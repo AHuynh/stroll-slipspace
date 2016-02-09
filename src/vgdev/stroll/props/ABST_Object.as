@@ -2,7 +2,6 @@ package vgdev.stroll.props
 {
 	import vgdev.stroll.ContainerGame;
 	import flash.display.MovieClip;
-	import flash.display.BitmapData;
 	import flash.geom.Point;
 
 	/**
@@ -14,17 +13,11 @@ package vgdev.stroll.props
 		/// A reference to the active instance of ContainerGame
 		protected var cg:ContainerGame;
 		
-		/// The MovieClip associated with this object (The actual graphic on the stage.)
+		/// The MovieClip associated with this object (The actual graphic on the stage)
 		public var mc_object:MovieClip;
 		
 		/// Indicates if this object should be removed
 		protected var completed:Boolean = false;
-		
-		protected var dx:Number = 0;
-		protected var dy:Number = 0;
-		
-		///Rotation
-		protected var dr:Number = 0;
 
 		/**
 		 * Should only be called through super(), never instantiated
@@ -45,26 +38,26 @@ package vgdev.stroll.props
 		}
 		
 		/**
-		 * Move the obstacle's x and y according to its dx and dy
+		 * Move the obstacle's x and y
 		 */
-		protected function updatePosition():void
+		protected function updatePosition(dx:Number, dy:Number):void
 		{
 			mc_object.x = changeWithLimit(mc_object.x, dx);
 			mc_object.y = changeWithLimit(mc_object.y, dy);
 		}
 		
 		/**
-		 * Helper to change the value of a variable restricted within limits and influenced by the time scale
+		 * Helper to change the value of a variable restricted within limits
 		 * @param	original		The original value
 		 * @param	change			The amount to change by
 		 * @param	limLow			The minimum amount
 		 * @param	limHigh			The maximum amount
-		 * @return					The original plus change, with respect to limits and time scale
+		 * @return					The original plus change, with respect to limits
 		 */
 		protected function changeWithLimit(original:Number, change:Number,
 										   limLow:Number = int.MIN_VALUE, limHigh:Number = int.MAX_VALUE):Number
 		{
-			original += change * TimeScale.s_scale;
+			original += change;
 			if (original < limLow)
 				original = limLow;
 			else if (original > limHigh)

@@ -1,4 +1,4 @@
-package vgdev.dodge 
+package vgdev.stroll 
 {
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -24,13 +24,8 @@ package vgdev.dodge
 		public const RET_NEXT:int = 2;
 		public var returnCode:int = RET_NORMAL;
 		
-		public var levels:Levels;
-		public var currLevel:String;				// set by ContainerMenu; determines which level to load
-		
 		public function Engine() 
-		{
-			levels = new Levels();
-			
+		{			
 			addEventListener(Event.ENTER_FRAME, step);					// primary game loop firer
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
@@ -57,24 +52,24 @@ package vgdev.dodge
 				switch (gameState)			// determine which new container to go to next
 				{
 					case STATE_MENU:
-						switchToContainer(new ContainerGame(this, levels.getLevel(currLevel), currLevel == "He's the Boss"), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+						switchToContainer(new ContainerGame(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
 						gameState = STATE_GAME;
+						trace("[ENGINE] Starting game!");
 					break;
 					case STATE_GAME:
 						if (returnCode == RET_NORMAL)
 						{
-							switchToContainer(new ContainerMenu(this, true), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+							switchToContainer(new ContainerMenu(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
 							gameState = STATE_MENU;
 						}
 						else if (returnCode == RET_RESTART)
 						{
-							switchToContainer(new ContainerGame(this, levels.getLevel(currLevel), currLevel == "He's the Boss"), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+							switchToContainer(new ContainerGame(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
 							gameState = STATE_GAME;
 						}
 						else if (returnCode == RET_NEXT)
 						{
-							currLevel = levels.getNextLevelName(currLevel);
-							switchToContainer(new ContainerGame(this, levels.getLevel(currLevel), currLevel == "He's the Boss"), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+							switchToContainer(new ContainerGame(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
 							gameState = STATE_GAME;
 						}
 					break;

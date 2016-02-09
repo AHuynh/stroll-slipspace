@@ -24,6 +24,17 @@
 		{			
 			super();
 			eng = _eng;
+			
+			swc = new SWC_MainMenu();
+			addChild(swc);
+			
+			swc.btn_start.addEventListener(MouseEvent.CLICK, onStart);
+		}
+		
+		private function onStart(e:MouseEvent):void
+		{
+			completed = true;
+			destroy(null);
 		}
 		
 		/**
@@ -32,12 +43,14 @@
 		 */
 		protected function destroy(e:Event):void
 		{
-			/*swc.btn_start.removeEventListener(MouseEvent.CLICK, onStart);
-			
-			if (swc && contains(swc))
-				removeChild(swc);
+			if (swc != null)
+			{
+				swc.btn_start.removeEventListener(MouseEvent.CLICK, onStart);
+				if (contains(swc))
+					removeChild(swc);
+			}
 			swc = null;
-			eng = null;*/
+			eng = null;
 		}
 	}
 }
