@@ -8,6 +8,7 @@
 	import flash.media.SoundMixer;
 	import flash.events.MouseEvent;
 	import flash.utils.getTimer;
+	import vgdev.stroll.props.Console;
 	import vgdev.stroll.props.Player;
 	
 	/**
@@ -20,14 +21,15 @@
 		public var engine:Engine;		// the game's Engine
 		public var game:SWC_Game;		// the Game SWC, containing all the base assets
 
-		private var players:Array;
-		
+		public var players:Array;
 		private var keyMap0:Object = { "RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
 									   "LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
-									   "ACCEPT":Keyboard.COMMA, "CANCEL":Keyboard.PERIOD };
+									   "ACTION":Keyboard.COMMA, "CANCEL":Keyboard.PERIOD };
 		private var keyMap1:Object = { "RIGHT":Keyboard.D,		"UP":Keyboard.W,
 									   "LEFT":Keyboard.A,		"DOWN":Keyboard.S,
-									   "ACCEPT":Keyboard.Z, 	"CANCEL":Keyboard.X };
+									   "ACTION":Keyboard.Z, 	"CANCEL":Keyboard.X };
+									   
+		public var consoles:Array;
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -46,8 +48,15 @@
 			
 			game.mc_ship.mc_interior_hit0.visible = false;
 			
-			players = [new Player(this, game.mc_ship.mc_player0, game.mc_ship.mc_interior_hit0, keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, game.mc_ship.mc_interior_hit0, keyMap1)];
+			players = [new Player(this, game.mc_ship.mc_player0, game.mc_ship.mc_interior_hit0, 0, keyMap0),
+					   new Player(this, game.mc_ship.mc_player1, game.mc_ship.mc_interior_hit0, 1, keyMap1)];
+					   
+			consoles = [];
+			var console:Console;
+			for (var i:int = 0; i < game.mc_ship.mc_consoleGroup.numChildren; i++)
+			{
+				consoles.push(new Console(this, game.mc_ship.mc_consoleGroup.getChildAt(i), players));
+			}
 		}
 
 		/**
@@ -61,6 +70,13 @@
 			}
 		}
 		
+		public function onAction(p:Player):void
+		{
+			trace("[GAME] Checking action for player", p);
+			for (var i:int = 0; i < consoles.length; i++)
+				consoles[i].onAction(p);
+		}
+		
 		/**
 		 * Called by Engine every frame to update the game
 		 * @return		completed, true if this container is done
@@ -70,6 +86,8 @@
 			var i:int;
 			for (i = 0; i < 2; i++)
 				players[i].step();
+			for (i = 0; i < consoles.length; i++)
+				consoles[i].step();
 			
 			return completed;			// return the state of the container (if true, it is done)
 		}

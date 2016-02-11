@@ -3,6 +3,7 @@ package vgdev.stroll.props
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.System;
 	
 	/**
 	 * Object that can move inside the spaceship.
@@ -10,14 +11,12 @@ package vgdev.stroll.props
 	 */
 	public class ABST_IMovable extends ABST_Object 
 	{
-		protected var validMCs:Array;
 		protected var hitMask:MovieClip;
 		
-		public function ABST_IMovable(_cg:ContainerGame, _validMCs:MovieClip) 
+		public function ABST_IMovable(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip) 
 		{
-			super(_cg);
-			
-			hitMask = _validMCs;
+			super(_cg, _mc_object);
+			hitMask = _hitMask;
 		}
 		
 		/**
@@ -25,7 +24,7 @@ package vgdev.stroll.props
 		 */
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
-			var ptNew:Point = new Point(changeWithLimit(mc_object.x, dx), changeWithLimit(mc_object.y, dy));
+			var ptNew:Point = new Point(System.changeWithLimit(mc_object.x, dx), System.changeWithLimit(mc_object.y, dy));
 			if (isPointValid(ptNew))
 			{
 				mc_object.x = ptNew.x;
