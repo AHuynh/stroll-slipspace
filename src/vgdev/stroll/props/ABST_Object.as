@@ -41,8 +41,8 @@ package vgdev.stroll.props
 		
 		protected function updatePosition(dx:Number, dy:Number):void
 		{
-			mc_object.x = System.changeWithLimit(mc_object.x, dx);
-			mc_object.y = System.changeWithLimit(mc_object.y, dy);
+			mc_object.x += dx;
+			mc_object.y += dy;
 		}
 		
 		/**

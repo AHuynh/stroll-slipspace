@@ -1,7 +1,10 @@
 package vgdev.stroll.props.consoles 
 {
 	import flash.display.MovieClip;
+	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.projectiles.ABST_Projectile;
+	import vgdev.stroll.props.projectiles.ProjectileGeneric;
 	import vgdev.stroll.System;
 	
 	/**
@@ -13,7 +16,7 @@ package vgdev.stroll.props.consoles
 		protected var turret:MovieClip;
 		
 		/// The number of frames to wait in-between shots
-		protected var cooldown:int = 10;
+		protected var cooldown:int = 5;
 		
 		/// The current cooldown count, where 0 is ready to fire
 		protected var cdCount:int = 0;
@@ -27,12 +30,29 @@ package vgdev.stroll.props.consoles
 		/// How many degrees per frame the gimbal can rotate at
 		protected var gimbalSpeed:Number = 4;
 		
+		/// Speed of projectiles shot
+		protected var projectileSpeed:Number = 12;
+		
+		/// How many frames projectiles shot will last
+		protected var projectileLife:Number = 60;
+		
+		public var rotOff:int = 0;
+		
 		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array) 
 		{
 			super(_cg, _mc_object, _players);	
 			turret = _turret;
 			gimbalLimits = _gimbalLimits;
 			controlIDs = _controlIDs;
+			
+			turret.nozzle.spawn.visible = false;
+		}
+		
+		override public function step():Boolean
+		{
+			if (cdCount > 0)
+				cdCount--;
+			return super.step();
 		}
 		
 		/**
@@ -61,7 +81,10 @@ package vgdev.stroll.props.consoles
 				if (cdCount == 0)
 				{
 					cdCount = cooldown;
-					// TODO fire
+					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
+																	 turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
+																	 turret.nozzle.rotation + rotOff, projectileSpeed, projectileLife, System.AFFIL_PLAYER);
+					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
 			}
 		}

@@ -29,6 +29,12 @@ package vgdev.stroll.props.consoles
 		
 		override public function step():Boolean
 		{
+			updatePlayer();
+			return false;
+		}
+
+		protected function updatePlayer():void
+		{
 			if (!inUse)
 			{
 				closestPlayer = null;
@@ -52,8 +58,6 @@ package vgdev.stroll.props.consoles
 					mc_object.prompt.visible = false;
 				}
 			}
-
-			return false;
 		}
 		
 		/**

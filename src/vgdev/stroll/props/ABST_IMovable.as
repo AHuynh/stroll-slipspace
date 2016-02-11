@@ -3,7 +3,6 @@ package vgdev.stroll.props
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
-	import vgdev.stroll.System;
 	
 	/**
 	 * Object that can move inside the spaceship.
@@ -21,7 +20,7 @@ package vgdev.stroll.props
 
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
-			var ptNew:Point = new Point(System.changeWithLimit(mc_object.x, dx), System.changeWithLimit(mc_object.y, dy));
+			var ptNew:Point = new Point(mc_object.x + dx, mc_object.y + dy);
 			if (isPointValid(ptNew))
 			{
 				mc_object.x = ptNew.x;

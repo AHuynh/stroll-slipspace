@@ -21,9 +21,6 @@ package vgdev.stroll.props
 		protected var markedToKill:Boolean = false;
 		protected var hitMask:MovieClip;
 		
-		protected var dX:Number = 0;
-		protected var dY:Number = 0;
-		
 		public function ABST_EMovable(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip) 
 		{
 			super(_cg, _mc_object);
@@ -35,16 +32,18 @@ package vgdev.stroll.props
 			LIM_Y_MAX = System.GAME_HEIGHT;
 		}
 
-		override protected function updatePosition(dx:Number = this.dX, dy:Number = this.dY):void
+		override protected function updatePosition(dx:Number, dy:Number):void
 		{
-			var ptNew:Point = new Point(System.changeWithLimit(mc_object.x, dx), System.changeWithLimit(mc_object.y, dy));
+			var ptNew:Point = new Point(mc_object.x + dx, mc_object.y + dy);
 			if (isPointValid(ptNew))
 			{
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
 				
 				if (System.outOfBounds(mc_object.x, LIM_X_MIN, LIM_X_MAX, BUFFER) || System.outOfBounds(mc_object.y, LIM_Y_MIN, LIM_Y_MAX, BUFFER))
+				{
 					kill();
+				}
 			}
 			else
 			{
@@ -54,9 +53,11 @@ package vgdev.stroll.props
 		}
 		
 		public function isPointValid(pt:Point):Boolean
-		{			
-			var ptL:Point = MovieClip(mc_object.parent).localToGlobal(pt);
-			return (mc_object.hitTestObject(hitMask) && hitMask.hitTestPoint(ptL.x, ptL.y, true));
+		{
+			if (!mc_object.hitTestObject(hitMask))
+				return true;
+			else
+				return !hitMask.hitTestPoint(pt.x, pt.y, true);
 		}
 		
 		public function kill():void

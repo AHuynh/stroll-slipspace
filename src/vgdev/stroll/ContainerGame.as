@@ -1,5 +1,6 @@
 ﻿package vgdev.stroll
 {
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
@@ -11,6 +12,7 @@
 	import vgdev.stroll.managers.ABST_Manager;
 	import vgdev.stroll.managers.ManagerEProjectile;
 	import vgdev.stroll.managers.ManagerGeneric;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.props.consoles.ConsoleTurret;
 	import vgdev.stroll.props.Player;
@@ -25,7 +27,9 @@
 		public var engine:Engine;		// the game's Engine
 		public var game:SWC_Game;		// the Game SWC, containing all the base assets
 
-		public var players:Array;
+		public var shipHitMask:MovieClip;
+		
+		public var players:Array = [];
 		private var keyMap0:Object = { "RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
 									   "LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
 									   "ACTION":Keyboard.COMMA, "CANCEL":Keyboard.PERIOD };
@@ -33,11 +37,10 @@
 									   "LEFT":Keyboard.A,		"DOWN":Keyboard.S,
 									   "ACTION":Keyboard.Z, 	"CANCEL":Keyboard.X };
 									   
-		public var consoles:Array;
+		public var consoles:Array = [];
 		
 		public var managers:Array = [];
-		private var manPlayer:ABST_Manager;
-		private var manConsole:ABST_Manager;
+		public var managerMap:Object = new Object();
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -47,22 +50,22 @@
 		{
 			super();
 			engine = eng;
-			
+
 			game = new SWC_Game();
 			addChild(game);
-			
+
 			game.mc_bg.gotoAndStop("space");
 			//engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
-			
+
 			game.mc_ship.mc_ship_hit.visible = false;
 			game.mc_ship.mod_nav.visible = false;
 			game.mc_ship.mod_shield.visible = false;
 			
-			
-			players = [new Player(this, game.mc_ship.mc_player0, game.mc_ship.mc_ship_hit, 0, keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, game.mc_ship.mc_ship_hit, 1, keyMap1)];
-					   
-			consoles = [];			
+			shipHitMask = game.mc_ship.mc_ship_hit;
+
+			players = [new Player(this, game.mc_ship.mc_player0, shipHitMask, 0, keyMap0),
+					   new Player(this, game.mc_ship.mc_player1, shipHitMask, 1, keyMap1)];
+
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
 											players, [-120, 120], [1, -1, 3, -1]));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console02, game.mc_ship.turret_1,		// left
@@ -71,19 +74,32 @@
 											players, [-15, 165], [0, -1, 2, -1]));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console05, game.mc_ship.turret_4,		// rear
 											players, [-90, 90], [3, -1, 1, -1]));
-			
+			consoles[3].rotOff = 180;
+
 			// TODO dynamic camera
 			//game.scaleX = game.scaleY = .7;
-			
-			managers.push(new ManagerEProjectile(this));
-			
-			manPlayer = new ManagerGeneric(this)
-			manPlayer.setObjects(players);
-			managers.push(manPlayer);
-			
-			manConsole = new ManagerGeneric(this)
-			manConsole.setObjects(consoles);
-			managers.push(manConsole);
+
+			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this)
+			managers.push(managerMap[System.M_EPROJECTILE]);
+
+			managerMap[System.M_PLAYER] = new ManagerGeneric(this)
+			managerMap[System.M_PLAYER].setObjects(players);
+			managers.push(managerMap[System.M_PLAYER]);
+
+			managerMap[System.M_CONSOLE] = new ManagerGeneric(this)
+			managerMap[System.M_CONSOLE] .setObjects(consoles);
+			managers.push(managerMap[System.M_CONSOLE]);
+		}
+		
+		/**
+		 * Add the given Object to the game
+		 * @param	mc			The ABST_Object to add
+		 * @param	manager		The ID of the manager that will manage mc
+		 */
+		public function addToGame(obj:ABST_Object, manager:int):void
+		{
+			game.addChild(obj.mc_object);
+			managerMap[manager].addObject(obj);
 		}
 
 		/**

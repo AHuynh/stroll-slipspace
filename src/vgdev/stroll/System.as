@@ -5,12 +5,21 @@ package vgdev.stroll
 	 * @author Alexander Huynh
 	 */
 	public class System 
-	{		
+	{
+		// global constants
 		public static const GAME_WIDTH:int = 800;
 		public static const GAME_HEIGHT:int = 600;
+		public static const GAME_OFFSX:int = 400;		// offsets
+		public static const GAME_OFFSY:int = 300;
 		
+		// constants used in ABST_Projectile
 		public static const AFFIL_PLAYER:int = 0;
-		public static const AFFIL_ENEMY:int = 0;
+		public static const AFFIL_ENEMY:int = 1;
+		
+		// constants used in ContainerGame.managerMap
+		public static const M_PLAYER:int = 0;		
+		public static const M_CONSOLE:int = 1;
+		public static const M_EPROJECTILE:int = 10;
 		
 		/**
 		 * Returns a random int between min and max
