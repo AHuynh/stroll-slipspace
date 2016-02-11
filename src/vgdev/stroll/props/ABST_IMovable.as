@@ -18,10 +18,7 @@ package vgdev.stroll.props
 			super(_cg, _mc_object);
 			hitMask = _hitMask;
 		}
-		
-		/**
-		 * Move the obstacle's x and y
-		 */
+
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
 			var ptNew:Point = new Point(System.changeWithLimit(mc_object.x, dx), System.changeWithLimit(mc_object.y, dy));

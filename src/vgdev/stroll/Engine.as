@@ -54,7 +54,7 @@ package vgdev.stroll
 					case STATE_MENU:
 						switchToContainer(new ContainerGame(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
 						gameState = STATE_GAME;
-						trace("[ENGINE] Starting game!");
+						//trace("[ENGINE] Starting game!");
 					break;
 					case STATE_GAME:
 						if (returnCode == RET_NORMAL)

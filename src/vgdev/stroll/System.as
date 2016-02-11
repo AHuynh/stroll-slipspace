@@ -6,6 +6,12 @@ package vgdev.stroll
 	 */
 	public class System 
 	{		
+		public static const GAME_WIDTH:int = 800;
+		public static const GAME_HEIGHT:int = 600;
+		
+		public static const AFFIL_PLAYER:int = 0;
+		public static const AFFIL_ENEMY:int = 0;
+		
 		/**
 		 * Returns a random int between min and max
 		 * @param	min		The lower bound

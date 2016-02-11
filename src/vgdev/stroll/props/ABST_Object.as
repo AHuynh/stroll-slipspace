@@ -39,13 +39,20 @@ package vgdev.stroll.props
 			return completed;
 		}
 		
-		/**
-		 * Move the obstacle's x and y
-		 */
 		protected function updatePosition(dx:Number, dy:Number):void
 		{
 			mc_object.x = System.changeWithLimit(mc_object.x, dx);
 			mc_object.y = System.changeWithLimit(mc_object.y, dy);
+		}
+		
+		/**
+		 * Clean-up function.
+		 */
+		public function destroy():void
+		{
+			mc_object = null;
+			cg = null;
+			completed = true;
 		}
 	}
 }

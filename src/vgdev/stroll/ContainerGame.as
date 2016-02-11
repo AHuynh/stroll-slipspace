@@ -8,7 +8,11 @@
 	import flash.media.SoundMixer;
 	import flash.events.MouseEvent;
 	import flash.utils.getTimer;
-	import vgdev.stroll.props.Console;
+	import vgdev.stroll.managers.ABST_Manager;
+	import vgdev.stroll.managers.ManagerEProjectile;
+	import vgdev.stroll.managers.ManagerGeneric;
+	import vgdev.stroll.props.consoles.ABST_Console;
+	import vgdev.stroll.props.consoles.ConsoleTurret;
 	import vgdev.stroll.props.Player;
 	
 	/**
@@ -31,6 +35,10 @@
 									   
 		public var consoles:Array;
 		
+		public var managers:Array = [];
+		private var manPlayer:ABST_Manager;
+		private var manConsole:ABST_Manager;
+		
 		/**
 		 * A MovieClip containing all of a Stroll level
 		 * @param	eng			A reference to the Engine
@@ -46,17 +54,36 @@
 			game.mc_bg.gotoAndStop("space");
 			//engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			
-			game.mc_ship.mc_interior_hit0.visible = false;
+			game.mc_ship.mc_ship_hit.visible = false;
+			game.mc_ship.mod_nav.visible = false;
+			game.mc_ship.mod_shield.visible = false;
 			
-			players = [new Player(this, game.mc_ship.mc_player0, game.mc_ship.mc_interior_hit0, 0, keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, game.mc_ship.mc_interior_hit0, 1, keyMap1)];
+			
+			players = [new Player(this, game.mc_ship.mc_player0, game.mc_ship.mc_ship_hit, 0, keyMap0),
+					   new Player(this, game.mc_ship.mc_player1, game.mc_ship.mc_ship_hit, 1, keyMap1)];
 					   
-			consoles = [];
-			var console:Console;
-			for (var i:int = 0; i < game.mc_ship.mc_consoleGroup.numChildren; i++)
-			{
-				consoles.push(new Console(this, game.mc_ship.mc_consoleGroup.getChildAt(i), players));
-			}
+			consoles = [];			
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
+											players, [-120, 120], [1, -1, 3, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console02, game.mc_ship.turret_1,		// left
+											players, [-165, 15], [2, -1, 0, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console04, game.mc_ship.turret_2,		// right
+											players, [-15, 165], [0, -1, 2, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console05, game.mc_ship.turret_4,		// rear
+											players, [-90, 90], [3, -1, 1, -1]));
+			
+			// TODO dynamic camera
+			//game.scaleX = game.scaleY = .7;
+			
+			managers.push(new ManagerEProjectile(this));
+			
+			manPlayer = new ManagerGeneric(this)
+			manPlayer.setObjects(players);
+			managers.push(manPlayer);
+			
+			manConsole = new ManagerGeneric(this)
+			manConsole.setObjects(consoles);
+			managers.push(manConsole);
 		}
 
 		/**
@@ -72,7 +99,6 @@
 		
 		public function onAction(p:Player):void
 		{
-			trace("[GAME] Checking action for player", p);
 			for (var i:int = 0; i < consoles.length; i++)
 				consoles[i].onAction(p);
 		}
@@ -82,14 +108,10 @@
 		 * @return		completed, true if this container is done
 		 */
 		override public function step():Boolean
-		{			
-			var i:int;
-			for (i = 0; i < 2; i++)
-				players[i].step();
-			for (i = 0; i < consoles.length; i++)
-				consoles[i].step();
-			
-			return completed;			// return the state of the container (if true, it is done)
+		{		
+			for (var i:int = 0; i < managers.length; i++)
+				managers[i].step();
+			return completed;
 		}
 
 		/**

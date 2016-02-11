@@ -1,24 +1,27 @@
-package vgdev.stroll.props 
+package vgdev.stroll.props.consoles 
 {
 	import flash.display.MovieClip;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
+	import vgdev.stroll.props.ABST_Object;
+	import vgdev.stroll.props.Player;
 	
 	/**
 	 * ...
 	 * @author Alexander Huynh
 	 */
-	public class Console extends ABST_Object 
+	public class ABST_Console extends ABST_Object 
 	{
 		private var players:Array;
-		private const RANGE:int = 20;
+		private const RANGE:int = 20;		// maximum range in px from which a player can activate this console
 		
-		public var inUse:Boolean = false;
+		/// true if a player is currently using this console
+		public var inUse:Boolean = false;	
 		
-		/// active/nearest player
+		/// the active player if this console is inUse; otherwise the nearest player
 		public var closestPlayer:Player;
 		
-		public function Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
+		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object);
 			players = _players;
@@ -35,7 +38,7 @@ package vgdev.stroll.props
 				for (var i:int = 0; i < players.length; i++)
 				{
 					player = players[i];
-					dist = System.getDistance(mc_object.x, mc_object.y, player.mc_object.x, player.mc_object.y + 15);
+					dist = System.getDistance(mc_object.x, mc_object.y, player.mc_object.x, player.mc_object.y - 15);
 					if (dist < RANGE && dist < closestDist)
 					{
 						dist = closestDist;
@@ -49,8 +52,26 @@ package vgdev.stroll.props
 					mc_object.prompt.visible = false;
 				}
 			}
-			
+
 			return false;
+		}
+		
+		/**
+		 * Performs some sort of functionality based on keys PRESSED by this console's active player
+		 * @param	key		[0-4] representing R, U, L, D, Action
+		 */
+		public function onKey(key:int):void
+		{
+			// -- override this function
+		}
+		
+		/**
+		 * Performs some sort of functionality based on keys HELD by this console's active player
+		 * @param	keys	array with indexes [0-4] representing R, U, L, D, Action
+		 */
+		public function holdKey(keys:Array):void
+		{
+			// override this function
 		}
 		
 		public function onAction(p:Player):void
@@ -66,7 +87,7 @@ package vgdev.stroll.props
 				}
 			}
 		}
-		
+
 		public function onCancel():void
 		{
 			if (inUse)

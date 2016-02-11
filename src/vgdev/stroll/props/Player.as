@@ -6,6 +6,7 @@ package vgdev.stroll.props
 	import flash.geom.Point;
 	import flash.ui.Keyboard;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.consoles.ABST_Console;
 	
 	/**
 	 * Instance of the player
@@ -31,7 +32,7 @@ package vgdev.stroll.props
 		public var playerID:int;
 		public var moveSpeed:Number = 4;
 		
-		private var activeConsole:Console = null;
+		private var activeConsole:ABST_Console = null;
 		
 		/// Map of key states
 		private var keysDown:Object = {UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false};
@@ -75,36 +76,32 @@ package vgdev.stroll.props
 		
 		private function handleKeyboard():void
 		{
-			var moved:Boolean = false;
-			
-			if (keysDown[RIGHT])
+			if (activeConsole == null)
 			{
-				updatePosition(moveSpeed, 0);
-				moved = true;
+				if (keysDown[RIGHT])
+				{
+					updatePosition(moveSpeed, 0);
+				}
+				if (keysDown[UP])
+				{
+					updatePosition(0, -moveSpeed);
+				}
+				if (keysDown[LEFT])
+				{
+					updatePosition( -moveSpeed, 0);
+				}
+				if (keysDown[DOWN])
+				{
+					updatePosition(0, moveSpeed);
+				}
 			}
-			if (keysDown[UP])
+			else
 			{
-				updatePosition(0, -moveSpeed);
-				moved = true;
-			}
-			if (keysDown[LEFT])
-			{
-				updatePosition( -moveSpeed, 0);
-				moved = true;
-			}
-			if (keysDown[DOWN])
-			{
-				updatePosition(0, moveSpeed);
-				moved = true;
-			}
-			
-			if (moved)
-			{
-				
+				activeConsole.holdKey([keysDown[RIGHT], keysDown[UP], keysDown[LEFT], keysDown[DOWN], keysDown[ACTION]]);
 			}
 		}
-		
-		public function sitAtConsole(console:Console):void
+
+		public function sitAtConsole(console:ABST_Console):void
 		{
 			activeConsole = console;
 		}
@@ -129,38 +126,61 @@ package vgdev.stroll.props
 			switch (e.keyCode)
 			{
 				case KEY_RIGHT:
+					keysDown[RIGHT] = true;
 					if (activeConsole == null)
 					{
-						keysDown[RIGHT] = true;
 						mc_object.scaleX = -1;
 						pressed = true;
 					}
+					else
+					{
+						activeConsole.onKey(0);
+					}
 				break;
 				case KEY_UP:
+					keysDown[UP] = true;
 					if (activeConsole == null)
 					{
-						keysDown[UP] = true;
 						pressed = true;
+					}
+					else
+					{
+						activeConsole.onKey(1);
 					}
 				break;
 				case KEY_LEFT:
+					keysDown[LEFT] = true;
 					if (activeConsole == null)
 					{
-						keysDown[LEFT] = true;
 						mc_object.scaleX = 1;
 						pressed = true;
 					}
+					else
+					{
+						activeConsole.onKey(2);
+					}
 				break;
 				case KEY_DOWN:
+					keysDown[DOWN] = true;
 					if (activeConsole == null)
 					{
-						keysDown[DOWN] = true;
 						pressed = true;
+					}
+					else
+					{
+						activeConsole.onKey(3);
 					}
 				break;
 				case KEY_ACTION:
 					keysDown[ACTION] = true;
-					cg.onAction(this);
+					if (activeConsole == null)
+					{
+						cg.onAction(this);
+					}
+					else
+					{
+						activeConsole.onKey(4);
+					}
 				break;
 				case KEY_CANCEL:
 					keysDown[CANCEL] = true;
