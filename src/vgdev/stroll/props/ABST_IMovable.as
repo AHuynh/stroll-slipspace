@@ -10,23 +10,14 @@ package vgdev.stroll.props
 	 */
 	public class ABST_IMovable extends ABST_Object 
 	{
-		public var hitbox:MovieClip;
 		protected var validMCs:Array;
-		
-		protected var debug:SWC_Debug;
+		protected var hitMask:MovieClip;
 		
 		public function ABST_IMovable(_cg:ContainerGame, _validMCs:MovieClip) 
 		{
 			super(_cg);
-			validMCs = [];
-			for (var i:int = 0; i < _validMCs.numChildren; i++)
-			{
-				validMCs.push(_validMCs.getChildAt(i));
-			}
 			
-			debug = new SWC_Debug();
-			cg.addChild(debug);
-			//debug.visible = true;
+			hitMask = _validMCs;
 		}
 		
 		/**
@@ -34,47 +25,18 @@ package vgdev.stroll.props
 		 */
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
-			//trace("[" + this + "] Trying to move!");
 			var ptNew:Point = new Point(changeWithLimit(mc_object.x, dx), changeWithLimit(mc_object.y, dy));
-			if (isPointValid(ptNew.add(new Point(dx * 0, dy * 0))))
+			if (isPointValid(ptNew))
 			{
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
-				//debug.visible = false;
 			}
-			else
-				trace("[" + this + "]\tcouldn't move!");
 		}
 		
 		public function isPointValid(pt:Point):Boolean
-		{
-			if (hitbox == null)
-				return false;
-				
-			hitbox.x += pt.x;
-			hitbox.y += pt.y;
-			
-			debug.x = pt.x;
-			debug.y = pt.y;
-			//debug.visible = true;
-				
-			var mc:MovieClip;
-			for (var i:int = 0; i < validMCs.length; i++)
-			{
-				if (hitbox.hitTestObject(validMCs[i]))// && validMCs[i].hitTestPoint(pt.x, pt.y))
-				//var ptL:Point = validMCs[i].localToGlobal(pt);
-				//if (validMCs[i].hitTestPoint(ptL.x, ptL.y))
-				{
-					trace("[" + this + "]\tFound a valid MC at:", validMCs[i].x, validMCs[i].y);
-					hitbox.x -= pt.x;
-					hitbox.y -= pt.y;
-					return true;
-				}
-			}
-			
-			hitbox.x -= pt.x;
-			hitbox.y -= pt.y;
-			return false;
+		{			
+			var ptL:Point = MovieClip(mc_object.parent).localToGlobal(pt);
+			return !(mc_object.hitTestObject(hitMask) && hitMask.hitTestPoint(ptL.x, ptL.y, true));
 		}
 	}
 }

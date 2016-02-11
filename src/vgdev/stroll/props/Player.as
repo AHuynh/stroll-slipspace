@@ -58,8 +58,6 @@ package vgdev.stroll.props
 			mc_object.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			cg.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			cg.stage.addEventListener(KeyboardEvent.KEY_UP, upKeyboard);
-			
-			hitbox = mc_object.hitbox;
 		}
 		
 		/**
@@ -90,20 +88,27 @@ package vgdev.stroll.props
 		 */
 		public function downKeyboard(e:KeyboardEvent):void
 		{
-			trace("[" + this + "] Keyboard pressed: " + e.keyCode);
+			var pressed:Boolean = false;
+			
 			switch (e.keyCode)
 			{
 				case KEY_RIGHT:
 					keysDown[RIGHT] = true;
+					mc_object.scaleX = -1;
+					pressed = true;
 				break;
 				case KEY_UP:
 					keysDown[UP] = true;
+					pressed = true;
 				break;
 				case KEY_LEFT:
 					keysDown[LEFT] = true;
+					mc_object.scaleX = 1;
+					pressed = true;
 				break;
 				case KEY_DOWN:
 					keysDown[DOWN] = true;
+					pressed = true;
 				break;
 				case KEY_ACTION:
 					keysDown[ACTION] = true;
@@ -112,6 +117,8 @@ package vgdev.stroll.props
 					keysDown[CANCEL] = true;
 				break;
 			}
+			if (pressed && mc_object.currentLabel == "idle")
+				mc_object.gotoAndPlay("walk");
 		}
 		
 		/**
@@ -119,20 +126,26 @@ package vgdev.stroll.props
 		 * @param	e		KeyboardEvent with info
 		 */
 		public function upKeyboard(e:KeyboardEvent):void
-		{			
+		{
+			var released:Boolean = false;
+			
 			switch (e.keyCode)
 			{
 				case KEY_RIGHT:
 					keysDown[RIGHT] = false;
+					released = true;
 				break;
 				case KEY_UP:
 					keysDown[UP] = false;
+					released = true;
 				break;
 				case KEY_LEFT:
 					keysDown[LEFT] = false;
+					released = true;
 				break;
 				case KEY_DOWN:
 					keysDown[DOWN] = false;
+					released = true;
 				break;
 				case KEY_ACTION:
 					keysDown[ACTION] = false;
@@ -141,6 +154,9 @@ package vgdev.stroll.props
 					keysDown[CANCEL] = false;
 				break;
 			}
+			
+			if (released && !keysDown[RIGHT] && !keysDown[UP] && !keysDown[LEFT] && !keysDown[DOWN])
+				mc_object.gotoAndStop("idle");
 		}
 		
 	}

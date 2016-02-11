@@ -41,11 +41,13 @@
 			game = new SWC_Game();
 			addChild(game);
 			
-			game.mc_bg.gotoAndPlay("space");
+			game.mc_bg.gotoAndStop("space");
 			//engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
-
-			players = [new Player(this, game.mc_ship.mc_player0, game.mc_ship.mc_interior, keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, game.mc_ship.mc_interior, keyMap1)];
+			
+			game.mc_ship.mc_interior_hit0.visible = false;
+			
+			players = [new Player(this, game.mc_ship.mc_player0, game.mc_ship.mc_interior_hit0, keyMap0),
+					   new Player(this, game.mc_ship.mc_player1, game.mc_ship.mc_interior_hit0, keyMap1)];
 		}
 
 		/**
