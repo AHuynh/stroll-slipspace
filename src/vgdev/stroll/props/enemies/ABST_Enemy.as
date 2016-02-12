@@ -8,7 +8,7 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.props.projectiles.*;
 	
 	/**
-	 * ...
+	 * Base class for enemies outside of the ship
 	 * @author Alexander Huynh
 	 */
 	public class ABST_Enemy extends ABST_EMovable 
@@ -18,6 +18,9 @@ package vgdev.stroll.props.enemies
 		
 		/// The min and max range from the ship that this Enemy should keep between
 		protected var ranges:Array = [200, 300];
+		
+		protected var hpMax:Number = 100;
+		protected var hp:Number = hpMax;
 		
 		protected var dX:Number = 0;
 		protected var dY:Number = 0;
@@ -39,6 +42,7 @@ package vgdev.stroll.props.enemies
 			updatePosition(dX, dY);
 			maintainRange();
 			
+			// update weapons
 			for (var i:int = 0; i < cooldowns.length; i++)
 			{
 				if (cdCounts[i]-- <= 0)
@@ -55,6 +59,16 @@ package vgdev.stroll.props.enemies
 			return completed;
 		}
 		
+		public function damage(dmg:Number):void
+		{
+			hp = Math.max(hp - dmg, 0);
+			if (hp == 0)
+				kill();
+		}
+		
+		/**
+		 * Keep between ranges[0] and ranges[1]
+		 */
 		protected function maintainRange():void
 		{
 			var dist:Number = System.getDistance(mc_object.x, mc_object.y, hitMask.x, hitMask.y);

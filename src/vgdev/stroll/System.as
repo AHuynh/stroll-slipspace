@@ -1,7 +1,7 @@
 package vgdev.stroll 
 {
 	/**
-	 * Helper functions
+	 * Helper functionality
 	 * @author Alexander Huynh
 	 */
 	public class System 
@@ -54,13 +54,29 @@ package vgdev.stroll
 			return radians * 57.296;
 		}
 
-		public static function getDistance(x1:Number, y1:Number,  x2:Number, y2:Number):Number
+		/**
+		 * Gets the distance in px between 2 points
+		 * @param	x1
+		 * @param	y1
+		 * @param	x2
+		 * @param	y2
+		 * @return
+		 */
+		public static function getDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number
 		{
 			var dx:Number = x1 - x2;
 			var dy:Number = y1 - y2;
 			return Math.sqrt(dx * dx + dy * dy);
 		}
-		
+
+		/**
+		 * Gets the angle between 2 points, returned in degrees
+		 * @param	x1
+		 * @param	y1
+		 * @param	x2
+		 * @param	y2
+		 * @return					The angle between (x1, y1) and (x2, y2)
+		 */ 
 		public static function getAngle(x1:Number, y1:Number, x2:Number, y2:Number):Number
 		{
 			var dx:Number = x2 - x1;
@@ -91,6 +107,14 @@ package vgdev.stroll
 			return orig;
 		}
 		
+		/**
+		 * Determines if val is not between the two limits, with an optional buffer
+		 * @param	val				The original value
+		 * @param	low				The lower limit
+		 * @param	high			The upper limit
+		 * @param	buffer			Buffer to subtract from low, add to high
+		 * @return					val < low - buffer || val > high + buffer
+		 */
 		public static function outOfBounds(val:Number, low:Number, high:Number, buffer:Number = 0):Boolean
 		{
 			return (val < low - buffer || val > high + buffer);

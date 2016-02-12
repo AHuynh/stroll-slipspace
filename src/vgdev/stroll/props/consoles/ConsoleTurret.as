@@ -8,11 +8,12 @@ package vgdev.stroll.props.consoles
 	import vgdev.stroll.System;
 	
 	/**
-	 * ...
+	 * A console that controls a basic ship turret
 	 * @author Alexander Huynh
 	 */
 	public class ConsoleTurret extends ABST_Console 
 	{
+		/// Reference to the linked turret
 		protected var turret:MovieClip;
 		
 		/// The number of frames to wait in-between shots
@@ -36,6 +37,7 @@ package vgdev.stroll.props.consoles
 		/// How many frames projectiles shot will last
 		protected var projectileLife:Number = 60;
 		
+		/// Rotation offset, if the mc_object's initial rotation is not 0
 		public var rotOff:int = 0;
 		
 		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array) 
@@ -61,6 +63,7 @@ package vgdev.stroll.props.consoles
 		 */
 		override public function holdKey(keys:Array):void
 		{
+			// turret aiming
 			for (var i:int = 0; i < 4; i++)
 			{
 				if (keys[i])
@@ -76,6 +79,7 @@ package vgdev.stroll.props.consoles
 				}
 			}
 			
+			// turret firing
 			if (keys[4])
 			{
 				if (cdCount == 0)
@@ -91,9 +95,9 @@ package vgdev.stroll.props.consoles
 		
 		/**
 		 * Traverse the turret's nozzle by gimbalSpeed in the dir direction with respect to gimbal limits
-		 * @param	dir		direction multiplier, either 1 or -1
+		 * @param	dir		direction multiplier, either 1 or -1 for now
 		 */
-		protected function traverse(dir:int):void
+		protected function traverse(dir:Number):void
 		{
 			turret.nozzle.rotation = System.changeWithLimit(turret.nozzle.rotation, gimbalSpeed * dir, gimbalLimits[0], gimbalLimits[1]);
 		}

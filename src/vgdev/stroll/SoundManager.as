@@ -7,7 +7,7 @@ package vgdev.stroll
 	public class SoundManager 
 	{
 		
-		[Embed(source="../../../bgm/BGM_mainMenu.mp3")]
+		//[Embed(source="../../../bgm/BGM_mainMenu.mp3")]
 		/*private static var bgm_menu:Class;*/
 		
 		private static var sounds:Object = new Object();

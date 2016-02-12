@@ -55,6 +55,11 @@ package vgdev.stroll.props
 			}
 		}
 		
+		override public function isActive():Boolean
+		{
+			return !markedToKill;
+		}
+		
 		public function isPointValid(pt:Point):Boolean
 		{	
 			if (!mc_object.hitTestObject(hitMask))

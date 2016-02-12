@@ -22,6 +22,7 @@ package vgdev.stroll.props
 		private const ACTION:int = 10;
 		private const CANCEL:int = 11;
 		
+		// stored Keyboard keycodes
 		private var KEY_RIGHT:uint;
 		private var KEY_UP:uint;
 		private var KEY_LEFT:uint;
@@ -29,9 +30,13 @@ package vgdev.stroll.props
 		private var KEY_ACTION:uint;
 		private var KEY_CANCEL:uint;
 		
+		/// Player 0 or 1
 		public var playerID:int;
+		
+		/// Pixels per frame this unit can move at
 		public var moveSpeed:Number = 4;
 		
+		/// If not null, the instance of ABST_Console this Player is currently paired with
 		private var activeConsole:ABST_Console = null;
 		
 		/// Map of key states
@@ -74,6 +79,9 @@ package vgdev.stroll.props
 			return completed;
 		}
 		
+		/**
+		 * Update state according to keyboard state
+		 */
 		private function handleKeyboard():void
 		{
 			if (activeConsole == null)
@@ -101,11 +109,18 @@ package vgdev.stroll.props
 			}
 		}
 
+		/**
+		 * Set this Player's active console to the one provided
+		 * @param	console		an ABST_Console that is not in use to be used by this Player
+		 */
 		public function sitAtConsole(console:ABST_Console):void
 		{
 			activeConsole = console;
 		}
 		
+		/**
+		 * Set this Player's active console to none, and if there was an active console, free it
+		 */
 		public function onCancel():void
 		{
 			if (activeConsole != null)

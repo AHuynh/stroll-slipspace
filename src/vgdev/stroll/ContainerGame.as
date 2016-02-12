@@ -25,9 +25,11 @@
 	 */
 	public class ContainerGame extends ABST_Container
 	{		
-		public var engine:Engine;		// the game's Engine
-		public var game:SWC_Game;		// the Game SWC, containing all the base assets
+		/// The SWC object containing graphics assets for the game
+		public var game:SWC_Game;
+		public var engine:Engine;
 
+		/// The ship's hitbox
 		public var shipHitMask:MovieClip;
 		
 		public var players:Array = [];
@@ -37,7 +39,8 @@
 		private var keyMap1:Object = { "RIGHT":Keyboard.D,		"UP":Keyboard.W,
 									   "LEFT":Keyboard.A,		"DOWN":Keyboard.S,
 									   "ACTION":Keyboard.Z, 	"CANCEL":Keyboard.X };
-									   
+			   
+		/// Array of ABST_Consoles, used to help figure out which console a player is trying to interact with
 		public var consoles:Array = [];
 		
 		public var managers:Array = [];
@@ -52,10 +55,11 @@
 			super();
 			engine = eng;
 
+			// set up the game SWC
 			game = new SWC_Game();
 			addChild(game);
 
-			game.mc_bg.gotoAndStop("space");
+			game.mc_bg.gotoAndStop("fractal00");
 			//engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 
 			game.mc_ship.mc_ship_hit.visible = false;
@@ -64,6 +68,7 @@
 			
 			shipHitMask = game.mc_ship.mc_ship_hit;
 
+			// link the game's assets
 			players = [new Player(this, game.mc_ship.mc_player0, shipHitMask, 0, keyMap0),
 					   new Player(this, game.mc_ship.mc_player1, shipHitMask, 1, keyMap1)];
 
@@ -80,6 +85,7 @@
 			// TODO dynamic camera
 			//game.scaleX = game.scaleY = .7;
 
+			// init the managers
 			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this);
 			managers.push(managerMap[System.M_EPROJECTILE]);
 
@@ -120,6 +126,10 @@
 			}
 		}
 		
+		/**
+		 * Callback when a player not at a console performs their 'USE' action
+		 * @param	p		the Player that is trying to USE something
+		 */
 		public function onAction(p:Player):void
 		{
 			for (var i:int = 0; i < consoles.length; i++)
