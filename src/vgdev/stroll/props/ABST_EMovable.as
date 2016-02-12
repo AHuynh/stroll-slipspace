@@ -18,13 +18,18 @@ package vgdev.stroll.props
 		protected var LIM_Y_MAX:int;
 		protected const BUFFER:int = 100;
 		
-		protected var markedToKill:Boolean = false;
-		protected var hitMask:MovieClip;
+		/// System friend or foe identifier (ex. System.M_PLAYER)
+		protected var affiliation:int;
 		
-		public function ABST_EMovable(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip) 
+		protected var markedToKill:Boolean = false;
+		
+		public function ABST_EMovable(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int) 
 		{
 			super(_cg, _mc_object);
-			hitMask = _hitMask;
+			mc_object.x = _pos.x - System.GAME_OFFSX;
+			mc_object.y = _pos.y - System.GAME_OFFSY;
+			
+			affiliation = _affiliation;
 			
 			LIM_X_MIN = -System.GAME_WIDTH;
 			LIM_X_MAX = System.GAME_WIDTH;
@@ -48,11 +53,21 @@ package vgdev.stroll.props
 					kill();
 				}
 			}
-			else
+			else if (affiliation != System.AFFIL_PLAYER)
 			{
-				// TODO collide with ship on this line
+				onShipHit();
 				kill();
 			}
+		}
+		
+		public function getAffiliation():int
+		{
+			return affiliation;
+		}
+		
+		protected function onShipHit():void
+		{
+			// -- override this function
 		}
 		
 		override public function isActive():Boolean
@@ -62,9 +77,10 @@ package vgdev.stroll.props
 		
 		public function isPointValid(pt:Point):Boolean
 		{	
-			if (!mc_object.hitTestObject(hitMask))
+			var mask:MovieClip = affiliation != System.AFFIL_PLAYER ? cg.shipHitMask : cg.shipHullMask;
+			if (!mc_object.hitTestObject(mask))
 				return true;
-			return !hitMask.hitTestPoint(pt.x + System.GAME_OFFSX, pt.y + System.GAME_OFFSY, true);
+			return !mask.hitTestPoint(pt.x + System.GAME_OFFSX, pt.y + System.GAME_OFFSY, true);
 		}
 		
 		public function kill():void

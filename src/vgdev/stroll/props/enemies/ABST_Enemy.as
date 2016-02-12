@@ -17,7 +17,7 @@ package vgdev.stroll.props.enemies
 		protected var cdCounts:Array = [0];
 		
 		/// The min and max range from the ship that this Enemy should keep between
-		protected var ranges:Array = [200, 300];
+		protected var ranges:Array = [270, 350];
 		
 		protected var hpMax:Number = 100;
 		protected var hp:Number = hpMax;
@@ -29,9 +29,9 @@ package vgdev.stroll.props.enemies
 		protected var drift:Number = .25;
 		protected var driftDir:int = 1;
 		
-		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _pos:Point) 
+		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point) 
 		{
-			super(_cg, _mc_object, _hitMask);
+			super(_cg, _mc_object, _pos, System.AFFIL_ENEMY);
 			
 			mc_object.x = _pos.x;
 			mc_object.y = _pos.y;
@@ -71,8 +71,8 @@ package vgdev.stroll.props.enemies
 		 */
 		protected function maintainRange():void
 		{
-			var dist:Number = System.getDistance(mc_object.x, mc_object.y, hitMask.x, hitMask.y);
-			var rot:Number = System.getAngle(mc_object.x, mc_object.y, hitMask.x, hitMask.y);
+			var dist:Number = System.getDistance(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
+			var rot:Number = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
 			mc_object.rotation = rot;
 			if (dist < ranges[0])
 			{

@@ -24,28 +24,22 @@ package vgdev.stroll.props.projectiles
 		protected var life:int;
 		
 		/// Base amount of damage to deal
-		protected var dmg:Number = 2;
-		
-		/// System friend or foe identifier (ex. System.M_PLAYER)
-		protected var affiliation:int;
+		protected var dmg:Number = 6;
 		
 		protected var managerProj:ManagerEProjectile;
 		protected var managerEnem:ManagerGeneric;
 		
-		public function ABST_Projectile(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, pos:Point, _dir:Number, _spd:Number,
-										_life:int, _affiliation:int, style:String = null, col:uint = 0) 
+		public function ABST_Projectile(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int, _dir:Number, _spd:Number,
+										_life:int, style:String = null, col:uint = 0) 
 		{
-			super(_cg, _mc_object, _hitMask);
+			super(_cg, _mc_object, _pos, _affiliation);
 			dir = _dir;
 			spd = _spd;
 			life = _life;
-			affiliation = _affiliation;
 			
 			managerProj = cg.managerMap[System.M_EPROJECTILE];
 			managerEnem = cg.managerMap[System.M_ENEMY];
 			
-			mc_object.x = pos.x - System.GAME_OFFSX;
-			mc_object.y = pos.y - System.GAME_OFFSY;
 			mc_object.rotation = dir;
 			
 			if (style != null)
@@ -78,9 +72,9 @@ package vgdev.stroll.props.projectiles
 			return completed;
 		}
 		
-		public function getAffiliation():int
+		override protected function onShipHit():void
 		{
-			return affiliation;
+			cg.ship.damage(dmg);
 		}
 	}
 }

@@ -33,8 +33,11 @@
 		public var level:Level;
 		public var gui:SWC_GUI;
 		
-		/// The ship's hitbox
+		public var ship:Ship;
+		
+		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;
+		public var shipHullMask:MovieClip;
 		
 		public var players:Array = [];
 		private var keyMap0:Object = { "RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
@@ -70,13 +73,14 @@
 			game.mc_ship.mod_nav.visible = false;
 			game.mc_ship.mod_shield.visible = false;
 			
-			shipHitMask = game.mc_ship.mc_ship_hit;
+			shipHullMask = game.mc_ship.mc_ship_hit;
+			setHitMask(false);
 			
 			game.addEventListener(Event.ADDED_TO_STAGE, init);
 
 			// link the game's assets
-			players = [new Player(this, game.mc_ship.mc_player0, shipHitMask, 0, keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, shipHitMask, 1, keyMap1)];
+			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, keyMap0),
+					   new Player(this, game.mc_ship.mc_player1, shipHullMask, 1, keyMap1)];
 
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
 											players, [-120, 120], [1, -1, 3, -1]));
@@ -88,7 +92,7 @@
 											players, [-90, 90], [3, -1, 1, -1]));
 			consoles[3].rotOff = 180;
 			
-			// TODO make a ship class?
+			ship = new Ship(this);
 
 			// TODO dynamic camera
 			//game.scaleX = game.scaleY = .7;
@@ -106,9 +110,9 @@
 			managers.push(managerMap[System.M_CONSOLE]);
 			
 			managerMap[System.M_ENEMY] = new ManagerGeneric(this);
-			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(200, 200)), System.M_ENEMY);
-			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(160, 210)), System.M_ENEMY);
-			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(180, 190)), System.M_ENEMY);
+			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(200, 200)), System.M_ENEMY);
+			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(160, 210)), System.M_ENEMY);
+			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);
 			managers.push(managerMap[System.M_ENEMY]);
 		}
 		
@@ -161,9 +165,15 @@
 		override public function step():Boolean
 		{		
 			level.step();
+			ship.step();
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
 			return completed;
+		}
+		
+		public function setHitMask(isHull:Boolean):void
+		{
+			shipHitMask = isHull ? shipHullMask : game.mc_ship.shield;
 		}
 
 		/**

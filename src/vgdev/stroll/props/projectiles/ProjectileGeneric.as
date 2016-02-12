@@ -14,7 +14,7 @@ package vgdev.stroll.props.projectiles
 		public function ProjectileGeneric(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, pos:Point, _dir:Number, _spd:Number,
 										  _life:int, _affiliation:int, style:String = null, col:uint = 0) 
 		{
-			super(_cg, _mc_object, _hitMask, pos, _dir, _spd, _life, _affiliation, style, col);
+			super(_cg, _mc_object, pos,  _affiliation, _dir, _spd, _life, style, col);
 		}
 	}
 }

@@ -23,8 +23,12 @@ package vgdev.stroll
 	
 		public function step():void
 		{
+			// update distance
 			distTrav = System.changeWithLimit(distTrav, distChange, 0, distGoal);
 			gui.tf_distance.text = System.formatDecimal(distTrav, 3).toString();
+			
+			
+			
 		}
 	}
 }
