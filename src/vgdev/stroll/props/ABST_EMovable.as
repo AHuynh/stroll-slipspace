@@ -34,6 +34,9 @@ package vgdev.stroll.props
 
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
+			if (markedToKill || completed)
+				return;
+			
 			var ptNew:Point = new Point(mc_object.x + dx, mc_object.y + dy);
 			if (isPointValid(ptNew))
 			{
@@ -53,11 +56,10 @@ package vgdev.stroll.props
 		}
 		
 		public function isPointValid(pt:Point):Boolean
-		{
+		{	
 			if (!mc_object.hitTestObject(hitMask))
 				return true;
-			else
-				return !hitMask.hitTestPoint(pt.x, pt.y, true);
+			return !hitMask.hitTestPoint(pt.x + System.GAME_OFFSX, pt.y + System.GAME_OFFSY, true);
 		}
 		
 		public function kill():void

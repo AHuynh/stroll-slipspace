@@ -46,7 +46,7 @@ package vgdev.stroll.props.enemies
 					cdCounts[i] = cooldowns[i];
 					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
 																	 mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
-																	 mc_object.rotation, 2, 150, System.AFFIL_ENEMY);
+																	 mc_object.rotation, 3, 150, System.AFFIL_ENEMY);
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
 			}
