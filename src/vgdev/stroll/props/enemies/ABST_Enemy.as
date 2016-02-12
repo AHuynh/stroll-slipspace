@@ -1,6 +1,7 @@
 package vgdev.stroll.props.enemies 
 {
 	import flash.display.MovieClip;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_EMovable;
@@ -28,6 +29,9 @@ package vgdev.stroll.props.enemies
 		protected var spd:Number = 1;
 		protected var drift:Number = .25;
 		protected var driftDir:int = 1;
+
+		protected var colAlpha:Number = 0;
+		protected const DCOL:Number = .04;
 		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point) 
 		{
@@ -55,6 +59,11 @@ package vgdev.stroll.props.enemies
 				}
 			}
 			
+			if (colAlpha > 0)
+			{
+				colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
+				mc_object.hitFlash.alpha = colAlpha;
+			}
 			
 			return completed;
 		}
@@ -62,6 +71,7 @@ package vgdev.stroll.props.enemies
 		public function damage(dmg:Number):void
 		{
 			hp = System.changeWithLimit(hp, -dmg, 0);
+			colAlpha = .7;
 			if (hp == 0)
 				kill();
 		}

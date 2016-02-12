@@ -26,6 +26,14 @@ package vgdev.stroll
 		public static const SECOND:int = 30;
 		public static const MINUTE:int = SECOND * 60;
 		
+		// color constants
+		public static const COL_WHITE:uint = 0xFFFFFF;
+		public static const COL_REDHIT:uint = 0xDD0000;
+		public static const COL_RED:uint = 0xFF0000;
+		public static const COL_YELLOW:uint = 0xFFFF00;
+		public static const COL_GREEN:uint = 0x00FF00;
+		public static const COL_BLUE:uint = 0x0077FF;
+		
 		/**
 		 * Returns a random int between min and max
 		 * @param	min		The lower bound

@@ -4,20 +4,16 @@
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
+	import flash.media.Camera;
 	import flash.ui.Keyboard;
 	import flash.media.Sound;
 	import flash.media.SoundMixer;
 	import flash.events.MouseEvent;
 	import flash.utils.getTimer;
-	import SWC_Game_fla.module_shield00_16;
-	import vgdev.stroll.managers.ABST_Manager;
-	import vgdev.stroll.managers.ManagerEProjectile;
-	import vgdev.stroll.managers.ManagerGeneric;
-	import vgdev.stroll.props.ABST_Object;
-	import vgdev.stroll.props.consoles.ABST_Console;
-	import vgdev.stroll.props.consoles.ConsoleTurret;
-	import vgdev.stroll.props.enemies.ABST_Enemy;
-	import vgdev.stroll.props.Player;
+	import vgdev.stroll.props.*;
+	import vgdev.stroll.props.consoles.*;
+	import vgdev.stroll.support.*;
+	import vgdev.stroll.managers.*;
 	
 	/**
 	 * Primary game container and controller
@@ -34,6 +30,7 @@
 		public var gui:SWC_GUI;
 		
 		public var ship:Ship;
+		//public var camera:Cam;
 		
 		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;
@@ -67,7 +64,6 @@
 			addChild(game);
 
 			game.mc_bg.gotoAndStop("fractal00");
-			//engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 
 			game.mc_ship.mc_ship_hit.visible = false;
 			game.mc_ship.mod_nav.visible = false;
@@ -91,9 +87,11 @@
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console05, game.mc_ship.turret_4,		// rear
 											players, [-90, 90], [3, -1, 1, -1]));
 			consoles[3].rotOff = 180;
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console03, players));
 			
 			ship = new Ship(this);
-
+			//camera = new Cam(this);
+			
 			// TODO dynamic camera
 			//game.scaleX = game.scaleY = .7;
 
@@ -124,6 +122,8 @@
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
 			level = new Level(this, gui);
+			
+			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 		}
 		
 		/**
@@ -145,6 +145,37 @@
 		{			
 			switch (e.keyCode)
 			{
+				/*case Keyboard.O:
+					camera.setCameraScale(2);
+				break;
+				case Keyboard.P:
+					camera.setCameraScale(1);
+				break;
+				case Keyboard.I:
+					camera.setCameraFocus(new Point(400, 200));
+				break;
+				case Keyboard.J:
+					camera.setCameraFocus(new Point(300, 400));
+				break;
+				case Keyboard.K:
+					camera.setCameraFocus(new Point(400, 300));
+				break;
+				case Keyboard.L:
+					camera.setCameraFocus(new Point(400, 400));
+				break;*/
+				
+				case Keyboard.U:
+					ship.setShieldColor(System.COL_BLUE);
+				break;
+				case Keyboard.I:
+					ship.setShieldColor(System.COL_GREEN);
+				break;
+				case Keyboard.O:
+					ship.setShieldColor(System.COL_YELLOW);
+				break;
+				case Keyboard.P:
+					ship.setShieldColor(System.COL_RED);
+				break;
 			}
 		}
 		
@@ -166,6 +197,8 @@
 		{		
 			level.step();
 			ship.step();
+			//camera.step();
+			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
 			return completed;
