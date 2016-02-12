@@ -37,6 +37,9 @@ package vgdev.stroll.props.consoles
 		/// How many frames projectiles shot will last
 		protected var projectileLife:Number = 60;
 		
+		/// Degrees to vary shots in each direction (total range is sway * 2)
+		protected var sway:Number = 5;
+		
 		/// Rotation offset, if the mc_object's initial rotation is not 0
 		public var rotOff:int = 0;
 		
@@ -87,7 +90,7 @@ package vgdev.stroll.props.consoles
 					cdCount = cooldown;
 					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
 																	 turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
-																	 turret.nozzle.rotation + rotOff, projectileSpeed, projectileLife, System.AFFIL_PLAYER);
+																	 turret.nozzle.rotation + rotOff + System.getRandNum(-sway, sway), projectileSpeed, projectileLife, System.AFFIL_PLAYER);
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
 			}

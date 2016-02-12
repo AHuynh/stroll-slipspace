@@ -19,7 +19,7 @@ package vgdev.stroll.props.enemies
 		/// The min and max range from the ship that this Enemy should keep between
 		protected var ranges:Array = [270, 350];
 		
-		protected var hpMax:Number = 100;
+		protected var hpMax:Number = 30;
 		protected var hp:Number = hpMax;
 		
 		protected var dX:Number = 0;

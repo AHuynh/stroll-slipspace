@@ -110,9 +110,9 @@
 			managers.push(managerMap[System.M_CONSOLE]);
 			
 			managerMap[System.M_ENEMY] = new ManagerGeneric(this);
-			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(200, 200)), System.M_ENEMY);
+			/*addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(200, 200)), System.M_ENEMY);
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(160, 210)), System.M_ENEMY);
-			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);
+			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);*/
 			managers.push(managerMap[System.M_ENEMY]);
 		}
 		

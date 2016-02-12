@@ -53,9 +53,10 @@ package vgdev.stroll.props
 					kill();
 				}
 			}
-			else if (affiliation != System.AFFIL_PLAYER)
+			else	// ship was hit
 			{
-				onShipHit();
+				if (affiliation != System.AFFIL_PLAYER)
+					onShipHit();
 				kill();
 			}
 		}

@@ -22,6 +22,10 @@ package vgdev.stroll
 		public static const M_CONSOLE:int = 10;
 		public static const M_EPROJECTILE:int = 20;
 		
+		// timing constants
+		public static const SECOND:int = 30;
+		public static const MINUTE:int = SECOND * 60;
+		
 		/**
 		 * Returns a random int between min and max
 		 * @param	min		The lower bound
