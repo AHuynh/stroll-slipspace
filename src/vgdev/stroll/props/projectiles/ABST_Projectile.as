@@ -28,8 +28,8 @@ package vgdev.stroll.props.projectiles
 			life = _life;
 			affiliation = _affiliation;
 			
-			mc_object.x = pos.x -= System.GAME_OFFSX;
-			mc_object.y = pos.y -= System.GAME_OFFSY;
+			mc_object.x = pos.x - System.GAME_OFFSX;
+			mc_object.y = pos.y - System.GAME_OFFSY;
 			mc_object.rotation = dir;
 			
 			if (style != null)

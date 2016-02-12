@@ -41,6 +41,7 @@ package vgdev.stroll.props.consoles
 				var closestDist:Number = 99999;
 				var dist:Number;
 				var player:Player;
+
 				for (var i:int = 0; i < players.length; i++)
 				{
 					player = players[i];

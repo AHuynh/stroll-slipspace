@@ -15,6 +15,7 @@
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.props.consoles.ConsoleTurret;
+	import vgdev.stroll.props.enemies.ABST_Enemy;
 	import vgdev.stroll.props.Player;
 	
 	/**
@@ -79,16 +80,22 @@
 			// TODO dynamic camera
 			//game.scaleX = game.scaleY = .7;
 
-			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this)
+			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this);
 			managers.push(managerMap[System.M_EPROJECTILE]);
 
-			managerMap[System.M_PLAYER] = new ManagerGeneric(this)
+			managerMap[System.M_PLAYER] = new ManagerGeneric(this);
 			managerMap[System.M_PLAYER].setObjects(players);
 			managers.push(managerMap[System.M_PLAYER]);
 
-			managerMap[System.M_CONSOLE] = new ManagerGeneric(this)
-			managerMap[System.M_CONSOLE] .setObjects(consoles);
+			managerMap[System.M_CONSOLE] = new ManagerGeneric(this);
+			managerMap[System.M_CONSOLE].setObjects(consoles);
 			managers.push(managerMap[System.M_CONSOLE]);
+			
+			managerMap[System.M_ENEMY] = new ManagerGeneric(this);
+			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(200, 200)), System.M_ENEMY);
+			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(160, 210)), System.M_ENEMY);
+			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(180, 190)), System.M_ENEMY);
+			managers.push(managerMap[System.M_ENEMY]);
 		}
 		
 		/**

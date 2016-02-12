@@ -18,8 +18,9 @@ package vgdev.stroll
 		
 		// constants used in ContainerGame.managerMap
 		public static const M_PLAYER:int = 0;		
-		public static const M_CONSOLE:int = 1;
-		public static const M_EPROJECTILE:int = 10;
+		public static const M_ENEMY:int = 1;
+		public static const M_CONSOLE:int = 10;
+		public static const M_EPROJECTILE:int = 20;
 		
 		/**
 		 * Returns a random int between min and max
