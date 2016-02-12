@@ -61,7 +61,7 @@ package vgdev.stroll.props.enemies
 		
 		public function damage(dmg:Number):void
 		{
-			hp = Math.max(hp - dmg, 0);
+			hp = System.changeWithLimit(hp, -dmg, 0);
 			if (hp == 0)
 				kill();
 		}

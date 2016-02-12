@@ -40,6 +40,7 @@
       <path-element>D:\GitHub\stroll-slipspace\swc\SWC_MainMenu.swc</path-element>
       <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Bullet.swc</path-element>
       <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Enemy.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_GUI.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>

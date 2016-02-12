@@ -9,6 +9,7 @@
 	import flash.media.SoundMixer;
 	import flash.events.MouseEvent;
 	import flash.utils.getTimer;
+	import SWC_Game_fla.module_shield00_16;
 	import vgdev.stroll.managers.ABST_Manager;
 	import vgdev.stroll.managers.ManagerEProjectile;
 	import vgdev.stroll.managers.ManagerGeneric;
@@ -29,6 +30,9 @@
 		public var game:SWC_Game;
 		public var engine:Engine;
 
+		public var level:Level;
+		public var gui:SWC_GUI;
+		
 		/// The ship's hitbox
 		public var shipHitMask:MovieClip;
 		
@@ -54,7 +58,7 @@
 		{
 			super();
 			engine = eng;
-
+			
 			// set up the game SWC
 			game = new SWC_Game();
 			addChild(game);
@@ -67,6 +71,8 @@
 			game.mc_ship.mod_shield.visible = false;
 			
 			shipHitMask = game.mc_ship.mc_ship_hit;
+			
+			game.addEventListener(Event.ADDED_TO_STAGE, init);
 
 			// link the game's assets
 			players = [new Player(this, game.mc_ship.mc_player0, shipHitMask, 0, keyMap0),
@@ -81,6 +87,8 @@
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console05, game.mc_ship.turret_4,		// rear
 											players, [-90, 90], [3, -1, 1, -1]));
 			consoles[3].rotOff = 180;
+			
+			// TODO make a ship class?
 
 			// TODO dynamic camera
 			//game.scaleX = game.scaleY = .7;
@@ -102,6 +110,16 @@
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(160, 210)), System.M_ENEMY);
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), shipHitMask, new Point(180, 190)), System.M_ENEMY);
 			managers.push(managerMap[System.M_ENEMY]);
+		}
+		
+		private function init(e:Event):void
+		{
+			game.removeEventListener(Event.ADDED_TO_STAGE, init);
+			gui = new SWC_GUI();
+			engine.addChild(gui);
+			gui.x += System.GAME_OFFSX;
+			gui.y += System.GAME_OFFSY;
+			level = new Level(this, gui);
 		}
 		
 		/**
@@ -142,6 +160,7 @@
 		 */
 		override public function step():Boolean
 		{		
+			level.step();
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
 			return completed;

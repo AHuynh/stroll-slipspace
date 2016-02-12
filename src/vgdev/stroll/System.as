@@ -120,6 +120,16 @@ package vgdev.stroll
 			return (val < low - buffer || val > high + buffer);
 		}
 		
+		public static function formatDecimal(num:Number, places:int):Number
+		{
+			if (places >= 0)
+			{
+				var temp:Number = Math.pow(10, places);
+				return (Math.round(num * temp) / temp)
+			}
+			return int(num);
+		} 
+		
 		// ray and line segment
 	/*	public static function calculateLineIntersect(p1:Point, p2:Point, p3:Point, p4:Point):Point
 		{

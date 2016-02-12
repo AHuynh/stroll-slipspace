@@ -57,6 +57,7 @@
     <element path="swc\SWC_Debug.swc" />
     <element path="swc\SWC_Bullet.swc" />
     <element path="swc\SWC_Enemy.swc" />
+    <element path="swc\SWC_GUI.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
