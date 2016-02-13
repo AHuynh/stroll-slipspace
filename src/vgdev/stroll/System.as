@@ -7,9 +7,9 @@ package vgdev.stroll
 	public class System 
 	{
 		// global constants
-		public static const GAME_WIDTH:int = 800;
+		public static const GAME_WIDTH:int = 960;
 		public static const GAME_HEIGHT:int = 600;
-		public static const GAME_OFFSX:int = 400;		// offsets
+		public static const GAME_OFFSX:int = 480;		// offsets
 		public static const GAME_OFFSY:int = 300;
 		
 		// constants used in ABST_Projectile

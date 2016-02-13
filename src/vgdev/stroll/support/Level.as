@@ -25,14 +25,14 @@ package vgdev.stroll.support
 			cg = _cg;
 			gui = _gui;
 			
-			gui.tf_distanceG.text = "/ " + System.formatDecimal(distGoal, 3) + " LY";
+			gui.tf_distance.text = System.formatDecimal(distGoal, 3) + " LY";
 		}
 	
 		public function step():void
 		{
 			// update distance
 			distTrav = System.changeWithLimit(distTrav, distChange, 0, distGoal);
-			gui.tf_distance.text = System.formatDecimal(distTrav, 3).toString();
+			gui.tf_distance.text = System.formatDecimal(distGoal, 3) + " LY";
 			
 			// TODO remove hardcode
 			timeline++;

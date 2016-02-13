@@ -9,10 +9,7 @@ package vgdev.stroll
 	 * @author Alexander Huynh
 	 */
 	public class Engine extends MovieClip
-	{
-		private const STAGE_WIDTH:int = 800;
-		private const STAGE_HEIGHT:int = 600;
-		
+	{		
 		private const STATE_MENU:int = 0;
 		private const STATE_GAME:int = 1;
 		
@@ -37,7 +34,7 @@ package vgdev.stroll
 		private function onAddedToStage(e:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);			
-			switchToContainer(new ContainerMenu(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+			switchToContainer(new ContainerMenu(this), System.GAME_OFFSX, System.GAME_OFFSY);
 		}
 		
 		/**
@@ -52,24 +49,24 @@ package vgdev.stroll
 				switch (gameState)			// determine which new container to go to next
 				{
 					case STATE_MENU:
-						switchToContainer(new ContainerGame(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+						switchToContainer(new ContainerGame(this), System.GAME_OFFSX, System.GAME_OFFSY);
 						gameState = STATE_GAME;
 						//trace("[ENGINE] Starting game!");
 					break;
 					case STATE_GAME:
 						if (returnCode == RET_NORMAL)
 						{
-							switchToContainer(new ContainerMenu(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+							switchToContainer(new ContainerMenu(this), System.GAME_OFFSX, System.GAME_OFFSY);
 							gameState = STATE_MENU;
 						}
 						else if (returnCode == RET_RESTART)
 						{
-							switchToContainer(new ContainerGame(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+							switchToContainer(new ContainerGame(this), System.GAME_OFFSX, System.GAME_OFFSY);
 							gameState = STATE_GAME;
 						}
 						else if (returnCode == RET_NEXT)
 						{
-							switchToContainer(new ContainerGame(this), STAGE_WIDTH * .5, STAGE_HEIGHT * .5);
+							switchToContainer(new ContainerGame(this), System.GAME_OFFSX, System.GAME_OFFSY);
 							gameState = STATE_GAME;
 						}
 					break;

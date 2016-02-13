@@ -7,7 +7,7 @@ package vgdev.stroll
 	 *	Initial file to run - sets up stage and entry point
 	 *	@author Alexander Huynh
 	 */
-	[SWF(backgroundColor="0x000000")]
+	[SWF(width="960", height="600", backgroundColor="0x000000")]
 	public class Main extends Sprite 
 	{
 		public function Main():void 
