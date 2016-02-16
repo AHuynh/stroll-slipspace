@@ -41,6 +41,11 @@ package vgdev.stroll.support
 			setShieldColor(shieldCol);
 		}
 		
+		public function getShields():Number
+		{
+			return shield;
+		}
+		
 		public function damage(dmg:Number):void
 		{
 			// shields absorb all damage until it breaks

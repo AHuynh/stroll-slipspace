@@ -19,11 +19,13 @@ package vgdev.stroll.props.consoles
 		/// The current cooldown count, where 0 is ready to swap
 		protected var cdCount:int = 0;
 		
-		private var shieldCols:Array = [System.COL_BLUE, System.COL_GREEN, System.COL_RED, System.COL_YELLOW];
+		private var shieldCols:Array = [System.COL_GREEN, System.COL_RED, System.COL_YELLOW, System.COL_BLUE];
+		private var currShield:int = -1;
 		
 		public function ConsoleShields(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
+			CONSOLE_NAME = "shields";
 			mc_shield = cg.game.mc_ship.shield;
 		}
 		
@@ -43,8 +45,18 @@ package vgdev.stroll.props.consoles
 			{
 				cg.ship.setShieldColor(shieldCols[key])
 				cdCount = cooldown;
-				SoundManager.playSFX("sfx_shieldrecharge");
+				
+				if (cg.ship.getShields() > 0)
+					SoundManager.playSFX("sfx_shieldrecharge");
+				
+				currShield = key;
+				updateHUD();
 			}
+		}
+		
+		override protected function updateHUD():void
+		{
+			getHUD().shieldIndicator.gotoAndStop(currShield + 2);
 		}
 	}
 }

@@ -9,9 +9,14 @@ package vgdev.stroll
 		// global constants
 		public static const GAME_WIDTH:int = 960;
 		public static const GAME_HEIGHT:int = 600;
-		public static const GAME_OFFSX:int = 480;		// offsets
-		public static const GAME_OFFSY:int = 300;
+		public static const GAME_HALF_WIDTH:int = GAME_WIDTH / 2;
+		public static const GAME_HALF_HEIGHT:int = GAME_HEIGHT / 2;
 		
+		// account for game's center registration point
+		// NOTE: can be changed by Cam.as
+		public static var GAME_OFFSX:int = GAME_HALF_WIDTH;
+		public static var GAME_OFFSY:int = GAME_HALF_HEIGHT;
+
 		// constants used in ABST_Projectile
 		public static const AFFIL_PLAYER:int = 0;
 		public static const AFFIL_ENEMY:int = 1;
@@ -56,11 +61,21 @@ package vgdev.stroll
 			return Math.random() * (max - min) + min;
 		}
 
+		/**
+		 * Converts degrees to radians
+		 * @param	degrees		Value in degrees
+		 * @return				Value in radians
+		 */
 		public static function degToRad(degrees:Number):Number
 		{
 			return degrees * .0175;
 		}
-
+		
+		/**
+		 * Converts radians to degrees
+		 * @param	radians		Value in radians
+		 * @return				Value in degrees
+		 */
 		public static function radToDeg(radians:Number):Number
 		{
 			return radians * 57.296;
@@ -95,8 +110,14 @@ package vgdev.stroll
 			var dy:Number = y2 - y1;
 			return radToDeg(Math.atan2(dy,dx));
 		}
-		
-		// takes degrees; returns dX or dY
+
+		/**
+		 * Given a speed and facing, returns the change in x or change in y. Call twice to get both dX and dY.
+		 * @param	spd				Pixels per frame the object is moving at
+		 * @param	rot				Direction in degrees the object is facing
+		 * @param	isX				If the method should return dX (true) or dY (false)
+		 * @return					Change in x or y, depending on isX
+		 */
 		public static function forward(spd:Number, rot:Number, isX:Boolean):Number
 		{
 			return (isX ? Math.cos(degToRad(rot)) : Math.sin(degToRad(rot))) * spd;
@@ -115,10 +136,9 @@ package vgdev.stroll
 		{
 			orig += chng;
 			orig = Math.max(orig, limLow);
-			orig = Math.min(orig, limHigh);
-			return orig;
+			return Math.min(orig, limHigh);
 		}
-		
+
 		/**
 		 * Determines if val is not between the two limits, with an optional buffer
 		 * @param	val				The original value
@@ -132,6 +152,7 @@ package vgdev.stroll
 			return (val < low - buffer || val > high + buffer);
 		}
 		
+		// TODO fix
 		public static function formatDecimal(num:Number, places:int):Number
 		{
 			if (places >= 0)

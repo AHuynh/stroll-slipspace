@@ -47,6 +47,7 @@ package vgdev.stroll.props.consoles
 		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array) 
 		{
 			super(_cg, _mc_object, _players);	
+			CONSOLE_NAME = "turret";
 			turret = _turret;
 			gimbalLimits = _gimbalLimits;
 			controlIDs = _controlIDs;

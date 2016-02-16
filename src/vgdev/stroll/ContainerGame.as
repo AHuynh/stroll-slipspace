@@ -29,20 +29,22 @@
 		public var level:Level;
 		public var gui:SWC_GUI;
 		
+		public var hudConsoles:Array;
+		
 		public var ship:Ship;
-		//public var camera:Cam;
+		public var camera:Cam;
 		
 		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;
 		public var shipHullMask:MovieClip;
 		
 		public var players:Array = [];
-		private var keyMap0:Object = { "RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
-									   "LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
-									   "ACTION":Keyboard.COMMA, "CANCEL":Keyboard.PERIOD };
-		private var keyMap1:Object = { "RIGHT":Keyboard.D,		"UP":Keyboard.W,
+		private var keyMap0:Object = { "RIGHT":Keyboard.D,		"UP":Keyboard.W,
 									   "LEFT":Keyboard.A,		"DOWN":Keyboard.S,
 									   "ACTION":Keyboard.Z, 	"CANCEL":Keyboard.X };
+		private var keyMap1:Object = { "RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
+									   "LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
+									   "ACTION":Keyboard.COMMA, "CANCEL":Keyboard.PERIOD };
 			   
 		/// Array of ABST_Consoles, used to help figure out which console a player is trying to interact with
 		public var consoles:Array = [];
@@ -57,22 +59,32 @@
 		public function ContainerGame(eng:Engine)
 		{
 			super();
-			engine = eng;
+			engine = eng
 			
-			// set up the game SWC
 			game = new SWC_Game();
 			addChild(game);
+			game.addEventListener(Event.ADDED_TO_STAGE, init);
+		}
+		
+		private function init(e:Event):void
+		{
+			game.removeEventListener(Event.ADDED_TO_STAGE, init);
+			
+			
+			gui = new SWC_GUI();
+			engine.addChild(gui);
+			gui.x += System.GAME_OFFSX;
+			gui.y += System.GAME_OFFSY;
+			
+			level = new Level(this, gui);
+			hudConsoles = [gui.mod_p1, gui.mod_p2];
 
 			game.mc_bg.gotoAndStop("fractal00");
-
 			game.mc_ship.mc_ship_hit.visible = false;
-			game.mc_ship.mod_nav.visible = false;
-			game.mc_ship.mod_shield.visible = false;
 			
 			shipHullMask = game.mc_ship.mc_ship_hit;
 			setHitMask(false);
 			
-			game.addEventListener(Event.ADDED_TO_STAGE, init);
 
 			// link the game's assets
 			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, keyMap0),
@@ -90,7 +102,7 @@
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console03, players));
 			
 			ship = new Ship(this);
-			//camera = new Cam(this);
+			camera = new Cam(this);
 			
 			// TODO dynamic camera
 			//game.scaleX = game.scaleY = .7;
@@ -113,17 +125,7 @@
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);*/
 			managers.push(managerMap[System.M_ENEMY]);
 			
-			SoundManager.playBGM("bgm_battle1");
-		}
-		
-		private function init(e:Event):void
-		{
-			game.removeEventListener(Event.ADDED_TO_STAGE, init);
-			gui = new SWC_GUI();
-			engine.addChild(gui);
-			gui.x += System.GAME_OFFSX;
-			gui.y += System.GAME_OFFSY;
-			level = new Level(this, gui);
+			//SoundManager.playBGM("bgm_battle1");
 			
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 		}
@@ -152,31 +154,33 @@
 				break;
 				case Keyboard.P:
 					camera.setCameraScale(1);
-				break;
-				case Keyboard.I:
-					camera.setCameraFocus(new Point(400, 200));
+				break;*/
+				/*case Keyboard.I:
+					camera.setCameraFocus(new Point(0, -100));
 				break;
 				case Keyboard.J:
-					camera.setCameraFocus(new Point(300, 400));
+					camera.setCameraFocus(new Point(-100, 0));
 				break;
 				case Keyboard.K:
-					camera.setCameraFocus(new Point(400, 300));
+					camera.setCameraFocus(new Point(0, 0));
 				break;
 				case Keyboard.L:
-					camera.setCameraFocus(new Point(400, 400));
+					camera.setCameraFocus(new Point(100, 0));
+				break;
+				case Keyboard.M:
+					camera.setCameraFocus(new Point(0, 100));
 				break;*/
-				
-				case Keyboard.U:
-					ship.setShieldColor(System.COL_BLUE);
-				break;
 				case Keyboard.I:
-					ship.setShieldColor(System.COL_GREEN);
+					camera.moveCameraFocus(new Point(0, 1));
 				break;
-				case Keyboard.O:
-					ship.setShieldColor(System.COL_YELLOW);
+				case Keyboard.J:
+					camera.moveCameraFocus(new Point(1, 0));
 				break;
-				case Keyboard.P:
-					ship.setShieldColor(System.COL_RED);
+				case Keyboard.K:
+					camera.moveCameraFocus(new Point(0, -1));
+				break;
+				case Keyboard.L:
+					camera.moveCameraFocus(new Point(-1, 0));
 				break;
 			}
 		}
@@ -199,7 +203,7 @@
 		{		
 			level.step();
 			ship.step();
-			//camera.step();
+			camera.step();
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
