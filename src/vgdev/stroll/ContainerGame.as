@@ -100,13 +100,11 @@
 											players, [-90, 90], [3, -1, 1, -1]));
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console03, players));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
 			
 			ship = new Ship(this);
 			camera = new Cam(this);
 			
-			// TODO dynamic camera
-			//game.scaleX = game.scaleY = .7;
-
 			// init the managers
 			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this);
 			managers.push(managerMap[System.M_EPROJECTILE]);
@@ -155,33 +153,6 @@
 				case Keyboard.P:
 					camera.setCameraScale(1);
 				break;*/
-				/*case Keyboard.I:
-					camera.setCameraFocus(new Point(0, -100));
-				break;
-				case Keyboard.J:
-					camera.setCameraFocus(new Point(-100, 0));
-				break;
-				case Keyboard.K:
-					camera.setCameraFocus(new Point(0, 0));
-				break;
-				case Keyboard.L:
-					camera.setCameraFocus(new Point(100, 0));
-				break;
-				case Keyboard.M:
-					camera.setCameraFocus(new Point(0, 100));
-				break;*/
-				case Keyboard.I:
-					camera.moveCameraFocus(new Point(0, 1));
-				break;
-				case Keyboard.J:
-					camera.moveCameraFocus(new Point(1, 0));
-				break;
-				case Keyboard.K:
-					camera.moveCameraFocus(new Point(0, -1));
-				break;
-				case Keyboard.L:
-					camera.moveCameraFocus(new Point(-1, 0));
-				break;
 			}
 		}
 		

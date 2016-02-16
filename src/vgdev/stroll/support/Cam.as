@@ -51,6 +51,18 @@ package vgdev.stroll.support
 			System.GAME_OFFSY = cg.game.y + System.GAME_HALF_HEIGHT;
 		}
 		
+		public function isAtLimit(limIndex:int):Boolean
+		{
+			switch (limIndex)
+			{
+				case 0:	return lim_x_min == focus.x;
+				case 1:	return lim_x_max == focus.x;
+				case 2:	return lim_y_min == focus.y;
+				case 3:	return lim_y_max == focus.y;
+			}
+			return false;
+		}
+		
 		private function updateNumber(num:Number, tgt:Number, add:Array, thresh:Number):Number
 		{
 			if (num == tgt)
