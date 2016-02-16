@@ -6,6 +6,7 @@ package vgdev.stroll.props.consoles
 	import vgdev.stroll.props.projectiles.ABST_Projectile;
 	import vgdev.stroll.props.projectiles.ProjectileGeneric;
 	import vgdev.stroll.System;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * A console that controls a basic ship turret
@@ -78,20 +79,21 @@ package vgdev.stroll.props.consoles
 					else if (controlIDs[2] == i || controlIDs[3] == i)
 					{
 						traverse(1);
-				}
+					}
 				}
 			}
 			
 			// turret firing
 			if (keys[4])
 			{
-				if (cdCount == 0)
+				if (cdCount == 0)		// fire a bullet
 				{
 					cdCount = cooldown;
 					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
 																	 turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
 																	 turret.nozzle.rotation + rotOff + System.getRandNum(-sway, sway), projectileSpeed, projectileLife, System.AFFIL_PLAYER);
 					cg.addToGame(proj, System.M_EPROJECTILE);
+					SoundManager.playSFX("sfx_laser1");
 				}
 			}
 		}

@@ -112,6 +112,8 @@
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(160, 210)), System.M_ENEMY);
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);*/
 			managers.push(managerMap[System.M_ENEMY]);
+			
+			SoundManager.playBGM("bgm_battle1");
 		}
 		
 		private function init(e:Event):void

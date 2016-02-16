@@ -73,7 +73,11 @@
   </intrinsics>
   <!-- Assets to embed into the output SWF -->
   <library>
-    <!-- example: <asset path="..." id="..." update="..." glyphs="..." mode="..." place="..." sharepoint="..." /> -->
+    <asset path="sfx\sfx_laser1.mp3" />
+    <asset path="sfx\sfx_hithull1.mp3" />
+    <asset path="sfx\sfx_hitshield1.mp3" />
+    <asset path="sfx\sfx_explosionlarge1.mp3" />
+    <asset path="bgm\bgm_battle1.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

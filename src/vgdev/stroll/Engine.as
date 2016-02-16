@@ -3,6 +3,7 @@ package vgdev.stroll
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.geom.Point;
+	import vgdev.stroll.support.SoundManager;
 
 	/**
 	 * Primary game 'holder' and updater
@@ -25,6 +26,8 @@ package vgdev.stroll
 		{			
 			addEventListener(Event.ENTER_FRAME, step);					// primary game loop firer
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			
+			SoundManager.init();
 		}
 		
 		/**
@@ -46,6 +49,7 @@ package vgdev.stroll
 		{
 			if (container.step())
 			{
+				SoundManager.shutUp();	
 				switch (gameState)			// determine which new container to go to next
 				{
 					case STATE_MENU:

@@ -43,12 +43,21 @@ package vgdev.stroll.support
 		
 		public function damage(dmg:Number):void
 		{
-			var overdamage:Number = shield - dmg;
-			shield = Math.max(0, shield - dmg);
-			
-			if (overdamage < 0)
-				hp = System.changeWithLimit(hp, overdamage, 0);
-			
+			// shields absorb all damage until it breaks
+			// a 10 damage attack against 100 hull and 20 shield results in 100 hull and 10 shield
+			// a 10 damage attack against 100 hull and 1 shield results in 100 hull and 0 shield
+			// a 10 damage attack against 100 hull and 0 shield results in 90 hull and 0 shield
+			if (shield > 0)
+			{
+				shield = System.changeWithLimit(shield, -dmg, 0);
+				SoundManager.playSFX("sfx_hitshield1");
+			}
+			else
+			{
+				hp = System.changeWithLimit(hp, -dmg, 0);
+				SoundManager.playSFX("sfx_hithull1");
+			}
+						
 			updateIntegrity();
 			
 			//if (hp == 0)
@@ -95,6 +104,7 @@ package vgdev.stroll.support
 				{
 					cg.setHitMask(false);
 					mc_shield.fx.gotoAndPlay("rebootStart");
+					SoundManager.playSFX("sfx_shieldrecharge");
 				}
 			}
 			else if (shield < shieldMax)

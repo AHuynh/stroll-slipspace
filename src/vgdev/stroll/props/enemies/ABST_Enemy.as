@@ -7,6 +7,7 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.props.ABST_EMovable;
 	import vgdev.stroll.System;
 	import vgdev.stroll.props.projectiles.*;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * Base class for enemies outside of the ship
@@ -73,7 +74,10 @@ package vgdev.stroll.props.enemies
 			hp = System.changeWithLimit(hp, -dmg, 0);
 			colAlpha = .7;
 			if (hp == 0)
+			{
+				SoundManager.playSFX("sfx_explosionlarge1");
 				kill();
+			}
 		}
 		
 		/**

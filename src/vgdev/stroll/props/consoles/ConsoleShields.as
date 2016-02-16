@@ -3,9 +3,10 @@ package vgdev.stroll.props.consoles
 	import flash.display.MovieClip;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
-	 * ...
+	 * Configures the shield color
 	 * @author Alexander Huynh
 	 */
 	public class ConsoleShields extends ABST_Console 
@@ -42,6 +43,7 @@ package vgdev.stroll.props.consoles
 			{
 				cg.ship.setShieldColor(shieldCols[key])
 				cdCount = cooldown;
+				SoundManager.playSFX("sfx_shieldrecharge");
 			}
 		}
 	}

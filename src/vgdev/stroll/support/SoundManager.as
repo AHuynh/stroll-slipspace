@@ -6,30 +6,49 @@ package vgdev.stroll.support
 	
 	public class SoundManager 
 	{
-		
-		//[Embed(source="../../../bgm/BGM_mainMenu.mp3")]
-		/*private static var bgm_menu:Class;*/
-		
+		private static var bgm:SoundChannel;		
 		private static var sounds:Object = new Object();
-		private static var bgm:SoundChannel;
+		
+		[Embed(source="../../../../bgm/bgm_battle1.mp3")]
+		private static var bgm_battle1:Class;
+		
+		[Embed(source="../../../../sfx/sfx_explosionlarge1.mp3")]
+		private static var sfx_explosionlarge1:Class;
+		[Embed(source="../../../../sfx/sfx_hithull1.mp3")]
+		private static var sfx_hithull1:Class;
+		[Embed(source="../../../../sfx/sfx_hitshield1.mp3")]
+		private static var sfx_hitshield1:Class;
+		[Embed(source="../../../../sfx/sfx_laser1.mp3")]
+		private static var sfx_laser1:Class;	
+		[Embed(source="../../../../sfx/sfx_shieldrecharge.mp3")]
+		private static var sfx_shieldrecharge:Class;	
 		
 		private static var currentBGM:String = "";
+		private static var isInit:Boolean = false;
 		
 		public function SoundManager() 
 		{
 			trace("WARNING: Should not instantiate SoundManager class!");
 		}
 		
-		public static function playSound(sound:String):void
+		public static function init():void
 		{
-			var snd:Sound;
-			switch (sound)
-			{
-				default:
-					trace("WARNING: No sound located for " + sound + "!");
-			}
-			if (snd)
-				snd.play();
+			if (isInit) return;
+			isInit = true;
+			
+			sounds["sfx_explosionlarge1"] = new sfx_explosionlarge1();
+			sounds["sfx_hithull1"] = new sfx_hithull1();
+			sounds["sfx_hitshield1"] = new sfx_hitshield1();
+			sounds["sfx_laser1"] = new sfx_laser1();
+			sounds["sfx_shieldrecharge"] = new sfx_shieldrecharge();
+		}
+		
+		public static function playSFX(sfx:String):void
+		{
+			if (sounds[sfx] == null)
+				trace("WARNING: No sound located for " + sfx + "!");
+			else
+				sounds[sfx].play();
 		}
 		
 		public static function playBGM(music:String):void
@@ -41,6 +60,7 @@ package vgdev.stroll.support
 			var snd:Sound;
 			switch (music)
 			{
+				case "bgm_battle1":					snd = new bgm_battle1();		break;
 				default:
 					trace("WARNING: No music located for " + music + "!");
 					return;
