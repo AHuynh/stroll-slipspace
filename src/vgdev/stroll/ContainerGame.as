@@ -71,11 +71,12 @@
 			engine.addChild(gui);
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
+			gui.alpha = .9
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
 			level = new Level(this, gui);
 			
-			game.mc_bg.gotoAndStop("fractal00");
+			game.mc_bg.gotoAndStop("space");
 			
 			shipHullMask = game.mc_ship.mc_ship_hit;
 			shipHullMask.visible = false;

@@ -21,13 +21,16 @@ package vgdev.stroll.support
 		private var shield:Number = shieldMax;		// max value of shields
 		
 		private var shieldReCurr:int = 0;			// current reboot timer
-		private var shieldRecharge:int = 120;		// time since last hit until shield starts to recharge
+		private var shieldRecharge:int = 90;		// time since last hit until shield starts to recharge
 		private var shieldReAmt:Number = .25;		// amount to recharge shield per frame
 		
 		private const SHIELD_DA:Number = .03;
 		private var shieldCD:int = 0;
 		private const SHIELD_CD:int = 15;
 		private const SHIELD_MA:Number = .1;
+		
+		/// Amount to multiply damage by if attack color matches shield color
+		private var shieldMitigation:Number = .35;
 		
 		private var shieldCol:uint = System.COL_WHITE;
 		private var shieldCTF:ColorTransform;
@@ -46,7 +49,7 @@ package vgdev.stroll.support
 			return shield;
 		}
 		
-		public function damage(dmg:Number):void
+		public function damage(dmg:Number, col:uint = 0):void
 		{
 			// shields absorb all damage until it breaks
 			// a 10 damage attack against 100 hull and 20 shield results in 100 hull and 10 shield
@@ -54,6 +57,8 @@ package vgdev.stroll.support
 			// a 10 damage attack against 100 hull and 0 shield results in 90 hull and 0 shield
 			if (shield > 0)
 			{
+				if (shieldCol == col)
+					dmg *= shieldMitigation;
 				shield = System.changeWithLimit(shield, -dmg, 0);
 				SoundManager.playSFX("sfx_hitshield1");
 			}

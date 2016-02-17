@@ -38,20 +38,34 @@ package vgdev.stroll.support
 			timeline++;
 			switch (timeline)
 			{
-				case System.SECOND * 3:
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(200, 200)), System.M_ENEMY);
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);
+				case System.SECOND * 4:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(200, 200), System.COL_RED), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(180, 190), System.COL_RED), System.M_ENEMY);
 				break;
-				case System.SECOND * 10:
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-300, -100)), System.M_ENEMY);
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-350, 0)), System.M_ENEMY);
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-300, 100)), System.M_ENEMY);
+				case System.SECOND * 15:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-300, -100), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-350, 0), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-300, 100), System.COL_BLUE), System.M_ENEMY);
 				break;
-				case System.SECOND * 16:
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-100, -250)), System.M_ENEMY);
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(100, -250)), System.M_ENEMY);
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-100, 250)), System.M_ENEMY);
-					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(100, 250)), System.M_ENEMY);
+				case System.SECOND * 28:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-100, -250), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(100, -250), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-100, 250), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(100, 250), System.COL_BLUE), System.M_ENEMY);
+				break;
+				case System.SECOND * 40:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(300, -320), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(330, -300), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(360, -340), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(360, -240), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(380, -250), System.COL_GREEN), System.M_ENEMY);
+				break;
+				case System.SECOND * 65:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-400, 320), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-330, 300), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-460, 340), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-520, 240), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-380, 250), System.COL_YELLOW), System.M_ENEMY);
 				break;
 			}
 		}

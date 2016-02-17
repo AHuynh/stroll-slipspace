@@ -1,6 +1,7 @@
 package vgdev.stroll.props.projectiles 
 {
 	import flash.display.MovieClip;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.managers.ManagerEProjectile;
@@ -26,16 +27,21 @@ package vgdev.stroll.props.projectiles
 		/// Base amount of damage to deal
 		protected var dmg:Number = 6;
 		
+		protected var attackColor:uint;
+		protected var colorTrans:ColorTransform;
+		
 		protected var managerProj:ManagerEProjectile;
 		protected var managerEnem:ManagerGeneric;
 		
 		public function ABST_Projectile(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int, _dir:Number, _spd:Number,
-										_life:int, style:String = null, col:uint = 0) 
+										_life:int, _dmg:Number, style:String = null, col:uint = 0) 
 		{
 			super(_cg, _mc_object, _pos, _affiliation);
 			dir = _dir;
 			spd = _spd;
 			life = _life;
+			dmg = _dmg;
+			attackColor = col;
 			
 			managerProj = cg.managerMap[System.M_EPROJECTILE];
 			managerEnem = cg.managerMap[System.M_ENEMY];
@@ -44,6 +50,13 @@ package vgdev.stroll.props.projectiles
 			
 			if (style != null)
 				mc_object.gotoAndStop(style);
+				
+			if (attackColor != 0)
+			{
+				colorTrans = new ColorTransform();
+				colorTrans.color = attackColor;
+				mc_object.transform.colorTransform = colorTrans;
+			}
 		}
 		
 		override public function step():Boolean
@@ -74,7 +87,7 @@ package vgdev.stroll.props.projectiles
 		
 		override protected function onShipHit():void
 		{
-			cg.ship.damage(dmg);
+			cg.ship.damage(dmg, attackColor);
 		}
 	}
 }

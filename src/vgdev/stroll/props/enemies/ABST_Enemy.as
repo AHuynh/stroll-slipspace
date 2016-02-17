@@ -19,7 +19,7 @@ package vgdev.stroll.props.enemies
 		protected var cdCounts:Array = [0];
 		
 		/// The min and max range from the ship that this Enemy should keep between
-		protected var ranges:Array = [270, 350];
+		protected var ranges:Array = [290, 500];
 		
 		protected var hpMax:Number = 30;
 		protected var hp:Number = hpMax;
@@ -34,12 +34,17 @@ package vgdev.stroll.props.enemies
 		protected var colAlpha:Number = 0;
 		protected const DCOL:Number = .04;
 		
-		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point) 
+		/// One of the 4 colors to use on projectiles
+		protected var attackColor:uint;
+		
+		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, col:uint = 0) 
 		{
 			super(_cg, _mc_object, _pos, System.AFFIL_ENEMY);
 			
 			mc_object.x = _pos.x;
 			mc_object.y = _pos.y;
+			
+			attackColor = col;
 		}
 		
 		override public function step():Boolean
@@ -55,7 +60,7 @@ package vgdev.stroll.props.enemies
 					cdCounts[i] = cooldowns[i];
 					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
 																	 mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
-																	 mc_object.rotation, 3, 150, System.AFFIL_ENEMY);
+																	 mc_object.rotation, 3, 150, 8, System.AFFIL_ENEMY, null, attackColor);
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
 			}
