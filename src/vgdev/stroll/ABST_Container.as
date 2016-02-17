@@ -20,5 +20,10 @@
 		{
 			return completed;
 		}
+		
+		public function setComplete():void
+		{
+			completed = true;
+		}
 	}
 }

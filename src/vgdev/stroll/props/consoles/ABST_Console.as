@@ -95,9 +95,9 @@ package vgdev.stroll.props.consoles
 					closestPlayer.sitAtConsole(this);
 					mc_object.gotoAndStop(3);
 					mc_object.prompt.visible = false;
-					
+	
 					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME);
-					updateHUD();
+					updateHUD(true);
 				}
 			}
 		}
@@ -111,14 +111,19 @@ package vgdev.stroll.props.consoles
 				mc_object.prompt.visible = true;
 				hud_consoles[closestPlayer.playerID].gotoAndStop("none");
 				closestPlayer = null;
+				updateHUD(false);
 			}
 		}
 		
-		protected function updateHUD():void
+		/**
+		 * Do something when the player first arrives, or leaves, this console
+		 * @param	isActive		true if the player just got here; false if the player is leaving
+		 */
+		protected function updateHUD(isActive:Boolean):void
 		{
 			// override this function
 		}
-		
+				
 		/**
 		 * Gets the MovieClip representing the module
 		 * @return		MovieClip (SWC_GUI.Module.mod)

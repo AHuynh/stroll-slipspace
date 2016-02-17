@@ -50,13 +50,14 @@ package vgdev.stroll.props.consoles
 					SoundManager.playSFX("sfx_shieldrecharge");
 				
 				currShield = key;
-				updateHUD();
+				updateHUD(true);
 			}
 		}
 		
-		override protected function updateHUD():void
+		override protected function updateHUD(isActive:Boolean):void
 		{
-			getHUD().shieldIndicator.gotoAndStop(currShield + 2);
+			if (isActive)
+				getHUD().shieldIndicator.gotoAndStop(currShield + 2);
 		}
 	}
 }

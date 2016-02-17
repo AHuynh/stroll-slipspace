@@ -39,12 +39,6 @@
 		public var shipHullMask:MovieClip;
 		
 		public var players:Array = [];
-		private var keyMap0:Object = { "RIGHT":Keyboard.D,		"UP":Keyboard.W,
-									   "LEFT":Keyboard.A,		"DOWN":Keyboard.S,
-									   "ACTION":Keyboard.Z, 	"CANCEL":Keyboard.X };
-		private var keyMap1:Object = { "RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
-									   "LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
-									   "ACTION":Keyboard.COMMA, "CANCEL":Keyboard.PERIOD };
 			   
 		/// Array of ABST_Consoles, used to help figure out which console a player is trying to interact with
 		public var consoles:Array = [];
@@ -56,39 +50,40 @@
 		 * A MovieClip containing all of a Stroll level
 		 * @param	eng			A reference to the Engine
 		 */
-		public function ContainerGame(eng:Engine)
+		public function ContainerGame(eng:Engine, isMenu:Boolean = false)
 		{
 			super();
 			engine = eng
 			
-			game = new SWC_Game();
-			addChild(game);
-			game.addEventListener(Event.ADDED_TO_STAGE, init);
+			if (!isMenu)
+			{
+				game = new SWC_Game();
+				addChild(game);
+				game.addEventListener(Event.ADDED_TO_STAGE, init);
+			}
 		}
 		
-		private function init(e:Event):void
+		protected function init(e:Event):void
 		{
 			game.removeEventListener(Event.ADDED_TO_STAGE, init);
-			
 			
 			gui = new SWC_GUI();
 			engine.addChild(gui);
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
+			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
 			level = new Level(this, gui);
-			hudConsoles = [gui.mod_p1, gui.mod_p2];
-
+			
 			game.mc_bg.gotoAndStop("fractal00");
-			game.mc_ship.mc_ship_hit.visible = false;
 			
 			shipHullMask = game.mc_ship.mc_ship_hit;
+			shipHullMask.visible = false;
 			setHitMask(false);
-			
 
 			// link the game's assets
-			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, shipHullMask, 1, keyMap1)];
+			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, System.keyMap0),
+					   new Player(this, game.mc_ship.mc_player1, shipHullMask, 1, System.keyMap1)];
 
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
 											players, [-120, 120], [1, -1, 3, -1]));
@@ -181,6 +176,10 @@
 			return completed;
 		}
 		
+		/**
+		 * Set the ship's exterior hit mask to either the hull or the shield
+		 * @param	isHull	true if using hull, false if using shields
+		 */
 		public function setHitMask(isHull:Boolean):void
 		{
 			shipHitMask = isHull ? shipHullMask : game.mc_ship.shield;
