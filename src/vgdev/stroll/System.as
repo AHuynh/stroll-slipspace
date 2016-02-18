@@ -11,10 +11,10 @@ package vgdev.stroll
 		// keyboard bindings for P1 and P2
 		public static var keyMap0:Object = {"RIGHT":Keyboard.D,		"UP":Keyboard.W,
 											"LEFT":Keyboard.A,		"DOWN":Keyboard.S,
-											"ACTION":Keyboard.Z, 	"CANCEL":Keyboard.X };
+											"ACTION":Keyboard.F, 	"CANCEL":Keyboard.G };
 		public static var keyMap1:Object = {"RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
 											"LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
-											"ACTION":Keyboard.COMMA,"CANCEL":Keyboard.PERIOD };
+											"ACTION":Keyboard.PERIOD,"CANCEL":Keyboard.SLASH };
 		
 		// global constants
 		public static const GAME_WIDTH:int = 960;
