@@ -74,7 +74,7 @@
 			gui.alpha = .9
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
-			level = new Level(this, gui);
+			level = new Level(this);
 			
 			game.mc_bg.gotoAndStop("space");
 			
@@ -97,6 +97,7 @@
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console03, players));
 			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
+			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));
 			
 			ship = new Ship(this);
 			camera = new Cam(this);
@@ -120,7 +121,7 @@
 			managers.push(managerMap[System.M_ENEMY]);
 			
 			//SoundManager.playBGM("bgm_battle1");
-			
+						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 		}
 		
@@ -184,6 +185,21 @@
 		public function setHitMask(isHull:Boolean):void
 		{
 			shipHitMask = isHull ? shipHullMask : game.mc_ship.shield;
+		}
+		
+		/**
+		 * Called by ship when jumping to the next sector
+		 */
+		public function jump():void
+		{
+			game.mc_jump.gotoAndPlay(2);		// play the jump animation
+			gui.mc_jumpReady.visible = false;
+				
+			// remove all external-ship instances
+			managerMap[System.M_EPROJECTILE].killAll();
+			managerMap[System.M_ENEMY].killAll();
+			
+			level.nextWave();
 		}
 
 		/**

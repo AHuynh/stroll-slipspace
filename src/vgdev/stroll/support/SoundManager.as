@@ -12,6 +12,8 @@ package vgdev.stroll.support
 		[Embed(source="../../../../bgm/bgm_battle1.mp3")]
 		private static var bgm_battle1:Class;
 		
+		[Embed(source="../../../../sfx/sfx_bell.mp3")]
+		private static var sfx_bell:Class;
 		[Embed(source="../../../../sfx/sfx_explosionlarge1.mp3")]
 		private static var sfx_explosionlarge1:Class;
 		[Embed(source="../../../../sfx/sfx_hithull1.mp3")]
@@ -36,6 +38,7 @@ package vgdev.stroll.support
 			if (isInit) return;
 			isInit = true;
 			
+			sounds["sfx_bell"] = new sfx_bell();
 			sounds["sfx_explosionlarge1"] = new sfx_explosionlarge1();
 			sounds["sfx_hithull1"] = new sfx_hithull1();
 			sounds["sfx_hitshield1"] = new sfx_hitshield1();

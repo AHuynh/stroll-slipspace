@@ -141,61 +141,61 @@ package vgdev.stroll.props
 			switch (e.keyCode)
 			{
 				case KEY_RIGHT:
-					keysDown[RIGHT] = true;
 					if (activeConsole == null)
 					{
 						mc_object.scaleX = -1;
 						pressed = true;
 					}
-					else
+					else if (!keysDown[RIGHT])
 					{
 						activeConsole.onKey(0);
 					}
+					keysDown[RIGHT] = true;
 				break;
 				case KEY_UP:
-					keysDown[UP] = true;
 					if (activeConsole == null)
 					{
 						pressed = true;
 					}
-					else
+					else if (!keysDown[UP])
 					{
 						activeConsole.onKey(1);
 					}
+					keysDown[UP] = true;
 				break;
 				case KEY_LEFT:
-					keysDown[LEFT] = true;
 					if (activeConsole == null)
 					{
 						mc_object.scaleX = 1;
 						pressed = true;
 					}
-					else
+					else if (!keysDown[LEFT])
 					{
 						activeConsole.onKey(2);
 					}
+					keysDown[LEFT] = true;
 				break;
 				case KEY_DOWN:
-					keysDown[DOWN] = true;
 					if (activeConsole == null)
 					{
 						pressed = true;
 					}
-					else
+					else if (!keysDown[DOWN])
 					{
 						activeConsole.onKey(3);
 					}
+					keysDown[DOWN] = true;
 				break;
 				case KEY_ACTION:
-					keysDown[ACTION] = true;
 					if (activeConsole == null)
 					{
 						cg.onAction(this);
 					}
-					else
+					else if (!keysDown[ACTION])
 					{
 						activeConsole.onKey(4);
 					}
+					keysDown[ACTION] = true;
 				break;
 				case KEY_CANCEL:
 					keysDown[CANCEL] = true;

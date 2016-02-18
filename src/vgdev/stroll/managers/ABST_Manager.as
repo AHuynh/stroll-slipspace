@@ -81,13 +81,22 @@ package vgdev.stroll.managers
 		}
 		
 		/**
+		 * Kill all objects managed by this manager
+		 */
+		public function killAll():void
+		{
+			for (var i:int = objArray.length - 1; i >= 0; i--)
+				objArray[i].kill();
+			objArray = [];
+		}
+		
+		/**
 		 * Clean-up function
 		 */
 		public function destroy():void
 		{
 			// -- override this function
-			for (var i:int = objArray.length - 1; i >= 0; i--)
-				objArray[i].kill();
+			killAll();
 			objArray = null;
 			cg = null;
 		}

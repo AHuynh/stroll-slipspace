@@ -65,6 +65,7 @@ package vgdev.stroll.props.enemies
 				}
 			}
 			
+			// update red 'damage taken' flash; reduce its opacity
 			if (colAlpha > 0)
 			{
 				colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
@@ -74,6 +75,10 @@ package vgdev.stroll.props.enemies
 			return completed;
 		}
 		
+		/**
+		 * Deal damage to this enemy
+		 * @param	dmg		The amount of damage to deal (positive number to deal damage)
+		 */
 		public function damage(dmg:Number):void
 		{
 			hp = System.changeWithLimit(hp, -dmg, 0);
@@ -86,7 +91,7 @@ package vgdev.stroll.props.enemies
 		}
 		
 		/**
-		 * Keep between ranges[0] and ranges[1]
+		 * Keep distance between self and ship between ranges[0] and ranges[1]
 		 */
 		protected function maintainRange():void
 		{

@@ -12,29 +12,20 @@ package vgdev.stroll.support
 	public class Level 
 	{
 		private var cg:ContainerGame;
-		private var gui:SWC_GUI;
-		
-		public var distGoal:Number = 4.37;
-		public var distTrav:Number = 0;
-		private var distChange:Number = .002;
-		
 		private var timeline:int = 0;
 		
-		public function Level(_cg:ContainerGame, _gui:SWC_GUI)
+		private var counter:int = -1;
+		
+		public function Level(_cg:ContainerGame)
 		{
 			cg = _cg;
-			gui = _gui;
-			
-			gui.tf_distance.text = System.formatDecimal(distGoal, 3) + " LY";
 		}
 	
 		public function step():void
 		{
-			// update distance
-			distTrav = System.changeWithLimit(distTrav, distChange, 0, distGoal);
-			gui.tf_distance.text = System.formatDecimal(distGoal, 3) + " LY";
-			
-			// TODO remove hardcode
+			if (counter == -1 || --counter != 0)
+				return;
+			/*// TODO remove hardcode
 			timeline++;
 			switch (timeline)
 			{
@@ -66,6 +57,65 @@ package vgdev.stroll.support
 					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-460, 340), System.COL_YELLOW), System.M_ENEMY);
 					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-520, 240), System.COL_YELLOW), System.M_ENEMY);
 					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-380, 250), System.COL_YELLOW), System.M_ENEMY);
+				break;
+			}*/
+			switch (timeline)
+			{
+				case 1:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(200, 200), System.COL_RED), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(180, 190), System.COL_RED), System.M_ENEMY);
+				break;
+				case 2:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-300, -100), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-350, 0), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-300, 100), System.COL_BLUE), System.M_ENEMY);
+				break;
+				case 3:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-100, -250), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(100, -250), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-100, 250), System.COL_BLUE), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(100, 250), System.COL_BLUE), System.M_ENEMY);
+				break;
+				case 4:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(300, -320), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(330, -300), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(360, -340), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(360, -240), System.COL_GREEN), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(380, -250), System.COL_GREEN), System.M_ENEMY);
+				break;
+				case 5:
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-400, 320), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-330, 300), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-460, 340), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-520, 240), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-380, 250), System.COL_YELLOW), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(-120, 230), System.COL_RED), System.M_ENEMY);
+					cg.addToGame(new ABST_Enemy(cg, new SWC_Enemy(), new Point(120, 270), System.COL_RED), System.M_ENEMY);
+				break;
+			}
+		}
+		
+		public function nextWave():void
+		{
+			counter = 90;
+			timeline++;
+			
+			switch (timeline)
+			{
+				case 1:
+					cg.ship.slipRange = 9;
+				break;
+				case 2:
+					cg.ship.slipRange = 9.4;
+				break;
+				case 3:
+					cg.ship.slipRange = 19;
+				break;
+				case 4:
+					cg.ship.slipRange = 22;
+				break;
+				case 5:
+					cg.ship.slipRange = 25;
 				break;
 			}
 		}

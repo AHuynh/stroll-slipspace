@@ -12,11 +12,12 @@ package vgdev.stroll.support
 	public class Ship 
 	{
 		private var cg:ContainerGame;
-		private var mc_shield:MovieClip;
 		
-		private var hpMax:Number = 1000;
-		private var hp:Number = hpMax;
+		private var hpMax:Number = 1000;			// maximum hull strength
+		private var hp:Number = hpMax;				// current hull strength
 		
+		// -- Shield --------------------------------------------------------------------------------------
+		private var mc_shield:MovieClip;			// reference to the shield MovieClip
 		private var shieldMax:Number = 100;			// actual value of shields
 		private var shield:Number = shieldMax;		// max value of shields
 		
@@ -24,16 +25,21 @@ package vgdev.stroll.support
 		private var shieldRecharge:int = 90;		// time since last hit until shield starts to recharge
 		private var shieldReAmt:Number = .25;		// amount to recharge shield per frame
 		
-		private const SHIELD_DA:Number = .03;
-		private var shieldCD:int = 0;
-		private const SHIELD_CD:int = 15;
-		private const SHIELD_MA:Number = .1;
+		private const SHIELD_DA:Number = .03;		// amount to fade shield alpha per frame
+		private var shieldCD:int = 0;				// current frames to hold before starting shield fade
+		private const SHIELD_CD:int = 15;			// frames to hold before starting shield fade
+		private const SHIELD_MA:Number = .1;		// minimum alpha of shield as long as it is non-zero
 		
 		/// Amount to multiply damage by if attack color matches shield color
 		private var shieldMitigation:Number = .35;
 		
-		private var shieldCol:uint = System.COL_WHITE;
+		private var shieldCol:uint = System.COL_WHITE;	// current shield color
 		private var shieldCTF:ColorTransform;
+		// ------------------------------------------------------------------------------------------------
+		
+		public var slipRange:Number = 1;			// 'distance' until slipdrive is in range
+		public var slipSpeed:Number = .03;			// amount to reduce slipRange per frame
+		private var slipLimits:Array = [0, 1];		// min and max values of slipSpeed
 		
 		public function Ship(_cg:ContainerGame)
 		{
@@ -86,6 +92,12 @@ package vgdev.stroll.support
 			shieldReCurr = shieldRecharge;
 		}
 		
+		private function updateIntegrity():void
+		{
+			cg.gui.tf_hull.text = Math.ceil(100 * hp / hpMax).toString();
+			cg.gui.tf_shield.text = Math.ceil(100 * shield / shieldMax).toString();
+		}
+		
 		public function setShieldColor(col:uint):void
 		{
 			shieldCol = col;
@@ -100,13 +112,7 @@ package vgdev.stroll.support
 			}
 		}
 		
-		private function updateIntegrity():void
-		{
-			cg.gui.tf_hull.text = Math.ceil(100 * hp / hpMax).toString();
-			cg.gui.tf_shield.text = Math.ceil(100 * shield / shieldMax).toString();
-		}
-		
-		public function step():void
+		private function updateShields():void
 		{
 			if (shieldReCurr > 0)
 			{
@@ -136,6 +142,50 @@ package vgdev.stroll.support
 			{
 				mc_shield.base.alpha = System.changeWithLimit(mc_shield.base.alpha, -SHIELD_DA, SHIELD_MA);
 			}
+		}
+		
+		private function updateSlip():void
+		{
+			if (slipRange > 0)
+			{
+				slipRange = System.changeWithLimit(slipRange, -slipSpeed, 0);
+				if (slipRange == 0)
+				{
+					SoundManager.playSFX("sfx_bell");
+					cg.gui.mc_jumpReady.visible = true;
+				}
+				cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
+			}
+		}
+		
+		/**
+		 * Check if the slipdrive is ready
+		 * @return		true if jump is ready
+		 */
+		public function isJumpReady():Boolean
+		{
+			// TODO add other limiting conditions here
+			return slipRange == 0;
+		}
+		
+		/**
+		 * Attempt to jump the ship to the next sector
+		 * @return		true if the jump succeeded
+		 */
+		public function jump():Boolean
+		{
+			if (isJumpReady())
+			{
+				cg.jump();
+				return true;
+			}
+			return false;
+		}
+		
+		public function step():void
+		{
+			updateSlip();
+			updateShields();
 		}
 	}
 }

@@ -48,9 +48,11 @@ package vgdev.stroll.props.projectiles
 			
 			mc_object.rotation = dir;
 			
+			// display the correct graphic
 			if (style != null)
 				mc_object.gotoAndStop(style);
-				
+			
+			// tint the graphic
 			if (attackColor != 0)
 			{
 				colorTrans = new ColorTransform();

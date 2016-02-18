@@ -39,8 +39,12 @@ package vgdev.stroll.props.consoles
 			return false;
 		}
 
+		/**
+		 * When inactive, find the nearest player and update the "!" icon's visibility
+		 */
 		protected function updatePlayer():void
 		{
+			// TODO fix if 2 players are in range and the furthest activates the console, they don't succeed
 			if (!inUse)
 			{
 				closestPlayer = null;
@@ -85,6 +89,10 @@ package vgdev.stroll.props.consoles
 			// override this function
 		}
 		
+		/**
+		 * Called when a player is attempting to sit at a console
+		 * @param	p		the Player attempting to sit at a console
+		 */
 		public function onAction(p:Player):void
 		{
 			if (!inUse)
@@ -102,6 +110,9 @@ package vgdev.stroll.props.consoles
 			}
 		}
 
+		/**
+		 * Called when a player leaves this console
+		 */
 		public function onCancel():void
 		{
 			if (inUse)
@@ -133,6 +144,11 @@ package vgdev.stroll.props.consoles
 			if (closestPlayer == null)
 			{
 				trace("[ABST_Console] WARNING: hud called without an active player!");
+				return new MovieClip();
+			}
+			else if (CONSOLE_NAME == "none")
+			{
+				trace("[ABST_Console] WARNING: CONSOLE_NAME is not set!");
 				return new MovieClip();
 			}
 			return hud_consoles[closestPlayer.playerID].mod;

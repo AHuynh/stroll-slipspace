@@ -31,21 +31,23 @@ package vgdev.stroll.props.consoles
 		
 		override public function step():Boolean
 		{
-			if (cdCount > 0)
+			if (cdCount > 0)		// reduce shield switch cooldown
 				cdCount--;
 			return super.step();
 		}
 		
 		override public function onKey(key:int):void
 		{
-			if (cdCount != 0)
+			if (cdCount != 0)		// quit if shield switch is on cooldown
 				return;
 				
-			if (key != 4)
+			// if a direction key was hit and the corresponding color isn't already active
+			if (key != 4 && key != currShield)
 			{
 				cg.ship.setShieldColor(shieldCols[key])
 				cdCount = cooldown;
-				
+
+				// play the shield switch sound if shields are actually up
 				if (cg.ship.getShields() > 0)
 					SoundManager.playSFX("sfx_shieldrecharge");
 				
@@ -54,6 +56,7 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		// update the active color displayed on the module HUD
 		override protected function updateHUD(isActive:Boolean):void
 		{
 			if (isActive)
