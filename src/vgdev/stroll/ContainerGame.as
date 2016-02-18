@@ -120,7 +120,7 @@
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);*/
 			managers.push(managerMap[System.M_ENEMY]);
 			
-			//SoundManager.playBGM("bgm_battle1");
+			SoundManager.playBGM("bgm_battle1");
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 		}
@@ -168,7 +168,10 @@
 		 * @return		completed, true if this container is done
 		 */
 		override public function step():Boolean
-		{		
+		{
+			if (completed)
+				return true;
+
 			level.step();
 			ship.step();
 			camera.step();
@@ -199,7 +202,11 @@
 			managerMap[System.M_EPROJECTILE].killAll();
 			managerMap[System.M_ENEMY].killAll();
 			
-			level.nextWave();
+			if (level.nextWave())
+			{
+				destroy(null);
+				completed = true;
+			}
 		}
 
 		/**
@@ -207,10 +214,17 @@
 		 * @param	e	the captured Event, unused
 		 */
 		protected function destroy(e:Event):void
-		{			
+		{
 			if (engine.stage.hasEventListener(KeyboardEvent.KEY_DOWN))
 				engine.stage.removeEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			
+			for (var i:int = 0; i < managers.length; i++)
+			{
+				managers[i].destroy();
+				managers[i] = null;
+			}
+			managers = null;
+				
 			if (game != null && contains(game))
 				removeChild(game);
 			game = null;

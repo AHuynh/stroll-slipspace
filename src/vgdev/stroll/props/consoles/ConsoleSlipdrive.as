@@ -26,7 +26,8 @@ package vgdev.stroll.props.consoles
 		override public function onKey(key:int):void
 		{
 			if (key == 4 && cg.ship.jump())
-				updateHUD(true);
+				if (cg)		// TODO remove temp
+					updateHUD(true);
 		}
 		
 		override protected function updateHUD(isActive:Boolean):void 

@@ -86,7 +86,7 @@ package vgdev.stroll.managers
 		public function killAll():void
 		{
 			for (var i:int = objArray.length - 1; i >= 0; i--)
-				objArray[i].kill();
+				objArray[i].destroy();
 			objArray = [];
 		}
 		

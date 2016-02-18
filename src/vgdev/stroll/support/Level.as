@@ -95,7 +95,7 @@ package vgdev.stroll.support
 			}
 		}
 		
-		public function nextWave():void
+		public function nextWave():Boolean
 		{
 			counter = 90;
 			timeline++;
@@ -118,6 +118,8 @@ package vgdev.stroll.support
 					cg.ship.slipRange = 25;
 				break;
 			}
+			
+			return timeline > 5;
 		}
 	}
 }
