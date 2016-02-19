@@ -24,6 +24,10 @@ package vgdev.stroll.support
 		private static var sfx_laser1:Class;	
 		[Embed(source="../../../../sfx/sfx_shieldrecharge.mp3")]
 		private static var sfx_shieldrecharge:Class;	
+		[Embed(source="../../../../sfx/sfx_sliphit.mp3")]
+		private static var sfx_sliphit:Class;	
+		[Embed(source="../../../../sfx/sfx_slipjump.mp3")]
+		private static var sfx_slipjump:Class;	
 		
 		private static var currentBGM:String = "";
 		private static var isInit:Boolean = false;
@@ -44,6 +48,8 @@ package vgdev.stroll.support
 			sounds["sfx_hitshield1"] = new sfx_hitshield1();
 			sounds["sfx_laser1"] = new sfx_laser1();
 			sounds["sfx_shieldrecharge"] = new sfx_shieldrecharge();
+			sounds["sfx_sliphit"] = new sfx_sliphit();
+			sounds["sfx_slipjump"] = new sfx_slipjump();
 		}
 		
 		public static function playSFX(sfx:String):void

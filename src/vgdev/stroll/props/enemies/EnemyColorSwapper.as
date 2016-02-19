@@ -22,6 +22,7 @@ package vgdev.stroll.props.enemies
 			super(_cg, _mc_object, _pos, attributes);
 			
 			cooldowns[0] = int(cooldowns[0] * 1.2);
+			ranges = [340, 530]
 		}
 		
 		override public function step():Boolean 

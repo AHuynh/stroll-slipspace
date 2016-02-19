@@ -53,6 +53,15 @@ package vgdev.stroll.managers
 		}
 		
 		/**
+		 * 
+		 * @return				How many objects are in this manager
+		 */
+		public function numObjects():int
+		{
+			return objArray.length;
+		}
+		
+		/**
 		 * Given an object, determines if it has collided with another object in this manager.
 		 * @param	o			The object to check for
 		 * @param	precise		Whether to use distance checking (false), or pixel-perfect checking (true)

@@ -37,9 +37,12 @@ package vgdev.stroll.support
 		private var shieldCTF:ColorTransform;
 		// ------------------------------------------------------------------------------------------------
 		
+		// -- Slipdrive -----------------------------------------------------------------------------------
 		public var slipRange:Number = 1;			// 'distance' until slipdrive is in range
 		public var slipSpeed:Number = .03;			// amount to reduce slipRange per frame
 		private var slipLimits:Array = [0, 1];		// min and max values of slipSpeed
+		public var jammable:int = 0;				// if non-zeo, prevents jumping if at least jammable enemies are present
+		// ------------------------------------------------------------------------------------------------
 		
 		public function Ship(_cg:ContainerGame)
 		{
@@ -160,12 +163,14 @@ package vgdev.stroll.support
 		
 		/**
 		 * Check if the slipdrive is ready
-		 * @return		true if jump is ready
+		 * @return		"ready" if jump is ready; otherwise reason why not
 		 */
-		public function isJumpReady():Boolean
+		public function isJumpReady():String
 		{
 			// TODO add other limiting conditions here
-			return slipRange == 0;
+			if (jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable)
+				return "jammed";
+			return slipRange == 0 ? "ready" : "range";
 		}
 		
 		/**
@@ -176,6 +181,7 @@ package vgdev.stroll.support
 		{
 			if (isJumpReady())
 			{
+				SoundManager.playSFX("sfx_slipjump");
 				cg.jump();
 				return true;
 			}

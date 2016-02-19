@@ -3,6 +3,7 @@ package vgdev.stroll.props.consoles
 	import flash.display.MovieClip;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * Activates the slipdrive
@@ -29,7 +30,7 @@ package vgdev.stroll.props.consoles
 		
 		override public function step():Boolean 
 		{
-			if (inUse && getHUD().currentLabel == "range")
+			if (inUse && getHUD().currentFrame <= 2)		// "range" or "jammed"
 				updateHUD(true);
 			updateArrows();
 			return super.step();
@@ -39,20 +40,21 @@ package vgdev.stroll.props.consoles
 		{		
 			if (!isSpooling)
 			{
-				if (key == 4 && cg.ship.isJumpReady())
+				if (key == 4 && cg.ship.isJumpReady() == "ready")
 				{
 					isSpooling = true;
 					initArrows();
 				}
 			}
-			else if (isSpooling && key != 4)
+			else if (isSpooling && key != 4 && arrows != null)
 			{
 				var mc:MovieClip = arrows[currentArrow];
-				if (Math.abs(mc.x - getHUD().mc_target.x) <= ARROW_DIST)
+				if (mc != null && Math.abs(mc.x - getHUD().mc_target.x) <= ARROW_DIST)
 				{
 					if (arrowMap[key] == mc.rotation)
 					{
 						mc.gotoAndStop(3);		// turn green
+						SoundManager.playSFX("sfx_sliphit");
 					}
 					else
 					{
@@ -72,7 +74,7 @@ package vgdev.stroll.props.consoles
 		override protected function updateHUD(isActive:Boolean):void 
 		{
 			if (isActive)
-				getHUD().gotoAndStop(cg.ship.isJumpReady() ? "ready" : "range");
+				getHUD().gotoAndStop(cg.ship.isJumpReady());
 		}
 		
 		private function initArrows():void
