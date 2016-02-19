@@ -5,6 +5,7 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.projectiles.ABST_Projectile;
 	import vgdev.stroll.props.projectiles.ProjectileGeneric;
+	import vgdev.stroll.props.projectiles.ProjectileHardened;
 	import vgdev.stroll.System;
 	
 	/**
@@ -42,15 +43,18 @@ package vgdev.stroll.props.enemies
 				{
 					cdCounts[i] = cooldowns[i];
 					var proj:ABST_Projectile;
+					var sway:int = System.getRandInt(8, 12);
 					for (var n:int = 0; n < 3; n++)
 					{
-						proj = new ProjectileGeneric(cg, new SWC_Bullet(),
+						proj = new ProjectileHardened(cg, new SWC_Bullet(),
 													{	 
 														"affiliation":	System.AFFIL_ENEMY,
 														"attackColor":	attackColor,
-														"dir":			mc_object.rotation - 10 + n * 10,
+														"dir":			mc_object.rotation + (n - 1) * sway,
 														"dmg":			attackStrength,
+														"hp":			2,
 														"life":			350,
+														"pdmg":			2,
 														"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 														"spd":			2,
 														"style":		null

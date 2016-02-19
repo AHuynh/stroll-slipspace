@@ -45,6 +45,15 @@ package vgdev.stroll.props
 		}
 		
 		/**
+		 * Scale this object in both X and Y
+		 * @param	scale	the amount to scale by (1.0 is original scale)
+		 */
+		public function setScale(scale:Number):void
+		{
+			mc_object.scaleX = mc_object.scaleY = scale;
+		}
+		
+		/**
 		 * Update this object's position
 		 * @param	dx		the amount to change in the horizontal direction
 		 * @param	dy		the amount to change in the vertical direction

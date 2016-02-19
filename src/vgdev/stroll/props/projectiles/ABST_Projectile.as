@@ -66,23 +66,28 @@ package vgdev.stroll.props.projectiles
 			else
 			{
 				updatePosition(System.forward(spd, dir, true), System.forward(spd, dir, false));	
-				var collide:ABST_Object = managerProj.collideWithOther(this);
+				updateCollisions();
+			}
+			return completed;
+		}
+		
+		protected function updateCollisions():void
+		{
+			var collide:ABST_Object = managerProj.collideWithOther(this);
+			if (collide != null)
+			{
+				kill();
+				(collide as ABST_Projectile).kill();
+			}
+			else if (getAffiliation() == System.AFFIL_PLAYER)
+			{
+				collide = managerEnem.collideWithOther(this, true);
 				if (collide != null)
 				{
 					kill();
-					(collide as ABST_Projectile).kill();
-				}
-				else if (getAffiliation() == System.AFFIL_PLAYER)
-				{
-					collide = managerEnem.collideWithOther(this, true);
-					if (collide != null)
-					{
-						kill();
-						(collide as ABST_Enemy).damage(dmg);
-					}
+					(collide as ABST_Enemy).damage(dmg);
 				}
 			}
-			return completed;
 		}
 		
 		override protected function onShipHit():void

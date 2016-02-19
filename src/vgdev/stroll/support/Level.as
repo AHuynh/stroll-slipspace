@@ -28,7 +28,7 @@ package vgdev.stroll.support
 				return;
 			switch (timeline)
 			{
-				case 1:
+				case 4:
 					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(200, 200), {"attackColor":System.COL_RED}), System.M_ENEMY);
 					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(180, 190), {"attackColor":System.COL_RED}), System.M_ENEMY);
 				break;
@@ -54,9 +54,9 @@ package vgdev.stroll.support
 					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-120, 230), {"attackColor":System.COL_RED}), System.M_ENEMY);
 					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(120, 270), {"attackColor":System.COL_RED}), System.M_ENEMY);
 				break;*/
-				case 4:
+				case 1:
 					var e:ABST_Enemy = new EnemyColorSwapper(cg, new SWC_Enemy, new Point(500, System.getRandNum(-100, 100)), {"attackColor":System.getRandCol(), "attackStrength":10, "hp":300});
-					e.mc_object.scaleX = e.mc_object.scaleY = 2;
+					e.setScale(2);
 					cg.addToGame(e, System.M_ENEMY);
 
 				break;

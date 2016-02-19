@@ -53,7 +53,7 @@ package vgdev.stroll.managers
 		}
 		
 		/**
-		 * Given an object, determines if it has collided with another object.
+		 * Given an object, determines if it has collided with another object in this manager.
 		 * @param	o			The object to check for
 		 * @param	precise		Whether to use distance checking (false), or pixel-perfect checking (true)
 		 * @return				The first ABST_Object that o is colliding with, else null
