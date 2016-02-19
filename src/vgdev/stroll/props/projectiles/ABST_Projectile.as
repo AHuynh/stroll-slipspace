@@ -25,23 +25,22 @@ package vgdev.stroll.props.projectiles
 		protected var life:int;
 		
 		/// Base amount of damage to deal
-		protected var dmg:Number = 6;
+		protected var dmg:Number;
 		
 		protected var attackColor:uint;
 		protected var colorTrans:ColorTransform;
 		
 		protected var managerProj:ManagerEProjectile;
 		protected var managerEnem:ManagerGeneric;
-		
-		public function ABST_Projectile(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int, _dir:Number, _spd:Number,
-										_life:int, _dmg:Number, style:String = null, col:uint = 0) 
+												
+		public function ABST_Projectile(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
-			super(_cg, _mc_object, _pos, _affiliation);
-			dir = _dir;
-			spd = _spd;
-			life = _life;
-			dmg = _dmg;
-			attackColor = col;
+			super(_cg, _mc_object, System.setAttribute("pos", attributes, new Point()), System.setAttribute("affiliation", attributes, System.AFFIL_ENEMY));
+			attackColor = System.setAttribute("attackColor", attributes, System.COL_WHITE);
+			dir = System.setAttribute("dir", attributes, attributes);
+			dmg = System.setAttribute("dmg", attributes, 6.0);
+			life = System.setAttribute("life", attributes, 120);
+			spd = System.setAttribute("spd", attributes, 2);
 			
 			managerProj = cg.managerMap[System.M_EPROJECTILE];
 			managerEnem = cg.managerMap[System.M_ENEMY];
@@ -49,8 +48,7 @@ package vgdev.stroll.props.projectiles
 			mc_object.rotation = dir;
 			
 			// display the correct graphic
-			if (style != null)
-				mc_object.gotoAndStop(style);
+			mc_object.gotoAndStop(System.setAttribute("style", attributes, 1));
 			
 			// tint the graphic
 			if (attackColor != 0)

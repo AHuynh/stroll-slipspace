@@ -11,10 +11,9 @@ package vgdev.stroll.props.projectiles
 	public class ProjectileGeneric extends ABST_Projectile 
 	{
 		
-		public function ProjectileGeneric(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, pos:Point, _dir:Number, _spd:Number,
-										  _life:int, _dmg:Number, _affiliation:int, style:String = null, col:uint = 0) 
+		public function ProjectileGeneric(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
-			super(_cg, _mc_object, pos, _affiliation, _dir, _spd, _life, _dmg, style, col);
+			super(_cg, _mc_object, attributes);
 		}
 	}
 }

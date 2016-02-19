@@ -44,9 +44,17 @@ package vgdev.stroll.props.enemies
 					var proj:ABST_Projectile;
 					for (var n:int = 0; n < 3; n++)
 					{
-						proj = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
-													 mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
-													 mc_object.rotation - 10 + n * 10, 2, 350, attackStrength, System.AFFIL_ENEMY, null, attackColor);
+						proj = new ProjectileGeneric(cg, new SWC_Bullet(),
+													{	 
+														"affiliation":	System.AFFIL_ENEMY,
+														"attackColor":	attackColor,
+														"dir":			mc_object.rotation - 10 + n * 10,
+														"dmg":			attackStrength,
+														"life":			350,
+														"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
+														"spd":			2,
+														"style":		null
+													});
 						proj.mc_object.scaleX = proj.mc_object.scaleY = 3;
 						cg.addToGame(proj, System.M_EPROJECTILE);
 					}

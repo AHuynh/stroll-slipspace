@@ -94,7 +94,7 @@ package vgdev.stroll
 		 * @param	fallback	Default to use if the attributes object doesn't contain a value for the key
 		 * @return				The corresponding attribute from the map, or fallback if none exists
 		 */
-		public static function setAttribute(key:*, attributes:Object, fallback:*):*
+		public static function setAttribute(key:*, attributes:Object, fallback:* = null):*
 		{
 			return attributes[key] != null ? attributes[key] : fallback;
 		}

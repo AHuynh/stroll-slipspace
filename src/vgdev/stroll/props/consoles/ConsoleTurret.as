@@ -89,11 +89,18 @@ package vgdev.stroll.props.consoles
 			{
 				if (cdCount == 0)		// fire a bullet
 				{
-					cdCount = cooldown;
-					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
-																	 turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
-																	 turret.nozzle.rotation + rotOff + System.getRandNum( -sway, sway), projectileSpeed, projectileLife,
-																	 6, System.AFFIL_PLAYER);
+					cdCount = cooldown;																	 
+					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(),
+																	{	 
+																		"affiliation":	System.AFFIL_PLAYER,
+																		"attackColor":	System.COL_WHITE,
+																		"dir":			turret.nozzle.rotation + rotOff + System.getRandNum( -sway, sway),
+																		"dmg":			6,
+																		"life":			projectileLife,
+																		"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
+																		"spd":			projectileSpeed,
+																		"style":		null
+																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
 					SoundManager.playSFX("sfx_laser1");
 				}

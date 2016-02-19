@@ -74,9 +74,17 @@ package vgdev.stroll.props.enemies
 				if (cdCounts[i]-- <= 0)
 				{
 					cdCounts[i] = cooldowns[i];
-					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
-																	 mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
-																	 mc_object.rotation, 3, 150, attackStrength, System.AFFIL_ENEMY, null, attackColor);
+					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(),
+																	{	 
+																		"affiliation":	System.AFFIL_ENEMY,
+																		"attackColor":	attackColor,
+																		"dir":			mc_object.rotation,
+																		"dmg":			attackStrength,
+																		"life":			150,
+																		"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
+																		"spd":			3,
+																		"style":		null
+																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
 			}
