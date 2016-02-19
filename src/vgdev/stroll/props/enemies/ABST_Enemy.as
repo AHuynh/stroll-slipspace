@@ -21,8 +21,8 @@ package vgdev.stroll.props.enemies
 		/// The min and max range from the ship that this Enemy should keep between
 		protected var ranges:Array = [290, 500];
 		
-		protected var hpMax:Number = 30;
-		protected var hp:Number = hpMax;
+		protected var hpMax:Number;
+		protected var hp:Number;
 		
 		protected var dX:Number = 0;
 		protected var dY:Number = 0;
@@ -36,34 +36,26 @@ package vgdev.stroll.props.enemies
 		
 		/// One of the 4 colors to use on projectiles
 		protected var attackColor:uint;
+	
+		protected var attackStrength:Number;
 		
-		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, col:uint = 0) 
+		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, attributes:Object) 
 		{
 			super(_cg, _mc_object, _pos, System.AFFIL_ENEMY);
 			
 			mc_object.x = _pos.x;
 			mc_object.y = _pos.y;
 			
-			attackColor = col;
+			attackColor = System.setAttribute("attackColor", attributes, System.COL_WHITE);
+			attackStrength = System.setAttribute("attackStrength", attributes, 8);
+			hpMax = hp = System.setAttribute("hp", attributes, 30);
 		}
 		
 		override public function step():Boolean
 		{
 			updatePosition(dX, dY);
 			maintainRange();
-			
-			// update weapons
-			for (var i:int = 0; i < cooldowns.length; i++)
-			{
-				if (cdCounts[i]-- <= 0)
-				{
-					cdCounts[i] = cooldowns[i];
-					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
-																	 mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
-																	 mc_object.rotation, 3, 150, 8, System.AFFIL_ENEMY, null, attackColor);
-					cg.addToGame(proj, System.M_EPROJECTILE);
-				}
-			}
+			updateWeapons();		
 			
 			// update red 'damage taken' flash; reduce its opacity
 			if (colAlpha > 0)
@@ -73,6 +65,21 @@ package vgdev.stroll.props.enemies
 			}
 			
 			return completed;
+		}
+		
+		protected function updateWeapons():void
+		{
+			for (var i:int = 0; i < cooldowns.length; i++)
+			{
+				if (cdCounts[i]-- <= 0)
+				{
+					cdCounts[i] = cooldowns[i];
+					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(), cg.shipHitMask,
+																	 mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
+																	 mc_object.rotation, 3, 150, attackStrength, System.AFFIL_ENEMY, null, attackColor);
+					cg.addToGame(proj, System.M_EPROJECTILE);
+				}
+			}
 		}
 		
 		/**

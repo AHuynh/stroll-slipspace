@@ -71,7 +71,6 @@
 			engine.addChild(gui);
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
-			gui.alpha = .9
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
 			level = new Level(this);

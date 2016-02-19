@@ -60,6 +60,8 @@ package vgdev.stroll.props
 		 */
 		public function destroy():void
 		{
+			if (MovieClip(mc_object.parent).contains(mc_object))
+				MovieClip(mc_object.parent).removeChild(mc_object);			
 			mc_object = null;
 			cg = null;
 			completed = true;

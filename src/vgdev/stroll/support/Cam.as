@@ -24,10 +24,10 @@ package vgdev.stroll.support
 		
 		private var camMoveRate:Number = 10;
 		
-		private var lim_x_min:Number = -System.GAME_HALF_WIDTH / 2;
-		private var lim_x_max:Number = System.GAME_HALF_WIDTH / 2;
-		private var lim_y_min:Number = -System.GAME_HALF_HEIGHT / 3;
-		private var lim_y_max:Number = System.GAME_HALF_HEIGHT / 3;
+		private var lim_x_min:Number = -System.GAME_HALF_WIDTH / 1.8;
+		private var lim_x_max:Number = System.GAME_HALF_WIDTH / 1.8;
+		private var lim_y_min:Number = -System.GAME_HALF_HEIGHT / 2;
+		private var lim_y_max:Number = System.GAME_HALF_HEIGHT / 2.5;
 		
 		public function Cam(_cg:ContainerGame) 
 		{

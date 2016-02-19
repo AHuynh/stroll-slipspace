@@ -70,7 +70,35 @@ package vgdev.stroll
 		{
 			return Math.random() * (max - min) + min;
 		}
+		
+		/**
+		 * Returns a random color from the 4 main colors (RGYB)
+		 * @param	excludes	An Array of colors to exclude, else null
+		 * @return				A random color from the 4 main colors, excluding colors in excludes
+		 */
+		public static function getRandCol(excludes:Array = null):uint
+		{
+			var choices:Array = [COL_RED, COL_YELLOW, COL_GREEN, COL_BLUE];
+			if (excludes != null)
+				for each (var col:uint in excludes)
+					choices.splice(choices.indexOf(col), 1);
+			if (choices.length == 0)
+				return System.COL_WHITE;
+			return choices[System.getRandInt(0, choices.length - 1)];
+		}
 
+		/**
+		 * Helper to set initial values from an attributes map
+		 * @param	key			The key to use in attributes
+		 * @param	attributes	A map of keys to values
+		 * @param	fallback	Default to use if the attributes object doesn't contain a value for the key
+		 * @return				The corresponding attribute from the map, or fallback if none exists
+		 */
+		public static function setAttribute(key:*, attributes:Object, fallback:*):*
+		{
+			return attributes[key] != null ? attributes[key] : fallback;
+		}
+		
 		/**
 		 * Converts degrees to radians
 		 * @param	degrees		Value in degrees
