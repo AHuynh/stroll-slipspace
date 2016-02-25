@@ -201,6 +201,18 @@ package vgdev.stroll
 			return int(num);
 		} 
 		
+		public static function stringToCol(colStr:String):uint
+		{
+			switch (colStr)
+			{
+				case "red":		return COL_RED;
+				case "green":	return COL_GREEN;
+				case "blue":	return COL_BLUE;
+				case "yellow":	return COL_YELLOW;
+				default:		return COL_WHITE;
+			}
+		}
+		
 		// ray and line segment
 	/*	public static function calculateLineIntersect(p1:Point, p2:Point, p3:Point, p4:Point):Point
 		{

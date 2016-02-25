@@ -39,7 +39,7 @@ package vgdev.stroll.props.consoles
 		override public function onKey(key:int):void
 		{		
 			if (!isSpooling)
-			{
+			{				
 				if (key == 4 && cg.ship.isJumpReady() == "ready")
 				{
 					isSpooling = true;

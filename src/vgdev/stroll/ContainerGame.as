@@ -119,7 +119,7 @@
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);*/
 			managers.push(managerMap[System.M_ENEMY]);
 			
-			SoundManager.playBGM("bgm_battle1");
+			//SoundManager.playBGM("bgm_battle1");
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 		}

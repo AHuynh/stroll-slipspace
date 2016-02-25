@@ -79,6 +79,10 @@
     <asset path="sfx\sfx_hitshield1.mp3" />
     <asset path="sfx\sfx_explosionlarge1.mp3" />
     <asset path="bgm\bgm_battle1.mp3" />
+    <asset path="sfx\sfx_bell.mp3" />
+    <asset path="sfx\sfx_shieldrecharge.mp3" />
+    <asset path="sfx\sfx_sliphit.mp3" />
+    <asset path="sfx\sfx_slipjump.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
