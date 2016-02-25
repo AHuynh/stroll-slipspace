@@ -95,7 +95,7 @@ package vgdev.stroll.support
 					switch (type)
 					{
 						case "Eye":
-							spawn = new EnemyGeneric(cg, new SWC_Enemy(), pos, { "attackColor": col } );
+							spawn = new EnemyEyeball(cg, new SWC_Enemy(), pos, { "attackColor": col } );
 							manager = System.M_ENEMY;
 						break;
 					}

@@ -73,6 +73,7 @@ package vgdev.stroll.props.enemies
 			{
 				if (cdCounts[i]-- <= 0)
 				{
+					onFire();
 					cdCounts[i] = cooldowns[i];
 					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(),
 																	{	 
@@ -88,6 +89,14 @@ package vgdev.stroll.props.enemies
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
 			}
+		}
+		
+		/**
+		 * Additional functionality when a projectile is fired.
+		 */
+		protected function onFire():void
+		{
+			// -- override this function
 		}
 		
 		/**
