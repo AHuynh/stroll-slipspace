@@ -54,12 +54,12 @@
   <libraryPaths>
     <element path="swc\SWC_Game.swc" />
     <element path="swc\SWC_MainMenu.swc" />
-    <element path="swc\SWC_Debug.swc" />
     <element path="swc\SWC_Bullet.swc" />
     <element path="swc\SWC_Enemy.swc" />
     <element path="swc\SWC_GUI.swc" />
     <element path="swc\SWC_SlipdriveArrow.swc" />
     <element path="swc\SWC_Decor.swc" />
+    <element path="swc\SWC_Debug.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

@@ -41,7 +41,7 @@ package vgdev.stroll.props.consoles
 			if (!isSpooling)
 			{				
 				if (key == 4 && cg.ship.isJumpReady() == "ready")
-				{
+				{					
 					isSpooling = true;
 					initArrows();
 				}

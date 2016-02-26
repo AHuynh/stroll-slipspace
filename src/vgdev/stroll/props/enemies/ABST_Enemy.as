@@ -20,10 +20,7 @@ package vgdev.stroll.props.enemies
 		
 		/// The min and max range from the ship that this Enemy should keep between
 		protected var ranges:Array = [290, 500];
-		
-		protected var hpMax:Number;
-		protected var hp:Number;
-		
+				
 		protected var dX:Number = 0;
 		protected var dY:Number = 0;
 		
@@ -53,17 +50,19 @@ package vgdev.stroll.props.enemies
 		
 		override public function step():Boolean
 		{
-			updatePosition(dX, dY);
-			maintainRange();
-			updateWeapons();		
-			
-			// update red 'damage taken' flash; reduce its opacity
-			if (colAlpha > 0)
+			if (!completed)
 			{
-				colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
-				mc_object.hitFlash.alpha = colAlpha;
+				updatePosition(dX, dY);
+				maintainRange();
+				updateWeapons();		
+				
+				// update red 'damage taken' flash; reduce its opacity
+				if (colAlpha > 0)
+				{
+					colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
+					mc_object.hitFlash.alpha = colAlpha;
+				}
 			}
-			
 			return completed;
 		}
 		
@@ -100,27 +99,17 @@ package vgdev.stroll.props.enemies
 		}
 		
 		/**
-		 * Additional functionality when kill is called.
-		 */
-		protected function onKill():void
-		{
-			// -- override this function
-			cg.addDecor("explosion_small", { "x":mc_object.x, "y":mc_object.y, "scale":4 } );
-		}
-		
-		/**
 		 * Deal damage to this enemy
-		 * @param	dmg		The amount of damage to deal (positive number to deal damage)
+		 * @param	amt		The amount of damage to deal (negative to deal damage)
+		 * @return			true if this object's HP is 0
 		 */
-		public function damage(dmg:Number):void
+		override public function changeHP(amt:Number):Boolean 
 		{
-			hp = System.changeWithLimit(hp, -dmg, 0);
 			colAlpha = .7;
+			hp = System.changeWithLimit(hp, amt, 0, hpMax);
 			if (hp == 0)
-			{
-				SoundManager.playSFX("sfx_explosionlarge1");
-				kill();
-			}
+				destroy();
+			return hp == 0;
 		}
 		
 		/**
@@ -145,10 +134,16 @@ package vgdev.stroll.props.enemies
 				updatePosition(System.forward(drift * driftDir, rot, true), System.forward(drift * driftDir, rot, false));
 		}
 		
-		override public function kill():void 
+		override public function destroySilently():void 
 		{
-			onKill();
-			super.kill();
+			super.destroy();
+		}
+		
+		override public function destroy():void 
+		{
+			SoundManager.playSFX("sfx_explosionlarge1");
+			cg.addDecor("explosion_small", { "x":mc_object.x, "y":mc_object.y, "scale":4 } );
+			super.destroy();
 		}
 	}
 }

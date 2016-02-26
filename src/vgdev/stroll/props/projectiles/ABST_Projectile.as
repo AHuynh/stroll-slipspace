@@ -62,7 +62,7 @@ package vgdev.stroll.props.projectiles
 		override public function step():Boolean
 		{
 			if (--life <= 0)
-				kill();
+				destroy();
 			else
 			{
 				updatePosition(System.forward(spd, dir, true), System.forward(spd, dir, false));	
@@ -76,16 +76,16 @@ package vgdev.stroll.props.projectiles
 			var collide:ABST_Object = managerProj.collideWithOther(this);
 			if (collide != null)
 			{
-				kill();
-				(collide as ABST_Projectile).kill();
+				destroy();
+				(collide as ABST_Projectile).destroy();
 			}
 			else if (getAffiliation() == System.AFFIL_PLAYER)
 			{
 				collide = managerEnem.collideWithOther(this, true);
 				if (collide != null)
 				{
-					kill();
-					(collide as ABST_Enemy).damage(dmg);
+					destroy();
+					(collide as ABST_Enemy).changeHP(-dmg);
 				}
 			}
 		}

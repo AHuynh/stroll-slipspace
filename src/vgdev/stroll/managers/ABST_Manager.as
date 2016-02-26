@@ -53,7 +53,7 @@ package vgdev.stroll.managers
 		}
 		
 		/**
-		 * 
+		 * Get the number of objects managed by this manager
 		 * @return				How many objects are in this manager
 		 */
 		public function numObjects():int
@@ -69,6 +69,8 @@ package vgdev.stroll.managers
 		 */
 		public function collideWithOther(o:ABST_Object, precise:Boolean = false):ABST_Object
 		{
+			if (!o.isActive())
+				return null;
 			var other:ABST_Object;
 			for (var i:int = 0; i < objArray.length; i++)
 			{
@@ -84,18 +86,46 @@ package vgdev.stroll.managers
 			return null;
 		}
 		
+		/**
+		 * Defines when to ignore collisions between a and b
+		 * @param	a	ABST_Object
+		 * @param	b	ABST_Object
+		 * @return		true to ignore collision between a and b
+		 */
 		protected function collisionException(a:ABST_Object, b:ABST_Object):Boolean
 		{
+			// -- override this function
 			return false;
 		}
 		
 		/**
-		 * Kill all objects managed by this manager
+		 * Checks if the given object is within distance to any other one in this manager
+		 * @param	o			the origin ABST_Object
+		 * @param	distance	the min distance, a Number
+		 * @return				true if at least 1 object is within range
+		 */
+		public function isNearOther(o:ABST_Object, distance:Number):Boolean
+		{
+			var other:ABST_Object;
+			for (var i:int = 0; i < objArray.length; i++)
+			{
+				other = objArray[i];
+				if (!other.isActive())
+					continue;
+				var dist:Number = System.getDistance(o.mc_object.x, o.mc_object.y, other.mc_object.x, other.mc_object.y);
+				if (dist != 0 && dist < distance)
+					return true;
+			}
+			return false;
+		}
+		
+		/**
+		 * Silently all objects managed by this manager
 		 */
 		public function killAll():void
 		{
 			for (var i:int = objArray.length - 1; i >= 0; i--)
-				objArray[i].destroy();
+				objArray[i].destroySilently();
 			objArray = [];
 		}
 		

@@ -21,8 +21,6 @@ package vgdev.stroll.props
 		/// System friend or foe identifier (ex. System.M_PLAYER)
 		protected var affiliation:int;
 		
-		protected var markedToKill:Boolean = false;
-		
 		public function ABST_EMovable(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int) 
 		{
 			super(_cg, _mc_object);
@@ -39,7 +37,7 @@ package vgdev.stroll.props
 
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
-			if (markedToKill || completed)
+			if (completed)
 				return;
 			
 			var ptNew:Point = new Point(mc_object.x + dx, mc_object.y + dy);
@@ -50,14 +48,14 @@ package vgdev.stroll.props
 				
 				if (System.outOfBounds(mc_object.x, LIM_X_MIN, LIM_X_MAX, BUFFER) || System.outOfBounds(mc_object.y, LIM_Y_MIN, LIM_Y_MAX, BUFFER))
 				{
-					kill();
+					destroy();
 				}
 			}
 			else	// ship was hit
 			{
 				if (affiliation != System.AFFIL_PLAYER)
 					onShipHit();
-				kill();
+				destroy();
 			}
 		}
 		
@@ -71,28 +69,12 @@ package vgdev.stroll.props
 			// -- override this function
 		}
 		
-		override public function isActive():Boolean
-		{
-			return !markedToKill;
-		}
-		
 		public function isPointValid(pt:Point):Boolean
 		{	
 			var mask:MovieClip = affiliation != System.AFFIL_PLAYER ? cg.shipHitMask : cg.shipHullMask;
 			if (!mc_object.hitTestObject(mask))
 				return true;
 			return !mask.hitTestPoint(pt.x + System.GAME_OFFSX, pt.y + System.GAME_OFFSY, true);
-		}
-		
-		public function kill():void
-		{
-			// -- override this function
-			if (!markedToKill)
-			{
-				markedToKill = true;
-				completed = true;
-				mc_object.visible = false;
-			}
 		}
 	}
 }

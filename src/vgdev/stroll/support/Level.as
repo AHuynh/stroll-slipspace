@@ -20,6 +20,8 @@ package vgdev.stroll.support
 		private var en_test:Class;
 		[Embed(source="../../../../json/en_test2.json", mimeType="application/octet-stream")]
 		private var en_test2:Class;
+		[Embed(source = "../../../../json/en_fire_lite.json", mimeType = "application/octet-stream")]
+		private var en_fire_lite:Class;
 		
 		/// A map of level names (ex: "test") to level objects
 		private var parsedEncounters:Object;
@@ -43,8 +45,12 @@ package vgdev.stroll.support
 			// add levels here
 			var rawEncountersJSON:Array =	[	
 												JSON.parse(new en_test()),
-												JSON.parse(new en_test2())
+												JSON.parse(new en_test2()),
+												JSON.parse(new en_fire_lite())
 											];
+											
+											// DEBUGGING A SINGLE ENCOUNTER ONLY
+											rawEncountersJSON = [JSON.parse(new en_fire_lite())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -81,7 +87,7 @@ package vgdev.stroll.support
 				return;
 			
 			// if we're at the next time to spawn things
-			if (++counter == counterNext)
+			if (++counter >= counterNext)
 			{				
 				// iterate over things to spawn
 				for each (var spawnItem:Object in waves[waveIndex]["spawnables"])
@@ -98,9 +104,15 @@ package vgdev.stroll.support
 							spawn = new EnemyEyeball(cg, new SWC_Enemy(), pos, { "attackColor": col } );
 							manager = System.M_ENEMY;
 						break;
+						
+						case "Fire":
+							spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
+							manager = System.M_FIRE;
+						break;
 					}
 					
 					cg.addToGame(spawn, manager);
+					
 				}
 				if (++waveIndex < waves.length)
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave
@@ -162,6 +174,7 @@ package vgdev.stroll.support
 			if (choices.length == 0)		// TODO something when there are no valid encounters
 				return false;
 			
+			trace("Choosing from", choices);
 			var encounter:Object = choices[int(System.getRandInt(0, choices.length - 1))];
 			trace("Starting encounter called: '" + encounter["id"] + "'");
 			

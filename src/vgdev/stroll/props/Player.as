@@ -7,6 +7,7 @@ package vgdev.stroll.props
 	import flash.ui.Keyboard;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.consoles.ABST_Console;
+	import vgdev.stroll.System;
 	
 	/**
 	 * Instance of the player
@@ -46,11 +47,12 @@ package vgdev.stroll.props
 		{
 			super(_cg, _mc_object, _hitMask);
 			playerID = _playerID;
+			hp = hpMax = 100;
 			
 			KEY_RIGHT = keyMap["RIGHT"];
 			KEY_UP = keyMap["UP"];
-			KEY_LEFT = keyMap["LEFT"];
 			KEY_DOWN = keyMap["DOWN"];
+			KEY_LEFT = keyMap["LEFT"];
 			KEY_ACTION = keyMap["ACTION"];
 			KEY_CANCEL = keyMap["CANCEL"];
 			
@@ -75,8 +77,19 @@ package vgdev.stroll.props
 		 */
 		override public function step():Boolean
 		{
-			handleKeyboard();
+			if (hp != 0)
+			{
+				handleKeyboard();
+			}
 			return completed;
+		}
+		
+		override public function changeHP(amt:Number):Boolean
+		{
+			hp = System.changeWithLimit(hp, amt, 0, hpMax);
+			// code omitted here - don't remove object
+			mc_object.alpha = .4;
+			return hp == 0;
 		}
 		
 		/**
@@ -136,8 +149,9 @@ package vgdev.stroll.props
 		 */
 		public function downKeyboard(e:KeyboardEvent):void
 		{
-			var pressed:Boolean = false;
+			if (hp == 0) return;
 			
+			var pressed:Boolean = false;
 			switch (e.keyCode)
 			{
 				case KEY_RIGHT:
@@ -212,8 +226,9 @@ package vgdev.stroll.props
 		 */
 		public function upKeyboard(e:KeyboardEvent):void
 		{
-			var released:Boolean = false;
+			if (hp == 0) return;
 			
+			var released:Boolean = false;
 			switch (e.keyCode)
 			{
 				case KEY_RIGHT:

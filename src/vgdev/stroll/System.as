@@ -37,6 +37,7 @@ package vgdev.stroll
 		public static const M_CONSOLE:int = 10;
 		public static const M_EPROJECTILE:int = 20;
 		public static const M_DECOR:int = 30;
+		public static const M_FIRE:int = 40;
 		
 		// timing constants
 		public static const SECOND:int = 30;

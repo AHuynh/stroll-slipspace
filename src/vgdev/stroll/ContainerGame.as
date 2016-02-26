@@ -37,8 +37,9 @@
 		public var camera:Cam;
 		
 		/// The current ship's hitbox, either hull or shields
-		public var shipHitMask:MovieClip;
-		public var shipHullMask:MovieClip;
+		public var shipHitMask:MovieClip;			// active external ship hitmask; can be hull or shield
+		public var shipHullMask:MovieClip;			// external ship hitmask; always hull
+		public var shipInsideMask:MovieClip;		// internal ship hitmask; always hull
 		
 		public var players:Array = [];
 			   
@@ -82,6 +83,8 @@
 			
 			shipHullMask = game.mc_ship.mc_ship_hit;
 			shipHullMask.visible = false;
+			shipInsideMask = game.mc_ship.mc_ship_hithard;
+			shipInsideMask.visible = false;
 			setHitMask(false);
 
 			// link the game's assets
@@ -118,6 +121,9 @@
 			
 			managerMap[System.M_DECOR] = new ManagerGeneric(this);
 			managers.push(managerMap[System.M_DECOR]);
+			
+			managerMap[System.M_FIRE] = new ManagerGeneric(this);
+			managers.push(managerMap[System.M_FIRE]);
 			
 			managerMap[System.M_ENEMY] = new ManagerGeneric(this);
 			/*addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(200, 200)), System.M_ENEMY);

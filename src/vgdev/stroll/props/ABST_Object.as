@@ -19,6 +19,9 @@ package vgdev.stroll.props
 		
 		/// Indicates if this object should be removed
 		protected var completed:Boolean = false;
+		
+		protected var hpMax:Number = 1;
+		protected var hp:Number = hpMax;
 
 		/**
 		 * Should only be called through super(), never instantiated
@@ -32,7 +35,7 @@ package vgdev.stroll.props
 		
 		/**
 		 * Update this object
-		 * @return			true if the prop is done and should be cleaned up
+		 * @return			true if the object is done and should be cleaned up
 		 */
 		public function step():Boolean
 		{
@@ -41,8 +44,9 @@ package vgdev.stroll.props
 		
 		public function isActive():Boolean
 		{
-			return !completed;
+			return !completed && mc_object != null;
 		}
+
 		
 		/**
 		 * Scale this object in both X and Y
@@ -65,12 +69,34 @@ package vgdev.stroll.props
 		}
 		
 		/**
+		 * Change this object's HP.
+		 * @param	amt		A Number to change HP by; can be positive or negative
+		 * @return			true if HP is 0
+		 */
+		public function changeHP(amt:Number):Boolean
+		{
+			hp = System.changeWithLimit(hp, amt, 0, hpMax);
+			if (hp == 0)
+				destroy();
+			return hp == 0;
+		}
+		
+		/**
+		 * Clean-up function, but without any extra effects like explosions
+		 */
+		public function destroySilently():void
+		{
+			// -- override this function
+			destroy();
+		}
+		
+		/**
 		 * Clean-up function
 		 */
 		public function destroy():void
 		{
 			if (MovieClip(mc_object.parent).contains(mc_object))
-				MovieClip(mc_object.parent).removeChild(mc_object);			
+				MovieClip(mc_object.parent).removeChild(mc_object);
 			mc_object = null;
 			cg = null;
 			completed = true;
