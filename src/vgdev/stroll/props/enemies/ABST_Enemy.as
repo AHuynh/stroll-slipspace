@@ -100,6 +100,15 @@ package vgdev.stroll.props.enemies
 		}
 		
 		/**
+		 * Additional functionality when kill is called.
+		 */
+		protected function onKill():void
+		{
+			// -- override this function
+			cg.addDecor("explosion_small", { "x":mc_object.x, "y":mc_object.y, "scale":4 } );
+		}
+		
+		/**
 		 * Deal damage to this enemy
 		 * @param	dmg		The amount of damage to deal (positive number to deal damage)
 		 */
@@ -134,6 +143,12 @@ package vgdev.stroll.props.enemies
 			}
 			else
 				updatePosition(System.forward(drift * driftDir, rot, true), System.forward(drift * driftDir, rot, false));
+		}
+		
+		override public function kill():void 
+		{
+			onKill();
+			super.kill();
 		}
 	}
 }

@@ -59,6 +59,7 @@
     <element path="swc\SWC_Enemy.swc" />
     <element path="swc\SWC_GUI.swc" />
     <element path="swc\SWC_SlipdriveArrow.swc" />
+    <element path="swc\SWC_Decor.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

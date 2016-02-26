@@ -113,6 +113,9 @@
 			managerMap[System.M_CONSOLE].setObjects(consoles);
 			managers.push(managerMap[System.M_CONSOLE]);
 			
+			managerMap[System.M_DECOR] = new ManagerGeneric(this);
+			managers.push(managerMap[System.M_DECOR]);
+			
 			managerMap[System.M_ENEMY] = new ManagerGeneric(this);
 			/*addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(200, 200)), System.M_ENEMY);
 			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(160, 210)), System.M_ENEMY);
@@ -133,6 +136,18 @@
 		{
 			game.addChild(obj.mc_object);
 			managerMap[manager].addObject(obj);
+		}
+		
+		public function addDecor(style:String, params:Object = null):void
+		{
+			var deco:Decor = new Decor(this, new SWC_Decor(), style);
+			if (params != null)
+			{
+				deco.mc_object.x = System.setAttribute("x", params, 0);
+				deco.mc_object.y = System.setAttribute("y", params, 0);
+				deco.setScale(System.setAttribute("scale", params, 1));
+			}
+			addToGame(deco, System.M_DECOR);
 		}
 
 		/**
