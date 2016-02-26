@@ -42,6 +42,7 @@
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
+			gui.mc_pause.visible = isPaused;
 			
 			shipHullMask = menu.mc_menu_hit;
 			shipHullMask.visible = false;

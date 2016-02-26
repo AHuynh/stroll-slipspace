@@ -29,6 +29,8 @@
 		public var level:Level;
 		public var gui:SWC_GUI;
 		
+		public var isPaused:Boolean = false;
+		
 		public var hudConsoles:Array;
 		
 		public var ship:Ship;
@@ -71,6 +73,7 @@
 			engine.addChild(gui);
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
+			gui.mc_pause.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
 			level = new Level(this);
@@ -158,12 +161,14 @@
 		{			
 			switch (e.keyCode)
 			{
-				/*case Keyboard.O:
-					camera.setCameraScale(2);
-				break;
 				case Keyboard.P:
-					camera.setCameraScale(1);
-				break;*/
+					isPaused = !isPaused;
+					if (isPaused)
+						game.mc_bg.base.stop();
+					else
+						game.mc_bg.base.play();
+					gui.mc_pause.visible = isPaused;
+				break;
 			}
 		}
 		
@@ -183,8 +188,8 @@
 		 */
 		override public function step():Boolean
 		{
-			if (completed)
-				return true;
+			if (completed || isPaused)
+				return completed;
 
 			level.step();
 			ship.step();
