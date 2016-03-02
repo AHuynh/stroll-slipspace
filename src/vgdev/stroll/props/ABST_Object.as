@@ -22,6 +22,9 @@ package vgdev.stroll.props
 		
 		protected var hpMax:Number = 1;
 		protected var hp:Number = hpMax;
+		
+		/// Helper for use in ManagerDepth
+		public var depth:Number;
 
 		/**
 		 * Should only be called through super(), never instantiated
@@ -31,6 +34,7 @@ package vgdev.stroll.props
 		{
 			cg = _cg;
 			mc_object = _mc_object;
+			depth = mc_object.y;
 		}
 		
 		/**
@@ -47,7 +51,6 @@ package vgdev.stroll.props
 			return !completed && mc_object != null;
 		}
 
-		
 		/**
 		 * Scale this object in both X and Y
 		 * @param	scale	the amount to scale by (1.0 is original scale)
@@ -66,6 +69,7 @@ package vgdev.stroll.props
 		{
 			mc_object.x += dx;
 			mc_object.y += dy;
+			//updateDepth();		// only call if needed
 		}
 		
 		/**
@@ -79,6 +83,12 @@ package vgdev.stroll.props
 			if (hp == 0)
 				destroy();
 			return hp == 0;
+		}
+		
+		public function updateDepth():void
+		{
+			depth = mc_object.y;
+			cg.managerMap[System.M_DEPTH].updateDepths();
 		}
 		
 		/**

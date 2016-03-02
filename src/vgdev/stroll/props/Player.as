@@ -121,7 +121,7 @@ package vgdev.stroll.props
 				activeConsole.holdKey([keysDown[RIGHT], keysDown[UP], keysDown[LEFT], keysDown[DOWN], keysDown[ACTION]]);
 			}
 		}
-
+		
 		/**
 		 * Set this Player's active console to the one provided
 		 * @param	console		an ABST_Console that is not in use to be used by this Player

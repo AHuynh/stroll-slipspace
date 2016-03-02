@@ -126,10 +126,15 @@
 			managers.push(managerMap[System.M_FIRE]);
 			
 			managerMap[System.M_ENEMY] = new ManagerGeneric(this);
-			/*addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(200, 200)), System.M_ENEMY);
-			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(160, 210)), System.M_ENEMY);
-			addToGame(new ABST_Enemy(this, new SWC_Enemy(), new Point(180, 190)), System.M_ENEMY);*/
 			managers.push(managerMap[System.M_ENEMY]);
+			
+			managerMap[System.M_DEPTH] = new ManagerDepth(this);
+			managers.push(managerMap[System.M_DEPTH]);
+			var i:int;
+			for (i = 0; i < players.length; i++)
+				managerMap[System.M_DEPTH].addObject(players[i]);
+			for (i = 0; i < consoles.length; i++)
+				managerMap[System.M_DEPTH].addObject(consoles[i]);
 			
 			//SoundManager.playBGM("bgm_battle1");
 						
@@ -138,13 +143,16 @@
 		
 		/**
 		 * Add the given Object to the game
-		 * @param	mc			The ABST_Object to add
-		 * @param	manager		The ID of the manager that will manage mc
+		 * @param	mc				The ABST_Object to add
+		 * @param	manager			The ID of the manager that will manage mc
+		 * @param	manageDepth		If true, object's depth can be updated based on its y position
 		 */
-		public function addToGame(obj:ABST_Object, manager:int):void
+		public function addToGame(obj:ABST_Object, manager:int, manageDepth:Boolean = false):void
 		{
 			game.addChild(obj.mc_object);
 			managerMap[manager].addObject(obj);
+			if (manageDepth)
+				managerMap[System.M_DEPTH].addObject(obj);
 		}
 		
 		public function addDecor(style:String, params:Object = null):void

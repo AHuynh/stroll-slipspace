@@ -27,6 +27,8 @@ package vgdev.stroll.props
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
 			}
+			
+			updateDepth();
 		}
 		
 		public function isPointValid(pt:Point):Boolean

@@ -21,6 +21,7 @@ package vgdev.stroll.props.enemies
 			mc_object.gotoAndStop("fire");
 			mc_object.x = _pos.x;
 			mc_object.y = _pos.y;
+			depth = mc_object.y;
 			setSpread();
 		}
 		
