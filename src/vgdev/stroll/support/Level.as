@@ -98,7 +98,6 @@ package vgdev.stroll.support
 
 					var spawn:ABST_Object;
 					var manager:int;
-					var manageDepth:Boolean = false;		// if true, object should have its depth updated
 					switch (type)
 					{
 						case "Eye":
@@ -109,10 +108,9 @@ package vgdev.stroll.support
 						case "Fire":
 							spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
 							manager = System.M_FIRE;
-							manageDepth = true;
 						break;
 					}
-					cg.addToGame(spawn, manager, manageDepth);					
+					cg.addToGame(spawn, manager);					
 				}
 				if (++waveIndex < waves.length)
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave

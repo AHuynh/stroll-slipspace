@@ -5,14 +5,22 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_IMovable;
 	import vgdev.stroll.props.Decor;
+	import vgdev.stroll.props.Player;
 	import vgdev.stroll.System;
 	
 	/**
-	 * A fire on-board the ship
+	 * A (single) fire on-board the ship
 	 * @author Alexander Huynh
 	 */
 	public class InternalFire extends ABST_IMovable 
 	{
+		/// Minimum pixel distance to a player to apply damage
+		private var FIRE_RANGE:int = 40;
+		
+		/// Maximum amount of HP damage to apply per tick; scales off of distance
+		private var FIRE_DAMAGE:Number = -0.1;
+		
+		/// Frames until the fire will check to spread
 		private var spreadCheck:int = 0;
 		
 		public function InternalFire(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _hitMask:MovieClip) 
@@ -25,6 +33,9 @@ package vgdev.stroll.props.enemies
 			setSpread();
 		}
 		
+		/**
+		 * Set the next time in frames that the fire will check to spread
+		 */
 		private function setSpread():void
 		{
 			spreadCheck = System.SECOND * 10 + System.getRandInt(0, System.SECOND * 10);
@@ -32,12 +43,14 @@ package vgdev.stroll.props.enemies
 		
 		override public function step():Boolean 
 		{
+			var i:int;
+			
 			// check for fire spreading
 			if (--spreadCheck == 0)
 			{
 				var dirCheck:int = System.getRandInt(0, 360);
 				var offsetBase:Number = 30;
-				for (var i:int = System.getRandInt(3, 6); i >= 0; i--)
+				for (i = System.getRandInt(3, 6); i >= 0; i--)
 				{
 					if (Math.random() < .4)
 						continue;
@@ -47,12 +60,6 @@ package vgdev.stroll.props.enemies
 										
 					if (isPointValid(checkPoint) && !cg.managerMap[System.M_FIRE].isNearOther(this, 30))
 						cg.addToGame(new InternalFire(cg, new SWC_Decor(), checkPoint, hitMask), System.M_FIRE);
-					/*else
-					{
-						var d:SWC_Debug = new SWC_Debug();
-						d.x = checkPoint.x; d.y = checkPoint.y;
-						cg.addChild(d);
-					}*/
 					
 					dirCheck = (dirCheck + 40 + System.getRandInt(0, 30)) % 360;
 				}
@@ -60,6 +67,16 @@ package vgdev.stroll.props.enemies
 			}
 			
 			// TODO damage nearby flammable things
+			var player:Player;
+			var dist:Number;
+			for (i = 0; i < cg.players.length; i++)
+			{
+				player = cg.players[i];
+				dist = System.getDistance(mc_object.x, mc_object.y, player.mc_object.x, player.mc_object.y);
+				if (dist < FIRE_RANGE)
+					continue;
+				player.changeHP(FIRE_DAMAGE * (1 - (dist / FIRE_RANGE)));
+			}
 			
 			return super.step();
 		}

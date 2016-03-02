@@ -147,12 +147,20 @@
 		 * @param	manager			The ID of the manager that will manage mc
 		 * @param	manageDepth		If true, object's depth can be updated based on its y position
 		 */
-		public function addToGame(obj:ABST_Object, manager:int, manageDepth:Boolean = false):void
+		public function addToGame(obj:ABST_Object, manager:int):void
 		{
-			game.addChild(obj.mc_object);
+			switch (manager)
+			{
+				case System.M_CONSOLE:
+				case System.M_DEPTH:
+				case System.M_FIRE:
+					game.mc_ship.addChild(obj.mc_object);
+					managerMap[System.M_DEPTH].addObject(obj);
+				break;
+				default:
+					game.mc_exterior.addChild(obj.mc_object);
+			}
 			managerMap[manager].addObject(obj);
-			if (manageDepth)
-				managerMap[System.M_DEPTH].addObject(obj);
 		}
 		
 		public function addDecor(style:String, params:Object = null):void

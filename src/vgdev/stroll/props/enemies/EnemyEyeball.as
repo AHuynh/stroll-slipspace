@@ -21,7 +21,7 @@ package vgdev.stroll.props.enemies
 		// animate the eye
 		override public function step():Boolean 
 		{
-			if (animationCooldown > 0)
+			if (isActive() && animationCooldown > 0)
 				if (--animationCooldown == 0)
 					mc_object.base.gotoAndStop(1);
 			return super.step();

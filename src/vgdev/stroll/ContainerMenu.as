@@ -4,7 +4,7 @@
 	import flash.display.SimpleButton;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import vgdev.stroll.managers.ManagerGeneric;
+	import vgdev.stroll.managers.*;
 	import vgdev.stroll.props.consoles.ConsoleEmbark;
 	import vgdev.stroll.props.Player;
 
@@ -60,6 +60,14 @@
 			managerMap[System.M_CONSOLE] = new ManagerGeneric(this);
 			managerMap[System.M_CONSOLE].setObjects(consoles);
 			managers.push(managerMap[System.M_CONSOLE]);
+			
+			managerMap[System.M_DEPTH] = new ManagerDepth(this);
+			managers.push(managerMap[System.M_DEPTH]);
+			var i:int;
+			for (i = 0; i < players.length; i++)
+				managerMap[System.M_DEPTH].addObject(players[i]);
+			for (i = 0; i < consoles.length; i++)
+				managerMap[System.M_DEPTH].addObject(consoles[i]);
 		}
 		
 		private function onStart(e:MouseEvent):void

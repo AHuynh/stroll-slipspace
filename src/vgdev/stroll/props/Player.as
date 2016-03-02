@@ -41,7 +41,9 @@ package vgdev.stroll.props
 		private var activeConsole:ABST_Console = null;
 		
 		/// Map of key states
-		private var keysDown:Object = {UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false};
+		private var keysDown:Object = { UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false };
+		
+		private var BAR_WIDTH:Number;
 		
 		public function Player(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object)
 		{
@@ -69,6 +71,9 @@ package vgdev.stroll.props
 			mc_object.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			cg.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			cg.stage.addEventListener(KeyboardEvent.KEY_UP, upKeyboard);
+			
+			mc_object.mc_bar.visible = false;		// hide the HP bar
+			BAR_WIDTH = mc_object.mc_bar.bar.width;
 		}
 		
 		/**
@@ -86,9 +91,17 @@ package vgdev.stroll.props
 		
 		override public function changeHP(amt:Number):Boolean
 		{
-			hp = System.changeWithLimit(hp, amt, 0, hpMax);
-			// code omitted here - don't remove object
-			mc_object.alpha = .4;
+			hp = System.changeWithLimit(hp, amt, 0, hpMax);		
+			
+			mc_object.alpha = hp == 0 ? .4 : 1;
+			if (hp != hpMax)
+			{
+				mc_object.mc_bar.visible = true;
+				mc_object.mc_bar.bar.width = (hp / hpMax) * BAR_WIDTH;
+			}
+			else
+				mc_object.mc_bar.visible = false;
+			
 			return hp == 0;
 		}
 		

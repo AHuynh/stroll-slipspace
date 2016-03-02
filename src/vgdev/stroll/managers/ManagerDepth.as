@@ -2,13 +2,15 @@ package vgdev.stroll.managers
 {
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
+	import vgdev.stroll.System;
 	
 	/**
 	 * Sorts objects in its array by y and updates their depths.
+	 * Depth-managed objects should reside in cg.game.mc_ship only.
 	 * @author Alexander Huynh
 	 */
 	public class ManagerDepth extends ABST_Manager 
-	{
+	{		
 		public function ManagerDepth(_cg:ContainerGame) 
 		{
 			super(_cg);
@@ -16,11 +18,12 @@ package vgdev.stroll.managers
 		
 		public function updateDepths():void
 		{
+			if (!cg.game) return;	
 			objArray.sortOn("depth", Array.NUMERIC);
 			for each (var obj:ABST_Object in objArray)
-				cg.addChild(obj.mc_object);
+				cg.game.mc_ship.addChild(obj.mc_object);
 		}
-		
+
 		// untrack items that are no longer active
 		override public function step():void 
 		{
