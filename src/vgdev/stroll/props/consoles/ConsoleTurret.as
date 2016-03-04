@@ -68,6 +68,8 @@ package vgdev.stroll.props.consoles
 		 */
 		override public function holdKey(keys:Array):void
 		{
+			if (hp == 0) return;
+			
 			// turret aiming
 			for (var i:int = 0; i < 4; i++)
 			{

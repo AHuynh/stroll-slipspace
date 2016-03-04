@@ -25,6 +25,9 @@ package vgdev.stroll.props
 		
 		/// Helper for use in ManagerDepth
 		public var depth:Number;
+		
+		/// Helper for use in ABST_Manager.getNearby
+		public var nearDistance:Number = 0;
 
 		/**
 		 * Should only be called through super(), never instantiated

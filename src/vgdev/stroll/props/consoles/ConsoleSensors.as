@@ -19,6 +19,8 @@ package vgdev.stroll.props.consoles
 		
 		override public function holdKey(keys:Array):void
 		{
+			if (hp == 0) return;
+			
 			if (keys[0])
 				cg.camera.moveCameraFocus(new Point(-1, 0));
 			if (keys[1])

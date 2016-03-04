@@ -38,7 +38,7 @@ package vgdev.stroll.props.consoles
 		
 		override public function onKey(key:int):void
 		{
-			if (cdCount != 0)		// quit if shield switch is on cooldown
+			if (cdCount != 0 || hp == 0)		// quit if shield switch is on cooldown or console is destroyed
 				return;
 				
 			// if a direction key was hit and the corresponding color isn't already active

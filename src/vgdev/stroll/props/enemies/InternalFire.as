@@ -4,6 +4,7 @@ package vgdev.stroll.props.enemies
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_IMovable;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.Decor;
 	import vgdev.stroll.props.Player;
 	import vgdev.stroll.System;
@@ -14,14 +15,20 @@ package vgdev.stroll.props.enemies
 	 */
 	public class InternalFire extends ABST_IMovable 
 	{
-		/// Minimum pixel distance to a player to apply damage
-		private var FIRE_RANGE:int = 50;
+		/// Minimum pixel distance to an object to apply damage
+		private var FIRE_RANGE:int = 40;
 		
 		/// Maximum amount of HP damage to apply per tick; scales off of distance
 		private var FIRE_DAMAGE:Number = -2;
 		
+		/// Amount of hull damage to apply
+		private var HULL_DAMAGE:Number = 1.25;
+		
 		/// Frames until the fire will check to spread
 		private var spreadCheck:int = 0;
+		
+		/// If false, has a chance to damage hull per tick. Changes to false on the first spread check.
+		private var contained:Boolean = true;
 		
 		public function InternalFire(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _hitMask:MovieClip) 
 		{
@@ -40,7 +47,7 @@ package vgdev.stroll.props.enemies
 		 */
 		private function setSpread():void
 		{
-			spreadCheck = System.SECOND * 10 + System.getRandInt(0, System.SECOND * 10);
+			spreadCheck = System.SECOND * 7 + System.getRandInt(0, System.SECOND * 5);
 		}
 		
 		// if being extinguished, delay the spread check
@@ -55,7 +62,6 @@ package vgdev.stroll.props.enemies
 		{
 			if (!isActive())
 				return super.step();
-			
 			var i:int;
 			
 			// check for fire spreading
@@ -76,25 +82,31 @@ package vgdev.stroll.props.enemies
 					
 					dirCheck = (dirCheck + 40 + System.getRandInt(0, 30)) % 360;
 				}
+				contained = false;
 				setSpread();
 			}
-			
+
 			// slowly restore HP (should return to full strength if not being actively extinguished)
 			changeHP(.25);
-			
-			// TODO damage nearby flammable things
-			var player:Player;
-			var dist:Number;
+
+			// damage things
 			for (i = 0; i < cg.players.length; i++)
-			{
-				player = cg.players[i];
-				dist = System.getDistance(mc_object.x, mc_object.y, player.mc_object.x, player.mc_object.y);
-				if (dist > FIRE_RANGE)
-					continue;
-				player.changeHP(FIRE_DAMAGE * (1 - (dist / FIRE_RANGE)));
-			}
+				damageObject(cg.players[i]);
+			for (i = 0; i < cg.consoles.length; i++)
+				damageObject(cg.consoles[i]);
 			
+			// after first spread check, 10% chance to damage hull per tick
+			if (!contained && Math.random() < .1)
+				cg.ship.damageDirect(HULL_DAMAGE);
+				
 			return super.step();
+		}
+		
+		private function damageObject(obj:ABST_Object):void
+		{
+			var dist:Number = System.getDistance(mc_object.x, mc_object.y, obj.mc_object.x, obj.mc_object.y);
+			if (dist <= FIRE_RANGE)
+				obj.changeHP(FIRE_DAMAGE * (1 - (dist / FIRE_RANGE)));
 		}
 	}
 }

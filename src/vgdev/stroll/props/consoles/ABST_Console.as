@@ -1,6 +1,7 @@
 package vgdev.stroll.props.consoles 
 {
 	import flash.display.MovieClip;
+	import flash.events.Event;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
 	import vgdev.stroll.props.ABST_Object;
@@ -26,13 +27,64 @@ package vgdev.stroll.props.consoles
 		/// the active player if this console is inUse; otherwise the nearest player
 		public var closestPlayer:Player;
 		
+		private var BAR_WIDTH:Number;
+		
 		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array)
 		{
 			super(_cg, _mc_object);
 			hud_consoles = cg.hudConsoles;
 			players = _players;
+			
+			hp = hpMax = 1000;
+			
+			mc_object.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 
+		/**
+		 * Helper to init the HP bar
+		 * 
+		 * @param	e	the captured Event, unused
+		 */
+		private function onAddedToStage(e:Event):void
+		{
+			mc_object.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			if (mc_object.mc_bar != null)
+			{
+				mc_object.mc_bar.visible = false;		// hide the HP bar
+				BAR_WIDTH = mc_object.mc_bar.bar.width;
+			}
+		}
+		
+		override public function changeHP(amt:Number):Boolean
+		{
+			hp = System.changeWithLimit(hp, amt, 0, hpMax);		
+			
+			// disable console
+			if (hp == 0)
+				onCancel();
+			
+			if (hp != hpMax)
+			{
+				mc_object.mc_bar.visible = true;
+				mc_object.mc_bar.bar.width = (hp / hpMax) * BAR_WIDTH;
+			}
+			else
+				mc_object.mc_bar.visible = false;
+				
+			return hp == 0;
+		}
+		
+		override public function isActive():Boolean 
+		{
+			 return hp != 0 && super.isActive();
+		}
+
+		/**
+		 * Updates the closest player and ! display for this console
+		 * Called by ManagerProximity
+		 * @param	p		if not null, p is the closest Player in range of this console
+		 * @param	dist	how far away p is
+		 */
 		public function setProximity(p:Player, dist:Number):void
 		{
 			if (p != null)
@@ -69,7 +121,7 @@ package vgdev.stroll.props.consoles
 		 */
 		public function holdKey(keys:Array):void
 		{
-			// override this function
+			// -- override this function
 		}
 		
 		/**

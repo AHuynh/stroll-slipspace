@@ -133,7 +133,7 @@ package vgdev.stroll.managers
 		 * Returns an array of the objects in this manager within distance of the origin
 		 * @param	o			the origin ABST_Object
 		 * @param	distance	the distance, a Number
-		 * @return				Array containing objects from objArray within range
+		 * @return				Array containing objects from objArray within range, sorted in ascending order
 		 */
 		public function getNearby(o:ABST_Object, distance:Number):Array
 		{
@@ -147,8 +147,12 @@ package vgdev.stroll.managers
 					continue;
 				dist = System.getDistance(o.mc_object.x, o.mc_object.y, other.mc_object.x, other.mc_object.y);
 				if (dist != 0 && dist < distance)
+				{
+					other.nearDistance = dist;
 					nearby.push(other);
+				}
 			}
+			nearby.sortOn("nearDistance", Array.NUMERIC);
 			return nearby;
 		}
 		

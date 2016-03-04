@@ -14,7 +14,10 @@ package vgdev.stroll.props.consoles
 	public class Omnitool extends ABST_Console
 	{		
 		private const RATE_EXTINGUISH:Number = -5;
-		private const RANGE_EXTINGUISH:Number = 65;
+		private const RANGE_EXTINGUISH:Number = 65
+		
+		private const RATE_REPAIR:Number = 5;
+		private const RANGE_REPAIR:Number = 65;
 		
 		public function Omnitool(_cg:ContainerGame, _mc_object:MovieClip, _players:Array)
 		{
@@ -41,6 +44,12 @@ package vgdev.stroll.props.consoles
 					updateHUD(true);
 				}
 			}
+		}
+		
+		override public function changeHP(amt:Number):Boolean 
+		{
+			// -- do nothing; Omnitool is invincible
+			return false;
 		}
 		
 		/**
@@ -71,6 +80,7 @@ package vgdev.stroll.props.consoles
 				var angle:Number;
 				for each (var fire:InternalFire in fires)
 				{
+					// skip if the fire isn't actually a fire
 					if (!fire.isActive())
 						continue;
 					
@@ -81,6 +91,7 @@ package vgdev.stroll.props.consoles
 						facing == 3 && fire.mc_object.y < closestPlayer.mc_object.y)
 						continue;
 					
+					// spray an extinguishing effect
 					angle = System.getAngle(closestPlayer.mc_object.x, closestPlayer.mc_object.y, fire.mc_object.x, fire.mc_object.y);
 					if (Math.random() < .7)
 						cg.addDecor("extinguish", {
@@ -90,6 +101,9 @@ package vgdev.stroll.props.consoles
 													"dy": System.forward(System.getRandNum(3, 5), angle + System.getRandNum(-10, 10), false)
 												  });
 					fire.changeHP(RATE_EXTINGUISH);
+					
+					// can only deal with 1 fire at a time; it will be the closest since fires will be sorted
+					return;
 				}
 					
 			}

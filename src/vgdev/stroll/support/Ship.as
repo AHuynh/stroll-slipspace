@@ -58,6 +58,11 @@ package vgdev.stroll.support
 			return shield;
 		}
 		
+		/**
+		 * Deal damage to the ship (with shields in effect)
+		 * @param	dmg		Amount of damage to deal (a positive value to damage)
+		 * @param	col		Color type of damage
+		 */
 		public function damage(dmg:Number, col:uint = 0):void
 		{
 			// shields absorb all damage until it breaks
@@ -93,6 +98,19 @@ package vgdev.stroll.support
 				
 			shieldCD = SHIELD_CD;
 			shieldReCurr = shieldRecharge;
+		}
+		
+		/**
+		 * Deal direct damage to the hull, ignoring shields
+		 * @param	dmg
+		 */
+		public function damageDirect(dmg:Number):void
+		{
+			hp = System.changeWithLimit(hp, -dmg, 0);
+			updateIntegrity();
+			
+			//if (hp == 0)
+			//	game over
 		}
 		
 		private function updateIntegrity():void

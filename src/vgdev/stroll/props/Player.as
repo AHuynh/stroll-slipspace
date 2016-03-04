@@ -108,7 +108,10 @@ package vgdev.stroll.props
 			mc_object.alpha = hp == 0 ? .4 : 1;
 			
 			if (hp == 0)
+			{
+				onCancel();
 				mc_object.gotoAndStop("idle");
+			}
 			
 			if (hp != hpMax)
 			{
