@@ -43,7 +43,7 @@
 		
 		public var players:Array = [];
 			   
-		/// Array of ABST_Consoles, used to help figure out which console a player is trying to interact with
+		/// Array of ABST_Consoles and ABST_Items, used to help figure out which console a player is trying to interact with
 		public var consoles:Array = [];
 		
 		public var managers:Array = [];
@@ -58,7 +58,7 @@
 			super();
 			engine = eng
 			
-			if (!isMenu)
+			if (!isMenu)		// super hacky and should probably be changed
 			{
 				game = new SWC_Game();
 				addChild(game);
@@ -104,17 +104,22 @@
 			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));
 			
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players));
+			
 			ship = new Ship(this);
 			camera = new Cam(this);
 			
-			// init the managers
+			var i:int;
+			
+			// init the managers			
 			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this);
 			managers.push(managerMap[System.M_EPROJECTILE]);
 
 			managerMap[System.M_PLAYER] = new ManagerGeneric(this);
 			managerMap[System.M_PLAYER].setObjects(players);
 			managers.push(managerMap[System.M_PLAYER]);
-
+			
 			managerMap[System.M_CONSOLE] = new ManagerGeneric(this);
 			managerMap[System.M_CONSOLE].setObjects(consoles);
 			managers.push(managerMap[System.M_CONSOLE]);
@@ -130,11 +135,17 @@
 			
 			managerMap[System.M_DEPTH] = new ManagerDepth(this);
 			managers.push(managerMap[System.M_DEPTH]);
-			var i:int;
 			for (i = 0; i < players.length; i++)
 				managerMap[System.M_DEPTH].addObject(players[i]);
 			for (i = 0; i < consoles.length; i++)
 				managerMap[System.M_DEPTH].addObject(consoles[i]);
+				
+			managerMap[System.M_PROXIMITY] = new ManagerProximity(this);
+			// -- (should not push this to managers, as it does not need to be stepped)
+			for (i = 0; i < players.length; i++)
+				players[i].manProx = managerMap[System.M_PROXIMITY];
+			for (i = 0; i < consoles.length; i++)
+				managerMap[System.M_PROXIMITY].addObject(consoles[i]);
 			
 			//SoundManager.playBGM("bgm_battle1");
 						
@@ -170,6 +181,8 @@
 			{
 				deco.mc_object.x = System.setAttribute("x", params, 0);
 				deco.mc_object.y = System.setAttribute("y", params, 0);
+				deco.dx = System.setAttribute("dx", params, 0);
+				deco.dy = System.setAttribute("dy", params, 0);
 				deco.setScale(System.setAttribute("scale", params, 1));
 			}
 			addToGame(deco, System.M_DECOR);
@@ -200,7 +213,8 @@
 		 */
 		public function onAction(p:Player):void
 		{
-			for (var i:int = 0; i < consoles.length; i++)
+			var i:int;
+			for (i = 0; i < consoles.length; i++)
 				consoles[i].onAction(p);
 		}
 		

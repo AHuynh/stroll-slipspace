@@ -15,10 +15,10 @@ package vgdev.stroll.props.enemies
 	public class InternalFire extends ABST_IMovable 
 	{
 		/// Minimum pixel distance to a player to apply damage
-		private var FIRE_RANGE:int = 40;
+		private var FIRE_RANGE:int = 50;
 		
 		/// Maximum amount of HP damage to apply per tick; scales off of distance
-		private var FIRE_DAMAGE:Number = -0.1;
+		private var FIRE_DAMAGE:Number = -2;
 		
 		/// Frames until the fire will check to spread
 		private var spreadCheck:int = 0;
@@ -31,6 +31,8 @@ package vgdev.stroll.props.enemies
 			mc_object.y = _pos.y;
 			depth = mc_object.y;
 			setSpread();
+			
+			hp = hpMax = 100;
 		}
 		
 		/**
@@ -41,8 +43,19 @@ package vgdev.stroll.props.enemies
 			spreadCheck = System.SECOND * 10 + System.getRandInt(0, System.SECOND * 10);
 		}
 		
+		// if being extinguished, delay the spread check
+		override public function changeHP(amt:Number):Boolean 
+		{
+			if (amt < 0)
+				spreadCheck += System.getRandInt(0, 3);
+			return super.changeHP(amt);
+		}
+		
 		override public function step():Boolean 
 		{
+			if (!isActive())
+				return super.step();
+			
 			var i:int;
 			
 			// check for fire spreading
@@ -66,6 +79,9 @@ package vgdev.stroll.props.enemies
 				setSpread();
 			}
 			
+			// slowly restore HP (should return to full strength if not being actively extinguished)
+			changeHP(.25);
+			
 			// TODO damage nearby flammable things
 			var player:Player;
 			var dist:Number;
@@ -73,7 +89,7 @@ package vgdev.stroll.props.enemies
 			{
 				player = cg.players[i];
 				dist = System.getDistance(mc_object.x, mc_object.y, player.mc_object.x, player.mc_object.y);
-				if (dist < FIRE_RANGE)
+				if (dist > FIRE_RANGE)
 					continue;
 				player.changeHP(FIRE_DAMAGE * (1 - (dist / FIRE_RANGE)));
 			}

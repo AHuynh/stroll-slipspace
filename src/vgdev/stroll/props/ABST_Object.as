@@ -92,6 +92,16 @@ package vgdev.stroll.props
 		}
 		
 		/**
+		 * Helper to get the distance from this object to another
+		 * @param	other		the other ABST_Obect
+		 * @return				the distance in pixels
+		 */
+		public function getDistance(other:ABST_Object):Number
+		{
+			return System.getDistance(mc_object.x, mc_object.y, other.mc_object.x, other.mc_object.y);
+		}
+		
+		/**
 		 * Clean-up function, but without any extra effects like explosions
 		 */
 		public function destroySilently():void

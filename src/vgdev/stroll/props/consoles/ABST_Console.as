@@ -13,7 +13,7 @@ package vgdev.stroll.props.consoles
 	public class ABST_Console extends ABST_Object 
 	{
 		private var players:Array;
-		private const RANGE:int = 20;		// maximum range in px from which a player can activate this console
+		public const RANGE:int = 20;		// maximum range in px from which a player can activate this console
 		
 		protected var CONSOLE_NAME:String = "none";
 		
@@ -32,43 +32,26 @@ package vgdev.stroll.props.consoles
 			hud_consoles = cg.hudConsoles;
 			players = _players;
 		}
-		
-		override public function step():Boolean
-		{
-			updatePlayer();
-			return false;
-		}
 
-		/**
-		 * When inactive, find the nearest player and update the "!" icon's visibility
-		 */
-		protected function updatePlayer():void
+		public function setProximity(p:Player, dist:Number):void
 		{
-			// TODO fix if 2 players are in range and the furthest activates the console, they don't succeed
-			if (!inUse)
+			if (p != null)
 			{
-				closestPlayer = null;
-				var closestDist:Number = 99999;
-				var dist:Number;
-				var player:Player;
-
-				for (var i:int = 0; i < players.length; i++)
-				{
-					player = players[i];
-					dist = System.getDistance(mc_object.x, mc_object.y, player.mc_object.x, player.mc_object.y - 15);
-					if (dist < RANGE && dist < closestDist)
-					{
-						dist = closestDist;
-						closestPlayer = player;
-						mc_object.prompt.visible = true;
-					}
-				}
-				
-				if (closestPlayer == null)
-				{
-					mc_object.prompt.visible = false;
-				}
+				if (closestPlayer == null || (p != closestPlayer && getDistance(p) < dist))
+					closestPlayer = p;
 			}
+			else if (!inUse)
+				closestPlayer = null;
+			setPromptVisible(p != null);
+		}
+		
+		/**
+		 * Override this in ABST_Item
+		 * @param	vis
+		 */
+		public function setPromptVisible(vis:Boolean):void
+		{
+			mc_object.prompt.visible = vis;
 		}
 		
 		/**
@@ -121,8 +104,8 @@ package vgdev.stroll.props.consoles
 				mc_object.gotoAndStop(2);
 				mc_object.prompt.visible = true;
 				hud_consoles[closestPlayer.playerID].gotoAndStop("none");
-				closestPlayer = null;
 				updateHUD(false);
+				closestPlayer = null;
 			}
 		}
 		
@@ -149,7 +132,7 @@ package vgdev.stroll.props.consoles
 			else if (CONSOLE_NAME == "none")
 			{
 				trace("[ABST_Console] WARNING: CONSOLE_NAME is not set!");
-				return new MovieClip();
+				//return new MovieClip();
 			}
 			return hud_consoles[closestPlayer.playerID].mod;
 		}

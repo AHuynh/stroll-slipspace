@@ -6,6 +6,7 @@ package vgdev.stroll.props
 	import flash.geom.Point;
 	import flash.ui.Keyboard;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.managers.ManagerProximity;
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.System;
 	
@@ -15,6 +16,9 @@ package vgdev.stroll.props
 	 */
 	public class Player extends ABST_IMovable
 	{
+		/// Pointer to the proximity manager, so this Player can tell the manager to update
+		public var manProx:ManagerProximity;
+		
 		// keys for use in keysDown
 		private const RIGHT:int = 0;
 		private const UP:int = 1;
@@ -31,6 +35,9 @@ package vgdev.stroll.props
 		private var KEY_ACTION:uint;
 		private var KEY_CANCEL:uint;
 		
+		/// Direction player last moved in (RULD, 0-3)
+		public var facing:int = 0;
+		
 		/// Player 0 or 1
 		public var playerID:int;
 		
@@ -39,6 +46,9 @@ package vgdev.stroll.props
 		
 		/// If not null, the instance of ABST_Console this Player is currently paired with
 		private var activeConsole:ABST_Console = null;
+		
+		/// If true, the console being used prevents player movement
+		private var rooted:Boolean = false;
 		
 		/// Map of key states
 		private var keysDown:Object = { UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false };
@@ -74,6 +84,8 @@ package vgdev.stroll.props
 			
 			mc_object.mc_bar.visible = false;		// hide the HP bar
 			BAR_WIDTH = mc_object.mc_bar.bar.width;
+			
+			mc_object.mc_omnitool.visible = false;
 		}
 		
 		/**
@@ -94,6 +106,10 @@ package vgdev.stroll.props
 			hp = System.changeWithLimit(hp, amt, 0, hpMax);		
 			
 			mc_object.alpha = hp == 0 ? .4 : 1;
+			
+			if (hp == 0)
+				mc_object.gotoAndStop("idle");
+			
 			if (hp != hpMax)
 			{
 				mc_object.mc_bar.visible = true;
@@ -101,7 +117,7 @@ package vgdev.stroll.props
 			}
 			else
 				mc_object.mc_bar.visible = false;
-			
+				
 			return hp == 0;
 		}
 		
@@ -110,38 +126,52 @@ package vgdev.stroll.props
 		 */
 		private function handleKeyboard():void
 		{
-			if (activeConsole == null)
+			if (!rooted)
 			{
 				if (keysDown[RIGHT])
 				{
 					updatePosition(moveSpeed, 0);
+					facing = RIGHT;
 				}
 				if (keysDown[UP])
 				{
 					updatePosition(0, -moveSpeed);
+					facing = UP;
 				}
 				if (keysDown[LEFT])
 				{
 					updatePosition( -moveSpeed, 0);
+					facing = LEFT;
 				}
 				if (keysDown[DOWN])
 				{
 					updatePosition(0, moveSpeed);
+					facing = DOWN;
 				}
 			}
-			else
+			if (activeConsole != null)
 			{
 				activeConsole.holdKey([keysDown[RIGHT], keysDown[UP], keysDown[LEFT], keysDown[DOWN], keysDown[ACTION]]);
 			}
 		}
 		
+		override protected function updatePosition(dx:Number, dy:Number):void 
+		{
+			if (activeConsole == null)
+				manProx.updateProximities(this);
+			super.updatePosition(dx, dy);
+		}
+		
 		/**
 		 * Set this Player's active console to the one provided
+		 * Called by ABST_Console
 		 * @param	console		an ABST_Console that is not in use to be used by this Player
+		 * @param	isRooted	true if the player shouldn't be able to move when using the console
 		 */
-		public function sitAtConsole(console:ABST_Console):void
+		public function sitAtConsole(console:ABST_Console, isRooted:Boolean = true):void
 		{
 			activeConsole = console;
+			rooted = isRooted;
 		}
 		
 		/**
@@ -153,6 +183,9 @@ package vgdev.stroll.props
 			{
 				activeConsole.onCancel();
 				activeConsole = null;
+				rooted = false;
+				manProx.updateProximities(this);
+				updateDepth();
 			}
 		}
 		
@@ -168,9 +201,10 @@ package vgdev.stroll.props
 			switch (e.keyCode)
 			{
 				case KEY_RIGHT:
-					if (activeConsole == null)
+					if (!rooted)
 					{
 						mc_object.scaleX = -1;
+						mc_object.mc_bar.scaleX = -1;
 						pressed = true;
 					}
 					else if (!keysDown[RIGHT])
@@ -180,7 +214,7 @@ package vgdev.stroll.props
 					keysDown[RIGHT] = true;
 				break;
 				case KEY_UP:
-					if (activeConsole == null)
+					if (!rooted)
 					{
 						pressed = true;
 					}
@@ -191,9 +225,10 @@ package vgdev.stroll.props
 					keysDown[UP] = true;
 				break;
 				case KEY_LEFT:
-					if (activeConsole == null)
+					if (!rooted)
 					{
 						mc_object.scaleX = 1;
+						mc_object.mc_bar.scaleX = 1;
 						pressed = true;
 					}
 					else if (!keysDown[LEFT])
@@ -203,7 +238,7 @@ package vgdev.stroll.props
 					keysDown[LEFT] = true;
 				break;
 				case KEY_DOWN:
-					if (activeConsole == null)
+					if (!rooted)
 					{
 						pressed = true;
 					}
@@ -214,7 +249,7 @@ package vgdev.stroll.props
 					keysDown[DOWN] = true;
 				break;
 				case KEY_ACTION:
-					if (activeConsole == null)
+					if (!rooted)
 					{
 						cg.onAction(this);
 					}
