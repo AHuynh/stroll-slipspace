@@ -12,7 +12,7 @@ package vgdev.stroll.props
 		/* Supported labels
 		 * explosion_small
 		 * extinguish
-		 * 
+		 * repair
 		 */
 		
 		public var dx:Number = 0;
@@ -24,6 +24,7 @@ package vgdev.stroll.props
 			mc_object.gotoAndStop(style);
 		}
 		
+		// remove self when animation is complete
 		override public function step():Boolean 
 		{
 			updatePosition(dx, dy);

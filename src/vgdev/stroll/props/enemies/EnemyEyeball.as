@@ -29,8 +29,8 @@ package vgdev.stroll.props.enemies
 		
 		override protected function onFire():void 
 		{
-			animationCooldown = 7;
-			mc_object.base.gotoAndStop(2);
+			mc_object.base.gotoAndStop(2);		// make the eye light up
+			animationCooldown = 7;				// the eye will go back to normal after 7 frames
 		}
 	}
 }

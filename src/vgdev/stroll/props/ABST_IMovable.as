@@ -7,6 +7,7 @@ package vgdev.stroll.props
 	
 	/**
 	 * Object that can move inside the spaceship.
+	 * Should have its depths updated by ManagerDepth
 	 * @author Alexander Huynh
 	 */
 	public class ABST_IMovable extends ABST_Object 
@@ -31,6 +32,11 @@ package vgdev.stroll.props
 			updateDepth();
 		}
 		
+		/**
+		 * Determines if the given point is colliding with the ship
+		 * @param	pt		The point to check
+		 * @return			true if the point is colliding with the ship (interior hitmask)
+		 */
 		public function isPointValid(pt:Point):Boolean
 		{			
 			var ptL:Point = MovieClip(mc_object.parent).localToGlobal(pt);

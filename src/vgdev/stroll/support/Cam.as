@@ -103,6 +103,10 @@ package vgdev.stroll.support
 			focusTgt.y = System.changeWithLimit(focusTgt.y, offFocus.y * camMoveRate, lim_y_min, lim_y_max);
 		}
 		
+		/**
+		 * Set the camera's scale
+		 * @param	newScale	Number, the scale to use
+		 */
 		public function setCameraScale(newScale:Number):void
 		{
 			scaleTgt = newScale;

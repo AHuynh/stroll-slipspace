@@ -24,23 +24,25 @@
 	{		
 		/// The SWC object containing graphics assets for the game
 		public var game:SWC_Game;
+		public var gui:SWC_GUI;
 		public var engine:Engine;
 
 		public var level:Level;
-		public var gui:SWC_GUI;
-		
-		public var isPaused:Boolean = false;
-		
-		public var hudConsoles:Array;
-		
 		public var ship:Ship;
 		public var camera:Cam;
+		
+		/// Whether or not the game is paused
+		public var isPaused:Boolean = false;
+		
+		/// UI consoles; an Array of MovieClips
+		public var hudConsoles:Array;
 		
 		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;			// active external ship hitmask; can be hull or shield
 		public var shipHullMask:MovieClip;			// external ship hitmask; always hull
 		public var shipInsideMask:MovieClip;		// internal ship hitmask; always hull
 		
+		/// Array of Player objects
 		public var players:Array = [];
 			   
 		/// Array of ABST_Consoles and ABST_Items, used to help figure out which console a player is trying to interact with
@@ -70,7 +72,8 @@
 		{
 			game.removeEventListener(Event.ADDED_TO_STAGE, init);
 			
-			gui = new SWC_GUI();
+			// init the GUI
+			gui = new SWC_GUI();	
 			engine.addChild(gui);
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
@@ -81,6 +84,7 @@
 			
 			game.mc_bg.gotoAndStop("space");
 			
+			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
 			shipHullMask.visible = false;
 			shipInsideMask = game.mc_ship.mc_ship_hithard;
@@ -156,7 +160,7 @@
 		 * Add the given Object to the game
 		 * @param	mc				The ABST_Object to add
 		 * @param	manager			The ID of the manager that will manage mc
-		 * @param	manageDepth		If true, object's depth can be updated based on its y position
+		 * @param	manageDepth		If true, object's depth will be updated based on its y position
 		 */
 		public function addToGame(obj:ABST_Object, manager:int):void
 		{
@@ -174,6 +178,11 @@
 			managerMap[manager].addObject(obj);
 		}
 		
+		/**
+		 * Add a decoration object to the game
+		 * @param	style			The label the SWC_Decor should use
+		 * @param	params			Object map with additional attributes (x, y, dx, dy, scale)
+		 */
 		public function addDecor(style:String, params:Object = null):void
 		{
 			var deco:Decor = new Decor(this, new SWC_Decor(), style);
@@ -198,7 +207,7 @@
 			{
 				case Keyboard.P:
 					isPaused = !isPaused;
-					if (isPaused)
+					if (isPaused)					// halt or resume background animation
 						game.mc_bg.base.stop();
 					else
 						game.mc_bg.base.play();
@@ -209,12 +218,12 @@
 		
 		/**
 		 * Callback when a player not at a console performs their 'USE' action
+		 * Attempts to activate (set the player to be using) the appropriate console
 		 * @param	p		the Player that is trying to USE something
 		 */
 		public function onAction(p:Player):void
 		{
-			var i:int;
-			for (i = 0; i < consoles.length; i++)
+			for (var i:int = 0; i < consoles.length; i++)
 				consoles[i].onAction(p);
 		}
 		
@@ -246,7 +255,7 @@
 		}
 		
 		/**
-		 * Called by ship when jumping to the next sector
+		 * Called by Ship when jumping to the next sector
 		 */
 		public function jump():void
 		{
@@ -257,6 +266,7 @@
 			managerMap[System.M_EPROJECTILE].killAll();
 			managerMap[System.M_ENEMY].killAll();
 			
+			// game finished state
 			if (level.nextWave())
 			{
 				destroy(null);

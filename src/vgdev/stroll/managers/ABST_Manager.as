@@ -23,6 +23,7 @@ package vgdev.stroll.managers
 		
 		/**
 		 * Called once per frame by ContainerGame
+		 * Step all of the objects in objArray (and stop keeping track of those that are completed)
 		 */
 		public function step():void
 		{
@@ -130,7 +131,7 @@ package vgdev.stroll.managers
 		}
 		
 		/**
-		 * Returns an array of the objects in this manager within distance of the origin
+		 * Returns a sorted array of the objects in this manager within distance of the origin
 		 * @param	o			the origin ABST_Object
 		 * @param	distance	the distance, a Number
 		 * @return				Array containing objects from objArray within range, sorted in ascending order
@@ -157,7 +158,7 @@ package vgdev.stroll.managers
 		}
 		
 		/**
-		 * Silently all objects managed by this manager
+		 * Silently kill all objects managed by this manager
 		 */
 		public function killAll():void
 		{

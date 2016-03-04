@@ -49,6 +49,10 @@ package vgdev.stroll.props
 			return completed;
 		}
 		
+		/**
+		 * Returns if this object is not slated for deletion
+		 * @return			true if this object should still be in the game doing things
+		 */
 		public function isActive():Boolean
 		{
 			return !completed && mc_object != null;
@@ -98,6 +102,9 @@ package vgdev.stroll.props
 			return hpMax;
 		}
 		
+		/**
+		 * Update this object's depth and have ManagerDepth update the depths of all depth-managed objects
+		 */
 		public function updateDepth():void
 		{
 			depth = mc_object.y;

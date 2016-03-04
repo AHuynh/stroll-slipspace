@@ -16,6 +16,9 @@ package vgdev.stroll.managers
 			super(_cg);
 		}
 		
+		/**
+		 * Reorder all depth-managed objects based on their y positions
+		 */
 		public function updateDepths():void
 		{
 			if (!cg.game) return;	

@@ -16,6 +16,7 @@ package vgdev.stroll.managers
 			super(_cg);
 		}
 		
+		// ignore projectile collisions if they are on the same team
 		override protected function collisionException(a:ABST_Object, b:ABST_Object):Boolean
 		{
 			return (a as ABST_Projectile).getAffiliation() == (b as ABST_Projectile).getAffiliation();

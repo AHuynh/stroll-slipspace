@@ -40,6 +40,7 @@ package vgdev.stroll.props.consoles
 		{		
 			if (hp == 0) return;
 			
+			// if the slipdrive isn't spooling, start spooling
 			if (!isSpooling)
 			{				
 				if (key == 4 && cg.ship.isJumpReady() == "ready")
@@ -48,21 +49,25 @@ package vgdev.stroll.props.consoles
 					initArrows();
 				}
 			}
+			// else if the slipdrive is spooling and a direction button was pressed and there are more arrows
 			else if (isSpooling && key != 4 && arrows != null)
 			{
 				var mc:MovieClip = arrows[currentArrow];
 				if (mc != null && Math.abs(mc.x - getHUD().mc_target.x) <= ARROW_DIST)
 				{
+					// if the correct button was pressed
 					if (arrowMap[key] == mc.rotation)
 					{
 						mc.gotoAndStop(3);		// turn green
 						SoundManager.playSFX("sfx_sliphit");
 					}
+					// else the wrong button was pressed
 					else
 					{
 						mc.gotoAndStop(2);		// turn red
 						anyMiss = true;
 					}
+					// if that was the last arrow and all arrows were hit, jump
 					if (++currentArrow == arrows.length && !anyMiss)
 					{
 						removeArrows();
@@ -79,6 +84,10 @@ package vgdev.stroll.props.consoles
 				getHUD().gotoAndStop(cg.ship.isJumpReady());
 		}
 		
+		/**
+		 * Start spooling the slipdrive
+		 * Arrows will spawn from the right and move left
+		 */
 		private function initArrows():void
 		{
 			removeArrows();
@@ -101,6 +110,9 @@ package vgdev.stroll.props.consoles
 			isSpooling = true;
 		}
 		
+		/**
+		 * Update the arrow targets by translating them and checking if they weren't pressed in time
+		 */
 		private function updateArrows():void
 		{
 			if (arrows == null)
@@ -111,12 +123,14 @@ package vgdev.stroll.props.consoles
 				mc = arrows[i];
 				mc.x -= arrowSpeed;
 				
+				// if the last arrow makes it past the left (it must be a miss)
 				if (i == arrows.length - 1 && arrows[i].x < -85)
 				{
 					removeArrows();
 					getHUD().gotoAndPlay("miss");
 					return;
 				}
+				// if the current arrow isn't pressed in time
 				else if (i == currentArrow && arrows[i].x < getHUD().mc_target.x - ARROW_DIST)
 				{
 					currentArrow++;
@@ -132,6 +146,9 @@ package vgdev.stroll.props.consoles
 			super.onCancel();
 		}
 		
+		/**
+		 * Stop the arrow target sequence
+		 */
 		private function removeArrows():void
 		{
 			if (arrows != null)

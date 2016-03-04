@@ -67,26 +67,28 @@ package vgdev.stroll.props.enemies
 			// check for fire spreading
 			if (--spreadCheck == 0)
 			{
-				var dirCheck:int = System.getRandInt(0, 360);
-				var offsetBase:Number = 30;
+				var dirCheck:int = System.getRandInt(0, 360);		// pick a random polar rotation
+				var offsetBase:Number = 30;							// distance away from the fire to check
+				// check random spawn locations in a circle around the fire
 				for (i = System.getRandInt(3, 6); i >= 0; i--)
 				{
-					if (Math.random() < .4)
+					if (Math.random() < .4)		// 40% chance to outright fail to spawn a new fire
 						continue;
 					
-					var offset:Number = offsetBase *= System.getRandNum(.8, 1.6);
+					var offset:Number = offsetBase *= System.getRandNum(.8, 1.6);		// slightly randomize the offset distance
 					var checkPoint:Point = new Point(mc_object.x + System.forward(offset, dirCheck, true), mc_object.y + System.forward(offset, dirCheck, false));
 										
+					// create a new fire if the spawn location is not colliding with the ship and the fire is far enough away from other fires
 					if (isPointValid(checkPoint) && !cg.managerMap[System.M_FIRE].isNearOther(this, 30))
 						cg.addToGame(new InternalFire(cg, new SWC_Decor(), checkPoint, hitMask), System.M_FIRE);
 					
 					dirCheck = (dirCheck + 40 + System.getRandInt(0, 30)) % 360;
 				}
-				contained = false;
-				setSpread();
+				contained = false;		// this fire will now have a chance to deal hull damage
+				setSpread();			// remember to check to see if this fire can spread again
 			}
 
-			// slowly restore HP (should return to full strength if not being actively extinguished)
+			// slowly restore HP (fire should return to full strength if not being actively extinguished)
 			changeHP(.25);
 
 			// damage things
@@ -102,6 +104,10 @@ package vgdev.stroll.props.enemies
 			return super.step();
 		}
 		
+		/**
+		 * Deal scaled damage (based on FIRE_RANGE and FIRE_DAMAGE) to an object if it is within range
+		 * @param	obj		The object to damage
+		 */
 		private function damageObject(obj:ABST_Object):void
 		{
 			var dist:Number = System.getDistance(mc_object.x, mc_object.y, obj.mc_object.x, obj.mc_object.y);

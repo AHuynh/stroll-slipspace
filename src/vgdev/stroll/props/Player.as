@@ -90,7 +90,7 @@ package vgdev.stroll.props
 		
 		/**
 		 * Update the player
-		 * @return		true if the player is dead
+		 * @return		true if the player is incapacitated
 		 */
 		override public function step():Boolean
 		{
@@ -98,7 +98,7 @@ package vgdev.stroll.props
 			{
 				handleKeyboard();
 			}
-			return completed;
+			return hp == 0;
 		}
 		
 		/**
@@ -115,6 +115,7 @@ package vgdev.stroll.props
 		{
 			hp = System.changeWithLimit(hp, amt, 0, hpMax);		
 						
+			// stop using consoles/items if incapacitated
 			if (hp == 0)
 			{
 				onCancel();
@@ -167,6 +168,7 @@ package vgdev.stroll.props
 			}
 		}
 		
+		// tell ManagerDepth to update all depth-managed object's depths when this Player moves
 		override protected function updatePosition(dx:Number, dy:Number):void 
 		{
 			if (activeConsole == null)

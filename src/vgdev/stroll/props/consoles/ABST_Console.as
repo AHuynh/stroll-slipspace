@@ -16,17 +16,19 @@ package vgdev.stroll.props.consoles
 		private var players:Array;
 		public const RANGE:int = 20;		// maximum range in px from which a player can activate this console
 		
+		/// Used as a label in the HUD object
 		protected var CONSOLE_NAME:String = "none";
 		
-		/// the two HUD objects for the consoles
+		/// The two HUD objects for the consoles, an Array of MovieClips
 		protected var hud_consoles:Array;
 		
-		/// true if a player is currently using this console
+		/// The if a player is currently using this console
 		public var inUse:Boolean = false;	
 		
-		/// the active player if this console is inUse; otherwise the nearest player
+		/// The active player if this console is inUse; otherwise the nearest player
 		public var closestPlayer:Player;
 		
+		/// The width of the HP bar
 		private var BAR_WIDTH:Number;
 		
 		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array)
@@ -61,7 +63,10 @@ package vgdev.stroll.props.consoles
 			
 			// disable console
 			if (hp == 0)
+			{
 				onCancel();
+				//setConsoleEnabled(false);		// TODO stop the beneficial effects of this console
+			}
 			
 			if (hp != hpMax)
 			{
@@ -76,11 +81,11 @@ package vgdev.stroll.props.consoles
 		
 		override public function isActive():Boolean 
 		{
-			 return hp != 0 && super.isActive();
+			return hp != 0 && super.isActive();
 		}
 
 		/**
-		 * Updates the closest player and ! display for this console
+		 * Updates the closest player and '!' display for this console
 		 * Called by ManagerProximity
 		 * @param	p		if not null, p is the closest Player in range of this console
 		 * @param	dist	how far away p is
@@ -117,7 +122,7 @@ package vgdev.stroll.props.consoles
 		
 		/**
 		 * Performs some sort of functionality based on keys HELD by this console's active player
-		 * @param	keys	array with indexes [0-4] representing R, U, L, D, Action
+		 * @param	keys	boolean array with indexes [0-4] representing R, U, L, D, Action
 		 */
 		public function holdKey(keys:Array):void
 		{
@@ -126,6 +131,7 @@ package vgdev.stroll.props.consoles
 		
 		/**
 		 * Called when a player is attempting to sit at a console
+		 * Called by ContainerGame
 		 * @param	p		the Player attempting to sit at a console
 		 */
 		public function onAction(p:Player):void
@@ -136,9 +142,10 @@ package vgdev.stroll.props.consoles
 				{
 					inUse = true;
 					closestPlayer.sitAtConsole(this);
-					mc_object.gotoAndStop(3);
-					mc_object.prompt.visible = false;
+					mc_object.gotoAndStop(3);				// change console graphic to 'on'
+					mc_object.prompt.visible = false;		// hide the '!'
 	
+					// show the appropriate module UI
 					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME);
 					updateHUD(true);
 				}
@@ -153,9 +160,9 @@ package vgdev.stroll.props.consoles
 			if (inUse)
 			{
 				inUse = false;
-				mc_object.gotoAndStop(2);
-				mc_object.prompt.visible = true;
-				hud_consoles[closestPlayer.playerID].gotoAndStop("none");
+				mc_object.gotoAndStop(2);									// change console graphic to 'shut off'
+				mc_object.prompt.visible = true;							// show the '!'
+				hud_consoles[closestPlayer.playerID].gotoAndStop("none");	// reset the module UI
 				updateHUD(false);
 				closestPlayer = null;
 			}
@@ -172,19 +179,19 @@ package vgdev.stroll.props.consoles
 				
 		/**
 		 * Gets the MovieClip representing the module
-		 * @return		MovieClip (SWC_GUI.Module.mod)
+		 * Useful when updating UI graphics based on what's happening in the module
+		 * @return		MovieClip (specifically, SWC_GUI.Module.mod)
 		 */
 		protected function getHUD():MovieClip
 		{
 			if (closestPlayer == null)
 			{
-				trace("[ABST_Console] WARNING: hud called without an active player!");
+				trace("[ABST_Console] WARNING: getHUD called without an active player!");
 				return new MovieClip();
 			}
 			else if (CONSOLE_NAME == "none")
 			{
 				trace("[ABST_Console] WARNING: CONSOLE_NAME is not set!");
-				//return new MovieClip();
 			}
 			return hud_consoles[closestPlayer.playerID].mod;
 		}

@@ -113,12 +113,19 @@ package vgdev.stroll.support
 			//	game over
 		}
 		
+		/**
+		 * Update the UI
+		 */
 		private function updateIntegrity():void
 		{
 			cg.gui.tf_hull.text = Math.ceil(100 * hp / hpMax).toString();
 			cg.gui.tf_shield.text = Math.ceil(100 * shield / shieldMax).toString();
 		}
 		
+		/**
+		 * Set the color of the ship's shield
+		 * @param	col		The color to use
+		 */
 		public function setShieldColor(col:uint):void
 		{
 			shieldCol = col;
