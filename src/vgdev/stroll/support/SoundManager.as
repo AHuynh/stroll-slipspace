@@ -3,6 +3,7 @@ package vgdev.stroll.support
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
 	import flash.media.SoundMixer;
+	import flash.media.SoundTransform;
 	
 	public class SoundManager 
 	{
@@ -11,6 +12,8 @@ package vgdev.stroll.support
 		
 		[Embed(source="../../../../bgm/bgm_battle1.mp3")]
 		private static var bgm_battle1:Class;
+		[Embed(source="../../../../bgm/bgm_calm.mp3")]
+		private static var bgm_calm:Class;
 		
 		[Embed(source="../../../../sfx/sfx_bell.mp3")]
 		private static var sfx_bell:Class;
@@ -60,7 +63,7 @@ package vgdev.stroll.support
 				sounds[sfx].play();
 		}
 		
-		public static function playBGM(music:String):void
+		public static function playBGM(music:String, volume:Number = 1):void
 		{
 			if (currentBGM == music)
 				return;
@@ -69,6 +72,7 @@ package vgdev.stroll.support
 			var snd:Sound;
 			switch (music)
 			{
+				case "bgm_calm":					snd = new bgm_calm();		break;
 				case "bgm_battle1":					snd = new bgm_battle1();		break;
 				default:
 					trace("WARNING: No music located for " + music + "!");
@@ -76,7 +80,9 @@ package vgdev.stroll.support
 			}
 			currentBGM = music;
 			
+			var volTransform:SoundTransform = new SoundTransform(volume);
 			bgm = snd.play(0, 9999);
+			bgm.soundTransform = volTransform;
 		}
 		
 		public static function stopBGM():void

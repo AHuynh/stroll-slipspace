@@ -90,7 +90,7 @@ package vgdev.stroll.props
 		
 		/**
 		 * Update the player
-		 * @return		true if the player is incapacitated
+		 * @return		false; player will never be complete
 		 */
 		override public function step():Boolean
 		{
@@ -98,7 +98,7 @@ package vgdev.stroll.props
 			{
 				handleKeyboard();
 			}
-			return hp == 0;
+			return false;
 		}
 		
 		/**

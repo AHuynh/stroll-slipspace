@@ -84,6 +84,7 @@
     <asset path="sfx\sfx_shieldrecharge.mp3" />
     <asset path="sfx\sfx_sliphit.mp3" />
     <asset path="sfx\sfx_slipjump.mp3" />
+    <asset path="bgm\bgm_calm.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
