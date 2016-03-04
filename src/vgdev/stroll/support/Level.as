@@ -22,6 +22,8 @@ package vgdev.stroll.support
 		private var en_test2:Class;
 		[Embed(source = "../../../../json/en_fire_lite.json", mimeType = "application/octet-stream")]
 		private var en_fire_lite:Class;
+		[Embed(source="../../../../json/en_fire_eyes.json", mimeType="application/octet-stream")]
+		private var en_fire_eyes:Class;
 		
 		/// A map of level names (ex: "test") to level objects
 		private var parsedEncounters:Object;
@@ -46,11 +48,12 @@ package vgdev.stroll.support
 			var rawEncountersJSON:Array =	[	
 												JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
-												JSON.parse(new en_fire_lite())
+												JSON.parse(new en_fire_lite()),
+												JSON.parse(new en_fire_eyes())
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_fire_lite())];
+											rawEncountersJSON = [JSON.parse(new en_fire_eyes())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)

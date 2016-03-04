@@ -126,6 +126,12 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		override public function onCancel():void 
+		{
+			removeArrows();
+			super.onCancel();
+		}
+		
 		private function removeArrows():void
 		{
 			if (arrows != null)

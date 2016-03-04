@@ -88,6 +88,16 @@ package vgdev.stroll.props
 			return hp == 0;
 		}
 		
+		public function getHP():Number
+		{
+			return hp;
+		}
+		
+		public function getHPmax():Number
+		{
+			return hpMax;
+		}
+		
 		public function updateDepth():void
 		{
 			depth = mc_object.y;

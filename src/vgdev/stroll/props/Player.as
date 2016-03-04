@@ -101,16 +101,25 @@ package vgdev.stroll.props
 			return completed;
 		}
 		
+		/**
+		 * Revive an incapacitated player by setting its HP to something > 0
+		 */
+		public function revive():void
+		{
+			if (hp != 0) return;
+			changeHP(hpMax * .4);
+			mc_object.alpha = 1;
+		}
+		
 		override public function changeHP(amt:Number):Boolean
 		{
 			hp = System.changeWithLimit(hp, amt, 0, hpMax);		
-			
-			mc_object.alpha = hp == 0 ? .4 : 1;
-			
+						
 			if (hp == 0)
 			{
 				onCancel();
 				mc_object.gotoAndStop("idle");
+				mc_object.alpha = .4;
 			}
 			
 			if (hp != hpMax)
