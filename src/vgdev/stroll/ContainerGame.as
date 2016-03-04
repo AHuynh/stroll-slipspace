@@ -95,7 +95,7 @@
 			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, System.keyMap0),
 					   new Player(this, game.mc_ship.mc_player1, shipHullMask, 1, System.keyMap1)];
 
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
+			/*consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
 											players, [-120, 120], [1, -1, 3, -1]));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console02, game.mc_ship.turret_1,		// left
 											players, [-165, 15], [2, -1, 0, -1]));
@@ -106,7 +106,20 @@
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console03, players));
 			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
-			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));
+			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));*/
+			
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
+											players, [-120, 120], [1, -1, 3, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
+											players, [-165, 10], [2, -1, 0, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
+											players, [-10, 165], [0, -1, 2, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
+											players, [-65, 65], [3, -1, 1, -1]));
+			consoles[3].rotOff = 180;
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players));
+			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
 			
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players));
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players));

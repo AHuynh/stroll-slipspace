@@ -22,7 +22,7 @@ package vgdev.stroll.props.enemies
 		private var FIRE_DAMAGE:Number = -2;
 		
 		/// Amount of hull damage to apply
-		private var HULL_DAMAGE:Number = 1.25;
+		private var HULL_DAMAGE:Number = .6;
 		
 		/// Frames until the fire will check to spread
 		private var spreadCheck:int = 0;
