@@ -24,26 +24,28 @@
 	{		
 		/// The SWC object containing graphics assets for the game
 		public var game:SWC_Game;
+		public var gui:SWC_GUI;
 		public var engine:Engine;
 
 		public var level:Level;
-		public var gui:SWC_GUI;
-		
-		public var isPaused:Boolean = false;
-		
-		public var hudConsoles:Array;
-		
 		public var ship:Ship;
 		public var camera:Cam;
+		
+		/// Whether or not the game is paused
+		public var isPaused:Boolean = false;
+		
+		/// UI consoles; an Array of MovieClips
+		public var hudConsoles:Array;
 		
 		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;			// active external ship hitmask; can be hull or shield
 		public var shipHullMask:MovieClip;			// external ship hitmask; always hull
 		public var shipInsideMask:MovieClip;		// internal ship hitmask; always hull
 		
+		/// Array of Player objects
 		public var players:Array = [];
 			   
-		/// Array of ABST_Consoles, used to help figure out which console a player is trying to interact with
+		/// Array of ABST_Consoles and ABST_Items, used to help figure out which console a player is trying to interact with
 		public var consoles:Array = [];
 		
 		public var managers:Array = [];
@@ -58,7 +60,7 @@
 			super();
 			engine = eng
 			
-			if (!isMenu)
+			if (!isMenu)		// super hacky and should probably be changed
 			{
 				game = new SWC_Game();
 				addChild(game);
@@ -70,7 +72,8 @@
 		{
 			game.removeEventListener(Event.ADDED_TO_STAGE, init);
 			
-			gui = new SWC_GUI();
+			// init the GUI
+			gui = new SWC_GUI();	
 			engine.addChild(gui);
 			gui.x += System.GAME_OFFSX;
 			gui.y += System.GAME_OFFSY;
@@ -81,6 +84,7 @@
 			
 			game.mc_bg.gotoAndStop("space");
 			
+			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
 			shipHullMask.visible = false;
 			shipInsideMask = game.mc_ship.mc_ship_hithard;
@@ -104,17 +108,22 @@
 			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));
 			
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players));
+			
 			ship = new Ship(this);
 			camera = new Cam(this);
 			
-			// init the managers
+			var i:int;
+			
+			// init the managers			
 			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this);
 			managers.push(managerMap[System.M_EPROJECTILE]);
 
 			managerMap[System.M_PLAYER] = new ManagerGeneric(this);
 			managerMap[System.M_PLAYER].setObjects(players);
 			managers.push(managerMap[System.M_PLAYER]);
-
+			
 			managerMap[System.M_CONSOLE] = new ManagerGeneric(this);
 			managerMap[System.M_CONSOLE].setObjects(consoles);
 			managers.push(managerMap[System.M_CONSOLE]);
@@ -130,11 +139,17 @@
 			
 			managerMap[System.M_DEPTH] = new ManagerDepth(this);
 			managers.push(managerMap[System.M_DEPTH]);
-			var i:int;
 			for (i = 0; i < players.length; i++)
 				managerMap[System.M_DEPTH].addObject(players[i]);
 			for (i = 0; i < consoles.length; i++)
 				managerMap[System.M_DEPTH].addObject(consoles[i]);
+				
+			managerMap[System.M_PROXIMITY] = new ManagerProximity(this);
+			// -- (should not push this to managers, as it does not need to be stepped)
+			for (i = 0; i < players.length; i++)
+				players[i].manProx = managerMap[System.M_PROXIMITY];
+			for (i = 0; i < consoles.length; i++)
+				managerMap[System.M_PROXIMITY].addObject(consoles[i]);
 			
 			//SoundManager.playBGM("bgm_battle1");
 						
@@ -145,16 +160,29 @@
 		 * Add the given Object to the game
 		 * @param	mc				The ABST_Object to add
 		 * @param	manager			The ID of the manager that will manage mc
-		 * @param	manageDepth		If true, object's depth can be updated based on its y position
+		 * @param	manageDepth		If true, object's depth will be updated based on its y position
 		 */
-		public function addToGame(obj:ABST_Object, manager:int, manageDepth:Boolean = false):void
+		public function addToGame(obj:ABST_Object, manager:int):void
 		{
-			game.addChild(obj.mc_object);
+			switch (manager)
+			{
+				case System.M_CONSOLE:
+				case System.M_DEPTH:
+				case System.M_FIRE:
+					game.mc_ship.addChild(obj.mc_object);
+					managerMap[System.M_DEPTH].addObject(obj);
+				break;
+				default:
+					game.mc_exterior.addChild(obj.mc_object);
+			}
 			managerMap[manager].addObject(obj);
-			if (manageDepth)
-				managerMap[System.M_DEPTH].addObject(obj);
 		}
 		
+		/**
+		 * Add a decoration object to the game
+		 * @param	style			The label the SWC_Decor should use
+		 * @param	params			Object map with additional attributes (x, y, dx, dy, scale)
+		 */
 		public function addDecor(style:String, params:Object = null):void
 		{
 			var deco:Decor = new Decor(this, new SWC_Decor(), style);
@@ -162,6 +190,8 @@
 			{
 				deco.mc_object.x = System.setAttribute("x", params, 0);
 				deco.mc_object.y = System.setAttribute("y", params, 0);
+				deco.dx = System.setAttribute("dx", params, 0);
+				deco.dy = System.setAttribute("dy", params, 0);
 				deco.setScale(System.setAttribute("scale", params, 1));
 			}
 			addToGame(deco, System.M_DECOR);
@@ -177,7 +207,7 @@
 			{
 				case Keyboard.P:
 					isPaused = !isPaused;
-					if (isPaused)
+					if (isPaused)					// halt or resume background animation
 						game.mc_bg.base.stop();
 					else
 						game.mc_bg.base.play();
@@ -188,6 +218,7 @@
 		
 		/**
 		 * Callback when a player not at a console performs their 'USE' action
+		 * Attempts to activate (set the player to be using) the appropriate console
 		 * @param	p		the Player that is trying to USE something
 		 */
 		public function onAction(p:Player):void
@@ -224,7 +255,7 @@
 		}
 		
 		/**
-		 * Called by ship when jumping to the next sector
+		 * Called by Ship when jumping to the next sector
 		 */
 		public function jump():void
 		{
@@ -235,6 +266,7 @@
 			managerMap[System.M_EPROJECTILE].killAll();
 			managerMap[System.M_ENEMY].killAll();
 			
+			// game finished state
 			if (level.nextWave())
 			{
 				destroy(null);

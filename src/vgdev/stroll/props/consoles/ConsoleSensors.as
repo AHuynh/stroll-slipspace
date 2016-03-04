@@ -19,6 +19,8 @@ package vgdev.stroll.props.consoles
 		
 		override public function holdKey(keys:Array):void
 		{
+			if (hp == 0) return;
+			
 			if (keys[0])
 				cg.camera.moveCameraFocus(new Point(-1, 0));
 			if (keys[1])
@@ -28,6 +30,7 @@ package vgdev.stroll.props.consoles
 			if (keys[3])
 				cg.camera.moveCameraFocus(new Point(0, -1));
 		
+			// set UI arrows to be faded out if the camera can't move any further in that direction
 			getHUD().arrow_right.alpha = cg.camera.isAtLimit(0) ? .2 : 1;
 			getHUD().arrow_left.alpha = cg.camera.isAtLimit(1) ? .2 : 1;
 			getHUD().arrow_down.alpha = cg.camera.isAtLimit(2) ? .2 : 1;

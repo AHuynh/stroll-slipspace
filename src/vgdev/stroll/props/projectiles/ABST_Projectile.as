@@ -71,15 +71,18 @@ package vgdev.stroll.props.projectiles
 			return completed;
 		}
 		
+		/**
+		 * Do things based on if this projectile has hit other objects
+		 */
 		protected function updateCollisions():void
 		{
 			var collide:ABST_Object = managerProj.collideWithOther(this);
-			if (collide != null)
+			if (collide != null)								// projectile has collided with another projectile
 			{
 				destroy();
 				(collide as ABST_Projectile).destroy();
 			}
-			else if (getAffiliation() == System.AFFIL_PLAYER)
+			else if (getAffiliation() == System.AFFIL_PLAYER)	// projectile is a player's; check for hits on enemies
 			{
 				collide = managerEnem.collideWithOther(this, true);
 				if (collide != null)

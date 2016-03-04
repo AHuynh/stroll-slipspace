@@ -22,6 +22,8 @@ package vgdev.stroll.support
 		private var en_test2:Class;
 		[Embed(source = "../../../../json/en_fire_lite.json", mimeType = "application/octet-stream")]
 		private var en_fire_lite:Class;
+		[Embed(source="../../../../json/en_fire_eyes.json", mimeType="application/octet-stream")]
+		private var en_fire_eyes:Class;
 		
 		/// A map of level names (ex: "test") to level objects
 		private var parsedEncounters:Object;
@@ -46,11 +48,12 @@ package vgdev.stroll.support
 			var rawEncountersJSON:Array =	[	
 												JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
-												JSON.parse(new en_fire_lite())
+												JSON.parse(new en_fire_lite()),
+												JSON.parse(new en_fire_eyes())
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											//rawEncountersJSON = [JSON.parse(new en_fire_lite())];
+											rawEncountersJSON = [JSON.parse(new en_fire_eyes())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -98,7 +101,6 @@ package vgdev.stroll.support
 
 					var spawn:ABST_Object;
 					var manager:int;
-					var manageDepth:Boolean = false;		// if true, object should have its depth updated
 					switch (type)
 					{
 						case "Eye":
@@ -109,10 +111,9 @@ package vgdev.stroll.support
 						case "Fire":
 							spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
 							manager = System.M_FIRE;
-							manageDepth = true;
 						break;
 					}
-					cg.addToGame(spawn, manager, manageDepth);					
+					cg.addToGame(spawn, manager);					
 				}
 				if (++waveIndex < waves.length)
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave

@@ -11,9 +11,12 @@ package vgdev.stroll.props
 	{
 		/* Supported labels
 		 * explosion_small
-		 * 
-		 * 
+		 * extinguish
+		 * repair
 		 */
+		
+		public var dx:Number = 0;
+		public var dy:Number = 0;
 		
 		public function Decor(_cg:ContainerGame, _mc_object:MovieClip = null, style:String = null)
 		{
@@ -21,8 +24,10 @@ package vgdev.stroll.props
 			mc_object.gotoAndStop(style);
 		}
 		
+		// remove self when animation is complete
 		override public function step():Boolean 
 		{
+			updatePosition(dx, dy);
 			if (mc_object.base.currentFrame == mc_object.base.totalFrames)
 				destroy();
 			return completed;

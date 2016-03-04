@@ -11,6 +11,7 @@ package vgdev.stroll.props.consoles
 	 */
 	public class ConsoleShields extends ABST_Console 
 	{
+		/// A reference to the shield MovieClip
 		private var mc_shield:MovieClip;
 		
 		/// The number of frames to wait in-between shield swaps
@@ -29,16 +30,17 @@ package vgdev.stroll.props.consoles
 			mc_shield = cg.game.mc_ship.shield;
 		}
 		
+		// reduce shield switch cooldown
 		override public function step():Boolean
 		{
-			if (cdCount > 0)		// reduce shield switch cooldown
+			if (cdCount > 0)		
 				cdCount--;
 			return super.step();
 		}
 		
 		override public function onKey(key:int):void
 		{
-			if (cdCount != 0)		// quit if shield switch is on cooldown
+			if (cdCount != 0 || hp == 0)		// quit if shield switch is on cooldown or console is destroyed
 				return;
 				
 			// if a direction key was hit and the corresponding color isn't already active

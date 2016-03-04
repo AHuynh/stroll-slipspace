@@ -15,6 +15,7 @@ package vgdev.stroll.props.enemies
 	 */
 	public class ABST_Enemy extends ABST_EMovable 
 	{
+		// cooldowns for weapons; can keep track of more than one weapon if desired
 		protected var cooldowns:Array = [60];
 		protected var cdCounts:Array = [0];
 		
@@ -24,16 +25,17 @@ package vgdev.stroll.props.enemies
 		protected var dX:Number = 0;
 		protected var dY:Number = 0;
 		
-		protected var spd:Number = 1;
-		protected var drift:Number = .25;
-		protected var driftDir:int = 1;
+		protected var spd:Number = 1;			// speed (in px) at which to move at when going to a target
+		protected var drift:Number = .25;		// speed (in px) at which to move at when idling
+		protected var driftDir:int = 1;			// direction of drift, 1 or -1
 
-		protected var colAlpha:Number = 0;
+		protected var colAlpha:Number = 0;		// helper for displaying the red flash on taking a hit
 		protected const DCOL:Number = .04;
 		
 		/// One of the 4 colors to use on projectiles
 		protected var attackColor:uint;
 	
+		/// Amount of damage to give its projectiles
 		protected var attackStrength:Number;
 		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, attributes:Object) 
@@ -66,6 +68,9 @@ package vgdev.stroll.props.enemies
 			return completed;
 		}
 		
+		/**
+		 * Update all weapon cooldowns and fire when appropriate
+		 */
 		protected function updateWeapons():void
 		{
 			for (var i:int = 0; i < cooldowns.length; i++)

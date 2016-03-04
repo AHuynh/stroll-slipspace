@@ -69,6 +69,11 @@ package vgdev.stroll.props
 			// -- override this function
 		}
 		
+		/**
+		 * Determines if the given point is not hitting the ship
+		 * @param	pt		The point to check for
+		 * @return			true if the point is colliding with the ship
+		 */
 		public function isPointValid(pt:Point):Boolean
 		{	
 			var mask:MovieClip = affiliation != System.AFFIL_PLAYER ? cg.shipHitMask : cg.shipHullMask;

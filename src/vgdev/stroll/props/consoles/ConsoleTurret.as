@@ -55,6 +55,7 @@ package vgdev.stroll.props.consoles
 			turret.nozzle.spawn.visible = false;
 		}
 		
+		// update cooldown
 		override public function step():Boolean
 		{
 			if (cdCount > 0)
@@ -64,20 +65,22 @@ package vgdev.stroll.props.consoles
 		
 		/**
 		 * Performs some sort of functionality based on keys HELD by this console's active player
-		 * @param	keys	array with indexes [0-4] representing R, U, L, D, Action
+		 * @param	keys	boolean array with indexes [0-4] representing R, U, L, D, Action
 		 */
 		override public function holdKey(keys:Array):void
 		{
+			if (hp == 0) return;
+			
 			// turret aiming
 			for (var i:int = 0; i < 4; i++)
 			{
-				if (keys[i])
+				if (keys[i])	// if the key is being held down
 				{
-					if (controlIDs[0] == i || controlIDs[1] == i)
+					if (controlIDs[0] == i || controlIDs[1] == i)		// if the key is one of the keys mapped to -rotate the turret
 					{
 						traverse(-1);
 					}
-					else if (controlIDs[2] == i || controlIDs[3] == i)
+					else if (controlIDs[2] == i || controlIDs[3] == i)	// if the key is one of the keys mapped to +rotate the turret
 					{
 						traverse(1);
 					}

@@ -26,6 +26,10 @@ package vgdev.stroll.props.projectiles
 			hp = hpMax = System.setAttribute("hp", attributes, 1);
 		}
 		
+		/**
+		 * Get how much hardened HP this projectile will remove (not how much damage it will deal to non-projectiles)
+		 * @return		pdmg
+		 */
 		public function getDamage():int
 		{
 			return pdmg;

@@ -23,6 +23,7 @@ package vgdev.stroll.managers
 		
 		/**
 		 * Called once per frame by ContainerGame
+		 * Step all of the objects in objArray (and stop keeping track of those that are completed)
 		 */
 		public function step():void
 		{
@@ -54,11 +55,20 @@ package vgdev.stroll.managers
 		
 		/**
 		 * Get the number of objects managed by this manager
-		 * @return				How many objects are in this manager
+		 * @return	How many objects are in this manager
 		 */
 		public function numObjects():int
 		{
 			return objArray.length;
+		}
+		
+		/**
+		 * Get if the number of objects managed by this manager is more than 0
+		 * @return	true if objArray.length > 0
+		 */
+		public function hasObjects():Boolean
+		{
+			return objArray.length > 0;
 		}
 		
 		/**
@@ -107,12 +117,13 @@ package vgdev.stroll.managers
 		public function isNearOther(o:ABST_Object, distance:Number):Boolean
 		{
 			var other:ABST_Object;
+			var dist:Number;
 			for (var i:int = 0; i < objArray.length; i++)
 			{
 				other = objArray[i];
 				if (!other.isActive())
 					continue;
-				var dist:Number = System.getDistance(o.mc_object.x, o.mc_object.y, other.mc_object.x, other.mc_object.y);
+				dist = System.getDistance(o.mc_object.x, o.mc_object.y, other.mc_object.x, other.mc_object.y);
 				if (dist != 0 && dist < distance)
 					return true;
 			}
@@ -120,7 +131,34 @@ package vgdev.stroll.managers
 		}
 		
 		/**
-		 * Silently all objects managed by this manager
+		 * Returns a sorted array of the objects in this manager within distance of the origin
+		 * @param	o			the origin ABST_Object
+		 * @param	distance	the distance, a Number
+		 * @return				Array containing objects from objArray within range, sorted in ascending order
+		 */
+		public function getNearby(o:ABST_Object, distance:Number):Array
+		{
+			var nearby:Array = [];
+			var other:ABST_Object;
+			var dist:Number;
+			for (var i:int = 0; i < objArray.length; i++)
+			{
+				other = objArray[i];
+				if (!other.isActive())
+					continue;
+				dist = System.getDistance(o.mc_object.x, o.mc_object.y, other.mc_object.x, other.mc_object.y);
+				if (dist != 0 && dist < distance)
+				{
+					other.nearDistance = dist;
+					nearby.push(other);
+				}
+			}
+			nearby.sortOn("nearDistance", Array.NUMERIC);
+			return nearby;
+		}
+		
+		/**
+		 * Silently kill all objects managed by this manager
 		 */
 		public function killAll():void
 		{

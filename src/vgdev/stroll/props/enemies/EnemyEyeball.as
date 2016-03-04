@@ -21,7 +21,7 @@ package vgdev.stroll.props.enemies
 		// animate the eye
 		override public function step():Boolean 
 		{
-			if (animationCooldown > 0)
+			if (isActive() && animationCooldown > 0)
 				if (--animationCooldown == 0)
 					mc_object.base.gotoAndStop(1);
 			return super.step();
@@ -29,8 +29,8 @@ package vgdev.stroll.props.enemies
 		
 		override protected function onFire():void 
 		{
-			animationCooldown = 7;
-			mc_object.base.gotoAndStop(2);
+			mc_object.base.gotoAndStop(2);		// make the eye light up
+			animationCooldown = 7;				// the eye will go back to normal after 7 frames
 		}
 	}
 }

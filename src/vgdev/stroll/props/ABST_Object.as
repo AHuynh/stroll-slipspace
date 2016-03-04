@@ -25,6 +25,9 @@ package vgdev.stroll.props
 		
 		/// Helper for use in ManagerDepth
 		public var depth:Number;
+		
+		/// Helper for use in ABST_Manager.getNearby
+		public var nearDistance:Number = 0;
 
 		/**
 		 * Should only be called through super(), never instantiated
@@ -46,6 +49,10 @@ package vgdev.stroll.props
 			return completed;
 		}
 		
+		/**
+		 * Returns if this object is not slated for deletion
+		 * @return			true if this object should still be in the game doing things
+		 */
 		public function isActive():Boolean
 		{
 			return !completed && mc_object != null;
@@ -85,10 +92,33 @@ package vgdev.stroll.props
 			return hp == 0;
 		}
 		
+		public function getHP():Number
+		{
+			return hp;
+		}
+		
+		public function getHPmax():Number
+		{
+			return hpMax;
+		}
+		
+		/**
+		 * Update this object's depth and have ManagerDepth update the depths of all depth-managed objects
+		 */
 		public function updateDepth():void
 		{
 			depth = mc_object.y;
 			cg.managerMap[System.M_DEPTH].updateDepths();
+		}
+		
+		/**
+		 * Helper to get the distance from this object to another
+		 * @param	other		the other ABST_Obect
+		 * @return				the distance in pixels
+		 */
+		public function getDistance(other:ABST_Object):Number
+		{
+			return System.getDistance(mc_object.x, mc_object.y, other.mc_object.x, other.mc_object.y);
 		}
 		
 		/**
