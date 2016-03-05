@@ -55,17 +55,14 @@
 		 * A MovieClip containing all of a Stroll level
 		 * @param	eng			A reference to the Engine
 		 */
-		public function ContainerGame(eng:Engine, isMenu:Boolean = false)
+		public function ContainerGame(eng:Engine)
 		{
 			super();
 			engine = eng
-			
-			if (!isMenu)		// super hacky and should probably be changed
-			{
-				game = new SWC_Game();
-				addChild(game);
-				game.addEventListener(Event.ADDED_TO_STAGE, init);
-			}
+
+			game = new SWC_Game();
+			addChild(game);
+			game.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
 		protected function init(e:Event):void
@@ -74,9 +71,7 @@
 			
 			// init the GUI
 			gui = new SWC_GUI();	
-			engine.addChild(gui);
-			gui.x += System.GAME_OFFSX;
-			gui.y += System.GAME_OFFSY;
+			engine.superContainer.mc_container.addChild(gui);
 			gui.mc_pause.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
@@ -95,6 +90,7 @@
 			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, System.keyMap0),
 					   new Player(this, game.mc_ship.mc_player1, shipHullMask, 1, System.keyMap1)];
 
+			// placeholder ship
 			/*consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
 											players, [-120, 120], [1, -1, 3, -1]));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console02, game.mc_ship.turret_1,		// left
@@ -108,6 +104,7 @@
 			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));*/
 			
+			// Eagle
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
 											players, [-120, 120], [1, -1, 3, -1]));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
@@ -164,7 +161,7 @@
 			for (i = 0; i < consoles.length; i++)
 				managerMap[System.M_PROXIMITY].addObject(consoles[i]);
 			
-			SoundManager.playBGM("bgm_calm", .4);
+			//SoundManager.playBGM("bgm_calm", .4);
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 		}

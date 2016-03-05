@@ -60,6 +60,7 @@
     <element path="swc\SWC_SlipdriveArrow.swc" />
     <element path="swc\SWC_Decor.swc" />
     <element path="swc\SWC_Debug.swc" />
+    <element path="swc\SWC_Mask.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

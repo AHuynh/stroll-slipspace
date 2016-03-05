@@ -17,6 +17,8 @@ package vgdev.stroll
 		private var gameState:int = STATE_MENU;
 		private var container:MovieClip;
 		
+		public var superContainer:SWC_Mask;
+		
 		public const RET_NORMAL:int = 0;
 		public const RET_RESTART:int = 1;
 		public const RET_NEXT:int = 2;
@@ -36,8 +38,19 @@ package vgdev.stroll
 		 */
 		private function onAddedToStage(e:Event):void
 		{
-			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);			
-			switchToContainer(new ContainerMenu(this), System.GAME_OFFSX, System.GAME_OFFSY);
+			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			superContainer = new SWC_Mask();
+			superContainer.x += System.GAME_OFFSX;
+			superContainer.y += System.GAME_OFFSY;
+			addChild(superContainer);
+			
+			superContainer.addEventListener(Event.ADDED_TO_STAGE, onReady);			
+		}
+		
+		private function onReady(e:Event):void
+		{
+			superContainer.removeEventListener(Event.ADDED_TO_STAGE, onReady);
+			switchToContainer(new ContainerMenu(this), 0, 0);
 		}
 		
 		/**
@@ -47,30 +60,30 @@ package vgdev.stroll
 		 */
 		public function step(e:Event):void
 		{
-			if (container.step())
+			if (container != null && container.step())
 			{
 				SoundManager.shutUp();	
 				switch (gameState)			// determine which new container to go to next
 				{
 					case STATE_MENU:
-						switchToContainer(new ContainerGame(this), System.GAME_OFFSX, System.GAME_OFFSY);
+						switchToContainer(new ContainerGame(this), 0, 0);
 						gameState = STATE_GAME;
 						//trace("[ENGINE] Starting game!");
 					break;
 					case STATE_GAME:
 						if (returnCode == RET_NORMAL)
 						{
-							switchToContainer(new ContainerMenu(this), System.GAME_OFFSX, System.GAME_OFFSY);
+							switchToContainer(new ContainerMenu(this), 0, 0);
 							gameState = STATE_MENU;
 						}
 						else if (returnCode == RET_RESTART)
 						{
-							switchToContainer(new ContainerGame(this), System.GAME_OFFSX, System.GAME_OFFSY);
+							switchToContainer(new ContainerGame(this), 0, 0);
 							gameState = STATE_GAME;
 						}
 						else if (returnCode == RET_NEXT)
 						{
-							switchToContainer(new ContainerGame(this), System.GAME_OFFSX, System.GAME_OFFSY);
+							switchToContainer(new ContainerGame(this), 0, 0);
 							gameState = STATE_GAME;
 						}
 					break;
@@ -86,15 +99,15 @@ package vgdev.stroll
 		 */
 		private function switchToContainer(containerNew:ABST_Container, offX:Number = 0, offY:Number = 0):void
 		{
-			if (container && contains(container))
+			if (container != null && superContainer.mc_container.contains(container))
 			{
-				removeChild(container);
+				superContainer.mc_container.removeChild(container);
 				container = null;
 			}
 			container = containerNew;
 			container.x += offX;
 			container.y += offY;
-			addChild(container);
+			superContainer.mc_container.addChild(container);
 			
 			returnCode = RET_NORMAL;
 		}
