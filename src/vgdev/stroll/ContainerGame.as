@@ -191,20 +191,11 @@
 		/**
 		 * Add a decoration object to the game
 		 * @param	style			The label the SWC_Decor should use
-		 * @param	params			Object map with additional attributes (x, y, dx, dy, scale)
+		 * @param	params			Object map with additional attributes
 		 */
 		public function addDecor(style:String, params:Object = null):void
 		{
-			var deco:Decor = new Decor(this, new SWC_Decor(), style);
-			if (params != null)
-			{
-				deco.mc_object.x = System.setAttribute("x", params, 0);
-				deco.mc_object.y = System.setAttribute("y", params, 0);
-				deco.dx = System.setAttribute("dx", params, 0);
-				deco.dy = System.setAttribute("dy", params, 0);
-				deco.setScale(System.setAttribute("scale", params, 1));
-			}
-			addToGame(deco, System.M_DECOR);
+			addToGame(new Decor(this, new SWC_Decor(), style, params), System.M_DECOR);
 		}
 
 		/**
