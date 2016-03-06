@@ -46,9 +46,10 @@ package vgdev.stroll.props
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
 				
-				if (System.outOfBounds(mc_object.x, LIM_X_MIN, LIM_X_MAX, BUFFER) || System.outOfBounds(mc_object.y, LIM_Y_MIN, LIM_Y_MAX, BUFFER))
+				if (System.directionalOutOfBounds(mc_object.x, dx, LIM_X_MIN, LIM_X_MAX, BUFFER) ||
+					System.directionalOutOfBounds(mc_object.y, dy, LIM_Y_MIN, LIM_Y_MAX, BUFFER))
 				{
-					destroy();
+					destroySilently();
 				}
 			}
 			else	// ship was hit
@@ -59,11 +60,18 @@ package vgdev.stroll.props
 			}
 		}
 		
+		/**
+		 * Get the SYSTEM affiliation of this enemy
+		 * @return		System.AFFIL_(something)
+		 */
 		public function getAffiliation():int
 		{
 			return affiliation;
 		}
 		
+		/**
+		 * Actions to perform when this enemy collides with the ship
+		 */
 		protected function onShipHit():void
 		{
 			// -- override this function

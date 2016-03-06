@@ -22,7 +22,7 @@ package vgdev.stroll.props.consoles
 		
 		override protected function updateHUD(isActive:Boolean):void
 		{
-			if (isActive)
+			if (isActive())
 			{
 				if (++ready == 2)
 					cg.setComplete();

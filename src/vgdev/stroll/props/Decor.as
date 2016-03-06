@@ -16,12 +16,12 @@ package vgdev.stroll.props
 		 * repair
 		 */
 		
+		/// If true, calculate when to remove the decor dynamically
+		private var codeAnimation:Boolean = false;
+		
 		private var dx:Number = 0;
 		private var dy:Number = 0;
 		private var dr:Number = 0;
-		
-		/// If true, calculate when to remove the decor dynamically
-		private var codeAnimation:Boolean = false;
 		
 		private var alphaDelay:int = 0;
 		private var alphaDelta:Number = 0;		// should be non-positive

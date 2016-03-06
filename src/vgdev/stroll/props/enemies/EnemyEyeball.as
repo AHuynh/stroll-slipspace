@@ -13,10 +13,10 @@ package vgdev.stroll.props.enemies
 	{
 		private var animationCooldown:int = 0;
 		
-		public function EnemyEyeball(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, attributes:Object) 
+		public function EnemyEyeball(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
-			super(_cg, _mc_object, _pos, attributes);
-			mc_object.gotoAndStop("eye");
+			super(_cg, _mc_object, attributes);
+			setStyle("eye");
 		}
 		
 		// animate the eye
@@ -30,6 +30,7 @@ package vgdev.stroll.props.enemies
 		
 		override protected function onFire():void 
 		{
+			if (!isActive()) return;
 			mc_object.base.gotoAndStop(2);		// make the eye light up
 			animationCooldown = 7;				// the eye will go back to normal after 7 frames
 		}

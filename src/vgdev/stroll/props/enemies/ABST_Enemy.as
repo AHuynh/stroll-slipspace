@@ -24,6 +24,7 @@ package vgdev.stroll.props.enemies
 				
 		protected var dX:Number = 0;
 		protected var dY:Number = 0;
+		protected var dR:Number = 0;
 		
 		protected var spd:Number = 1;			// speed (in px) at which to move at when going to a target
 		protected var drift:Number = .25;		// speed (in px) at which to move at when idling
@@ -38,16 +39,40 @@ package vgdev.stroll.props.enemies
 		/// Amount of damage to give its projectiles
 		protected var attackStrength:Number;
 		
-		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, attributes:Object) 
+		// Amound of damage to deal to the ship if the enemy itself collides with it
+		protected var attackCollide:Number;
+		
+		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
-			super(_cg, _mc_object, _pos, System.AFFIL_ENEMY);
+			super(_cg, _mc_object, new Point(System.setAttribute("x", attributes, 0), System.setAttribute("y", attributes, 0)), System.AFFIL_ENEMY);
 			
-			mc_object.x = _pos.x;
-			mc_object.y = _pos.y;
-			
+			dX = System.setAttribute("dx", attributes, 0);
+			dY = System.setAttribute("dy", attributes, 0);
+			dR = System.setAttribute("dr", attributes, 0);
+			mc_object.rotation = System.setAttribute("rot", attributes, 0);
+			setScale(System.setAttribute("scale", attributes, 1));
+				
 			attackColor = System.setAttribute("attackColor", attributes, System.COL_WHITE);
 			attackStrength = System.setAttribute("attackStrength", attributes, 8);
+			attackCollide = System.setAttribute("attackCollide", attributes, 15);
+			
+			if (attributes["tint"] != null)
+			{
+				var col:uint = attributes["tint"] == "random" ? System.getRandCol() : attributes["tint"];
+				var ct:ColorTransform = new ColorTransform();
+				ct.color = col;
+				//ct.alphaMultiplier = .4;
+				mc_object.base.transform.colorTransform = ct;
+			}
+			
 			hpMax = hp = System.setAttribute("hp", attributes, 30);
+		}
+		
+		protected function setStyle(style:String):void
+		{
+			mc_object.gotoAndStop(style);
+			mc_object.spawn.visible = false;
+			mc_object.hitFlash.alpha = 0;
 		}
 		
 		override public function step():Boolean
@@ -55,17 +80,24 @@ package vgdev.stroll.props.enemies
 			if (!completed)
 			{
 				updatePosition(dX, dY);
+				if (!isActive())		// quit if updating position caused this to die
+					return completed;
+				updateRotation(dR);
 				maintainRange();
 				updateWeapons();		
-				
-				// update red 'damage taken' flash; reduce its opacity
-				if (colAlpha > 0)
-				{
-					colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
-					mc_object.hitFlash.alpha = colAlpha;
-				}
+				updateDamageFlash();				
 			}
 			return completed;
+		}
+		
+		protected function updateDamageFlash():void
+		{
+			// update red 'damage taken' flash; reduce its opacity
+			if (colAlpha > 0)
+			{
+				colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
+				mc_object.hitFlash.alpha = colAlpha;
+			}
 		}
 		
 		/**
@@ -93,6 +125,11 @@ package vgdev.stroll.props.enemies
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
 			}
+		}
+		
+		override protected function onShipHit():void 
+		{
+			cg.ship.damage(attackCollide);
 		}
 		
 		/**

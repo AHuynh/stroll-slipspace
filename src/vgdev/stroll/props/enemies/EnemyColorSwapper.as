@@ -17,9 +17,9 @@ package vgdev.stroll.props.enemies
 		protected var colorCooldown:int = 0;
 		protected const COLOR_COOLDOWN:int = 360;
 		
-		public function EnemyColorSwapper(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, attributes:Object) 
+		public function EnemyColorSwapper(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
-			super(_cg, _mc_object, _pos, attributes);
+			super(_cg, _mc_object, attributes);
 			
 			cooldowns[0] = int(cooldowns[0] * 1.2);
 			ranges = [340, 530]

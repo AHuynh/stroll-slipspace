@@ -1,0 +1,21 @@
+{
+  "settings": {
+	"id": "testSurvive",
+	"background": "default",
+	"difficulty_range": [0, 4],
+    "jamming_min": 0,
+    "slip_range": 15.0,
+	"type": "Debris"
+  },
+  "waves": [
+	{
+		"time": 45,
+		"recur": 90,
+		"repeat": 4,
+		"spawnables":
+			[
+				{"type": "GeometricAnomaly"}
+			]
+	}
+  ]
+}

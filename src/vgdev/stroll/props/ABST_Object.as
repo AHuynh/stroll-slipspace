@@ -74,9 +74,22 @@ package vgdev.stroll.props
 		 */
 		protected function updatePosition(dx:Number, dy:Number):void
 		{
-			mc_object.x += dx;
-			mc_object.y += dy;
-			//updateDepth();		// only call if needed
+			if (mc_object != null)
+			{
+				mc_object.x += dx;
+				mc_object.y += dy;
+				//updateDepth();		// only call if needed
+			}
+		}
+		
+		/**
+		 * Update this object's rotation
+		 * @param	dr		the amount to change in the clockwise direction, in degrees
+		 */
+		protected function updateRotation(dr:Number):void
+		{
+			if (mc_object != null)
+				mc_object.rotation = (mc_object.rotation + dr) % 360;
 		}
 		
 		/**

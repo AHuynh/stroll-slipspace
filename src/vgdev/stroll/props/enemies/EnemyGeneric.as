@@ -5,15 +5,28 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.ContainerGame;
 	
 	/**
-	 * Same as ABST_Enemy
+	 * An 'dumb' enemy with no weapons (i.e. debris)
 	 * @author Alexander Huynh
 	 */
 	public class EnemyGeneric extends ABST_Enemy 
 	{
-		
-		public function EnemyGeneric(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, attributes:Object) 
+		public function EnemyGeneric(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
-			super(_cg, _mc_object, _pos, attributes);
+			super(_cg, _mc_object, attributes);
+		}
+		
+		// no weapons or distance maintaining on generic enemy
+		override public function step():Boolean
+		{
+			if (!completed)
+			{
+				updatePosition(dX, dY);
+				if (!isActive())		// quit if updating position caused this to die
+					return completed;
+				updateRotation(dR);	
+				updateDamageFlash();				
+			}
+			return completed;
 		}
 	}
 }

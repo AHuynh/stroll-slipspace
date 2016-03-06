@@ -24,6 +24,8 @@ package vgdev.stroll.support
 		private var en_fire_lite:Class;
 		[Embed(source="../../../../json/en_fire_eyes.json", mimeType="application/octet-stream")]
 		private var en_fire_eyes:Class;
+		[Embed(source="../../../../json/en_testSurvive.json", mimeType="application/octet-stream")]
+		private var en_testSurvive:Class;
 		
 		/// A map of level names (ex: "test") to level objects
 		private var parsedEncounters:Object;
@@ -49,11 +51,12 @@ package vgdev.stroll.support
 												JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
 												JSON.parse(new en_fire_lite()),
-												JSON.parse(new en_fire_eyes())
+												JSON.parse(new en_fire_eyes()),
+												JSON.parse(new en_testSurvive())
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_test())];
+											rawEncountersJSON = [JSON.parse(new en_testSurvive())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -73,6 +76,10 @@ package vgdev.stroll.support
 					var waveObj:Object = new Object();
 					waveObj["time"] = waveJSON["time"];
 					waveObj["spawnables"] = waveJSON["spawnables"];
+					if (waveJSON["recur"] != null)
+						waveObj["recur"] = waveJSON["recur"];
+					if (waveJSON["repeat"] != null)
+						waveObj["repeat"] = waveJSON["repeat"];
 					parsedEncounter["spawnables"].push(waveObj);
 				}
 			
@@ -92,31 +99,55 @@ package vgdev.stroll.support
 			// if we're at the next time to spawn things
 			if (++counter >= counterNext)
 			{				
-				// iterate over things to spawn
-				for each (var spawnItem:Object in waves[waveIndex]["spawnables"])
+				var repeat:int = waves[waveIndex]["repeat"] == null ? 1 : waves[waveIndex]["repeat"];
+				for (var r:int = 0; r < repeat; r++)
 				{
-					var type:String = spawnItem["type"];
-					var pos:Point = new Point(spawnItem["x"], spawnItem["y"]);
-					var col:uint = System.stringToCol(spawnItem["color"]);
-
-					var spawn:ABST_Object;
-					var manager:int;
-					switch (type)
+					// iterate over things to spawn
+					for each (var spawnItem:Object in waves[waveIndex]["spawnables"])
 					{
-						case "Eye":
-							spawn = new EnemyEyeball(cg, new SWC_Enemy(), pos, { "attackColor": col } );
-							manager = System.M_ENEMY;
-						break;
-						
+						var type:String = spawnItem["type"];
+						var pos:Point = new Point(spawnItem["x"] + System.GAME_OFFSX, spawnItem["y"] + System.GAME_OFFSY);
+						var col:uint = System.stringToCol(spawnItem["color"]);
+
+						var spawn:ABST_Object;
+						var manager:int;
+						switch (type)
+						{
+							case "Eye":
+								spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
+																				"x":pos.x,
+																				"y":pos.y,
+																				"attackColor": col,
+																				"hp": 30
+																				});
+								manager = System.M_ENEMY;
+							break;
+							case "GeometricAnomaly":
+								spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
+																						"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																						"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																						"tint": "random",
+																						"dx": -3 - System.getRandNum(0, 1),
+																						"hp": 12
+																						});
+								manager = System.M_ENEMY;
+							break;
+							
 						case "Fire":
-							spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
-							manager = System.M_FIRE;
-						break;
+								pos.x -= System.GAME_OFFSX;
+								pos.y -= System.GAME_OFFSY;
+								spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
+								manager = System.M_FIRE;
+							break;
+						}
+						cg.addToGame(spawn, manager);					
 					}
-					cg.addToGame(spawn, manager);					
 				}
-				if (++waveIndex < waves.length)
+				if (waves[waveIndex]["recur"] != null)			// redo the current wave if "recur" exists
+					counterNext = waves[waveIndex]["recur"];
+				else if (++waveIndex < waves.length)
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave
+				counter = 0;
 			}
 
 			/*switch (timeline)

@@ -91,10 +91,11 @@ package vgdev.stroll.support
 				mc_shield.base.alpha = .75;
 			else if (mc_shield.base.alpha != 0)
 			{
-				cg.setHitMask(true);
 				mc_shield.fx.gotoAndPlay("offline");
 				mc_shield.base.alpha = 0;
 			}
+			
+			cg.setHitMask(shield == 0);
 				
 			shieldCD = SHIELD_CD;
 			shieldReCurr = shieldRecharge;

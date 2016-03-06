@@ -194,6 +194,20 @@ package vgdev.stroll
 			return (val < low - buffer || val > high + buffer);
 		}
 		
+		/**
+		 * Determines if val is not between the two limits, with an optional buffer; but only if val is approaching the limit
+		 * @param	val				The original value
+		 * @param	dVal			The change in the original value
+		 * @param	low				The lower limit
+		 * @param	high			The upper limit
+		 * @param	buffer			Buffer to subtract from low, add to high
+		 * @return					val < low - buffer || val > high + buffer
+		 */
+		public static function directionalOutOfBounds(val:Number, dVal:Number, low:Number, high:Number, buffer:Number = 0):Boolean
+		{
+			return outOfBounds(val, low, high, buffer) && ((val < low && dVal < 0) || (val > high && dVal > 0))
+		}
+		
 		// TODO fix
 		public static function formatDecimal(num:Number, places:int):Number
 		{
