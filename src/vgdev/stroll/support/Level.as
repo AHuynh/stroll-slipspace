@@ -100,6 +100,7 @@ package vgdev.stroll.support
 			if (++counter >= counterNext)
 			{				
 				var repeat:int = waves[waveIndex]["repeat"] == null ? 1 : waves[waveIndex]["repeat"];
+				var waveColor:uint = System.getRandCol();
 				for (var r:int = 0; r < repeat; r++)
 				{
 					// iterate over things to spawn
@@ -126,7 +127,7 @@ package vgdev.stroll.support
 								spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
 																						"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
 																						"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
-																						"tint": "random",
+																						"tint": waveColor,
 																						"dx": -3 - System.getRandNum(0, 1),
 																						"hp": 12
 																						});

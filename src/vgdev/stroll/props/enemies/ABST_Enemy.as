@@ -42,6 +42,8 @@ package vgdev.stroll.props.enemies
 		// Amound of damage to deal to the ship if the enemy itself collides with it
 		protected var attackCollide:Number;
 		
+		protected var selfColor:uint = System.COL_WHITE;
+		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			super(_cg, _mc_object, new Point(System.setAttribute("x", attributes, 0), System.setAttribute("y", attributes, 0)), System.AFFIL_ENEMY);
@@ -57,13 +59,7 @@ package vgdev.stroll.props.enemies
 			attackCollide = System.setAttribute("attackCollide", attributes, 15);
 			
 			if (attributes["tint"] != null)
-			{
-				var col:uint = attributes["tint"] == "random" ? System.getRandCol() : attributes["tint"];
-				var ct:ColorTransform = new ColorTransform();
-				ct.color = col;
-				//ct.alphaMultiplier = .4;
-				mc_object.base.transform.colorTransform = ct;
-			}
+				selfColor = attributes["tint"] == "random" ? System.getRandCol() : attributes["tint"];
 			
 			hpMax = hp = System.setAttribute("hp", attributes, 30);
 		}
@@ -73,6 +69,16 @@ package vgdev.stroll.props.enemies
 			mc_object.gotoAndStop(style);
 			mc_object.spawn.visible = false;
 			mc_object.hitFlash.alpha = 0;
+			
+			if (selfColor != System.COL_WHITE)
+			{
+				var ct:ColorTransform = new ColorTransform();
+				ct.color = selfColor;
+				ct.alphaMultiplier = System.getRandNum(.2, .5);
+				mc_object.colorOverlay.transform.colorTransform = ct;
+			}
+			else
+				mc_object.colorOverlay.visible = false;
 		}
 		
 		override public function step():Boolean
@@ -129,7 +135,7 @@ package vgdev.stroll.props.enemies
 		
 		override protected function onShipHit():void 
 		{
-			cg.ship.damage(attackCollide);
+			cg.ship.damage(attackCollide, selfColor);
 		}
 		
 		/**

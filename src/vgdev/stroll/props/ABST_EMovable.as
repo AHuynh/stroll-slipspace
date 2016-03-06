@@ -7,7 +7,7 @@ package vgdev.stroll.props
 	
 	/**
 	 * Object that can move outside the spaceship.
-	 * Destroys self if it leaves the game area or hits the ship.
+	 * Destroys self if it is leaving the game area or hits the ship.
 	 * @author Alexander Huynh
 	 */
 	public class ABST_EMovable extends ABST_Object 
