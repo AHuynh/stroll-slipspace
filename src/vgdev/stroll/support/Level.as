@@ -40,6 +40,8 @@ package vgdev.stroll.support
 		private var counter:int = 0;		// keep track of frames elapsed since current encounter started
 		private var counterNext:int = 0;	// the "time" that the next wave spawns
 		
+		private var TAILSmessage:String;
+		
 		public function Level(_cg:ContainerGame)
 		{
 			cg = _cg;
@@ -56,7 +58,7 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_testSurvive())];
+											//rawEncountersJSON = [JSON.parse(new en_testSurvive())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -68,6 +70,7 @@ package vgdev.stroll.support
 				parsedEncounter["jamming_min"] = rawEncounter["settings"]["jamming_min"];
 				parsedEncounter["difficulty_min"] = rawEncounter["settings"]["difficulty_range"][0];
 				parsedEncounter["difficulty_max"] = rawEncounter["settings"]["difficulty_range"][1];
+				parsedEncounter["TAILS"] = rawEncounter["settings"]["TAILS"];
 				
 				// set up object waves
 				parsedEncounter["spawnables"] = [];
@@ -217,10 +220,16 @@ package vgdev.stroll.support
 			
 			cg.ship.slipRange = encounter["slip_range"];
 			cg.ship.jammable = encounter["jamming_min"];
+			TAILSmessage = encounter["TAILS"];
 
 			counter = 0;			
 			
 			return difficultyLevel > 5;		// TODO end state
+		}
+		
+		public function getTAILS():String
+		{
+			return TAILSmessage;
 		}
 	}
 }

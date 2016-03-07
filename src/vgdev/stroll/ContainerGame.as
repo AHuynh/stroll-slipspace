@@ -30,6 +30,7 @@
 		public var level:Level;
 		public var ship:Ship;
 		public var camera:Cam;
+		public var tails:TAILS;
 		
 		/// Whether or not the game is paused
 		public var isPaused:Boolean = false;
@@ -50,6 +51,10 @@
 		
 		public var managers:Array = [];
 		public var managerMap:Object = new Object();
+		
+		// TEMPORARY
+		private const TAILS_DEFAULT:String = "Heya! I'm T.A.I.L.S., your on-board Artificial Intelligence.\n\n" +
+											 "Are both of you ready? Let's hurry to the next slipsector!";
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -73,9 +78,11 @@
 			gui = new SWC_GUI();	
 			engine.superContainer.mc_container.addChild(gui);
 			gui.mc_pause.visible = false;
+			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
 			level = new Level(this);
+			tails = new TAILS(this, gui.mc_tails);
 			
 			game.mc_bg.gotoAndStop("space");
 			
@@ -164,6 +171,9 @@
 			//SoundManager.playBGM("bgm_calm", .4);
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
+			
+			tails.show(TAILS_DEFAULT);
+			isPaused = true;
 		}
 		
 		/**
@@ -219,13 +229,22 @@
 		
 		/**
 		 * Callback when a player not at a console performs their 'USE' action
-		 * Attempts to activate (set the player to be using) the appropriate console
+		 * If TAILS is up, acknowledge.
+		 * Otherwise, attempts to activate (set the player to be using) the appropriate console
 		 * @param	p		the Player that is trying to USE something
 		 */
 		public function onAction(p:Player):void
 		{
-			for (var i:int = 0; i < consoles.length; i++)
-				consoles[i].onAction(p);
+			if (tails.isActive())
+			{
+				if (tails.acknowledge(p.playerID))
+					isPaused = false;
+			}
+			else
+			{
+				for (var i:int = 0; i < consoles.length; i++)
+					consoles[i].onAction(p);
+			}
 		}
 		
 		/**
@@ -272,6 +291,11 @@
 			{
 				destroy(null);
 				completed = true;
+			}
+			else
+			{
+				tails.show(level.getTAILS());
+				isPaused = true;
 			}
 		}
 

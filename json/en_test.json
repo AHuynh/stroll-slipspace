@@ -5,7 +5,8 @@
 	"difficulty_range": [0, 4],
     "jamming_min": 0,
     "slip_range": 9.0,
-	"type": "Enemies"
+	"type": "Enemies",
+	"TAILS": "Two monsters are on the way. Show 'em who's boss!"
   },
   "waves": [
 	{

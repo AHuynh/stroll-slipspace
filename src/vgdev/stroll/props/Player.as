@@ -209,6 +209,13 @@ package vgdev.stroll.props
 		 */
 		public function downKeyboard(e:KeyboardEvent):void
 		{
+			if (cg.isPaused)		
+			{
+				if (e.keyCode == KEY_ACTION && cg.tails.isActive())		// only allow acknowledgement to go through
+					cg.onAction(this);
+				return;
+			}
+			
 			if (hp == 0) return;
 			
 			var pressed:Boolean = false;

@@ -5,7 +5,8 @@
 	"difficulty_range": [0, 4],
     "jamming_min": 2,
     "slip_range": 12.0,
-	"type": "Enemies"
+	"type": "Enemies",
+	"TAILS": "I think I'm detecting something outside the ship.\n\nGet the turrets ready!"
   },
   "waves": [
 	{
