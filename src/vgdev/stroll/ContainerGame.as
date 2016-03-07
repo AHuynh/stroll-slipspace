@@ -259,6 +259,7 @@
 			level.step();
 			ship.step();
 			camera.step();
+			tails.step();
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
@@ -294,8 +295,8 @@
 			}
 			else
 			{
-				tails.show(level.getTAILS());
-				isPaused = true;
+				tails.show(level.getTAILS(), 120);
+				//isPaused = true;		// TODO pause if big
 			}
 		}
 
