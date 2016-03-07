@@ -30,8 +30,8 @@ package vgdev.stroll.support
 		/// A map of level names (ex: "test") to level objects
 		private var parsedEncounters:Object;
 		
-		/// The current difficulty rating, used to determine from which encounters to choose from
-		private var difficultyLevel:int = 0;
+		/// The current sector, [0-12]
+		private var sectorIndex:int = 0;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -193,17 +193,16 @@ package vgdev.stroll.support
 		}
 
 		/**
-		 * Load the next wave (encounter)
-		 * @param	addDiff		amount of difficulty to add to the ongoing difficulty counter
-		 * @return				true if this was the last wave in the game
+		 * Load the next sector (encounter)
+		 * @return			true if this was the last sector in the game
 		 */
-		public function nextWave(addDiff:int = 1):Boolean
+		public function nextSector():Boolean
 		{
-			difficultyLevel += addDiff;
+			sectorIndex++;
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (!System.outOfBounds(difficultyLevel, e["difficulty_min"], e["difficulty_max"]))
+				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
 					choices.push(e);
 			}
 			
@@ -222,9 +221,12 @@ package vgdev.stroll.support
 			cg.ship.jammable = encounter["jamming_min"];
 			TAILSmessage = encounter["TAILS"];
 
-			counter = 0;			
+			counter = 0;					// reset time elapsed in this encounter		
 			
-			return difficultyLevel > 5;		// TODO end state
+			// update progress meter
+			cg.gui.mc_progress.setSectorProgress(sectorIndex);
+			
+			return sectorIndex > 12;		// TODO end state
 		}
 		
 		public function getTAILS():String

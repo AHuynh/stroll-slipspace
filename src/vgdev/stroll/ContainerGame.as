@@ -288,7 +288,7 @@
 			managerMap[System.M_ENEMY].killAll();
 			
 			// game finished state
-			if (level.nextWave())
+			if (level.nextSector())
 			{
 				destroy(null);
 				completed = true;
