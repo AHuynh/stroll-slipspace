@@ -44,6 +44,7 @@ package vgdev.stroll
 		// timing constants
 		public static const SECOND:int = 30;
 		public static const MINUTE:int = SECOND * 60;
+		public static const TAILS_NORMAL:int = SECOND * 4;
 		
 		// color constants
 		public static const COL_WHITE:uint = 0xFFFFFF;

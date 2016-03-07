@@ -53,8 +53,9 @@
 		public var managerMap:Object = new Object();
 		
 		// TEMPORARY
-		private const TAILS_DEFAULT:String = "Heya! I'm T.A.I.L.S., your on-board Artificial Intelligence.\n\n" +
-											 "Are both of you ready? Let's hurry to the next slipsector!";
+		private const TAILS_DEFAULT:String = "Hey! I'm T.A.I.L.S., your ship's AI.\n\n" +
+											 "I managed to bring some of the ship's systems online. Check them out before we jump.\n\n" +
+											 "OK, are both of you ready?";
 		
 		/**
 		 * A MovieClip containing all of a Stroll level

@@ -16,6 +16,9 @@ package vgdev.stroll.support
 		private var cg:ContainerGame;
 		private var timeline:int = 0;
 		
+		[Embed(source="../../../../json/en_intro_waves.json", mimeType="application/octet-stream")]
+		private var en_intro_waves:Class;
+		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
 		[Embed(source="../../../../json/en_test2.json", mimeType="application/octet-stream")]
@@ -50,6 +53,8 @@ package vgdev.stroll.support
 			
 			// add levels here
 			var rawEncountersJSON:Array =	[	
+												JSON.parse(new en_intro_waves()),
+												
 												JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
 												JSON.parse(new en_fire_lite()),
@@ -58,7 +63,7 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											//rawEncountersJSON = [JSON.parse(new en_testSurvive())];
+											rawEncountersJSON = [JSON.parse(new en_intro_waves())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -77,12 +82,14 @@ package vgdev.stroll.support
 				for each (var waveJSON:Object in rawEncounter["waves"])
 				{
 					var waveObj:Object = new Object();
-					waveObj["time"] = waveJSON["time"];
+					waveObj["time"] = int(waveJSON["time"] * System.SECOND);		// the RELATIVE time to wait since the start of the previous wave
 					waveObj["spawnables"] = waveJSON["spawnables"];
 					if (waveJSON["recur"] != null)
-						waveObj["recur"] = waveJSON["recur"];
+						waveObj["recur"] = waveJSON["recur"];				// loop this wave forever
 					if (waveJSON["repeat"] != null)
-						waveObj["repeat"] = waveJSON["repeat"];
+						waveObj["repeat"] = waveJSON["repeat"];				// spawn the spawnables in this wave 'repeat' times
+					if (waveJSON["TAILS"] != null)
+						waveObj["TAILS"] = waveJSON["TAILS"];				// display a TAILS message
 					parsedEncounter["spawnables"].push(waveObj);
 				}
 			
@@ -101,51 +108,70 @@ package vgdev.stroll.support
 			
 			// if we're at the next time to spawn things
 			if (++counter >= counterNext)
-			{				
+			{
+				//trace("[Level] Starting wave at index", waveIndex);
+				
+				if (waves[waveIndex]["TAILS"] != null)
+					cg.tails.show(waves[waveIndex]["TAILS"], System.TAILS_NORMAL);
+					
 				var repeat:int = waves[waveIndex]["repeat"] == null ? 1 : waves[waveIndex]["repeat"];
+				//trace("[Level]\tEnemies to spawn:", (waves[waveIndex]["spawnables"].length * repeat));
 				var waveColor:uint = System.getRandCol();
-				for (var r:int = 0; r < repeat; r++)
+				if (waves[waveIndex]["spawnables"].length != 0)
 				{
-					// iterate over things to spawn
-					for each (var spawnItem:Object in waves[waveIndex]["spawnables"])
+					for (var r:int = 0; r < repeat; r++)
 					{
-						var type:String = spawnItem["type"];
-						var pos:Point = new Point(spawnItem["x"] + System.GAME_OFFSX, spawnItem["y"] + System.GAME_OFFSY);
-						var col:uint = System.stringToCol(spawnItem["color"]);
-
-						var spawn:ABST_Object;
-						var manager:int;
-						switch (type)
+						// iterate over things to spawn
+						for each (var spawnItem:Object in waves[waveIndex]["spawnables"])
 						{
-							case "Eye":
-								spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
-																				"x":pos.x,
-																				"y":pos.y,
-																				"attackColor": col,
-																				"hp": 30
-																				});
-								manager = System.M_ENEMY;
-							break;
-							case "GeometricAnomaly":
-								spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
-																						"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
-																						"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
-																						"tint": waveColor,
-																						"dx": -3 - System.getRandNum(0, 1),
-																						"hp": 12
-																						});
-								manager = System.M_ENEMY;
-							break;
+							var type:String = spawnItem["type"];
+							var col:uint = System.stringToCol(spawnItem["color"]);
 							
-						case "Fire":
-								pos.x -= System.GAME_OFFSX;
-								pos.y -= System.GAME_OFFSY;
-								spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
-								manager = System.M_FIRE;
-							break;
+							var pos:Point;
+							if (spawnItem["region"] != null)
+								pos = getRandomPointInRegion(spawnItem["region"]).add(new Point(System.GAME_OFFSX, System.GAME_OFFSY));
+							else if (spawnItem["x"] != null && spawnItem["y"] != null)
+								pos = new Point(spawnItem["x"] + System.GAME_OFFSX, spawnItem["y"] + System.GAME_OFFSY);
+							else
+							{
+								pos = new Point();
+								trace("[Level] No spawn location defined for", type);
+							}
+
+							var spawn:ABST_Object;
+							var manager:int;
+							switch (type)
+							{
+								case "Eye":
+									spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
+																					"x":pos.x,
+																					"y":pos.y,
+																					"attackColor": col,
+																					"hp": 30
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "GeometricAnomaly":
+									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
+																							"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																							"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																							"tint": waveColor,
+																							"dx": -3 - System.getRandNum(0, 1),
+																							"hp": 12
+																							});
+									manager = System.M_ENEMY;
+								break;
+								
+							case "Fire":
+									pos.x -= System.GAME_OFFSX;
+									pos.y -= System.GAME_OFFSY;
+									spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
+									manager = System.M_FIRE;
+								break;
+							}
+							cg.addToGame(spawn, manager);					
 						}
-						cg.addToGame(spawn, manager);					
-					}
+					}		
 				}
 				if (waves[waveIndex]["recur"] != null)			// redo the current wave if "recur" exists
 					counterNext = waves[waveIndex]["recur"];
@@ -154,41 +180,11 @@ package vgdev.stroll.support
 				counter = 0;
 			}
 
-			/*switch (timeline)
-			{
-				case 1:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(200, 200), {"attackColor":System.COL_RED}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(180, 190), {"attackColor":System.COL_RED}), System.M_ENEMY);
-				break;
-				case 2:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-100, -250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(100, -250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-100, 250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(100, 250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-				break;
-				case 3:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(300, -320), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(330, -300), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(360, -340), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(360, -240), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(380, -250), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.ship.jammable = 3;
-				break;
-				case 4:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-400, 320), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-330, 300), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-460, 340), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-520, 240), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-380, 250), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-120, 230), {"attackColor":System.COL_RED}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(120, 270), {"attackColor":System.COL_RED}), System.M_ENEMY);
-				break;
-				case 4:
-					var e:ABST_Enemy = new EnemyColorSwapper(cg, new SWC_Enemy, new Point(500, System.getRandNum(-100, 100)), {"attackColor":System.getRandCol(), "attackStrength":10, "hp":300});
-					e.setScale(2);
-					cg.addToGame(e, System.M_ENEMY);
-					cg.ship.jammable = 1;
-				break;
+			/*
+			var e:ABST_Enemy = new EnemyColorSwapper(cg, new SWC_Enemy, new Point(500, System.getRandNum(-100, 100)), {"attackColor":System.getRandCol(), "attackStrength":10, "hp":300});
+			e.setScale(2);
+			cg.addToGame(e, System.M_ENEMY);
+			cg.ship.jammable = 1;
 			}*/
 		}
 
@@ -207,7 +203,10 @@ package vgdev.stroll.support
 			}
 			
 			if (choices.length == 0)		// TODO something when there are no valid encounters
+			{
+				trace("[Level] No suitable encounters found for sector", sectorIndex);
 				return false;
+			}
 
 			var encounter:Object = choices[int(System.getRandInt(0, choices.length - 1))];
 			trace("Starting encounter called: '" + encounter["id"] + "'");
@@ -232,6 +231,29 @@ package vgdev.stroll.support
 		public function getTAILS():String
 		{
 			return TAILSmessage;
+		}
+		
+		/**
+		 * Gets a spawn location in the given region, for the Eagle ship
+		 * @param	region		String indicating region (ex: "top_right")
+		 * @return				Point, a valid spawn point
+		 */
+		private function getRandomPointInRegion(region:String):Point
+		{
+			switch (region)
+			{
+				case "right":			return new Point(System.getRandNum( 290,  400), System.getRandNum(-150,  150));	break;
+				case "top_right":		return new Point(System.getRandNum( 100,  400), System.getRandNum(-250, -170));	break;
+				case "bottom_right":	return new Point(System.getRandNum( 100,  400), System.getRandNum( 170,  250));	break;
+				case "top":				return new Point(System.getRandNum(-250,  250), System.getRandNum(-250, -170));	break;
+				case "bottom":			return new Point(System.getRandNum(-250,  250), System.getRandNum( 170,  250));	break;
+				case "top_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum(-250, -120));	break;
+				case "bottom_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum( 250,  120));	break;
+				case "left":			return new Point(System.getRandNum(-450, -300), System.getRandNum(-200,  200));	break;
+				default:
+					trace("[Level] Region not known:", region);
+					return new Point();
+			}
 		}
 	}
 }
