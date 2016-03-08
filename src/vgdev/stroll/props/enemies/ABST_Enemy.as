@@ -90,12 +90,16 @@ package vgdev.stroll.props.enemies
 			}
 		}
 		
+		/**
+		 * Set the color tint of this enemy, accounting for the 'hit flash'
+		 * @param	col		uint color to use
+		 */
 		protected function setBaseColor(col:uint):void
 		{
 			selfColor = col;			
 			ct.redMultiplier = selfColor >> 16 & 0x0000FF / 255;
-			ct.blueMultiplier = Math.min(selfColor >> 8 & 0x0000FF / 255, (0xFF / 255) * colAlpha);
-			ct.greenMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * colAlpha)
+			ct.greenMultiplier = Math.min(selfColor >> 8 & 0x0000FF / 255, (0xFF / 255) * colAlpha);
+			ct.blueMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * colAlpha)
 			mc_object.base.transform.colorTransform = ct;
 		}
 		
