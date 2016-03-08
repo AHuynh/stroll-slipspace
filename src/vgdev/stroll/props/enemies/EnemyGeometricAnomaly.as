@@ -17,7 +17,6 @@ package vgdev.stroll.props.enemies
 			setStyle("geometricAnomaly");
 			var frame:int = System.getRandInt(1, mc_object.base.totalFrames);
 			mc_object.base.gotoAndStop(frame);
-			mc_object.mc_mask.gotoAndStop(frame);
 		}
 		
 		override public function destroy():void 

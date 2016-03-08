@@ -5,6 +5,8 @@ package vgdev.stroll.support
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.enemies.*;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.support.splevels.ABST_SPLevel;
+	import vgdev.stroll.support.splevels.SPLevelAnomalies;
 	import vgdev.stroll.System;
 	
 	/**
@@ -16,10 +18,13 @@ package vgdev.stroll.support
 		private var cg:ContainerGame;
 		private var timeline:int = 0;
 		
+		// -- EASY REGION ---------------------------------------------------------------------------------------
 		[Embed(source="../../../../json/en_intro_waves.json", mimeType="application/octet-stream")]
 		private var en_intro_waves:Class;
 		[Embed(source="../../../../json/en_intro_squids.json", mimeType="application/octet-stream")]
 		private var en_intro_squids:Class;
+		[Embed(source="../../../../json/en_anomalyfield.json", mimeType="application/octet-stream")]
+		private var en_anomalyfield:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -47,6 +52,8 @@ package vgdev.stroll.support
 		
 		private var TAILSmessage:String;
 		
+		private var spLevel:ABST_SPLevel;	// non-null if using a special level that needs code
+		
 		public function Level(_cg:ContainerGame)
 		{
 			cg = _cg;
@@ -57,6 +64,7 @@ package vgdev.stroll.support
 			var rawEncountersJSON:Array =	[	
 												JSON.parse(new en_intro_waves()),
 												JSON.parse(new en_intro_squids()),
+												JSON.parse(new en_anomalyfield()),
 												
 												JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -66,7 +74,7 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_intro_squids())];
+											rawEncountersJSON = [JSON.parse(new en_anomalyfield())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -79,6 +87,7 @@ package vgdev.stroll.support
 				parsedEncounter["difficulty_min"] = rawEncounter["settings"]["difficulty_range"][0];
 				parsedEncounter["difficulty_max"] = rawEncounter["settings"]["difficulty_range"][1];
 				parsedEncounter["TAILS"] = rawEncounter["settings"]["TAILS"];
+				parsedEncounter["spLevel"] = rawEncounter["settings"]["spLevel"];
 				
 				// set up object waves
 				parsedEncounter["spawnables"] = [];
@@ -105,6 +114,13 @@ package vgdev.stroll.support
 		 */
 		public function step():void
 		{
+			// hand control over to special level class if one exists for this encounter
+			if (spLevel != null)
+			{
+				spLevel.step();
+				return;
+			}
+			
 			// quit if there are no more things happening
 			if (waves == null || waveIndex == waves.length)
 				return;
@@ -224,10 +240,25 @@ package vgdev.stroll.support
 			var encounter:Object = choices[int(System.getRandInt(0, choices.length - 1))];
 			trace("Starting encounter called: '" + encounter["id"] + "'");
 			
-			waves = encounter["spawnables"];
+			if (encounter["spLevel"] != null)
+			{
+				switch (encounter["spLevel"])
+				{
+					case "anomalies":
+						spLevel = new SPLevelAnomalies(cg);
+					break;
+					default:
+						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);
+				}
+			}
+			else
+			{
+				spLevel = null;
+				waves = encounter["spawnables"];
+				counterNext = waves[0]["time"];
+			}
 			
 			waveIndex = 0;
-			counterNext = waves[0]["time"];
 			
 			cg.ship.slipRange = encounter["slip_range"];
 			cg.ship.jammable = encounter["jamming_min"];

@@ -21,3 +21,10 @@ Wave 1
 	1x Squid in far right
 Wave 2
 	1x Squid in far left
+	
+------------------------------------------------
+en_anomalyfield
+------------------------------------------------
+Encounter with colored Geometric Anomalies for Sector X-X
+
+Infinite waves of Anomalies with increasing frequency.
