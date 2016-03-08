@@ -135,7 +135,7 @@ package vgdev.stroll.props.enemies
 				{
 					onFire();
 					cdCounts[i] = cooldowns[i];
-					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(),
+					var proj:ABST_EProjectile = new EProjectileGeneric(cg, new SWC_Bullet(),
 																	{	 
 																		"affiliation":	System.AFFIL_ENEMY,
 																		"attackColor":	attackColor,

@@ -3,9 +3,9 @@ package vgdev.stroll.props.enemies
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
-	import vgdev.stroll.props.projectiles.ABST_Projectile;
-	import vgdev.stroll.props.projectiles.ProjectileGeneric;
-	import vgdev.stroll.props.projectiles.ProjectileHardened;
+	import vgdev.stroll.props.projectiles.ABST_EProjectile;
+	import vgdev.stroll.props.projectiles.EProjectileGeneric;
+	import vgdev.stroll.props.projectiles.EProjectileHardened;
 	import vgdev.stroll.System;
 	
 	/**
@@ -35,11 +35,11 @@ package vgdev.stroll.props.enemies
 				if (cdCounts[i]-- <= 0)
 				{
 					cdCounts[i] = cooldowns[i] + System.getRandInt(-40, 60);
-					var proj:ABST_Projectile;
+					var proj:ABST_EProjectile;
 					switch (i)
 					{
 						case 0:
-							proj = new ProjectileHardened(cg, new SWC_Bullet(),
+							proj = new EProjectileHardened(cg, new SWC_Bullet(),
 																		{	 
 																			"affiliation":	System.AFFIL_ENEMY,
 																			"attackColor":	attackColor,
@@ -58,7 +58,7 @@ package vgdev.stroll.props.enemies
 						case 1:
 							for (var n:int = 0; n < 3; n++)
 							{
-								proj = new ProjectileGeneric(cg, new SWC_Bullet(),
+								proj = new EProjectileGeneric(cg, new SWC_Bullet(),
 																		{	 
 																			"affiliation":	System.AFFIL_ENEMY,
 																			"attackColor":	attackColor,

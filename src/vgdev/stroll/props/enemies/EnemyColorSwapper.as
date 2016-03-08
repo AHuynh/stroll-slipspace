@@ -3,9 +3,9 @@ package vgdev.stroll.props.enemies
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
-	import vgdev.stroll.props.projectiles.ABST_Projectile;
-	import vgdev.stroll.props.projectiles.ProjectileGeneric;
-	import vgdev.stroll.props.projectiles.ProjectileHardened;
+	import vgdev.stroll.props.projectiles.ABST_EProjectile;
+	import vgdev.stroll.props.projectiles.EProjectileGeneric;
+	import vgdev.stroll.props.projectiles.EProjectileHardened;
 	import vgdev.stroll.System;
 	
 	/**
@@ -46,7 +46,7 @@ package vgdev.stroll.props.enemies
 					var sway:int = System.getRandInt(8, 12);
 					for (var n:int = 0; n < 3; n++)
 					{
-						var proj:ABST_Projectile = new ProjectileHardened(cg, new SWC_Bullet(),
+						var proj:ABST_EProjectile = new EProjectileHardened(cg, new SWC_Bullet(),
 													{	 
 														"affiliation":	System.AFFIL_ENEMY,
 														"attackColor":	attackColor,

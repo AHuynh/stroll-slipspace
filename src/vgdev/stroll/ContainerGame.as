@@ -135,8 +135,11 @@
 			var i:int;
 			
 			// init the managers			
-			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this);
+			managerMap[System.M_EPROJECTILE] = new ManagerProjectile(this);
 			managers.push(managerMap[System.M_EPROJECTILE]);
+			
+			managerMap[System.M_IPROJECTILE] = new ManagerProjectile(this);
+			managers.push(managerMap[System.M_IPROJECTILE]);
 
 			managerMap[System.M_PLAYER] = new ManagerGeneric(this);
 			managerMap[System.M_PLAYER].setObjects(players);

@@ -3,8 +3,8 @@ package vgdev.stroll.props.consoles
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
-	import vgdev.stroll.props.projectiles.ABST_Projectile;
-	import vgdev.stroll.props.projectiles.ProjectileGeneric;
+	import vgdev.stroll.props.projectiles.ABST_EProjectile;
+	import vgdev.stroll.props.projectiles.EProjectileGeneric;
 	import vgdev.stroll.System;
 	import vgdev.stroll.support.SoundManager;
 	
@@ -93,7 +93,7 @@ package vgdev.stroll.props.consoles
 				if (cdCount == 0)		// fire a bullet
 				{
 					cdCount = cooldown;																	 
-					var proj:ABST_Projectile = new ProjectileGeneric(cg, new SWC_Bullet(),
+					var proj:ABST_EProjectile = new EProjectileGeneric(cg, new SWC_Bullet(),
 																	{	 
 																		"affiliation":	System.AFFIL_PLAYER,
 																		"attackColor":	System.COL_WHITE,

@@ -28,6 +28,9 @@ package vgdev.stroll.props
 		
 		/// Helper for use in ABST_Manager.getNearby
 		public var nearDistance:Number = 0;
+		
+		/// System friend or foe identifier (ex. System.M_PLAYER)
+		protected var affiliation:int;
 
 		/**
 		 * Should only be called through super(), never instantiated
@@ -56,6 +59,15 @@ package vgdev.stroll.props
 		public function isActive():Boolean
 		{
 			return !completed && mc_object != null;
+		}
+		
+		/**
+		 * Get the SYSTEM affiliation of this object
+		 * @return		System.AFFIL_(something)
+		 */
+		public function getAffiliation():int
+		{
+			return affiliation;
 		}
 
 		/**
@@ -120,8 +132,11 @@ package vgdev.stroll.props
 		 */
 		public function updateDepth():void
 		{
-			depth = mc_object.y;
-			cg.managerMap[System.M_DEPTH].updateDepths();
+			if (mc_object != null)
+			{
+				depth = mc_object.y;
+				cg.managerMap[System.M_DEPTH].updateDepths();
+			}
 		}
 		
 		/**

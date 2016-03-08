@@ -18,9 +18,6 @@ package vgdev.stroll.props
 		protected var LIM_Y_MAX:int;
 		protected const BUFFER:int = 100;
 		
-		/// System friend or foe identifier (ex. System.M_PLAYER)
-		protected var affiliation:int;
-		
 		public function ABST_EMovable(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int) 
 		{
 			super(_cg, _mc_object);
@@ -58,15 +55,6 @@ package vgdev.stroll.props
 					onShipHit();
 				destroy();
 			}
-		}
-		
-		/**
-		 * Get the SYSTEM affiliation of this enemy
-		 * @return		System.AFFIL_(something)
-		 */
-		public function getAffiliation():int
-		{
-			return affiliation;
 		}
 		
 		/**

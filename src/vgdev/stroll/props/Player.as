@@ -8,6 +8,8 @@ package vgdev.stroll.props
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.managers.ManagerProximity;
 	import vgdev.stroll.props.consoles.ABST_Console;
+	import vgdev.stroll.props.projectiles.ABST_IProjectile;
+	import vgdev.stroll.props.projectiles.IProjectileGeneric;
 	import vgdev.stroll.System;
 	
 	/**
@@ -35,6 +37,9 @@ package vgdev.stroll.props
 		private var KEY_ACTION:uint;
 		private var KEY_CANCEL:uint;
 		
+		/// Map of key states
+		private var keysDown:Object = { UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false };
+		
 		/// Direction player last moved in (RULD, 0-3)
 		public var facing:int = 0;
 		
@@ -50,8 +55,10 @@ package vgdev.stroll.props
 		/// If true, the console being used prevents player movement
 		private var rooted:Boolean = false;
 		
-		/// Map of key states
-		private var keysDown:Object = { UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false };
+		// PWD variables
+		private var countPDW:int = 0;			// current PDW status
+		private var cooldownPDW:int = 15;		// cooldown time in frames between PDW shots
+		private var damagePDW:int = 7;
 		
 		private var BAR_WIDTH:Number;
 		
@@ -97,6 +104,8 @@ package vgdev.stroll.props
 			if (hp != 0)
 			{
 				handleKeyboard();
+				if (countPDW > 0)
+					countPDW--;
 			}
 			return false;
 		}
@@ -120,7 +129,7 @@ package vgdev.stroll.props
 			{
 				onCancel();
 				mc_object.gotoAndStop("idle");
-				mc_object.alpha = .4;
+				mc_object.alpha = .4;		// TODO incap sprite
 			}
 			
 			if (hp != hpMax)
@@ -161,11 +170,35 @@ package vgdev.stroll.props
 					updatePosition(0, moveSpeed);
 					facing = DOWN;
 				}
+				if (keysDown[CANCEL] && countPDW == 0)
+				{
+					handlePDW();
+				}
 			}
 			if (activeConsole != null)
 			{
 				activeConsole.holdKey([keysDown[RIGHT], keysDown[UP], keysDown[LEFT], keysDown[DOWN], keysDown[ACTION]]);
 			}
+		}
+		
+		/**
+		 * Fire the PDW
+		 */
+		private function handlePDW():void
+		{
+			var shot:ABST_IProjectile = new IProjectileGeneric(cg, new SWC_Bullet(), hitMask,
+																	{	 
+																		"affiliation":	System.AFFIL_PLAYER,
+																		"dir":			facing * -90 + System.getRandNum(-2, 2),
+																		"dmg":			damagePDW,
+																		"life":			190,
+																		"pos":			new Point(mc_object.x, mc_object.y - 25),
+																		"spd":			4,
+																		"style":		null,
+																		"scale":		0.5
+																	});
+			cg.addToGame(shot, System.M_IPROJECTILE);
+			countPDW = cooldownPDW;
 		}
 		
 		// tell ManagerDepth to update all depth-managed object's depths when this Player moves
