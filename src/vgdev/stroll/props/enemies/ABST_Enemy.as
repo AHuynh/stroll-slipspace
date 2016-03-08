@@ -80,7 +80,6 @@ package vgdev.stroll.props.enemies
 			setBaseColor(selfColor);
 			if (useHitbox)
 			{
-				trace("[ENEMY] Using a hitbox");
 				if (mc_object.hitbox == null)
 					trace("[ENEMY] Warning: Missing hitbox for enemy:", this);
 				else

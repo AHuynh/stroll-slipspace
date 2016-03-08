@@ -74,7 +74,6 @@ package vgdev.stroll.props.projectiles
 		
 		override public function destroy():void
 		{
-			trace("[HPROJ] destroy called with hp:", hp);
 			if (!markedToKill && hp == 0)
 			{
 				markedToKill = true;

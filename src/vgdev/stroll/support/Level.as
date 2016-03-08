@@ -18,6 +18,8 @@ package vgdev.stroll.support
 		
 		[Embed(source="../../../../json/en_intro_waves.json", mimeType="application/octet-stream")]
 		private var en_intro_waves:Class;
+		[Embed(source="../../../../json/en_intro_squids.json", mimeType="application/octet-stream")]
+		private var en_intro_squids:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -54,6 +56,7 @@ package vgdev.stroll.support
 			// add levels here
 			var rawEncountersJSON:Array =	[	
 												JSON.parse(new en_intro_waves()),
+												JSON.parse(new en_intro_squids()),
 												
 												JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -63,7 +66,7 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_test())];
+											rawEncountersJSON = [JSON.parse(new en_intro_squids())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -156,7 +159,7 @@ package vgdev.stroll.support
 																					"x":pos.x,
 																					"y":pos.y,
 																					"attackColor": col,
-																					"attackStrength": 15,
+																					"attackStrength": 18,
 																					"hp": 200
 																					});
 									manager = System.M_ENEMY;
@@ -208,7 +211,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
+				//if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
 					choices.push(e);
 			}
 			
@@ -253,6 +256,7 @@ package vgdev.stroll.support
 			switch (region)
 			{
 				case "right":			return new Point(System.getRandNum( 290,  400), System.getRandNum(-150,  150));	break;
+				case "far_right":		return new Point(System.getRandNum( 400,  450), System.getRandNum(-150,  150));	break;
 				case "top_right":		return new Point(System.getRandNum( 100,  400), System.getRandNum(-250, -170));	break;
 				case "bottom_right":	return new Point(System.getRandNum( 100,  400), System.getRandNum( 170,  250));	break;
 				case "top":				return new Point(System.getRandNum(-250,  250), System.getRandNum(-250, -170));	break;
@@ -260,6 +264,7 @@ package vgdev.stroll.support
 				case "top_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum(-250, -120));	break;
 				case "bottom_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum( 250,  120));	break;
 				case "left":			return new Point(System.getRandNum(-450, -300), System.getRandNum(-200,  200));	break;
+				case "far_left":		return new Point(System.getRandNum(-450, -400), System.getRandNum(-200,  200));	break;
 				default:
 					trace("[Level] Region not known:", region);
 					return new Point();

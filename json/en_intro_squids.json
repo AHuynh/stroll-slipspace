@@ -1,0 +1,34 @@
+{
+  "settings": {
+	"id": "intro_squids",
+	"background": "default",
+	"difficulty_range": [2, 4],
+    "jamming_min": 1,
+    "slip_range": 35.0,
+	"type": "Enemies",
+	"TAILS": "Large enemies inbound. Get ready for a fight!"
+  },
+  "waves": [
+	{
+		"time": 4.5,
+		"spawnables":
+			[
+				{"type": "Squid", "region": "far_right"}
+			]
+	},
+	{
+		"time": 15,
+		"TAILS": "One more detected from the rear!",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 3,
+		"spawnables":
+			[
+				{"type": "Squid", "region": "far_left"}
+			]
+	}
+  ]
+}

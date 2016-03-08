@@ -9,7 +9,7 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.System;
 	
 	/**
-	 * ...
+	 * Beefy but slow enemy with a strong attack and a weaker trishot
 	 * @author Alexander Huynh
 	 */
 	public class EnemySquid extends ABST_Enemy 
@@ -20,8 +20,8 @@ package vgdev.stroll.props.enemies
 			super(_cg, _mc_object, attributes);
 			setStyle("squid");
 			
-			// [Large Shot, Small shot]
-			cdCounts = [30, 90];
+			// [Large shot, Small trishot]
+			cdCounts = [45, 90];
 			cooldowns = [120, 160];
 			ranges = [390, 430];
 			drift = .1;
@@ -34,7 +34,7 @@ package vgdev.stroll.props.enemies
 			{
 				if (cdCounts[i]-- <= 0)
 				{
-					cdCounts[i] = cooldowns[i];
+					cdCounts[i] = cooldowns[i] + System.getRandInt(-40, 60);
 					var proj:ABST_Projectile;
 					switch (i)
 					{
@@ -63,7 +63,7 @@ package vgdev.stroll.props.enemies
 																			"affiliation":	System.AFFIL_ENEMY,
 																			"attackColor":	attackColor,
 																			"dir":			System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y) + System.getRandNum(-5, 5) + (n - 1) * 30,
-																			"dmg":			attackStrength,
+																			"dmg":			attackStrength * .2,
 																			"life":			150,
 																			"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 																			"spd":			3,
@@ -75,6 +75,10 @@ package vgdev.stroll.props.enemies
 					}
 				}
 			}
+			
+			// attack animation
+			if (cdCounts[0] == 27)
+				mc_object.base.gotoAndPlay("shoot");
 		}
 		
 		override protected function maintainRange():void
