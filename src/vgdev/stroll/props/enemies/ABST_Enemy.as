@@ -39,10 +39,14 @@ package vgdev.stroll.props.enemies
 		/// Amount of damage to give its projectiles
 		protected var attackStrength:Number;
 		
-		// Amound of damage to deal to the ship if the enemy itself collides with it
+		/// Amount of damage to deal to the ship if the enemy itself collides with it
 		protected var attackCollide:Number;
 		
 		protected var selfColor:uint = System.COL_WHITE;
+		protected var ct:ColorTransform;
+		
+		/// If null, use mc_object as normal for collisions, else use hitbox specifically
+		public var hitbox:MovieClip = null;
 		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
@@ -60,17 +64,27 @@ package vgdev.stroll.props.enemies
 			
 			if (attributes["tint"] != null)
 				selfColor = attributes["tint"] == "random" ? System.getRandCol() : attributes["tint"];
+			if (attributes["customHitbox"] != null)
+			{
+				if (mc_object.hitbox == null)
+					trace("[ENEMY] Warning: Missing hitbox for enemy:", this);
+				else
+					hitbox = mc_object.hitbox;
+			}
 			
 			hpMax = hp = System.setAttribute("hp", attributes, 30);
+			
+			ct = new ColorTransform();
+			mc_object.base.transform.colorTransform = ct;
 		}
 		
 		protected function setStyle(style:String):void
 		{
 			mc_object.gotoAndStop(style);
 			mc_object.spawn.visible = false;
-			mc_object.hitFlash.alpha = 0;
+			//mc_object.hitFlash.alpha = 0;
 			
-			if (selfColor != System.COL_WHITE)
+			/*if (mc_object.colorOverlay != null && selfColor != System.COL_WHITE)
 			{
 				var ct:ColorTransform = new ColorTransform();
 				ct.color = selfColor;
@@ -78,7 +92,17 @@ package vgdev.stroll.props.enemies
 				mc_object.colorOverlay.transform.colorTransform = ct;
 			}
 			else
-				mc_object.colorOverlay.visible = false;
+				mc_object.colorOverlay.visible = false;*/
+			setBaseColor(selfColor);
+		}
+		
+		protected function setBaseColor(col:uint):void
+		{
+			selfColor = col;			
+			ct.redMultiplier = selfColor >> 16 & 0x0000FF / 255;
+			ct.blueMultiplier = Math.min(selfColor >> 8 & 0x0000FF / 255, (0xFF / 255) * (1-colAlpha));
+			ct.greenMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * (1-colAlpha))
+			mc_object.base.transform.colorTransform = ct;
 		}
 		
 		override public function step():Boolean
@@ -102,7 +126,8 @@ package vgdev.stroll.props.enemies
 			if (colAlpha > 0)
 			{
 				colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
-				mc_object.hitFlash.alpha = colAlpha;
+				//mc_object.hitFlash.alpha = colAlpha;
+				setBaseColor(selfColor);
 			}
 		}
 		

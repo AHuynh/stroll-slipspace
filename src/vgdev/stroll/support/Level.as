@@ -63,7 +63,7 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_intro_waves())];
+											rawEncountersJSON = [JSON.parse(new en_test())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -135,7 +135,7 @@ package vgdev.stroll.support
 							else
 							{
 								pos = new Point();
-								trace("[Level] No spawn location defined for", type);
+								//trace("[Level] No spawn location defined for", type);
 							}
 
 							var spawn:ABST_Object;
@@ -174,7 +174,7 @@ package vgdev.stroll.support
 					}		
 				}
 				if (waves[waveIndex]["recur"] != null)			// redo the current wave if "recur" exists
-					counterNext = waves[waveIndex]["recur"];
+					counterNext = waves[waveIndex]["recur"] * System.SECOND;
 				else if (++waveIndex < waves.length)
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave
 				counter = 0;

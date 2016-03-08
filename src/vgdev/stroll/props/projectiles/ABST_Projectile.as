@@ -84,11 +84,15 @@ package vgdev.stroll.props.projectiles
 			}
 			else if (getAffiliation() == System.AFFIL_PLAYER)	// projectile is a player's; check for hits on enemies
 			{
-				collide = managerEnem.collideWithOther(this, true);
-				if (collide != null)
+				var hitEnemy:ABST_Enemy = managerEnem.collideWithOther(this, true) as ABST_Enemy;		// check for any hit
+				if (hitEnemy != null)
 				{
-					destroy();
-					(collide as ABST_Enemy).changeHP(-dmg);
+					// if the enemy is using a hitbox, check on that as well (otherwise accept as a hit)
+					if (hitEnemy.hitbox == null || hitEnemy.mc_object.hitbox.hitTestPoint(mc_object.x + System.GAME_OFFSX, mc_object.y + System.GAME_OFFSY, true))
+					{
+						destroy();
+						(hitEnemy as ABST_Enemy).changeHP(-dmg);
+					}
 				}
 			}
 		}

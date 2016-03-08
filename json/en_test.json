@@ -10,7 +10,7 @@
   },
   "waves": [
 	{
-		"time": 90,
+		"time": 3,
 		"spawnables":
 			[
 				{"type": "Eye", "x": 200, "y": 200, "color": "red"},

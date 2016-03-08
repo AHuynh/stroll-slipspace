@@ -10,8 +10,8 @@
   },
   "waves": [
 	{
-		"time": 45,
-		"recur": 90,
+		"time": 1,
+		"recur": 3,
 		"repeat": 4,
 		"spawnables":
 			[
