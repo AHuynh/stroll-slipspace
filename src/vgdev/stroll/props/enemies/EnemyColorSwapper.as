@@ -43,11 +43,10 @@ package vgdev.stroll.props.enemies
 				if (cdCounts[i]-- <= 0)
 				{
 					cdCounts[i] = cooldowns[i];
-					var proj:ABST_Projectile;
 					var sway:int = System.getRandInt(8, 12);
 					for (var n:int = 0; n < 3; n++)
 					{
-						proj = new ProjectileHardened(cg, new SWC_Bullet(),
+						var proj:ABST_Projectile = new ProjectileHardened(cg, new SWC_Bullet(),
 													{	 
 														"affiliation":	System.AFFIL_ENEMY,
 														"attackColor":	attackColor,
@@ -57,10 +56,10 @@ package vgdev.stroll.props.enemies
 														"life":			350,
 														"pdmg":			2,
 														"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
+														"scale":		3,
 														"spd":			2,
 														"style":		null
 													});
-						proj.mc_object.scaleX = proj.mc_object.scaleY = 3;
 						cg.addToGame(proj, System.M_EPROJECTILE);
 					}
 				}

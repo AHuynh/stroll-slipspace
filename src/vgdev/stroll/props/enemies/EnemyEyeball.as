@@ -45,6 +45,7 @@ package vgdev.stroll.props.enemies
 											"dy": System.getRandNum( -1, 1),
 											"dr": System.getRandNum( -5, 5),
 											"rot": System.getRandNum(0, 360),
+											"scale": System.getRandNum(1, 2),
 											"alphaDelay": 90 + System.getRandInt(0, 30),
 											"alphaDelta": 30,
 											"random": true

@@ -41,6 +41,7 @@ package vgdev.stroll.props.projectiles
 			dmg = System.setAttribute("dmg", attributes, 6.0);
 			life = System.setAttribute("life", attributes, 120);
 			spd = System.setAttribute("spd", attributes, 2);
+			setScale(System.setAttribute("scale", attributes, 1));
 			
 			managerProj = cg.managerMap[System.M_EPROJECTILE];
 			managerEnem = cg.managerMap[System.M_ENEMY];

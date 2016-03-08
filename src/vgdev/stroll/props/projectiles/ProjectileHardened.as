@@ -10,13 +10,12 @@ package vgdev.stroll.props.projectiles
 	 * A projectile with HP
 	 * @author Alexander Huynh
 	 */
-	public class ProjectileHardened extends ProjectileGeneric 
-	{
-		protected var hpMax:int;
-		protected var hp:int;
-	
+	public class ProjectileHardened extends ABST_Projectile 
+	{	
 		/// How much HP to remove from other Hardened projectiles (non-Hardened are assumed to be dmg = 1)
 		protected var pdmg:int;
+		
+		private var markedToKill:Boolean = false;
 		
 		public function ProjectileHardened(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
@@ -52,8 +51,8 @@ package vgdev.stroll.props.projectiles
 				if (collide is ProjectileHardened)
 					(collide as ProjectileHardened).damage(pdmg);
 				else
-					(collide as ABST_Projectile).kill();
-				kill();
+					(collide as ABST_Projectile).destroy();
+				destroy();
 			}
 			else if (getAffiliation() == System.AFFIL_PLAYER)
 			{
@@ -61,8 +60,8 @@ package vgdev.stroll.props.projectiles
 				if (collide != null)
 				{
 					hp = 0;
-					kill();
-					(collide as ABST_Enemy).damage(dmg);
+					destroy();
+					(collide as ABST_Enemy).changeHP(-dmg);
 				}
 			}
 		}
@@ -73,13 +72,13 @@ package vgdev.stroll.props.projectiles
 			cg.ship.damage(dmg, attackColor);
 		}
 		
-		override public function kill():void
+		override public function destroy():void
 		{
+			trace("[HPROJ] destroy called with hp:", hp);
 			if (!markedToKill && hp == 0)
 			{
 				markedToKill = true;
-				completed = true;
-				mc_object.visible = false;
+				super.destroy();
 			}
 			else
 				damage(1);

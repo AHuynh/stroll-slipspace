@@ -151,6 +151,16 @@ package vgdev.stroll.support
 																					});
 									manager = System.M_ENEMY;
 								break;
+								case "Squid":
+									spawn = new EnemySquid(cg, new SWC_Enemy(), {
+																					"x":pos.x,
+																					"y":pos.y,
+																					"attackColor": col,
+																					"attackStrength": 15,
+																					"hp": 200
+																					});
+									manager = System.M_ENEMY;
+								break;
 								case "GeometricAnomaly":
 									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
 																							"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,

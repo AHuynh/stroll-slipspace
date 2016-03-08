@@ -30,7 +30,7 @@ package vgdev.stroll.props.enemies
 		protected var drift:Number = .25;		// speed (in px) at which to move at when idling
 		protected var driftDir:int = 1;			// direction of drift, 1 or -1
 
-		protected var colAlpha:Number = 0;		// helper for displaying the red flash on taking a hit
+		protected var colAlpha:Number = 1;		// helper for displaying the red flash on taking a hit
 		protected const DCOL:Number = .04;
 		
 		/// One of the 4 colors to use on projectiles
@@ -47,6 +47,7 @@ package vgdev.stroll.props.enemies
 		
 		/// If null, use mc_object as normal for collisions, else use hitbox specifically
 		public var hitbox:MovieClip = null;
+		private var useHitbox:Boolean = false;
 		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
@@ -64,13 +65,7 @@ package vgdev.stroll.props.enemies
 			
 			if (attributes["tint"] != null)
 				selfColor = attributes["tint"] == "random" ? System.getRandCol() : attributes["tint"];
-			if (attributes["customHitbox"] != null)
-			{
-				if (mc_object.hitbox == null)
-					trace("[ENEMY] Warning: Missing hitbox for enemy:", this);
-				else
-					hitbox = mc_object.hitbox;
-			}
+			useHitbox = attributes["customHitbox"] != null;
 			
 			hpMax = hp = System.setAttribute("hp", attributes, 30);
 			
@@ -82,26 +77,26 @@ package vgdev.stroll.props.enemies
 		{
 			mc_object.gotoAndStop(style);
 			mc_object.spawn.visible = false;
-			//mc_object.hitFlash.alpha = 0;
-			
-			/*if (mc_object.colorOverlay != null && selfColor != System.COL_WHITE)
-			{
-				var ct:ColorTransform = new ColorTransform();
-				ct.color = selfColor;
-				ct.alphaMultiplier = System.getRandNum(.2, .5);
-				mc_object.colorOverlay.transform.colorTransform = ct;
-			}
-			else
-				mc_object.colorOverlay.visible = false;*/
 			setBaseColor(selfColor);
+			if (useHitbox)
+			{
+				trace("[ENEMY] Using a hitbox");
+				if (mc_object.hitbox == null)
+					trace("[ENEMY] Warning: Missing hitbox for enemy:", this);
+				else
+				{
+					hitbox = mc_object.hitbox;
+					hitbox.visible = false;
+				}
+			}
 		}
 		
 		protected function setBaseColor(col:uint):void
 		{
 			selfColor = col;			
 			ct.redMultiplier = selfColor >> 16 & 0x0000FF / 255;
-			ct.blueMultiplier = Math.min(selfColor >> 8 & 0x0000FF / 255, (0xFF / 255) * (1-colAlpha));
-			ct.greenMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * (1-colAlpha))
+			ct.blueMultiplier = Math.min(selfColor >> 8 & 0x0000FF / 255, (0xFF / 255) * colAlpha);
+			ct.greenMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * colAlpha)
 			mc_object.base.transform.colorTransform = ct;
 		}
 		
@@ -123,10 +118,9 @@ package vgdev.stroll.props.enemies
 		protected function updateDamageFlash():void
 		{
 			// update red 'damage taken' flash; reduce its opacity
-			if (colAlpha > 0)
+			if (colAlpha < 1)
 			{
-				colAlpha = System.changeWithLimit(colAlpha, -DCOL, 0);
-				//mc_object.hitFlash.alpha = colAlpha;
+				colAlpha = System.changeWithLimit(colAlpha, DCOL, 0, 1);
 				setBaseColor(selfColor);
 			}
 		}
@@ -146,7 +140,7 @@ package vgdev.stroll.props.enemies
 																	{	 
 																		"affiliation":	System.AFFIL_ENEMY,
 																		"attackColor":	attackColor,
-																		"dir":			mc_object.rotation,
+																		"dir":			mc_object.rotation + System.getRandNum(-5, 5),
 																		"dmg":			attackStrength,
 																		"life":			150,
 																		"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
@@ -178,7 +172,7 @@ package vgdev.stroll.props.enemies
 		 */
 		override public function changeHP(amt:Number):Boolean 
 		{
-			colAlpha = .7;
+			colAlpha = .3;
 			hp = System.changeWithLimit(hp, amt, 0, hpMax);
 			if (hp == 0)
 				destroy();
