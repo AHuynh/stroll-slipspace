@@ -57,7 +57,7 @@ package vgdev.stroll.props
 		
 		// PWD variables
 		private var countPDW:int = 0;			// current PDW status
-		private var cooldownPDW:int = 15;		// cooldown time in frames between PDW shots
+		private var cooldownPDW:int = 5;		// cooldown time in frames between PDW shots
 		private var damagePDW:int = 7;
 		
 		private var BAR_WIDTH:Number;
@@ -191,11 +191,11 @@ package vgdev.stroll.props
 																		"affiliation":	System.AFFIL_PLAYER,
 																		"dir":			facing * -90 + System.getRandNum(-2, 2),
 																		"dmg":			damagePDW,
-																		"life":			190,
-																		"pos":			new Point(mc_object.x, mc_object.y - 25),
-																		"spd":			4,
+																		"life":			30,
+																		"pos":			new Point(mc_object.x, mc_object.y - 20),
+																		"spd":			9,
 																		"style":		null,
-																		"scale":		0.5
+																		"scale":		0.75
 																	});
 			cg.addToGame(shot, System.M_IPROJECTILE);
 			countPDW = cooldownPDW;

@@ -18,7 +18,7 @@ package vgdev.stroll.props.consoles
 		protected var turret:MovieClip;
 		
 		/// The number of frames to wait in-between shots
-		protected var cooldown:int = 5;
+		protected var cooldown:int = 7;
 		
 		/// The current cooldown count, where 0 is ready to fire
 		protected var cdCount:int = 0;
@@ -33,7 +33,7 @@ package vgdev.stroll.props.consoles
 		protected var gimbalSpeed:Number = 4;
 		
 		/// Speed of projectiles shot
-		protected var projectileSpeed:Number = 12;
+		protected var projectileSpeed:Number = 14;
 		
 		/// How many frames projectiles shot will last
 		protected var projectileLife:Number = 60;
@@ -96,13 +96,12 @@ package vgdev.stroll.props.consoles
 					var proj:ABST_EProjectile = new EProjectileGeneric(cg, new SWC_Bullet(),
 																	{	 
 																		"affiliation":	System.AFFIL_PLAYER,
-																		"attackColor":	System.COL_WHITE,
 																		"dir":			turret.nozzle.rotation + rotOff + System.getRandNum( -sway, sway),
 																		"dmg":			6,
 																		"life":			projectileLife,
 																		"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
 																		"spd":			projectileSpeed,
-																		"style":		null
+																		"style":		"turret_small_orange"
 																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
 					SoundManager.playSFX("sfx_laser1");

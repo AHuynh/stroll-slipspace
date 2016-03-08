@@ -43,15 +43,15 @@ package vgdev.stroll.props.enemies
 																		{	 
 																			"affiliation":	System.AFFIL_ENEMY,
 																			"attackColor":	attackColor,
-																			"dir":			System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y) + System.getRandNum(-10, 10),
+																			"dir":			System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y) + System.getRandNum( -10, 10),
+																			"rot":			90 * System.getRandInt(0, 3),
 																			"dmg":			attackStrength,
 																			"hp":			4,
 																			"life":			350,
 																			"pdmg":			3,
 																			"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
-																			"scale":		2,
 																			"spd":			1,
-																			"style":		null
+																			"style":		"pus"
 																		});
 							cg.addToGame(proj, System.M_EPROJECTILE);
 						break;
@@ -63,11 +63,13 @@ package vgdev.stroll.props.enemies
 																			"affiliation":	System.AFFIL_ENEMY,
 																			"attackColor":	attackColor,
 																			"dir":			System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y) + System.getRandNum(-5, 5) + (n - 1) * 30,
+																			"rot":			90 * System.getRandInt(0, 3),
 																			"dmg":			attackStrength * .2,
 																			"life":			150,
 																			"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 																			"spd":			3,
-																			"style":		null
+																			"style":		"pus",
+																			"scale":		0.5
 																		});
 								cg.addToGame(proj, System.M_EPROJECTILE);
 							}
