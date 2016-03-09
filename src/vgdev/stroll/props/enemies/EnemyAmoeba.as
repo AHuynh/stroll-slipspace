@@ -70,6 +70,8 @@ package vgdev.stroll.props.enemies
 		override public function changeHP(amt:Number):Boolean 
 		{
 			spd = Math.max(spd - 0.5, MIN_SPEED);
+			if (Math.random() < .3)
+				addGib();
 			return super.changeHP(amt);
 		}
 		
@@ -83,10 +85,11 @@ package vgdev.stroll.props.enemies
 		{
 			SoundManager.playSFX("sfx_explosionlarge1");
 			cg.addDecor("explosion_small", { "x":mc_object.x, "y":mc_object.y, "scale":4 } );
+			var i:int;
 			
 			if (amoebaSize > 0)
 			{
-				for (var i:int = 0; i < 2; i++)
+				for (i = 0; i < 2; i++)
 				{
 					cg.addToGame(new EnemyAmoeba(cg, new SWC_Enemy(), amoebaSize - 1, {
 																		"x": mc_object.x + System.getRandNum(-30, 30) + System.GAME_OFFSX,
@@ -96,8 +99,27 @@ package vgdev.stroll.props.enemies
 								System.M_ENEMY);
 				}
 			}
+
+			for (i = 3 + System.getRandInt(0, amoebaSize); i >= 0; i--)
+				addGib();
 			
 			super.destroy();
+		}
+		
+		private function addGib():void
+		{
+			cg.addDecor("gib_amoeba", {
+									"x": System.getRandNum(mc_object.x - 20, mc_object.x + 20),
+									"y": System.getRandNum(mc_object.y - 20, mc_object.y + 20),
+									"dx": System.getRandNum( -0.5, 0.5),
+									"dy": System.getRandNum( -0.5, 0.5),
+									"dr": System.getRandNum( -9, 9),
+									"rot": System.getRandNum(0, 360),
+									"scale": mc_object.scaleX,
+									"alphaDelay": 40 + System.getRandInt(0, 70),
+									"alphaDelta": 20,
+									"random": true
+								});
 		}
 	}
 }

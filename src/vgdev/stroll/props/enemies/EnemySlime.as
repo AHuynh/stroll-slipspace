@@ -78,5 +78,22 @@ package vgdev.stroll.props.enemies
 			// do nothing
 			return;
 		}
+		
+		override public function destroy():void 
+		{
+			for (var i:int = 5 + System.getRandInt(0, 3); i >= 0; i--)
+				cg.addDecor("gib_slime", {
+											"x": System.getRandNum(mc_object.x - 20, mc_object.x + 20),
+											"y": System.getRandNum(mc_object.y - 20, mc_object.y + 20),
+											"dx": System.getRandNum( -2, 2),
+											"dy": System.getRandNum( -2, 2),
+											"dr": System.getRandNum( -11, 11),
+											"rot": System.getRandNum(0, 360),
+											"alphaDelay": 70 + System.getRandInt(0, 20),
+											"alphaDelta": 30,
+											"random": true
+										});
+			super.destroy();
+		}
 	}
 }

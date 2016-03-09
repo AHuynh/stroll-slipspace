@@ -70,17 +70,17 @@ package vgdev.stroll.support
 												JSON.parse(new en_intro_squids()),
 												JSON.parse(new en_intro_slimes()),
 												JSON.parse(new en_intro_amoebas()),
-												JSON.parse(new en_anomalyfield()),
+												JSON.parse(new en_anomalyfield())
 												
-												JSON.parse(new en_test()),
+												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
 												JSON.parse(new en_fire_lite()),
 												JSON.parse(new en_fire_eyes()),
-												JSON.parse(new en_testSurvive())
+												JSON.parse(new en_testSurvive())*/
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_intro_slimes())];
+											//rawEncountersJSON = [JSON.parse(new en_intro_slimes())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -248,7 +248,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				//if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
+				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
 					choices.push(e);
 			}
 			
