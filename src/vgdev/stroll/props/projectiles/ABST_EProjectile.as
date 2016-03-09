@@ -4,6 +4,7 @@ package vgdev.stroll.props.projectiles
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.managers.ManagerEnemy;
 	import vgdev.stroll.managers.ManagerProjectile;
 	import vgdev.stroll.managers.ManagerGeneric;
 	import vgdev.stroll.props.ABST_EMovable;
@@ -36,7 +37,7 @@ package vgdev.stroll.props.projectiles
 		protected var colorTrans:ColorTransform;
 		
 		protected var managerProj:ManagerProjectile;
-		protected var managerEnem:ManagerGeneric;
+		protected var managerEnem:ManagerEnemy;
 												
 		public function ABST_EProjectile(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{

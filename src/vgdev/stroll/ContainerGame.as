@@ -155,7 +155,7 @@
 			managerMap[System.M_FIRE] = new ManagerGeneric(this);
 			managers.push(managerMap[System.M_FIRE]);
 			
-			managerMap[System.M_ENEMY] = new ManagerGeneric(this);
+			managerMap[System.M_ENEMY] = new ManagerEnemy(this);
 			managers.push(managerMap[System.M_ENEMY]);
 			
 			managerMap[System.M_DEPTH] = new ManagerDepth(this);

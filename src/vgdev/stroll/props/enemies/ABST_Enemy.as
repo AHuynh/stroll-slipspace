@@ -103,6 +103,15 @@ package vgdev.stroll.props.enemies
 			mc_object.base.transform.colorTransform = ct;
 		}
 		
+		/**
+		 * How many enemies this enemy counts for towards jamming
+		 * @return		int, how many enemies this enemy counts as (default 1)
+		 */
+		public function getJammingValue():int
+		{
+			return 1;
+		}
+		
 		override public function step():Boolean
 		{
 			if (!completed)

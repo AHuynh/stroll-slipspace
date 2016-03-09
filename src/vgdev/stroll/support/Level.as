@@ -23,6 +23,8 @@ package vgdev.stroll.support
 		private var en_intro_waves:Class;
 		[Embed(source="../../../../json/en_intro_squids.json", mimeType="application/octet-stream")]
 		private var en_intro_squids:Class;
+		[Embed(source="../../../../json/en_intro_amoebas.json", mimeType="application/octet-stream")]
+		private var en_intro_amoebas:Class;
 		[Embed(source="../../../../json/en_anomalyfield.json", mimeType="application/octet-stream")]
 		private var en_anomalyfield:Class;
 		
@@ -64,6 +66,7 @@ package vgdev.stroll.support
 			var rawEncountersJSON:Array =	[	
 												JSON.parse(new en_intro_waves()),
 												JSON.parse(new en_intro_squids()),
+												JSON.parse(new en_intro_amoebas()),
 												JSON.parse(new en_anomalyfield()),
 												
 												JSON.parse(new en_test()),
@@ -74,7 +77,7 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_intro_squids())];
+											rawEncountersJSON = [JSON.parse(new en_intro_amoebas())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -177,6 +180,13 @@ package vgdev.stroll.support
 																					"attackColor": col,
 																					"attackStrength": 18,
 																					"hp": 200
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "Amoeba":
+									spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
+																					"x":pos.x,
+																					"y":pos.y
 																					});
 									manager = System.M_ENEMY;
 								break;
