@@ -5,16 +5,18 @@
 	"difficulty_range": [0, 4],
     "jamming_min": 0,
     "slip_range": 6.5,
-	"type": "Hazard"
+	"type": "Hazard",
+	"TAILS": "I'm detecting extreme heat levels in this sector! Be careful!"
   },
   "waves": [
 	{
-		"time": 0,
+		"time": 60,
 		"spawnables":
 			[
-				{"type": "Fire", "x": -90, "y": -60},
-				{"type": "Fire", "x":  35, "y":  25},
-				{"type": "Fire", "x": -10, "y": -30}
+				{"type": "Fire", "x": -120, "y": -75},
+				{"type": "Fire", "x":  85, "y":  25},
+				{"type": "Fire", "x":  102,"y":   5},
+				{"type": "Fire", "x": -10, "y":   0}
 			]
 	}
   ]

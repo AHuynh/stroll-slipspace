@@ -7,7 +7,7 @@ package vgdev.stroll.props
 	
 	/**
 	 * Object that can move outside the spaceship.
-	 * Destroys self if it leaves the game area or hits the ship.
+	 * Destroys self if it is leaving the game area or hits the ship.
 	 * @author Alexander Huynh
 	 */
 	public class ABST_EMovable extends ABST_Object 
@@ -17,9 +17,6 @@ package vgdev.stroll.props
 		protected var LIM_Y_MIN:int;
 		protected var LIM_Y_MAX:int;
 		protected const BUFFER:int = 100;
-		
-		/// System friend or foe identifier (ex. System.M_PLAYER)
-		protected var affiliation:int;
 		
 		public function ABST_EMovable(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int) 
 		{
@@ -46,9 +43,10 @@ package vgdev.stroll.props
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
 				
-				if (System.outOfBounds(mc_object.x, LIM_X_MIN, LIM_X_MAX, BUFFER) || System.outOfBounds(mc_object.y, LIM_Y_MIN, LIM_Y_MAX, BUFFER))
+				if (System.directionalOutOfBounds(mc_object.x, dx, LIM_X_MIN, LIM_X_MAX, BUFFER) ||
+					System.directionalOutOfBounds(mc_object.y, dy, LIM_Y_MIN, LIM_Y_MAX, BUFFER))
 				{
-					destroy();
+					destroySilently();
 				}
 			}
 			else	// ship was hit
@@ -59,11 +57,9 @@ package vgdev.stroll.props
 			}
 		}
 		
-		public function getAffiliation():int
-		{
-			return affiliation;
-		}
-		
+		/**
+		 * Actions to perform when this enemy collides with the ship
+		 */
 		protected function onShipHit():void
 		{
 			// -- override this function

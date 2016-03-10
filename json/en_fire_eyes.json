@@ -5,7 +5,8 @@
 	"difficulty_range": [0, 4],
     "jamming_min": 0,
     "slip_range": 6.5,
-	"type": "Hazard"
+	"type": "Hazard",
+	"TAILS": "It's really hot in this sector... and there are eyes coming, too! Watch out!"
   },
   "waves": [
 	{
@@ -14,7 +15,7 @@
 			[
 				{"type": "Fire", "x": -90, "y": -60},
 				{"type": "Fire", "x":  35, "y":  25},
-				{"type": "Fire", "x": -10, "y": -30},
+				{"type": "Fire", "x": -10, "y": -10},
 				{"type": "Eye", "x": 200, "y": 200, "color": "red"},
 				{"type": "Eye", "x": 180, "y": 190, "color": "red"},
 				{"type": "Eye", "x":-180, "y": -190, "color": "red"},

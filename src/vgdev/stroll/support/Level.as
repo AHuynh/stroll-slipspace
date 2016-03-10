@@ -5,6 +5,8 @@ package vgdev.stroll.support
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.enemies.*;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.support.splevels.ABST_SPLevel;
+	import vgdev.stroll.support.splevels.SPLevelAnomalies;
 	import vgdev.stroll.System;
 	
 	/**
@@ -16,6 +18,14 @@ package vgdev.stroll.support
 		private var cg:ContainerGame;
 		private var timeline:int = 0;
 		
+		// -- EASY REGION ---------------------------------------------------------------------------------------
+		[Embed(source="../../../../json/en_intro_waves.json", mimeType="application/octet-stream")]
+		private var en_intro_waves:Class;
+		[Embed(source="../../../../json/en_intro_squids.json", mimeType="application/octet-stream")]
+		private var en_intro_squids:Class;
+		[Embed(source="../../../../json/en_anomalyfield.json", mimeType="application/octet-stream")]
+		private var en_anomalyfield:Class;
+		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
 		[Embed(source="../../../../json/en_test2.json", mimeType="application/octet-stream")]
@@ -24,12 +34,14 @@ package vgdev.stroll.support
 		private var en_fire_lite:Class;
 		[Embed(source="../../../../json/en_fire_eyes.json", mimeType="application/octet-stream")]
 		private var en_fire_eyes:Class;
+		[Embed(source="../../../../json/en_testSurvive.json", mimeType="application/octet-stream")]
+		private var en_testSurvive:Class;
 		
 		/// A map of level names (ex: "test") to level objects
 		private var parsedEncounters:Object;
 		
-		/// The current difficulty rating, used to determine from which encounters to choose from
-		private var difficultyLevel:int = 0;
+		/// The current sector, [0-12]
+		private var sectorIndex:int = 0;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -37,6 +49,10 @@ package vgdev.stroll.support
 
 		private var counter:int = 0;		// keep track of frames elapsed since current encounter started
 		private var counterNext:int = 0;	// the "time" that the next wave spawns
+		
+		private var TAILSmessage:String;
+		
+		private var spLevel:ABST_SPLevel;	// non-null if using a special level that needs code
 		
 		public function Level(_cg:ContainerGame)
 		{
@@ -46,14 +62,19 @@ package vgdev.stroll.support
 			
 			// add levels here
 			var rawEncountersJSON:Array =	[	
+												JSON.parse(new en_intro_waves()),
+												JSON.parse(new en_intro_squids()),
+												JSON.parse(new en_anomalyfield()),
+												
 												JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
 												JSON.parse(new en_fire_lite()),
-												JSON.parse(new en_fire_eyes())
+												JSON.parse(new en_fire_eyes()),
+												JSON.parse(new en_testSurvive())
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_fire_eyes())];
+											rawEncountersJSON = [JSON.parse(new en_anomalyfield())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -65,14 +86,22 @@ package vgdev.stroll.support
 				parsedEncounter["jamming_min"] = rawEncounter["settings"]["jamming_min"];
 				parsedEncounter["difficulty_min"] = rawEncounter["settings"]["difficulty_range"][0];
 				parsedEncounter["difficulty_max"] = rawEncounter["settings"]["difficulty_range"][1];
+				parsedEncounter["TAILS"] = rawEncounter["settings"]["TAILS"];
+				parsedEncounter["spLevel"] = rawEncounter["settings"]["spLevel"];
 				
 				// set up object waves
 				parsedEncounter["spawnables"] = [];
 				for each (var waveJSON:Object in rawEncounter["waves"])
 				{
 					var waveObj:Object = new Object();
-					waveObj["time"] = waveJSON["time"];
+					waveObj["time"] = int(waveJSON["time"] * System.SECOND);		// the RELATIVE time to wait since the start of the previous wave
 					waveObj["spawnables"] = waveJSON["spawnables"];
+					if (waveJSON["recur"] != null)
+						waveObj["recur"] = waveJSON["recur"];				// loop this wave forever
+					if (waveJSON["repeat"] != null)
+						waveObj["repeat"] = waveJSON["repeat"];				// spawn the spawnables in this wave 'repeat' times
+					if (waveJSON["TAILS"] != null)
+						waveObj["TAILS"] = waveJSON["TAILS"];				// display a TAILS message
 					parsedEncounter["spawnables"].push(waveObj);
 				}
 			
@@ -85,110 +114,192 @@ package vgdev.stroll.support
 		 */
 		public function step():void
 		{
+			// hand control over to special level class if one exists for this encounter
+			if (spLevel != null)
+			{
+				spLevel.step();
+				return;
+			}
+			
 			// quit if there are no more things happening
 			if (waves == null || waveIndex == waves.length)
 				return;
 			
 			// if we're at the next time to spawn things
 			if (++counter >= counterNext)
-			{				
-				// iterate over things to spawn
-				for each (var spawnItem:Object in waves[waveIndex]["spawnables"])
+			{
+				//trace("[Level] Starting wave at index", waveIndex);
+				
+				if (waves[waveIndex]["TAILS"] != null)
+					cg.tails.show(waves[waveIndex]["TAILS"], System.TAILS_NORMAL);
+					
+				var repeat:int = waves[waveIndex]["repeat"] == null ? 1 : waves[waveIndex]["repeat"];
+				//trace("[Level]\tEnemies to spawn:", (waves[waveIndex]["spawnables"].length * repeat));
+				var waveColor:uint = System.getRandCol();
+				if (waves[waveIndex]["spawnables"].length != 0)
 				{
-					var type:String = spawnItem["type"];
-					var pos:Point = new Point(spawnItem["x"], spawnItem["y"]);
-					var col:uint = System.stringToCol(spawnItem["color"]);
-
-					var spawn:ABST_Object;
-					var manager:int;
-					switch (type)
+					for (var r:int = 0; r < repeat; r++)
 					{
-						case "Eye":
-							spawn = new EnemyEyeball(cg, new SWC_Enemy(), pos, { "attackColor": col } );
-							manager = System.M_ENEMY;
-						break;
-						
-						case "Fire":
-							spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
-							manager = System.M_FIRE;
-						break;
-					}
-					cg.addToGame(spawn, manager);					
+						// iterate over things to spawn
+						for each (var spawnItem:Object in waves[waveIndex]["spawnables"])
+						{
+							var type:String = spawnItem["type"];
+							var col:uint = System.stringToCol(spawnItem["color"]);
+							
+							var pos:Point;
+							if (spawnItem["region"] != null)
+								pos = getRandomPointInRegion(spawnItem["region"]).add(new Point(System.GAME_OFFSX, System.GAME_OFFSY));
+							else if (spawnItem["x"] != null && spawnItem["y"] != null)
+								pos = new Point(spawnItem["x"] + System.GAME_OFFSX, spawnItem["y"] + System.GAME_OFFSY);
+							else
+							{
+								pos = new Point();
+								//trace("[Level] No spawn location defined for", type);
+							}
+
+							var spawn:ABST_Object;
+							var manager:int;
+							switch (type)
+							{
+								case "Eye":
+									spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
+																					"x":pos.x,
+																					"y":pos.y,
+																					"attackColor": col,
+																					"hp": 30
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "Squid":
+									spawn = new EnemySquid(cg, new SWC_Enemy(), {
+																					"x":pos.x,
+																					"y":pos.y,
+																					"attackColor": col,
+																					"attackStrength": 18,
+																					"hp": 200
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "GeometricAnomaly":
+									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
+																							"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																							"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																							"tint": waveColor,
+																							"dx": -3 - System.getRandNum(0, 1),
+																							"hp": 12
+																							});
+									manager = System.M_ENEMY;
+								break;
+								
+							case "Fire":
+									pos.x -= System.GAME_OFFSX;
+									pos.y -= System.GAME_OFFSY;
+									spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
+									manager = System.M_FIRE;
+								break;
+							}
+							cg.addToGame(spawn, manager);					
+						}
+					}		
 				}
-				if (++waveIndex < waves.length)
+				if (waves[waveIndex]["recur"] != null)			// redo the current wave if "recur" exists
+					counterNext = waves[waveIndex]["recur"] * System.SECOND;
+				else if (++waveIndex < waves.length)
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave
+				counter = 0;
 			}
 
-			/*switch (timeline)
-			{
-				case 1:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(200, 200), {"attackColor":System.COL_RED}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(180, 190), {"attackColor":System.COL_RED}), System.M_ENEMY);
-				break;
-				case 2:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-100, -250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(100, -250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-100, 250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(100, 250), {"attackColor":System.COL_BLUE}), System.M_ENEMY);
-				break;
-				case 3:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(300, -320), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(330, -300), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(360, -340), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(360, -240), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(380, -250), {"attackColor":System.COL_GREEN}), System.M_ENEMY);
-					cg.ship.jammable = 3;
-				break;
-				case 4:
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-400, 320), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-330, 300), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-460, 340), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-520, 240), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-380, 250), {"attackColor":System.COL_YELLOW}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(-120, 230), {"attackColor":System.COL_RED}), System.M_ENEMY);
-					cg.addToGame(new EnemyGeneric(cg, new SWC_Enemy(), new Point(120, 270), {"attackColor":System.COL_RED}), System.M_ENEMY);
-				break;
-				case 4:
-					var e:ABST_Enemy = new EnemyColorSwapper(cg, new SWC_Enemy, new Point(500, System.getRandNum(-100, 100)), {"attackColor":System.getRandCol(), "attackStrength":10, "hp":300});
-					e.setScale(2);
-					cg.addToGame(e, System.M_ENEMY);
-					cg.ship.jammable = 1;
-				break;
+			/*
+			var e:ABST_Enemy = new EnemyColorSwapper(cg, new SWC_Enemy, new Point(500, System.getRandNum(-100, 100)), {"attackColor":System.getRandCol(), "attackStrength":10, "hp":300});
+			e.setScale(2);
+			cg.addToGame(e, System.M_ENEMY);
+			cg.ship.jammable = 1;
 			}*/
 		}
 
 		/**
-		 * Load the next wave (encounter)
-		 * @param	addDiff		amount of difficulty to add to the ongoing difficulty counter
-		 * @return				true if this was the last wave in the game
+		 * Load the next sector (encounter)
+		 * @return			true if this was the last sector in the game
 		 */
-		public function nextWave(addDiff:int = 1):Boolean
+		public function nextSector():Boolean
 		{
-			difficultyLevel += addDiff;
+			sectorIndex++;
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (!System.outOfBounds(difficultyLevel, e["difficulty_min"], e["difficulty_max"]))
+				//if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
 					choices.push(e);
 			}
 			
 			if (choices.length == 0)		// TODO something when there are no valid encounters
+			{
+				trace("[Level] No suitable encounters found for sector", sectorIndex);
 				return false;
+			}
 
 			var encounter:Object = choices[int(System.getRandInt(0, choices.length - 1))];
 			trace("Starting encounter called: '" + encounter["id"] + "'");
 			
-			waves = encounter["spawnables"];
+			if (encounter["spLevel"] != null)
+			{
+				switch (encounter["spLevel"])
+				{
+					case "anomalies":
+						spLevel = new SPLevelAnomalies(cg);
+					break;
+					default:
+						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);
+				}
+			}
+			else
+			{
+				spLevel = null;
+				waves = encounter["spawnables"];
+				counterNext = waves[0]["time"];
+			}
 			
 			waveIndex = 0;
-			counterNext = waves[0]["time"];
 			
 			cg.ship.slipRange = encounter["slip_range"];
 			cg.ship.jammable = encounter["jamming_min"];
+			TAILSmessage = encounter["TAILS"];
 
-			counter = 0;			
+			counter = 0;					// reset time elapsed in this encounter		
 			
-			return difficultyLevel > 5;		// TODO end state
+			// update progress meter
+			cg.gui.mc_progress.setSectorProgress(sectorIndex);
+			
+			return sectorIndex > 12;		// TODO end state
+		}
+		
+		public function getTAILS():String
+		{
+			return TAILSmessage;
+		}
+		
+		/**
+		 * Gets a spawn location in the given region, for the Eagle ship
+		 * @param	region		String indicating region (ex: "top_right")
+		 * @return				Point, a valid spawn point
+		 */
+		private function getRandomPointInRegion(region:String):Point
+		{
+			switch (region)
+			{
+				case "right":			return new Point(System.getRandNum( 290,  400), System.getRandNum(-150,  150));	break;
+				case "far_right":		return new Point(System.getRandNum( 400,  450), System.getRandNum(-150,  150));	break;
+				case "top_right":		return new Point(System.getRandNum( 100,  400), System.getRandNum(-250, -170));	break;
+				case "bottom_right":	return new Point(System.getRandNum( 100,  400), System.getRandNum( 170,  250));	break;
+				case "top":				return new Point(System.getRandNum(-250,  250), System.getRandNum(-250, -170));	break;
+				case "bottom":			return new Point(System.getRandNum(-250,  250), System.getRandNum( 170,  250));	break;
+				case "top_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum(-250, -120));	break;
+				case "bottom_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum( 250,  120));	break;
+				case "left":			return new Point(System.getRandNum(-450, -300), System.getRandNum(-200,  200));	break;
+				case "far_left":		return new Point(System.getRandNum(-450, -400), System.getRandNum(-200,  200));	break;
+				default:
+					trace("[Level] Region not known:", region);
+					return new Point();
+			}
 		}
 	}
 }

@@ -78,11 +78,6 @@ package vgdev.stroll.props.consoles
 				
 			return hp == 0;
 		}
-		
-		override public function isActive():Boolean 
-		{
-			return hp != 0 && super.isActive();
-		}
 
 		/**
 		 * Updates the closest player and '!' display for this console

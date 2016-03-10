@@ -1,0 +1,30 @@
+------------------------------------------------
+en_intro_waves
+------------------------------------------------
+"Tutorial" for Sector 1.
+
+Wave 1
+	2x Eye in top right
+Wave 2
+	2x Eye in bottom right
+Wave 3
+	4x Eye in left
+Wave 4
+	6x Eye in all directions
+	
+------------------------------------------------
+en_intro_squid
+------------------------------------------------
+Encounter with Squids for Sector 2-4
+
+Wave 1
+	1x Squid in far right
+Wave 2
+	1x Squid in far left
+	
+------------------------------------------------
+en_anomalyfield
+------------------------------------------------
+Encounter with colored Geometric Anomalies for Sector X-X
+
+Infinite waves of Anomalies with increasing frequency.

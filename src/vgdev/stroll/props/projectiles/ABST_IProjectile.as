@@ -4,18 +4,19 @@ package vgdev.stroll.props.projectiles
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
-	import vgdev.stroll.managers.ManagerEProjectile;
+	import vgdev.stroll.managers.ManagerProjectile;
 	import vgdev.stroll.managers.ManagerGeneric;
-	import vgdev.stroll.props.ABST_EMovable;
+	import vgdev.stroll.props.ABST_IMovable;
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.enemies.ABST_Enemy;
+	import vgdev.stroll.props.Player;
 	import vgdev.stroll.System;
 	
 	/**
-	 * Base class for all projectiles outside of the ship
+	 * Base class for all projectiles inside of the ship
 	 * @author Alexander Huynh
 	 */
-	public class ABST_Projectile extends ABST_EMovable 
+	public class ABST_IProjectile extends ABST_IMovable 
 	{
 		// polar
 		protected var spd:Number;
@@ -30,20 +31,28 @@ package vgdev.stroll.props.projectiles
 		protected var attackColor:uint;
 		protected var colorTrans:ColorTransform;
 		
-		protected var managerProj:ManagerEProjectile;
+		protected var managerProj:ManagerProjectile;
 		protected var managerEnem:ManagerGeneric;
+		protected var managerPlay:ManagerGeneric;
 												
-		public function ABST_Projectile(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
+		public function ABST_IProjectile(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, attributes:Object) 
 		{
-			super(_cg, _mc_object, System.setAttribute("pos", attributes, new Point()), System.setAttribute("affiliation", attributes, System.AFFIL_ENEMY));
+			super(_cg, _mc_object, _hitMask);
+			
+			mc_object.x = attributes["pos"].x;
+			mc_object.y = attributes["pos"].y;
+			
 			attackColor = System.setAttribute("attackColor", attributes, System.COL_WHITE);
+			affiliation = System.setAttribute("affiliation", attributes, System.AFFIL_ENEMY)
 			dir = System.setAttribute("dir", attributes, attributes);
 			dmg = System.setAttribute("dmg", attributes, 6.0);
 			life = System.setAttribute("life", attributes, 120);
 			spd = System.setAttribute("spd", attributes, 2);
+			setScale(System.setAttribute("scale", attributes, 1));
 			
-			managerProj = cg.managerMap[System.M_EPROJECTILE];
-			managerEnem = cg.managerMap[System.M_ENEMY];
+			managerProj = cg.managerMap[System.M_IPROJECTILE];
+			managerEnem = cg.managerMap[System.M_ENEMY];			// TODO internal enemies
+			managerPlay = cg.managerMap[System.M_PLAYER];
 			
 			mc_object.rotation = dir;
 			
@@ -71,31 +80,38 @@ package vgdev.stroll.props.projectiles
 			return completed;
 		}
 		
+		override protected function onShipHit():void 
+		{
+			destroy();
+		}
+		
 		/**
 		 * Do things based on if this projectile has hit other objects
 		 */
 		protected function updateCollisions():void
 		{
-			var collide:ABST_Object = managerProj.collideWithOther(this);
-			if (collide != null)								// projectile has collided with another projectile
+			if (getAffiliation() == System.AFFIL_ENEMY)								// projectile has collided with another projectile
 			{
-				destroy();
-				(collide as ABST_Projectile).destroy();
+				var hitPlayer:ABST_Object = managerPlay.collideWithOther(this, true);
+				if (hitPlayer != null)
+				{
+					hitPlayer.changeHP( -dmg);
+					destroy();
+				}
 			}
 			else if (getAffiliation() == System.AFFIL_PLAYER)	// projectile is a player's; check for hits on enemies
 			{
-				collide = managerEnem.collideWithOther(this, true);
-				if (collide != null)
+				var hitEnemy:ABST_Enemy = managerEnem.collideWithOther(this, true) as ABST_Enemy;		// check for any hit
+				if (hitEnemy != null)
 				{
-					destroy();
-					(collide as ABST_Enemy).changeHP(-dmg);
+					// if the enemy is using a hitbox, check on that as well (otherwise accept as a hit)
+					if (hitEnemy.hitbox == null || hitEnemy.mc_object.hitbox.hitTestPoint(mc_object.x + System.GAME_OFFSX, mc_object.y + System.GAME_OFFSY, true))
+					{
+						(hitEnemy as ABST_Enemy).changeHP(-dmg);
+						destroy();
+					}
 				}
 			}
-		}
-		
-		override protected function onShipHit():void
-		{
-			cg.ship.damage(dmg, attackColor);
 		}
 	}
 }

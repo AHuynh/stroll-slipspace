@@ -90,7 +90,7 @@ package vgdev.stroll.props.consoles
 			
 			// revive incapacitated players
 			for each (var player:Player in cg.players)
-			{
+			{				
 				if (player == closestPlayer || player.getHP() != 0)
 					continue;
 				if (System.getDistance(closestPlayer.mc_object.x, closestPlayer.mc_object.y, player.mc_object.x, player.mc_object.y) < RANGE_REVIVE)
@@ -164,8 +164,8 @@ package vgdev.stroll.props.consoles
 							break;
 							case "repair":
 								cg.addDecor(visualEffect, {
-														"x": closestPlayer.mc_object.x + System.getRandNum(-6, 6),
-														"y": closestPlayer.mc_object.y + System.getRandNum(-6, 6),
+														"x": item.mc_object.x + System.getRandNum(-6, 6),
+														"y": item.mc_object.y + System.getRandNum(-6, 6),
 														"dy": System.getRandNum(-.5, -1)
 													  });	
 							break;

@@ -29,10 +29,20 @@ package vgdev.stroll.managers
 		 */
 		public function updateProximities(p:Player):void
 		{
+			var c:ABST_Console;
+			
+			// don't check proximity for this player if they are incapacitated
+			if (p.getHP() == 0)
+			{
+				for each (c in objArray)
+					c.setProximity(null, 99999);
+				return;
+			}
+			
 			var closestDist:Number = 99999;
 			var closestConsole:ABST_Console;
 			var dist:Number;
-			var c:ABST_Console;
+			
 			for each (c in objArray)
 			{
 				if (c.inUse)				// skip things already being used

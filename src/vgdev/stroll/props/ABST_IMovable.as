@@ -28,8 +28,18 @@ package vgdev.stroll.props
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
 			}
+			else
+				onShipHit();
 			
 			updateDepth();
+		}
+		
+		/**
+		 * Actions to perform when this object collides with the interal ship hitbox
+		 */
+		protected function onShipHit():void
+		{
+			// -- override this function
 		}
 		
 		/**

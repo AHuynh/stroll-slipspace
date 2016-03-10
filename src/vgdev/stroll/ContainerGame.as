@@ -30,6 +30,7 @@
 		public var level:Level;
 		public var ship:Ship;
 		public var camera:Cam;
+		public var tails:TAILS;
 		
 		/// Whether or not the game is paused
 		public var isPaused:Boolean = false;
@@ -51,21 +52,23 @@
 		public var managers:Array = [];
 		public var managerMap:Object = new Object();
 		
+		// TEMPORARY
+		private const TAILS_DEFAULT:String = "Hey! I'm T.A.I.L.S., your ship's AI.\n\n" +
+											 "I managed to bring some of the ship's systems online. Check them out before we jump.\n\n" +
+											 "OK, are both of you ready?";
+		
 		/**
 		 * A MovieClip containing all of a Stroll level
 		 * @param	eng			A reference to the Engine
 		 */
-		public function ContainerGame(eng:Engine, isMenu:Boolean = false)
+		public function ContainerGame(eng:Engine)
 		{
 			super();
 			engine = eng
-			
-			if (!isMenu)		// super hacky and should probably be changed
-			{
-				game = new SWC_Game();
-				addChild(game);
-				game.addEventListener(Event.ADDED_TO_STAGE, init);
-			}
+
+			game = new SWC_Game();
+			addChild(game);
+			game.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
 		protected function init(e:Event):void
@@ -74,13 +77,13 @@
 			
 			// init the GUI
 			gui = new SWC_GUI();	
-			engine.addChild(gui);
-			gui.x += System.GAME_OFFSX;
-			gui.y += System.GAME_OFFSY;
+			engine.superContainer.mc_container.addChild(gui);
 			gui.mc_pause.visible = false;
+			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			
 			level = new Level(this);
+			tails = new TAILS(this, gui.mc_tails);
 			
 			game.mc_bg.gotoAndStop("space");
 			
@@ -95,7 +98,8 @@
 			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, System.keyMap0),
 					   new Player(this, game.mc_ship.mc_player1, shipHullMask, 1, System.keyMap1)];
 
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
+			// placeholder ship
+			/*consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
 											players, [-120, 120], [1, -1, 3, -1]));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console02, game.mc_ship.turret_1,		// left
 											players, [-165, 15], [2, -1, 0, -1]));
@@ -106,7 +110,21 @@
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console03, players));
 			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
-			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));
+			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));*/
+			
+			// Eagle
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
+											players, [-120, 120], [1, -1, 3, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
+											players, [-165, 10], [2, -1, 0, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
+											players, [-10, 165], [0, -1, 2, -1]));
+			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
+											players, [-65, 65], [3, -1, 1, -1]));
+			consoles[3].rotOff = 180;
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players));
+			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
 			
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players));
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players));
@@ -117,8 +135,11 @@
 			var i:int;
 			
 			// init the managers			
-			managerMap[System.M_EPROJECTILE] = new ManagerEProjectile(this);
+			managerMap[System.M_EPROJECTILE] = new ManagerProjectile(this);
 			managers.push(managerMap[System.M_EPROJECTILE]);
+			
+			managerMap[System.M_IPROJECTILE] = new ManagerProjectile(this);
+			managers.push(managerMap[System.M_IPROJECTILE]);
 
 			managerMap[System.M_PLAYER] = new ManagerGeneric(this);
 			managerMap[System.M_PLAYER].setObjects(players);
@@ -151,9 +172,12 @@
 			for (i = 0; i < consoles.length; i++)
 				managerMap[System.M_PROXIMITY].addObject(consoles[i]);
 			
-			//SoundManager.playBGM("bgm_battle1");
+			//SoundManager.playBGM("bgm_calm", .4);
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
+			
+			tails.show(TAILS_DEFAULT);
+			isPaused = true;
 		}
 		
 		/**
@@ -181,20 +205,11 @@
 		/**
 		 * Add a decoration object to the game
 		 * @param	style			The label the SWC_Decor should use
-		 * @param	params			Object map with additional attributes (x, y, dx, dy, scale)
+		 * @param	params			Object map with additional attributes
 		 */
 		public function addDecor(style:String, params:Object = null):void
 		{
-			var deco:Decor = new Decor(this, new SWC_Decor(), style);
-			if (params != null)
-			{
-				deco.mc_object.x = System.setAttribute("x", params, 0);
-				deco.mc_object.y = System.setAttribute("y", params, 0);
-				deco.dx = System.setAttribute("dx", params, 0);
-				deco.dy = System.setAttribute("dy", params, 0);
-				deco.setScale(System.setAttribute("scale", params, 1));
-			}
-			addToGame(deco, System.M_DECOR);
+			addToGame(new Decor(this, new SWC_Decor(), style, params), System.M_DECOR);
 		}
 
 		/**
@@ -218,13 +233,22 @@
 		
 		/**
 		 * Callback when a player not at a console performs their 'USE' action
-		 * Attempts to activate (set the player to be using) the appropriate console
+		 * If TAILS is up, acknowledge.
+		 * Otherwise, attempts to activate (set the player to be using) the appropriate console
 		 * @param	p		the Player that is trying to USE something
 		 */
 		public function onAction(p:Player):void
 		{
-			for (var i:int = 0; i < consoles.length; i++)
-				consoles[i].onAction(p);
+			if (tails.isActive())
+			{
+				if (tails.acknowledge(p.playerID))
+					isPaused = false;
+			}
+			else
+			{
+				for (var i:int = 0; i < consoles.length; i++)
+					consoles[i].onAction(p);
+			}
 		}
 		
 		/**
@@ -239,6 +263,7 @@
 			level.step();
 			ship.step();
 			camera.step();
+			tails.step();
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
@@ -267,10 +292,15 @@
 			managerMap[System.M_ENEMY].killAll();
 			
 			// game finished state
-			if (level.nextWave())
+			if (level.nextSector())
 			{
 				destroy(null);
 				completed = true;
+			}
+			else
+			{
+				tails.show(level.getTAILS(), 120);
+				//isPaused = true;		// TODO pause if big
 			}
 		}
 

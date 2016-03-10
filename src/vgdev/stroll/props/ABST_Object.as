@@ -28,6 +28,9 @@ package vgdev.stroll.props
 		
 		/// Helper for use in ABST_Manager.getNearby
 		public var nearDistance:Number = 0;
+		
+		/// System friend or foe identifier (ex. System.M_PLAYER)
+		protected var affiliation:int;
 
 		/**
 		 * Should only be called through super(), never instantiated
@@ -57,6 +60,15 @@ package vgdev.stroll.props
 		{
 			return !completed && mc_object != null;
 		}
+		
+		/**
+		 * Get the SYSTEM affiliation of this object
+		 * @return		System.AFFIL_(something)
+		 */
+		public function getAffiliation():int
+		{
+			return affiliation;
+		}
 
 		/**
 		 * Scale this object in both X and Y
@@ -74,9 +86,22 @@ package vgdev.stroll.props
 		 */
 		protected function updatePosition(dx:Number, dy:Number):void
 		{
-			mc_object.x += dx;
-			mc_object.y += dy;
-			//updateDepth();		// only call if needed
+			if (mc_object != null)
+			{
+				mc_object.x += dx;
+				mc_object.y += dy;
+				//updateDepth();		// only call if needed
+			}
+		}
+		
+		/**
+		 * Update this object's rotation
+		 * @param	dr		the amount to change in the clockwise direction, in degrees
+		 */
+		protected function updateRotation(dr:Number):void
+		{
+			if (mc_object != null)
+				mc_object.rotation = (mc_object.rotation + dr) % 360;
 		}
 		
 		/**
@@ -107,8 +132,11 @@ package vgdev.stroll.props
 		 */
 		public function updateDepth():void
 		{
-			depth = mc_object.y;
-			cg.managerMap[System.M_DEPTH].updateDepths();
+			if (mc_object != null)
+			{
+				depth = mc_object.y;
+				cg.managerMap[System.M_DEPTH].updateDepths();
+			}
 		}
 		
 		/**

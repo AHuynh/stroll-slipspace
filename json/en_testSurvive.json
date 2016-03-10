@@ -1,0 +1,22 @@
+{
+  "settings": {
+	"id": "testSurvive",
+	"background": "default",
+	"difficulty_range": [0, 4],
+    "jamming_min": 0,
+    "slip_range": 15.0,
+	"type": "Debris",
+	"TAILS": "Geometric Anomalies detected, and a lot of them! Keep the ship safe until we can jump!"
+  },
+  "waves": [
+	{
+		"time": 1,
+		"recur": 3,
+		"repeat": 4,
+		"spawnables":
+			[
+				{"type": "GeometricAnomaly"}
+			]
+	}
+  ]
+}

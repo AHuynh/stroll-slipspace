@@ -28,8 +28,8 @@ package vgdev.stroll
 		public static var GAME_OFFSY:int = GAME_HALF_HEIGHT;
 
 		// constants used in ABST_Projectile
-		public static const AFFIL_PLAYER:int = 0;
-		public static const AFFIL_ENEMY:int = 1;
+		public static const AFFIL_PLAYER:int = 1;
+		public static const AFFIL_ENEMY:int = 2;
 		
 		// constants used in ContainerGame.managerMap
 		public static const M_PLAYER:int = 0;		
@@ -37,6 +37,7 @@ package vgdev.stroll
 		public static const M_CONSOLE:int = 10;
 		public static const M_PROXIMITY:int = 11;
 		public static const M_EPROJECTILE:int = 20;
+		public static const M_IPROJECTILE:int = 21;
 		public static const M_DECOR:int = 30;
 		public static const M_FIRE:int = 40;
 		public static const M_DEPTH:int = 50;
@@ -44,6 +45,7 @@ package vgdev.stroll
 		// timing constants
 		public static const SECOND:int = 30;
 		public static const MINUTE:int = SECOND * 60;
+		public static const TAILS_NORMAL:int = SECOND * 4;
 		
 		// color constants
 		public static const COL_WHITE:uint = 0xFFFFFF;
@@ -192,6 +194,20 @@ package vgdev.stroll
 		public static function outOfBounds(val:Number, low:Number, high:Number, buffer:Number = 0):Boolean
 		{
 			return (val < low - buffer || val > high + buffer);
+		}
+		
+		/**
+		 * Determines if val is not between the two limits, with an optional buffer; but only if val is approaching the limit
+		 * @param	val				The original value
+		 * @param	dVal			The change in the original value
+		 * @param	low				The lower limit
+		 * @param	high			The upper limit
+		 * @param	buffer			Buffer to subtract from low, add to high
+		 * @return					val < low - buffer || val > high + buffer
+		 */
+		public static function directionalOutOfBounds(val:Number, dVal:Number, low:Number, high:Number, buffer:Number = 0):Boolean
+		{
+			return outOfBounds(val, low, high, buffer) && ((val < low && dVal < 0) || (val > high && dVal > 0))
 		}
 		
 		// TODO fix

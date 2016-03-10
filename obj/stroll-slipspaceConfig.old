@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'3/4/2016'</value>
+      <value>'3/8/2016'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -38,6 +38,7 @@
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
+<<<<<<< HEAD
       <path-element>C:\Users\Jimmy\Documents\GitHub\stroll-slipspace\swc\SWC_Game.swc</path-element>
       <path-element>C:\Users\Jimmy\Documents\GitHub\stroll-slipspace\swc\SWC_MainMenu.swc</path-element>
       <path-element>C:\Users\Jimmy\Documents\GitHub\stroll-slipspace\swc\SWC_Bullet.swc</path-element>
@@ -46,6 +47,17 @@
       <path-element>C:\Users\Jimmy\Documents\GitHub\stroll-slipspace\swc\SWC_SlipdriveArrow.swc</path-element>
       <path-element>C:\Users\Jimmy\Documents\GitHub\stroll-slipspace\swc\SWC_Decor.swc</path-element>
       <path-element>C:\Users\Jimmy\Documents\GitHub\stroll-slipspace\swc\SWC_Debug.swc</path-element>
+=======
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Game.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_MainMenu.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Bullet.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Enemy.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_GUI.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_SlipdriveArrow.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Decor.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Debug.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Mask.swc</path-element>
+>>>>>>> refs/remotes/AHuynh/master
     </library-path>
   </compiler>
   <file-specs>

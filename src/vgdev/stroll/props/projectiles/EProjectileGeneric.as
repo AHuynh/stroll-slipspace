@@ -8,10 +8,10 @@ package vgdev.stroll.props.projectiles
 	 * Same as ABST_Projectile (but not abstract)
 	 * @author Alexander Huynh
 	 */
-	public class ProjectileGeneric extends ABST_Projectile 
+	public class EProjectileGeneric extends ABST_EProjectile 
 	{
 		
-		public function ProjectileGeneric(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
+		public function EProjectileGeneric(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			super(_cg, _mc_object, attributes);
 		}
