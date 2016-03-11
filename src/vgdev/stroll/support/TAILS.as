@@ -14,6 +14,8 @@ package vgdev.stroll.support
 		private var playerReady:Array = [false, false];
 		private var showDuration:int = 0;
 		
+		private var tailsLarge:Boolean = false;
+		
 		public function TAILS(_cg:ContainerGame, _tails:MovieClip) 
 		{
 			cg = _cg;
@@ -22,7 +24,7 @@ package vgdev.stroll.support
 		
 		public function isActive():Boolean
 		{
-			return tails.visible;
+			return tailsLarge && tails.visible;
 		}
 		
 		public function step():void
@@ -42,6 +44,8 @@ package vgdev.stroll.support
 			tails.gotoAndStop(showDuration == 0 ? 1 : 2);
 			tails.visible = true;
 			tails.tf_message.text = text;
+			
+			tailsLarge = showDuration == 0;
 			
 			playerReady = [false, false];
 			tails.mc_ready1.visible = tails.mc_ready2.visible = showDuration == 0;

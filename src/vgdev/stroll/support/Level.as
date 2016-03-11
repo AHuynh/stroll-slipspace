@@ -23,6 +23,10 @@ package vgdev.stroll.support
 		private var en_intro_waves:Class;
 		[Embed(source="../../../../json/en_intro_squids.json", mimeType="application/octet-stream")]
 		private var en_intro_squids:Class;
+		[Embed(source="../../../../json/en_intro_slimes.json", mimeType="application/octet-stream")]
+		private var en_intro_slimes:Class;
+		[Embed(source="../../../../json/en_intro_amoebas.json", mimeType="application/octet-stream")]
+		private var en_intro_amoebas:Class;
 		[Embed(source="../../../../json/en_anomalyfield.json", mimeType="application/octet-stream")]
 		private var en_anomalyfield:Class;
 		
@@ -64,17 +68,19 @@ package vgdev.stroll.support
 			var rawEncountersJSON:Array =	[	
 												JSON.parse(new en_intro_waves()),
 												JSON.parse(new en_intro_squids()),
-												JSON.parse(new en_anomalyfield()),
+												JSON.parse(new en_intro_slimes()),
+												JSON.parse(new en_intro_amoebas()),
+												JSON.parse(new en_anomalyfield())
 												
-												JSON.parse(new en_test()),
+												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
 												JSON.parse(new en_fire_lite()),
 												JSON.parse(new en_fire_eyes()),
-												JSON.parse(new en_testSurvive())
+												JSON.parse(new en_testSurvive())*/
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											rawEncountersJSON = [JSON.parse(new en_anomalyfield())];
+											//rawEncountersJSON = [JSON.parse(new en_intro_slimes())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -180,6 +186,21 @@ package vgdev.stroll.support
 																					});
 									manager = System.M_ENEMY;
 								break;
+								case "Slime":
+									spawn = new EnemySlime(cg, new SWC_Enemy(), {
+																					"attackColor": col,
+																					"attackStrength": 18,
+																					"hp": 40
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "Amoeba":
+									spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
+																					"x":pos.x,
+																					"y":pos.y
+																					});
+									manager = System.M_ENEMY;
+								break;
 								case "GeometricAnomaly":
 									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
 																							"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
@@ -227,7 +248,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				//if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
+				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
 					choices.push(e);
 			}
 			

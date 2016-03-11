@@ -23,6 +23,16 @@ Wave 2
 	1x Squid in far left
 	
 ------------------------------------------------
+en_intro_amoebas
+------------------------------------------------
+Encounter with Amoebas for Sector 2-4
+
+Wave 1
+	1x Amoeba (2) in far right
+Wave 2
+	1x Amoeba (3) in top right
+	
+------------------------------------------------
 en_anomalyfield
 ------------------------------------------------
 Encounter with colored Geometric Anomalies for Sector X-X

@@ -4,6 +4,7 @@ package vgdev.stroll.props.projectiles
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.managers.ManagerEnemy;
 	import vgdev.stroll.managers.ManagerProjectile;
 	import vgdev.stroll.managers.ManagerGeneric;
 	import vgdev.stroll.props.ABST_EMovable;
@@ -13,6 +14,11 @@ package vgdev.stroll.props.projectiles
 	
 	/**
 	 * Base class for all projectiles outside of the ship
+	 * Supported labels:
+	 * 		turret_standard
+	 * 		turret_small
+	 * 		turret_small_orange
+	 * 		pus
 	 * @author Alexander Huynh
 	 */
 	public class ABST_EProjectile extends ABST_EMovable 
@@ -31,13 +37,13 @@ package vgdev.stroll.props.projectiles
 		protected var colorTrans:ColorTransform;
 		
 		protected var managerProj:ManagerProjectile;
-		protected var managerEnem:ManagerGeneric;
+		protected var managerEnem:ManagerEnemy;
 												
 		public function ABST_EProjectile(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			super(_cg, _mc_object, System.setAttribute("pos", attributes, new Point()), System.setAttribute("affiliation", attributes, System.AFFIL_ENEMY));
 			attackColor = System.setAttribute("attackColor", attributes, System.COL_WHITE);
-			dir = System.setAttribute("dir", attributes, attributes);
+			dir = System.setAttribute("dir", attributes, 0);
 			dmg = System.setAttribute("dmg", attributes, 6.0);
 			life = System.setAttribute("life", attributes, 120);
 			spd = System.setAttribute("spd", attributes, 2);
@@ -46,13 +52,13 @@ package vgdev.stroll.props.projectiles
 			managerProj = cg.managerMap[System.M_EPROJECTILE];
 			managerEnem = cg.managerMap[System.M_ENEMY];
 			
-			mc_object.rotation = dir;
+			mc_object.rotation = System.setAttribute("rot", attributes, dir);
 			
 			// display the correct graphic
 			mc_object.gotoAndStop(System.setAttribute("style", attributes, 1));
 			
 			// tint the graphic
-			if (attackColor != 0)
+			if (attackColor != System.COL_WHITE)
 			{
 				colorTrans = new ColorTransform();
 				colorTrans.color = attackColor;
