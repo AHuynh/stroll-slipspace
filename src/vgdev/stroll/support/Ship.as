@@ -37,9 +37,22 @@ package vgdev.stroll.support
 		private var shieldCTF:ColorTransform;
 		// ------------------------------------------------------------------------------------------------
 		
+		// -- Navigation -----------------------------------------------------------------------------------
+		public var shipHeading:Number = 0; //Number determining how far off course ship is. Maintain this at 0 for best navigation.
+		
+		private var SHIP_HEADING_MAX:Number = 1; 	//Max value shipHeading can have
+		private var SHIP_HEADING_MIN:Number = -1; 	//Min value shipHeading can have
+		
+		private var HEADING_RUNAWAY:Number = 1.003;  //Scaling factor applied to heading every game tick
+		private var HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
+		// ------------------------------------------------------------------------------------------------
+		
 		// -- Slipdrive -----------------------------------------------------------------------------------
 		public var slipRange:Number = 1;			// 'distance' until slipdrive is in range
-		public var slipSpeed:Number = .03;			// amount to reduce slipRange per frame
+		private var MAX_SLIP_SPEED:Number = .03;
+		private var MIN_SLIP_SPEED:Number = .01;
+		
+		public var slipSpeed:Number = MAX_SLIP_SPEED;	// amount to reduce slipRange per frame
 		private var slipLimits:Array = [0, 1];		// min and max values of slipSpeed
 		public var jammable:int = 0;				// if non-zeo, prevents jumping if at least jammable enemies are present
 		// ------------------------------------------------------------------------------------------------
@@ -141,6 +154,26 @@ package vgdev.stroll.support
 			}
 		}
 		
+		public function adjustHeading(change:Number):void 
+		{
+			var newHeading:Number = shipHeading + change;
+			
+			if (newHeading > SHIP_HEADING_MAX) {
+				shipHeading = SHIP_HEADING_MAX;
+			} else if (newHeading < SHIP_HEADING_MIN) {
+				shipHeading = SHIP_HEADING_MIN;
+			} else {
+				shipHeading = newHeading;
+			}
+		
+		}
+		
+		public function scaleHeading(factor:Number):void
+		{
+			var change:Number = shipHeading * factor - shipHeading;
+			adjustHeading(change);
+		}
+		
 		private function updateShields():void
 		{
 			if (shieldReCurr > 0)
@@ -173,6 +206,13 @@ package vgdev.stroll.support
 			}
 		}
 		
+		private function updateNavigation():void {
+			scaleHeading(HEADING_RUNAWAY);
+			adjustHeading((Math.random() - 0.5) * HEADING_JUMP);
+			slipSpeed = MAX_SLIP_SPEED - ((MAX_SLIP_SPEED - MIN_SLIP_SPEED) * Math.abs(shipHeading));
+			trace("Current Heading: " + shipHeading + "Current Slip Speed: " + slipSpeed);
+		}
+		
 		private function updateSlip():void
 		{
 			if (slipRange > 0)
@@ -194,10 +234,20 @@ package vgdev.stroll.support
 		public function isJumpReady():String
 		{
 			// TODO add other limiting conditions here
+			if (!isNavGood()) {
+				//change to say navigation sucks
+				return "range";
+			}
 			if (jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable)
 				return "jammed";
 			return slipRange == 0 ? "ready" : "range";
 		}
+		
+		public function isNavGood():Boolean 
+		{
+			return Math.abs(shipHeading) < 0.035;
+		}
+		
 		
 		/**
 		 * Attempt to jump the ship to the next sector
@@ -217,6 +267,7 @@ package vgdev.stroll.support
 		public function step():void
 		{
 			updateSlip();
+			updateNavigation();
 			updateShields();
 		}
 	}

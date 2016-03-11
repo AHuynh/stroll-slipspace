@@ -81,7 +81,6 @@
 			gui.mc_pause.visible = false;
 			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
-			
 			level = new Level(this);
 			tails = new TAILS(this, gui.mc_tails);
 			
@@ -123,8 +122,11 @@
 											players, [-65, 65], [3, -1, 1, -1]));
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players));
+			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_sensors, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
+			
+			//just a test
+			//consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_sensors, players));
 			
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players));
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players));
