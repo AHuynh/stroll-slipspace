@@ -49,6 +49,11 @@ package vgdev.stroll.props.consoles
 		override public function step():Boolean 
 		{
 			updateHUD(inUse);
+			if (hp <= 0) {
+				cg.ship.navOnline = false;
+			} else {
+				cg.ship.navOnline = true;
+			}
 			return super.step();
 		}
 		

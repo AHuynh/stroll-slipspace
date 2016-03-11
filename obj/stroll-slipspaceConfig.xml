@@ -16,11 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-<<<<<<< HEAD
       <value>'3/11/2016'</value>
-=======
-      <value>'3/9/2016'</value>
->>>>>>> refs/remotes/AHuynh/master
     </define>
     <define append="true">
       <name>CONFIG::air</name>
