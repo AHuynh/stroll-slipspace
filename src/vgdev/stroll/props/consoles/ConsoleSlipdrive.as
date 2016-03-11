@@ -30,9 +30,13 @@ package vgdev.stroll.props.consoles
 		
 		override public function step():Boolean 
 		{
-			if (inUse && getHUD().currentFrame <= 2)		// "range" or "jammed"
+			if (inUse && !isSpooling)		// "range" or "jammed"
 				updateHUD(true);
 			updateArrows();
+			
+			if (!cg.ship.isHeadingGood()) {
+				removeArrows();
+			}
 			return super.step();
 		}
 		
@@ -80,7 +84,7 @@ package vgdev.stroll.props.consoles
 		
 		override protected function updateHUD(isActive:Boolean):void 
 		{
-			if (isActive)
+			if (isActive && !getHUD().missVisible)
 				getHUD().gotoAndStop(cg.ship.isJumpReady());
 		}
 		

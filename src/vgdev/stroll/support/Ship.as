@@ -7,7 +7,7 @@ package vgdev.stroll.support
 	
 	/**
 	 * Support functionality related to the ship
-	 * @author Alexander Huynh
+	 * @author Alexander Huynh, Jimmy Spearman
 	 */
 	public class Ship 
 	{
@@ -37,11 +37,25 @@ package vgdev.stroll.support
 		private var shieldCTF:ColorTransform;
 		// ------------------------------------------------------------------------------------------------
 		
+		// -- Navigation ----------------------------------------------------------------------------------
+		public var shipHeading:Number = 0;				//Number determining how far off course ship is. Maintain this at 0 for best navigation.
+		public var navOnline:Boolean = true; 			// boolean determining if slipdrive can function
+		
+		private var SHIP_HEADING_MAX:Number = 1; 		//Max value shipHeading can have
+		private var SHIP_HEADING_MIN:Number = -1; 		//Min value shipHeading can have
+		
+		private var HEADING_RUNAWAY:Number = 1.003;  	//Scaling factor applied to heading every game tick
+		private var HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
+		private var DAMAGE_JUMP_FACTOR:Number = 0.01;	//max value of random jumps applied to the heading every game tick 
+		// ------------------------------------------------------------------------------------------------
+		
 		// -- Slipdrive -----------------------------------------------------------------------------------
-		public var slipRange:Number = 1;			// 'distance' until slipdrive is in range
-		public var slipSpeed:Number = .03;			// amount to reduce slipRange per frame
-		private var slipLimits:Array = [0, 1];		// min and max values of slipSpeed
-		public var jammable:int = 0;				// if non-zeo, prevents jumping if at least jammable enemies are present
+		public var slipRange:Number = 1;				// 'distance' until slipdrive is in range
+		private var MAX_SLIP_SPEED:Number = .03;
+		private var MIN_SLIP_SPEED:Number = .01;
+		
+		public var slipSpeed:Number = MAX_SLIP_SPEED;	// amount to reduce slipRange per frame
+		public var jammable:int = 0;					// if non-zeo, prevents jumping if at least jammable enemies are present
 		// ------------------------------------------------------------------------------------------------
 		
 		public function Ship(_cg:ContainerGame)
@@ -79,6 +93,7 @@ package vgdev.stroll.support
 			else
 			{
 				hp = System.changeWithLimit(hp, -dmg, 0);
+				adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
 				SoundManager.playSFX("sfx_hithull1");
 			}
 						
@@ -108,6 +123,7 @@ package vgdev.stroll.support
 		public function damageDirect(dmg:Number):void
 		{
 			hp = System.changeWithLimit(hp, -dmg, 0);
+			adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
 			updateIntegrity();
 			
 			//if (hp == 0)
@@ -141,6 +157,36 @@ package vgdev.stroll.support
 			}
 		}
 		
+		/**
+		 * Change the heading of the ship
+		 * @param	change		Number, the amount to change by (should be constrained by SHIP_HEADING_MIN, SHIP_HEADING_MAX)
+		 */
+		public function adjustHeading(change:Number):void 
+		{
+			var newHeading:Number = shipHeading + change;
+			
+			if (newHeading > SHIP_HEADING_MAX) {
+				shipHeading = SHIP_HEADING_MAX;
+			} else if (newHeading < SHIP_HEADING_MIN) {
+				shipHeading = SHIP_HEADING_MIN;
+			} else {
+				shipHeading = newHeading;
+			}
+		}
+		
+		/**
+		 * ...
+		 * @param	factor		...
+		 */
+		public function scaleHeading(factor:Number):void
+		{
+			var change:Number = shipHeading * factor - shipHeading;
+			adjustHeading(change);
+		}
+		
+		/**
+		 * Helper to update shield cooldowns and graphics
+		 */
 		private function updateShields():void
 		{
 			if (shieldReCurr > 0)
@@ -173,6 +219,19 @@ package vgdev.stroll.support
 			}
 		}
 		
+		/**
+		 * Gradually drift the ship's heading away from the center
+		 */
+		private function updateNavigation():void {
+			scaleHeading(HEADING_RUNAWAY);
+			adjustHeading((Math.random() - 0.5) * HEADING_JUMP);
+			slipSpeed = MAX_SLIP_SPEED - ((MAX_SLIP_SPEED - MIN_SLIP_SPEED) * Math.abs(shipHeading));
+			//trace("Current Heading: " + shipHeading + "Current Slip Speed: " + slipSpeed);
+		}
+		
+		/**
+		 * Advance the ship's progress and update relevant UI
+		 */
 		private function updateSlip():void
 		{
 			if (slipRange > 0)
@@ -194,9 +253,25 @@ package vgdev.stroll.support
 		public function isJumpReady():String
 		{
 			// TODO add other limiting conditions here
-			if (jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable)
+			if (!navOnline) {
+				return "repair";
+			}
+			if (jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable) {
 				return "jammed";
+			}
+			if (!isHeadingGood()) {
+				return "heading";
+			}
 			return slipRange == 0 ? "ready" : "range";
+		}
+		
+		/**
+		 * Returns if the ship's heading is close enough to the center to jump
+		 * @return		true if the ship can jump
+		 */
+		public function isHeadingGood():Boolean 
+		{
+			return (Math.abs(shipHeading) < 0.035);
 		}
 		
 		/**
@@ -217,6 +292,7 @@ package vgdev.stroll.support
 		public function step():void
 		{
 			updateSlip();
+			updateNavigation();
 			updateShields();
 		}
 	}
