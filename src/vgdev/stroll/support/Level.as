@@ -248,7 +248,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				//if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
+				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
 					choices.push(e);
 			}
 			

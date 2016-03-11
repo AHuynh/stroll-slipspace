@@ -2,7 +2,7 @@
   "settings": {
 	"id": "intro_squids",
 	"background": "default",
-	"difficulty_range": [2, 4],
+	"difficulty_range": [2, 2],
     "jamming_min": 1,
     "slip_range": 35.0,
 	"type": "Enemies",
