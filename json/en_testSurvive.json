@@ -2,7 +2,7 @@
   "settings": {
 	"id": "testSurvive",
 	"background": "default",
-	"difficulty_range": [5, 5],
+	"difficulty_range": [9, 9],
     "jamming_min": 0,
     "slip_range": 15.0,
 	"type": "Debris",

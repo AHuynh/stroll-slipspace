@@ -69,8 +69,8 @@ package vgdev.stroll.support
 												JSON.parse(new en_intro_waves()),
 												JSON.parse(new en_intro_squids()),
 												JSON.parse(new en_intro_slimes()),
-												JSON.parse(new en_intro_amoebas()),
-												JSON.parse(new en_anomalyfield())
+												JSON.parse(new en_intro_amoebas())
+												//JSON.parse(new en_anomalyfield())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
