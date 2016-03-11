@@ -75,16 +75,20 @@
 		{
 			game.removeEventListener(Event.ADDED_TO_STAGE, init);
 			
+			game.mc_bg.gotoAndStop("space");
+			
 			// init the GUI
 			gui = new SWC_GUI();	
 			engine.superContainer.mc_container.addChild(gui);
 			gui.mc_pause.visible = false;
 			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
+			
+			// init support classes
 			level = new Level(this);
 			tails = new TAILS(this, gui.mc_tails);
-			
-			game.mc_bg.gotoAndStop("space");
+			ship = new Ship(this);
+			camera = new Cam(this);
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -94,8 +98,8 @@
 			setHitMask(false);
 
 			// link the game's assets
-			players = [new Player(this, game.mc_ship.mc_player0, shipHullMask, 0, System.keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, shipHullMask, 1, System.keyMap1)];
+			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
+					   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
 
 			// placeholder ship
 			/*consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
@@ -122,17 +126,12 @@
 											players, [-65, 65], [3, -1, 1, -1]));
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players));
-			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_sensors, players));
+			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-			
-			//just a test
-			//consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_sensors, players));
 			
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players));
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players));
-			
-			ship = new Ship(this);
-			camera = new Cam(this);
 			
 			var i:int;
 			

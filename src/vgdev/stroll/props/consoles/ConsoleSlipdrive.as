@@ -84,7 +84,7 @@ package vgdev.stroll.props.consoles
 		
 		override protected function updateHUD(isActive:Boolean):void 
 		{
-			if (isActive)
+			if (isActive && !getHUD().missVisible)
 				getHUD().gotoAndStop(cg.ship.isJumpReady());
 		}
 		
