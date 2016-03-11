@@ -34,7 +34,7 @@ package vgdev.stroll.props.consoles
 				updateHUD(true);
 			updateArrows();
 			
-			if (!cg.ship.isHeadingGood()) {
+			if (!cg.ship.isNavGood()) {
 				removeArrows();
 			}
 			return super.step();

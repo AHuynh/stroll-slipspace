@@ -39,14 +39,12 @@ package vgdev.stroll.support
 		
 		// -- Navigation -----------------------------------------------------------------------------------
 		public var shipHeading:Number = 0; //Number determining how far off course ship is. Maintain this at 0 for best navigation.
-		public var navOnline:Boolean = true; 		// boolean determining if slipdrive can function
 		
 		private var SHIP_HEADING_MAX:Number = 1; 	//Max value shipHeading can have
 		private var SHIP_HEADING_MIN:Number = -1; 	//Min value shipHeading can have
 		
 		private var HEADING_RUNAWAY:Number = 1.003;  //Scaling factor applied to heading every game tick
 		private var HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
-		private var DAMAGE_JUMP_FACTOR:Number = 0.01;		//max value of random jumps applied to the heading every game tick 
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Slipdrive -----------------------------------------------------------------------------------
@@ -94,7 +92,6 @@ package vgdev.stroll.support
 			else
 			{
 				hp = System.changeWithLimit(hp, -dmg, 0);
-				adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
 				SoundManager.playSFX("sfx_hithull1");
 			}
 						
@@ -124,7 +121,6 @@ package vgdev.stroll.support
 		public function damageDirect(dmg:Number):void
 		{
 			hp = System.changeWithLimit(hp, -dmg, 0);
-			adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
 			updateIntegrity();
 			
 			//if (hp == 0)
@@ -214,7 +210,7 @@ package vgdev.stroll.support
 			scaleHeading(HEADING_RUNAWAY);
 			adjustHeading((Math.random() - 0.5) * HEADING_JUMP);
 			slipSpeed = MAX_SLIP_SPEED - ((MAX_SLIP_SPEED - MIN_SLIP_SPEED) * Math.abs(shipHeading));
-			//trace("Current Heading: " + shipHeading + "Current Slip Speed: " + slipSpeed);
+			trace("Current Heading: " + shipHeading + "Current Slip Speed: " + slipSpeed);
 		}
 		
 		private function updateSlip():void
@@ -238,24 +234,18 @@ package vgdev.stroll.support
 		public function isJumpReady():String
 		{
 			// TODO add other limiting conditions here
-			if (!isHeadingGood()) {
+			if (!isNavGood()) {
 				//change to say navigation sucks
 				return "range";
 			}
-			
-			if (!navOnline) {
-				//change to say navigation offline
-				return "range";
-			}
-			
 			if (jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable)
 				return "jammed";
 			return slipRange == 0 ? "ready" : "range";
 		}
 		
-		public function isHeadingGood():Boolean 
+		public function isNavGood():Boolean 
 		{
-			return (Math.abs(shipHeading) < 0.035);
+			return Math.abs(shipHeading) < 0.035;
 		}
 		
 		
