@@ -54,7 +54,7 @@ package vgdev.stroll.support
 		private var counter:int = 0;		// keep track of frames elapsed since current encounter started
 		private var counterNext:int = 0;	// the "time" that the next wave spawns
 		
-		private var TAILSmessage:String;
+		private var TAILSmessage:String = "...";
 		
 		private var spLevel:ABST_SPLevel;	// non-null if using a special level that needs code
 		
@@ -80,7 +80,7 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											//rawEncountersJSON = [JSON.parse(new en_fire_lite())];
+											//rawEncountersJSON = [JSON.parse(new en_anomalyfield())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -248,13 +248,13 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
+				//if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
 					choices.push(e);
 			}
 			
 			if (choices.length == 0)		// TODO something when there are no valid encounters
 			{
-				trace("[Level] No suitable encounters found for sector", sectorIndex);
+				trace("[Level] WARNING: No suitable encounters found for Sector", sectorIndex);
 				return false;
 			}
 
@@ -312,7 +312,9 @@ package vgdev.stroll.support
 				case "top_right":		return new Point(System.getRandNum( 100,  400), System.getRandNum(-250, -170));	break;
 				case "bottom_right":	return new Point(System.getRandNum( 100,  400), System.getRandNum( 170,  250));	break;
 				case "top":				return new Point(System.getRandNum(-250,  250), System.getRandNum(-250, -170));	break;
+				case "far_top":			return new Point(System.getRandNum(-250,  250), System.getRandNum(-300, -260));	break;
 				case "bottom":			return new Point(System.getRandNum(-250,  250), System.getRandNum( 170,  250));	break;
+				case "far_bottom":		return new Point(System.getRandNum(-250,  250), System.getRandNum( 300,  260));	break;
 				case "top_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum(-250, -120));	break;
 				case "bottom_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum( 250,  120));	break;
 				case "left":			return new Point(System.getRandNum(-450, -300), System.getRandNum(-200,  200));	break;
