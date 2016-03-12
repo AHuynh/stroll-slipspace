@@ -1,0 +1,20 @@
+{
+  "settings": {
+	"id": "boss_peeps",
+	"background": "default",
+	"difficulty_range": [4, 4],
+    "jamming_min": 1,
+    "slip_range": 100.0,
+	"type": "Boss",
+	"TAILS": "A powerful enemy is ahead! Get ready!"
+  },
+  "waves": [
+	{
+		"time": 3,
+		"spawnables":
+			[
+				{"type": "Peeps"}
+			]
+	}
+  ]
+}

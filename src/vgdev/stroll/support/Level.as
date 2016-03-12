@@ -30,6 +30,9 @@ package vgdev.stroll.support
 		[Embed(source="../../../../json/en_anomalyfield.json", mimeType="application/octet-stream")]
 		private var en_anomalyfield:Class;
 		
+		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
+		private var en_boss_peeps:Class;
+		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
 		[Embed(source="../../../../json/en_test2.json", mimeType="application/octet-stream")]
@@ -80,7 +83,11 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
+											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
 											//rawEncountersJSON = [JSON.parse(new en_anomalyfield())];
+											
+											// Peeps boss
+											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -203,12 +210,17 @@ package vgdev.stroll.support
 								break;
 								case "GeometricAnomaly":
 									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
-																							"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
-																							"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
-																							"tint": waveColor,
-																							"dx": -3 - System.getRandNum(0, 1),
-																							"hp": 12
-																							});
+																					"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																					"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																					"tint": waveColor,
+																					"dx": -3 - System.getRandNum(0, 1),
+																					"hp": 12
+																					});
+									manager = System.M_ENEMY;
+								break;
+								
+								case "Peeps":
+									spawn = new EnemyPeeps(cg, new SWC_Enemy(), {});
 									manager = System.M_ENEMY;
 								break;
 								
@@ -248,7 +260,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
+				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
 					choices.push(e);
 			}
 			

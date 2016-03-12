@@ -173,7 +173,7 @@
 			for (i = 0; i < consoles.length; i++)
 				managerMap[System.M_PROXIMITY].addObject(consoles[i]);
 			
-			SoundManager.playBGM("bgm_calm", .4);
+			//SoundManager.playBGM("bgm_calm", .4);
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			
