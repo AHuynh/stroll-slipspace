@@ -58,6 +58,9 @@ package vgdev.stroll.support
 		public var jammable:int = 0;					// if non-zeo, prevents jumping if at least jammable enemies are present
 		// ------------------------------------------------------------------------------------------------
 		
+		private const BAR_BIG_WIDTH:Number = 157.7;		// SP/HP bar
+		private var hpCTF:ColorTransform;
+		
 		public function Ship(_cg:ContainerGame)
 		{
 			cg = _cg;
@@ -65,6 +68,10 @@ package vgdev.stroll.support
 			
 			shieldCTF = new ColorTransform();
 			setShieldColor(shieldCol);
+			
+			hpCTF = new ColorTransform();
+			cg.gui.bar_hp.transform.colorTransform = hpCTF;
+			updateIntegrity();
 		}
 		
 		public function getShields():Number
@@ -135,8 +142,25 @@ package vgdev.stroll.support
 		 */
 		private function updateIntegrity():void
 		{
-			cg.gui.tf_hull.text = Math.ceil(100 * hp / hpMax).toString();
-			cg.gui.tf_shield.text = Math.ceil(100 * shield / shieldMax).toString();
+			var hpPerc:Number = hp / hpMax;
+			var spPerc:Number = shield / shieldMax;
+			
+			// textfields
+			cg.gui.tf_hull.text = Math.ceil(100 * hpPerc).toString();
+			cg.gui.tf_shield.text = Math.ceil(100 * spPerc).toString();
+			
+			// bars
+			cg.gui.bar_hp.width = hpPerc * BAR_BIG_WIDTH;
+			cg.gui.bar_sp.width = spPerc * BAR_BIG_WIDTH;
+			
+			// colors
+			if (hpPerc < .3)
+				hpCTF.color = System.COL_RED;
+			else if (hpPerc < .6)
+				hpCTF.color = System.COL_YELLOW;
+			else
+				hpCTF.color = System.COL_GREEN;
+			cg.gui.bar_hp.transform.colorTransform = hpCTF;
 		}
 		
 		/**
@@ -148,6 +172,7 @@ package vgdev.stroll.support
 			shieldCol = col;
 			shieldCTF.color = shieldCol;
 			mc_shield.transform.colorTransform = shieldCTF;
+			cg.gui.bar_sp.transform.colorTransform = shieldCTF;
 			
 			if (shield > 0)
 			{
@@ -241,6 +266,7 @@ package vgdev.stroll.support
 				{
 					SoundManager.playSFX("sfx_bell");
 					cg.gui.tf_distance.text = "In range";
+					cg.gui.large_indicator.gotoAndStop("green");
 				}
 				else
 					cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
@@ -285,6 +311,7 @@ package vgdev.stroll.support
 			{
 				SoundManager.playSFX("sfx_slipjump");
 				cg.jump();
+				cg.gui.large_indicator.gotoAndStop(1);
 				return true;
 			}
 			return false;
