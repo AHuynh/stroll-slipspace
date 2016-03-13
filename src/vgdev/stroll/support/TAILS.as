@@ -51,7 +51,7 @@ package vgdev.stroll.support
 			tails.mc_ready1.visible = tails.mc_ready2.visible = showDuration == 0;
 			if (showDuration == 0)
 			{
-				tails.mc_ready1.gotoAndStop(1);		// show X's
+				tails.mc_ready1.gotoAndStop(1);		// show not ready
 				tails.mc_ready2.gotoAndStop(1);
 			}
 
@@ -75,13 +75,13 @@ package vgdev.stroll.support
 			playerReady[playerID] = true;
 			
 			if (playerID == 0)
-				tails.mc_ready1.gotoAndStop(2);
+				tails.mc_ready1.play();
 			else if (playerID == 1)
-				tails.mc_ready2.gotoAndStop(2);
+				tails.mc_ready2.play();
 			
 			if (playerReady[0] && playerReady[1])
 			{
-				tails.visible = false;
+				showDuration = 30;
 				return true;
 			}
 			return false;

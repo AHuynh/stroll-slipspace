@@ -240,9 +240,10 @@ package vgdev.stroll.support
 				if (slipRange == 0)
 				{
 					SoundManager.playSFX("sfx_bell");
-					cg.gui.mc_jumpReady.visible = true;
+					cg.gui.tf_distance.text = "In range";
 				}
-				cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
+				else
+					cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
 			}
 		}
 		

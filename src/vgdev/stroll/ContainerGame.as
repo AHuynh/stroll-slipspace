@@ -286,7 +286,6 @@
 		public function jump():void
 		{
 			game.mc_jump.gotoAndPlay(2);		// play the jump animation
-			gui.mc_jumpReady.visible = false;
 				
 			// remove all external-ship instances
 			managerMap[System.M_EPROJECTILE].killAll();
