@@ -118,13 +118,13 @@
 			
 			// Eagle
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
-											players, [-120, 120], [1, -1, 3, -1]));
+											players, [-120, 120], [1, -1, 3, -1], 0));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
-											players, [-165, 10], [2, -1, 0, -1]));
+											players, [-165, 10], [2, -1, 0, -1], 1));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
-											players, [-10, 165], [0, -1, 2, -1]));
+											players, [-10, 165], [0, -1, 2, -1], 2));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
-											players, [-65, 65], [3, -1, 1, -1]));
+											players, [-65, 65], [3, -1, 1, -1], 3));
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));

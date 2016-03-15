@@ -131,6 +131,15 @@ package vgdev.stroll.managers
 		}
 		
 		/**
+		 * Returns an array of the objects in this manager
+		 * @return		Array (objArray)
+		 */
+		public function getAll():Array
+		{
+			return objArray;
+		}
+		
+		/**
 		 * Returns a sorted array of the objects in this manager within distance of the origin
 		 * @param	o			the origin ABST_Object
 		 * @param	distance	the distance, a Number

@@ -3,6 +3,7 @@ package vgdev.stroll.props.consoles
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.projectiles.ABST_EProjectile;
 	import vgdev.stroll.props.projectiles.EProjectileGeneric;
 	import vgdev.stroll.System;
@@ -45,13 +46,16 @@ package vgdev.stroll.props.consoles
 		/// Rotation offset, if the mc_object's initial rotation is not 0
 		public var rotOff:int = 0;
 		
-		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array) 
+		private var turretID:int;
+		
+		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array, _turretID:int) 
 		{
 			super(_cg, _mc_object, _players);	
 			CONSOLE_NAME = "turret";
 			turret = _turret;
 			gimbalLimits = _gimbalLimits;
 			controlIDs = _controlIDs;
+			turretID = _turretID;
 			
 			markerHelper = gimbalLimits[1] - gimbalLimits[0];
 			
@@ -118,9 +122,32 @@ package vgdev.stroll.props.consoles
 		{
 			if (isActive)
 			{
-				getHUD().tf_cooldown.text = Math.round(10 * cdCount / System.SECOND).toString();
-				getHUD().tf_rotation.text = Math.abs(Math.round(turret.nozzle.rotation)) + "°";
-				getHUD().mc_marker.x = 37 + 47 * ((turret.nozzle.rotation - gimbalLimits[0]) / markerHelper);
+				var trot:Number = turret.nozzle.rotation;
+				var hud:MovieClip = getHUD();
+				hud.tf_cooldown.text = Math.round(10 * cdCount / System.SECOND).toString();
+				hud.tf_rotation.text = Math.abs(Math.round(trot)) + "°";
+				hud.mc_marker.x = 37 + 47 * ((trot - gimbalLimits[0]) / markerHelper);
+				hud.mc_light.y = 18.5 - 9 * turretID;
+				
+				// small window graphics
+				hud.mc_container.graphics.clear();
+				hud.mc_container.graphics.lineStyle(1, System.COL_WHITE, 1);
+				
+				var theta:Number
+				for (var i:int = 1; i >= 0; i--)
+				{
+					theta = System.degToRad(270 - trot + gimbalLimits[i]);
+					hud.mc_container.graphics.moveTo(0, 23);
+					hud.mc_container.graphics.lineTo(50 * Math.cos(theta), 23 + 50 * Math.sin(theta));
+				}
+				
+				var dist:Number;
+				for each (var obj:ABST_Object in cg.managerMap[System.M_EPROJECTILE].getAll())
+				{
+					theta = System.degToRad(270 - trot + rotOff + System.getAngle(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y));
+					dist = System.getDistance(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y) * .1;
+					hud.mc_container.graphics.drawCircle(dist * Math.cos(theta), 23 + dist * Math.sin(theta), 1);
+				}
 			}
 		}
 		
