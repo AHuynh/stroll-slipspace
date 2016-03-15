@@ -12,6 +12,7 @@
 	import flash.utils.getTimer;
 	import vgdev.stroll.props.*;
 	import vgdev.stroll.props.consoles.*;
+	import vgdev.stroll.props.enemies.EnemyEyeball;
 	import vgdev.stroll.support.*;
 	import vgdev.stroll.managers.*;
 	
@@ -179,6 +180,8 @@
 			
 			tails.show(TAILS_DEFAULT);
 			isPaused = true;
+			
+			addToGame(new EnemyEyeball(this, new SWC_Enemy(), {}), System.M_ENEMY);
 		}
 		
 		/**

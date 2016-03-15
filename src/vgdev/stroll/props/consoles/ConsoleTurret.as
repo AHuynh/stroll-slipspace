@@ -25,6 +25,7 @@ package vgdev.stroll.props.consoles
 		
 		/// The min and max values of rotation that can be applied to the turret nozzle's rotation
 		protected var gimbalLimits:Array = [0, 0];
+		private var markerHelper:Number;
 		
 		/// The IDs of the keys that are used to move the turret in pairs (0 and 1, 2 and 3)
 		protected var controlIDs:Array;
@@ -52,6 +53,8 @@ package vgdev.stroll.props.consoles
 			gimbalLimits = _gimbalLimits;
 			controlIDs = _controlIDs;
 			
+			markerHelper = gimbalLimits[1] - gimbalLimits[0];
+			
 			turret.nozzle.spawn.visible = false;
 		}
 		
@@ -60,6 +63,8 @@ package vgdev.stroll.props.consoles
 		{
 			if (cdCount > 0)
 				cdCount--;
+			if (inUse)
+				updateHUD(true);
 			return super.step();
 		}
 		
@@ -106,6 +111,16 @@ package vgdev.stroll.props.consoles
 					cg.addToGame(proj, System.M_EPROJECTILE);
 					SoundManager.playSFX("sfx_laser1");
 				}
+			}
+		}
+		
+		override protected function updateHUD(isActive:Boolean):void 
+		{
+			if (isActive)
+			{
+				getHUD().tf_cooldown.text = Math.round(10 * cdCount / System.SECOND).toString();
+				getHUD().tf_rotation.text = Math.abs(Math.round(turret.nozzle.rotation)) + "°";
+				getHUD().mc_marker.x = 37.5 + 48 * (turret.nozzle.rotation / markerHelper);
 			}
 		}
 		

@@ -35,6 +35,8 @@ package vgdev.stroll.props.consoles
 		{
 			if (cdCount > 0)		
 				cdCount--;
+			if (inUse)
+				updateHUD(true);
 			return super.step();
 		}
 		
@@ -62,7 +64,11 @@ package vgdev.stroll.props.consoles
 		override protected function updateHUD(isActive:Boolean):void
 		{
 			if (isActive)
-				getHUD().shieldIndicator.gotoAndStop(currShield + 2);
+			{
+				//getHUD().shieldIndicator.gotoAndStop(currShield + 2);
+				getHUD().tf_cooldown.text =  Math.ceil(100 * (1 - (cdCount / cooldown))).toString();
+				getHUD().tf_recharge.text = Math.ceil(100 * (1 - (cg.ship.shieldReCurr / cg.ship.shieldRecharge))).toString();		
+			}
 		}
 	}
 }

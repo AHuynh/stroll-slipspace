@@ -15,7 +15,7 @@ package vgdev.stroll.support
 		private var focus:Point;
 		private var scale:Number = 1;
 		
-		private var focusTgt:Point;
+		public var focusTgt:Point;
 		private var scaleTgt:Number = 1;
 		
 		private const ADD_SCALE:Array = [-.05, .05];
@@ -24,10 +24,10 @@ package vgdev.stroll.support
 		
 		private var camMoveRate:Number = 10;
 		
-		private var lim_x_min:Number = -System.GAME_HALF_WIDTH / 1.8;
-		private var lim_x_max:Number = System.GAME_HALF_WIDTH / 1.8;
-		private var lim_y_min:Number = -System.GAME_HALF_HEIGHT / 2;
-		private var lim_y_max:Number = System.GAME_HALF_HEIGHT / 2.5;
+		public var lim_x_min:Number = -System.GAME_HALF_WIDTH / 1.8;
+		public var lim_x_max:Number = System.GAME_HALF_WIDTH / 1.8;
+		public var lim_y_min:Number = -System.GAME_HALF_HEIGHT / 2;
+		public var lim_y_max:Number = System.GAME_HALF_HEIGHT / 2.5;
 		
 		public function Cam(_cg:ContainerGame) 
 		{

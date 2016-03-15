@@ -17,6 +17,12 @@ package vgdev.stroll.props.consoles
 			CONSOLE_NAME = "sensors";
 		}
 		
+		override protected function updateHUD(isActive:Boolean):void 
+		{
+			if (isActive)
+				holdKey([false, false, false, false]);
+		}
+		
 		override public function holdKey(keys:Array):void
 		{
 			if (hp == 0) return;
@@ -31,10 +37,19 @@ package vgdev.stroll.props.consoles
 				cg.camera.moveCameraFocus(new Point(0, -1));
 		
 			// set UI arrows to be faded out if the camera can't move any further in that direction
-			getHUD().arrow_right.alpha = cg.camera.isAtLimit(0) ? .2 : 1;
-			getHUD().arrow_left.alpha = cg.camera.isAtLimit(1) ? .2 : 1;
-			getHUD().arrow_down.alpha = cg.camera.isAtLimit(2) ? .2 : 1;
-			getHUD().arrow_up.alpha = cg.camera.isAtLimit(3) ? .2 : 1;
+			getHUD().mc_arrowR.gotoAndStop(cg.camera.isAtLimit(0) ? 2 : 1);
+			getHUD().mc_arrowL.gotoAndStop(cg.camera.isAtLimit(1) ? 2 : 1);
+			getHUD().mc_arrowD.gotoAndStop(cg.camera.isAtLimit(2) ? 2 : 1);
+			getHUD().mc_arrowU.gotoAndStop(cg.camera.isAtLimit(3) ? 2 : 1);
+			
+			getHUD().mc_limitX.visible = cg.camera.isAtLimit(0) || cg.camera.isAtLimit(1);
+			getHUD().mc_limitY.visible = cg.camera.isAtLimit(2) || cg.camera.isAtLimit(3);
+			
+			getHUD().tf_x.text = Math.round(-cg.camera.focusTgt.x * .25).toString();
+			getHUD().tf_y.text = Math.round(cg.camera.focusTgt.y * .25).toString();
+			
+			getHUD().mc_markerX.x = -71 + 48 * (-cg.camera.focusTgt.x / (cg.camera.lim_x_max - cg.camera.lim_x_min));
+			getHUD().mc_markerY.x = 74 + 48 * (cg.camera.focusTgt.y / (cg.camera.lim_y_max - cg.camera.lim_y_min));
 		}
 	}
 }

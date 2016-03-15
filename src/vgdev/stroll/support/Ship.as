@@ -17,12 +17,12 @@ package vgdev.stroll.support
 		private var hp:Number = hpMax;				// current hull strength
 		
 		// -- Shield --------------------------------------------------------------------------------------
-		private var mc_shield:MovieClip;			// reference to the shield MovieClip
+		public var mc_shield:MovieClip;			// reference to the shield MovieClip
 		private var shieldMax:Number = 100;			// actual value of shields
 		private var shield:Number = shieldMax;		// max value of shields
 		
-		private var shieldReCurr:int = 0;			// current reboot timer
-		private var shieldRecharge:int = 90;		// time since last hit until shield starts to recharge
+		public var shieldReCurr:int = 0;			// current reboot timer
+		public var shieldRecharge:int = 90;		// time since last hit until shield starts to recharge
 		private var shieldReAmt:Number = .25;		// amount to recharge shield per frame
 		
 		private const SHIELD_DA:Number = .03;		// amount to fade shield alpha per frame

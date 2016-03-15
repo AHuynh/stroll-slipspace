@@ -32,7 +32,8 @@ package vgdev.stroll.props.consoles
 		override protected function updateHUD(isActive:Boolean):void
 		{
 			if (isActive) {
-				getHUD().barCurr.x = 70 * cg.ship.shipHeading;
+				getHUD().mc_navbar.x = 68 * cg.ship.shipHeading;
+				getHUD().mc_okay.visible = cg.ship.isHeadingGood();
 			}
 		}
 		
