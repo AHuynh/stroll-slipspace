@@ -1,6 +1,7 @@
 package vgdev.stroll.props.consoles 
 {
 	import flash.display.MovieClip;
+	import flash.geom.ColorTransform;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
 	import vgdev.stroll.support.SoundManager;
@@ -68,6 +69,11 @@ package vgdev.stroll.props.consoles
 				//getHUD().shieldIndicator.gotoAndStop(currShield + 2);
 				getHUD().tf_cooldown.text =  Math.ceil(100 * (1 - (cdCount / cooldown))).toString();
 				getHUD().tf_recharge.text = Math.ceil(100 * (1 - (cg.ship.shieldReCurr / cg.ship.shieldRecharge))).toString();		
+				
+				var ct:ColorTransform = new ColorTransform();
+				ct.color = currShield == -1 ? System.COL_WHITE : shieldCols[currShield];
+				hud_consoles[0].transform.colorTransform = ct;
+				hud_consoles[1].transform.colorTransform = ct;
 			}
 		}
 	}

@@ -41,12 +41,12 @@ package vgdev.stroll.support
 		public var shipHeading:Number = 0;				//Number determining how far off course ship is. Maintain this at 0 for best navigation.
 		public var navOnline:Boolean = true; 			// boolean determining if slipdrive can function
 		
-		private var SHIP_HEADING_MAX:Number = 1; 		//Max value shipHeading can have
-		private var SHIP_HEADING_MIN:Number = -1; 		//Min value shipHeading can have
+		public const SHIP_HEADING_MAX:Number = 1; 		//Max value shipHeading can have
+		public const SHIP_HEADING_MIN:Number = -1; 		//Min value shipHeading can have
 		
-		private var HEADING_RUNAWAY:Number = 1.003;  	//Scaling factor applied to heading every game tick
-		private var HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
-		private var DAMAGE_JUMP_FACTOR:Number = 0.01;	//max value of random jumps applied to the heading every game tick 
+		private const HEADING_RUNAWAY:Number = 1.003;  	//Scaling factor applied to heading every game tick
+		private const HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
+		private const DAMAGE_JUMP_FACTOR:Number = 0.01;	//max value of random jumps applied to the heading every game tick 
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Slipdrive -----------------------------------------------------------------------------------
@@ -154,13 +154,13 @@ package vgdev.stroll.support
 			cg.gui.bar_sp.width = spPerc * BAR_BIG_WIDTH;
 			
 			// colors
-			if (hpPerc < .3)
+			/*if (hpPerc < .3)
 				hpCTF.color = System.COL_RED;
 			else if (hpPerc < .6)
 				hpCTF.color = System.COL_YELLOW;
 			else
-				hpCTF.color = System.COL_GREEN;
-			cg.gui.bar_hp.transform.colorTransform = hpCTF;
+				hpCTF.color = System.COL_GREEN;*/
+			//cg.gui.bar_hp.transform.colorTransform = hpCTF;
 		}
 		
 		/**
@@ -173,6 +173,7 @@ package vgdev.stroll.support
 			shieldCTF.color = shieldCol;
 			mc_shield.transform.colorTransform = shieldCTF;
 			cg.gui.bar_sp.transform.colorTransform = shieldCTF;
+			cg.gui.bar_hp.transform.colorTransform = shieldCTF;
 			
 			if (shield > 0)
 			{
@@ -280,16 +281,37 @@ package vgdev.stroll.support
 		public function isJumpReady():String
 		{
 			// TODO add other limiting conditions here
-			if (!navOnline) {
+			if (isJumpReadySpecific("repair")) {
 				return "repair";
 			}
-			if (jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable) {
+			if (isJumpReadySpecific("jammed")) {
 				return "jammed";
 			}
-			if (!isHeadingGood()) {
+			if (isJumpReadySpecific("heading")) {
 				return "heading";
 			}
-			return slipRange == 0 ? "ready" : "range";
+			return isJumpReadySpecific("range") ? "range" : "ready";
+		}
+		
+		public function isJumpReadySpecific(str:String):Boolean
+		{
+			switch (str)
+			{
+				case "repair":
+					return !navOnline;
+				break;
+				case "jammed":
+					return jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable;
+				break;
+				case "heading":
+					return !isHeadingGood();
+				break;
+				case "range":
+					return slipRange != 0;
+				break;
+				default:
+					return false;
+			}
 		}
 		
 		/**

@@ -181,7 +181,7 @@
 			tails.show(TAILS_DEFAULT);
 			isPaused = true;
 			
-			addToGame(new EnemyEyeball(this, new SWC_Enemy(), {}), System.M_ENEMY);
+			//addToGame(new EnemyEyeball(this, new SWC_Enemy(), {}), System.M_ENEMY);
 		}
 		
 		/**

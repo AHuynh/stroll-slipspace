@@ -120,7 +120,7 @@ package vgdev.stroll.props.consoles
 			{
 				getHUD().tf_cooldown.text = Math.round(10 * cdCount / System.SECOND).toString();
 				getHUD().tf_rotation.text = Math.abs(Math.round(turret.nozzle.rotation)) + "°";
-				getHUD().mc_marker.x = 37.5 + 48 * (turret.nozzle.rotation / markerHelper);
+				getHUD().mc_marker.x = 37 + 47 * ((turret.nozzle.rotation - gimbalLimits[0]) / markerHelper);
 			}
 		}
 		
