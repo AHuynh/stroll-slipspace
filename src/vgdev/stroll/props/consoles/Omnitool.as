@@ -28,7 +28,11 @@ package vgdev.stroll.props.consoles
 		public function Omnitool(_cg:ContainerGame, _mc_object:MovieClip, _players:Array)
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "omnitool";
+			CONSOLE_NAME = "Omnitool";
+			TUT_SECTOR = 0;
+			TUT_TITLE = "Omnitool";
+			TUT_MSG = "A restorative tool that you can take with you.\n\n" +
+					  "Press and hold to extinguish fires, repair modules, and revive allies.";
 		}
 		
 		/**
@@ -47,7 +51,17 @@ package vgdev.stroll.props.consoles
 					closestPlayer.mc_object.mc_omnitool.visible = true;
 	
 					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME);
+					cg.hudTitles[closestPlayer.playerID].visible = true;
+					cg.hudTitles[closestPlayer.playerID].text = CONSOLE_NAME;
 					updateHUD(true);
+					if (cg.tails.tutorialMode)
+					{
+						hud_consoles[closestPlayer.playerID].mc_tutorial.visible = true;
+						hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(CONSOLE_NAME);
+						
+						cg.tails.showHalf(closestPlayer.playerID == 0, TUT_TITLE, TUT_MSG);
+					}
+					mc_object.mc_newIndicator.visible = false;
 				}
 			}
 		}
@@ -71,6 +85,9 @@ package vgdev.stroll.props.consoles
 				mc_object.x = closestPlayer.mc_object.x;
 				mc_object.y = closestPlayer.mc_object.y;
 				hud_consoles[closestPlayer.playerID].gotoAndStop("none");
+				hud_consoles[closestPlayer.playerID].mc_tutorial.visible = false;
+				cg.hudTitles[closestPlayer.playerID].visible = false;
+				cg.tails.hideHalf(closestPlayer.playerID == 0);
 				closestPlayer = null;
 				updateHUD(false);
 			}

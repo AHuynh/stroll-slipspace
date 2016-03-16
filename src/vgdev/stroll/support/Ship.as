@@ -50,7 +50,7 @@ package vgdev.stroll.support
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Slipdrive -----------------------------------------------------------------------------------
-		public var slipRange:Number = 1;				// 'distance' until slipdrive is in range
+		public var slipRange:Number = 2.5;				// 'distance' until slipdrive is in range
 		private var MAX_SLIP_SPEED:Number = .03;
 		private var MIN_SLIP_SPEED:Number = .01;
 		
@@ -174,6 +174,8 @@ package vgdev.stroll.support
 			mc_shield.transform.colorTransform = shieldCTF;
 			cg.gui.bar_sp.transform.colorTransform = shieldCTF;
 			cg.gui.bar_hp.transform.colorTransform = shieldCTF;
+			cg.gui.tf_titleL.transform.colorTransform = shieldCTF;
+			cg.gui.tf_titleR.transform.colorTransform = shieldCTF;
 			
 			if (shield > 0)
 			{
@@ -265,7 +267,7 @@ package vgdev.stroll.support
 				slipRange = System.changeWithLimit(slipRange, -slipSpeed, 0);
 				if (slipRange == 0)
 				{
-					SoundManager.playSFX("sfx_bell");
+					SoundManager.playSFX("sfx_readybeep1B", .7);
 					cg.gui.tf_distance.text = "In range";
 					cg.gui.large_indicator.gotoAndStop("green");
 				}

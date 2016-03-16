@@ -22,12 +22,18 @@ package vgdev.stroll.props.consoles
 		
 		private const ARROW_DIST:int = 12;						// max distance between arrow and target to count as a hit
 		private const ARROW_TARGET:int = -45;
+		
 		private var missCounter:int = 0;
+		private var complain:Boolean = false;
 		
 		public function ConsoleSlipdrive(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "slipdrive";
+			CONSOLE_NAME = "Slipdrive";
+			TUT_SECTOR = 0;
+			TUT_TITLE = "Slipdrive Module";
+			TUT_MSG = "Once we're in range, use this module to jump to the next slipsector.\n\n" +
+					  "Requires Navigation to be on-course. Enemies may jam the slipdrive.";
 		}
 		
 		override public function step():Boolean 
@@ -36,7 +42,12 @@ package vgdev.stroll.props.consoles
 				updateHUD(true);
 			
 			if (missCounter > 0)
-				missCounter--;
+			{
+				if (--missCounter == 0)
+					complain = false;
+				if (complain && inUse)
+					getHUD().tf_problem.visible = int(missCounter / 5) % 2 == 0;
+			}
 				
 			updateArrows();
 			
@@ -53,10 +64,18 @@ package vgdev.stroll.props.consoles
 			// if the slipdrive isn't spooling, start spooling
 			if (!isSpooling)
 			{				
-				if (key == 4 && cg.ship.isJumpReady() == "ready")
-				{					
-					isSpooling = true;
-					initArrows();
+				if (key == 4)
+				{
+					if (cg.ship.isJumpReady() == "ready")
+					{					
+						isSpooling = true;
+						initArrows();
+					}
+					else
+					{
+						complain = true;
+						missCounter = 30;
+					}
 				}
 			}
 			// else if the slipdrive is spooling and a direction button was pressed and there are more arrows

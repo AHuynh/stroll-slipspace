@@ -15,7 +15,11 @@ package vgdev.stroll.props.consoles
 		public function ConsoleNavigation(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "navigation";
+			CONSOLE_NAME = "Navigation";
+			TUT_SECTOR = 0;
+			TUT_TITLE = "Navigation Module";
+			TUT_MSG = "Move the bar to the center to keep the ship on-course and travelling fast.\n\n" +
+					  "The ship can jump using the Slipdrive module only if it's on-course!";
 		}
 		
 		override public function holdKey(keys:Array):void 

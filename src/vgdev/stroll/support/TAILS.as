@@ -2,6 +2,7 @@ package vgdev.stroll.support
 {
 	import flash.display.MovieClip;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.consoles.ABST_Console;
 	/**
 	 * Helper class for handling the TAILS window
 	 * @author Alexander Huynh
@@ -16,10 +17,15 @@ package vgdev.stroll.support
 		
 		private var tailsLarge:Boolean = false;
 		
+		public var tutorialMode:Boolean = true;
+		
 		public function TAILS(_cg:ContainerGame, _tails:MovieClip) 
 		{
 			cg = _cg;
 			tails = _tails;
+			
+			tails.mc_left.visible = false;
+			tails.mc_right.visible = false;
 		}
 		
 		public function isActive():Boolean
@@ -30,7 +36,12 @@ package vgdev.stroll.support
 		public function step():void
 		{
 			if (showDuration > 0 && --showDuration == 1)
+			{
 				tails.visible = false;
+				cg.isTailsPaused = false;
+				for each (var console:ABST_Console in cg.consoles)
+					console.showNew(cg.level.sectorIndex);
+			}
 		}
 		
 		/**
@@ -43,6 +54,7 @@ package vgdev.stroll.support
 			showDuration = showForFrames;
 			tails.gotoAndStop(showDuration == 0 ? 1 : 2);
 			tails.visible = true;
+			hideHalf(true);	hideHalf(false);
 			tails.tf_message.text = text;
 			
 			tailsLarge = showDuration == 0;
@@ -55,6 +67,8 @@ package vgdev.stroll.support
 				tails.mc_ready2.gotoAndStop(1);
 			}
 
+			cg.isTailsPaused = showForFrames == 0;
+
 			// TODO dynamically
 			if (Math.random() > .5)
 				tails.avatar.talkForLoops(6);
@@ -63,27 +77,59 @@ package vgdev.stroll.support
 		}
 		
 		/**
+		 * Show the half TAILS tutorial screen
+		 * @param	isLeft			true to show P1's tutorial frame
+		 * @param	title			String to place as the title
+		 * @param	message			String to place as the message contents
+		 */
+		public function showHalf(isLeft:Boolean, title:String, message:String):void
+		{
+			tails.gotoAndStop(3);
+			tails.visible = true;
+			tailsLarge = false;
+			var mc:MovieClip = isLeft ? tails.mc_left : tails.mc_right;
+			mc.visible = true;
+			mc.tf_title.text = title;
+			mc.tf_message.text = message;
+		}
+		
+		/**
+		 * Hide the half TAILS tutorial screen
+		 * @param	isLeft			true to hide P1's tutorial frame
+		 */
+		public function hideHalf(isLeft:Boolean):void
+		{
+			isLeft ? tails.mc_left.visible = false : tails.mc_right.visible = false;
+		}
+		
+		/**
 		 * Call when a player has readied up. Hides TAILS and returns true if both players are ready.
 		 * @param	playerID		The ID of the player to ready
 		 * @return					true if both players have indicated they are ready
 		 */
 		public function acknowledge(playerID:int):Boolean
-		{
+		{			
 			if (showDuration > 0)
 				return false;
 
+			if (!playerReady[playerID])
+			{
+				if (playerID == 0)
+					tails.mc_ready1.play();
+				else if (playerID == 1)
+					tails.mc_ready2.play();
+			}
 			playerReady[playerID] = true;
-			
-			if (playerID == 0)
-				tails.mc_ready1.play();
-			else if (playerID == 1)
-				tails.mc_ready2.play();
 			
 			if (playerReady[0] && playerReady[1])
 			{
 				showDuration = 30;
+				SoundManager.playSFX("sfx_readybeep2G", .5);
 				return true;
 			}
+			else
+				SoundManager.playSFX("sfx_UI_Beep_Cs", .5);
+			
 			return false;
 		}
 	}

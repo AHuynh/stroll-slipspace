@@ -12,7 +12,7 @@
 	import flash.utils.getTimer;
 	import vgdev.stroll.props.*;
 	import vgdev.stroll.props.consoles.*;
-	import vgdev.stroll.props.enemies.EnemyEyeball;
+	import vgdev.stroll.props.enemies.*;
 	import vgdev.stroll.support.*;
 	import vgdev.stroll.managers.*;
 	
@@ -34,10 +34,12 @@
 		public var tails:TAILS;
 		
 		/// Whether or not the game is paused
-		public var isPaused:Boolean = false;
+		public var isPaused:Boolean = false;		// from P
+		public var isTailsPaused:Boolean = false;	// from TAILS
 		
 		/// UI consoles; an Array of MovieClips
 		public var hudConsoles:Array;
+		public var hudTitles:Array;
 		
 		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;			// active external ship hitmask; can be hull or shield
@@ -54,8 +56,8 @@
 		public var managerMap:Object = new Object();
 		
 		// TEMPORARY
-		private const TAILS_DEFAULT:String = "Hey! I'm T.A.I.L.S., your ship's AI.\n\n" +
-											 "I managed to bring some of the ship's systems online. Check them out before we jump.\n\n" +
+		private const TAILS_DEFAULT:String = "Hi! I'm TAILS; the ship AI.\n\n" +
+											 "I've booted up the ship's basic systems. Check them out before we jump.\n\n" +
 											 "OK, are both of you ready?";
 		
 		/**
@@ -84,6 +86,9 @@
 			gui.mc_pause.visible = false;
 			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
+			gui.tf_titleL.visible = false;
+			gui.tf_titleR.visible = false;
+			hudTitles = [gui.tf_titleL, gui.tf_titleR];
 			
 			// init support classes
 			level = new Level(this);
@@ -118,13 +123,13 @@
 			
 			// Eagle
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
-											players, [-120, 120], [1, -1, 3, -1], 0));
+											players, [-120, 120], [1, 2, 0, 3], 0));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
-											players, [-165, 10], [2, -1, 0, -1], 1));
+											players, [-165, 10], [1, 2, 0, 3], 1));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
-											players, [-10, 165], [0, -1, 2, -1], 2));
+											players, [-10, 165], [1, 2, 0, 3], 2));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
-											players, [-65, 65], [3, -1, 1, -1], 3));
+											players, [-65, 65], [1, 2, 0, 3], 3));
 			consoles[3].rotOff = 180;
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
@@ -174,14 +179,11 @@
 			for (i = 0; i < consoles.length; i++)
 				managerMap[System.M_PROXIMITY].addObject(consoles[i]);
 			
-			//SoundManager.playBGM("bgm_calm", .4);
+			SoundManager.playBGM("bgm_calm", .4);
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			
 			tails.show(TAILS_DEFAULT);
-			isPaused = true;
-			
-			//addToGame(new EnemyEyeball(this, new SWC_Enemy(), {}), System.M_ENEMY);
 		}
 		
 		/**
@@ -226,13 +228,22 @@
 			{
 				case Keyboard.P:
 					isPaused = !isPaused;
-					if (isPaused)					// halt or resume background animation
+					if (isTruePaused())					// halt or resume background animation
 						game.mc_bg.base.stop();
 					else
 						game.mc_bg.base.play();
 					gui.mc_pause.visible = isPaused;
 				break;
 			}
+		}
+		
+		/**
+		 * Evaluates all possible reasons for being paused and returns if the game is actually paused
+		 * @return		true if the game is paused for any reason
+		 */
+		public function isTruePaused():Boolean
+		{
+			return isPaused || isTailsPaused;
 		}
 		
 		/**
@@ -246,7 +257,7 @@
 			if (tails.isActive())
 			{
 				if (tails.acknowledge(p.playerID))
-					isPaused = false;
+					isTailsPaused = false;
 			}
 			else
 			{
@@ -260,14 +271,19 @@
 		 * @return		completed, true if this container is done
 		 */
 		override public function step():Boolean
-		{
-			if (completed || isPaused)
+		{			
+			if (completed)
+				return completed;
+				
+			if (!isPaused)
+				tails.step();
+				
+			if (isTruePaused())
 				return completed;
 
 			level.step();
 			ship.step();
 			camera.step();
-			tails.step();
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
@@ -302,8 +318,25 @@
 			}
 			else
 			{
-				tails.show(level.getTAILS(), 120);
-				//isPaused = true;		// TODO pause if big
+				var boss:Boolean = level.sectorIndex % 4 == 0;
+				
+				if (boss)
+					SoundManager.playBGM("bgm_boss", .4);
+				else if (level.sectorIndex % 4 == 1)
+					SoundManager.playBGM("bgm_calm", .4);
+					
+				
+				tails.show(level.getTAILS(), boss ? 0 : 120);
+				
+				// hide all "New!" and console tutorial messages
+				for each (var console:ABST_Console in consoles)
+					console.showNew( -1);
+				gui.mod_p1.mc_tutorial.visible = false;
+				gui.mod_p2.mc_tutorial.visible = false;
+				
+				tails.tutorialMode = level.sectorIndex % 4 == 0;
+				tails.tutorialMode = false;
+				// TODO TAILS text
 			}
 		}
 

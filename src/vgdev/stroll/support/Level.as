@@ -48,7 +48,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		private var sectorIndex:int = 0;
+		public var sectorIndex:int = 0;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -72,8 +72,10 @@ package vgdev.stroll.support
 												JSON.parse(new en_intro_waves()),
 												JSON.parse(new en_intro_squids()),
 												JSON.parse(new en_intro_slimes()),
-												JSON.parse(new en_intro_amoebas())
+												JSON.parse(new en_intro_amoebas()),
 												//JSON.parse(new en_anomalyfield())
+												
+												JSON.parse(new en_boss_peeps())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -84,7 +86,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_anomalyfield())];
+											//rawEncountersJSON = [JSON.parse(new en_intro_slimes())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -196,8 +198,8 @@ package vgdev.stroll.support
 								case "Slime":
 									spawn = new EnemySlime(cg, new SWC_Enemy(), {
 																					"attackColor": col,
-																					"attackStrength": 18,
-																					"hp": 40
+																					"attackStrength": 10,
+																					"hp": 30
 																					});
 									manager = System.M_ENEMY;
 								break;
@@ -260,7 +262,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
+				if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
 					choices.push(e);
 			}
 			
@@ -270,7 +272,9 @@ package vgdev.stroll.support
 				return false;
 			}
 
-			var encounter:Object = choices[int(System.getRandInt(0, choices.length - 1))];
+			var choiceIndex:int = int(System.getRandInt(0, choices.length - 1));
+			var encounter:Object = choices[choiceIndex];
+			parsedEncounters[choices[choiceIndex]["id"]]["used"] = true;
 			trace("Starting encounter called: '" + encounter["id"] + "'");
 			
 			if (encounter["spLevel"] != null)

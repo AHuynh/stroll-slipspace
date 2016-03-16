@@ -14,7 +14,10 @@ package vgdev.stroll.props.consoles
 		public function ConsoleSensors(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "sensors";
+			CONSOLE_NAME = "Sensors";
+			TUT_SECTOR = 0;
+			TUT_TITLE = "Sensors Module";
+			TUT_MSG = "Adjust the ship's sensors to get a better view of outside."
 		}
 		
 		override protected function updateHUD(isActive:Boolean):void 

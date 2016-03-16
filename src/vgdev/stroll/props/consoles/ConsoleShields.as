@@ -27,7 +27,10 @@ package vgdev.stroll.props.consoles
 		public function ConsoleShields(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "shields";
+			CONSOLE_NAME = "Shields";
+			TUT_SECTOR = 0;
+			TUT_TITLE = "Shield Frequency Module";
+			TUT_MSG = "If we match the shield color to the color of enemies' attacks, our shields will take less damage!"
 			mc_shield = cg.game.mc_ship.shield;
 		}
 		
