@@ -50,14 +50,14 @@ package vgdev.stroll.props.consoles
 					mc_object.visible = false;
 					closestPlayer.mc_object.mc_omnitool.visible = true;
 	
-					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME);
+					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME.toLowerCase());
 					cg.hudTitles[closestPlayer.playerID].visible = true;
 					cg.hudTitles[closestPlayer.playerID].text = CONSOLE_NAME;
 					updateHUD(true);
 					if (cg.tails.tutorialMode)
 					{
 						hud_consoles[closestPlayer.playerID].mc_tutorial.visible = true;
-						hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(CONSOLE_NAME);
+						hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(CONSOLE_NAME.toLowerCase());
 						
 						cg.tails.showHalf(closestPlayer.playerID == 0, TUT_TITLE, TUT_MSG);
 					}
