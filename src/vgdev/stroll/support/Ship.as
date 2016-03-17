@@ -81,11 +81,15 @@ package vgdev.stroll.support
 		
 		/**
 		 * Deal damage to the ship (with shields in effect)
-		 * @param	dmg		Amount of damage to deal (a positive value to damage)
-		 * @param	col		Color type of damage
+		 * @param	dmg				Amount of damage to deal (a positive value to damage)
+		 * @param	col				Color type of damage
+		 * @param	mitigation		If provided, use this instead of default mitigation
 		 */
-		public function damage(dmg:Number, col:uint = 0):void
+		public function damage(dmg:Number, col:uint = 0, mitigation:Number = -1):void
 		{
+			if (mitigation == -1)
+				mitigation = shieldMitigation;
+			
 			// shields absorb all damage until it breaks
 			// a 10 damage attack against 100 hull and 20 shield results in 100 hull and 10 shield
 			// a 10 damage attack against 100 hull and 1 shield results in 100 hull and 0 shield
@@ -93,7 +97,7 @@ package vgdev.stroll.support
 			if (shield > 0)
 			{
 				if (shieldCol == col)
-					dmg *= shieldMitigation;
+					dmg *= mitigation;
 				shield = System.changeWithLimit(shield, -dmg, 0);
 				SoundManager.playSFX("sfx_hitshield1");
 			}

@@ -153,6 +153,8 @@ package vgdev.stroll.props.consoles
 				anchor += 40 + System.getRandNum(0, 20);
 			}
 			setText(null);
+			missCounter = 0;
+			complain = false;
 			currentArrow = 0;
 			anyMiss = false;
 			isSpooling = true;

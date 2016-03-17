@@ -1,0 +1,50 @@
+{
+  "settings": {
+	"id": "swipe",
+	"background": "default",
+	"difficulty_range": [0, 12],
+    "jamming_min": 0,
+    "slip_range": 42.0,
+	"type": "Enemy",
+	"TAILS": "Whoa! Something's about to take a swipe at the ship!"
+  },
+  "waves": [
+	{
+		"time": 1,
+		"spawnables":
+			[
+				{"type": "Swipe"}
+			]
+	},
+	{
+		"time": 6.5,
+		"TAILS": "Quick, match the shield color to those things!",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 8,
+		"TAILS": "Can't damage it. We need to just jump away!",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 6,
+		"TAILS": "Careful! There's incoming debris, too!",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 2,
+		"recur": 5,
+		"repeat": 3,
+		"spawnables":
+			[
+				{"type": "GeometricAnomalyPlain"}
+			]
+	}
+  ]
+}

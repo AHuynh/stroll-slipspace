@@ -63,6 +63,11 @@ package vgdev.stroll.support
 			return false;
 		}
 		
+		public function getFocusLoc(isX:Boolean):Number
+		{
+			return isX ? focus.x : focus.y;
+		}
+		
 		private function updateNumber(num:Number, tgt:Number, add:Array, thresh:Number):Number
 		{
 			if (num == tgt)

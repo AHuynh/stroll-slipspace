@@ -87,6 +87,8 @@ package vgdev.stroll.support
 		
 		public static function playBGM(music:String, volume:Number = 1):void
 		{
+			return;
+			
 			if (currentBGM == music)
 				return;
 			stopBGM();

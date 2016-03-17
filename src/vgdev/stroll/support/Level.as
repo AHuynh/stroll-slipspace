@@ -33,6 +33,9 @@ package vgdev.stroll.support
 		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
 		private var en_boss_peeps:Class;
 		
+		[Embed(source="../../../../json/en_swipe.json", mimeType="application/octet-stream")]
+		private var en_swipe:Class;
+		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
 		[Embed(source="../../../../json/en_test2.json", mimeType="application/octet-stream")]
@@ -86,7 +89,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_intro_slimes())];
+											rawEncountersJSON = [JSON.parse(new en_swipe())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -176,6 +179,13 @@ package vgdev.stroll.support
 							var manager:int;
 							switch (type)
 							{
+								case "Amoeba":
+									spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
+																					"x":pos.x,
+																					"y":pos.y
+																					});
+									manager = System.M_ENEMY;
+								break;
 								case "Eye":
 									spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
 																					"x":pos.x,
@@ -185,13 +195,15 @@ package vgdev.stroll.support
 																					});
 									manager = System.M_ENEMY;
 								break;
-								case "Squid":
-									spawn = new EnemySquid(cg, new SWC_Enemy(), {
-																					"x":pos.x,
-																					"y":pos.y,
-																					"attackColor": col,
-																					"attackStrength": 18,
-																					"hp": 200
+								case "GeometricAnomalyPlain":
+									waveColor = System.COL_WHITE;
+								case "GeometricAnomaly":
+									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
+																					"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																					"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																					"tint": waveColor,
+																					"dx": -3 - System.getRandNum(0, 1),
+																					"hp": 12
 																					});
 									manager = System.M_ENEMY;
 								break;
@@ -203,20 +215,19 @@ package vgdev.stroll.support
 																					});
 									manager = System.M_ENEMY;
 								break;
-								case "Amoeba":
-									spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
-																					"x":pos.x,
-																					"y":pos.y
+								case "Swipe":
+									spawn = new EnemySwipe(cg, new SWC_Enemy(), {
+																					"attackStrength": 65
 																					});
 									manager = System.M_ENEMY;
 								break;
-								case "GeometricAnomaly":
-									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
-																					"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
-																					"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
-																					"tint": waveColor,
-																					"dx": -3 - System.getRandNum(0, 1),
-																					"hp": 12
+								case "Squid":
+									spawn = new EnemySquid(cg, new SWC_Enemy(), {
+																					"x":pos.x,
+																					"y":pos.y,
+																					"attackColor": col,
+																					"attackStrength": 18,
+																					"hp": 200
 																					});
 									manager = System.M_ENEMY;
 								break;
@@ -262,7 +273,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
+				//if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
 					choices.push(e);
 			}
 			

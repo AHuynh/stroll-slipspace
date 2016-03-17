@@ -193,8 +193,9 @@
 		 * @param	mc				The ABST_Object to add
 		 * @param	manager			The ID of the manager that will manage mc
 		 * @param	manageDepth		If true, object's depth will be updated based on its y position
+		 * @return					The ABST_Object that was created
 		 */
-		public function addToGame(obj:ABST_Object, manager:int):void
+		public function addToGame(obj:ABST_Object, manager:int):ABST_Object
 		{
 			switch (manager)
 			{
@@ -208,16 +209,18 @@
 					game.mc_exterior.addChild(obj.mc_object);
 			}
 			managerMap[manager].addObject(obj);
+			return obj;
 		}
 		
 		/**
 		 * Add a decoration object to the game
 		 * @param	style			The label the SWC_Decor should use
 		 * @param	params			Object map with additional attributes
+		 * @return					The ABST_Object that was created
 		 */
-		public function addDecor(style:String, params:Object = null):void
+		public function addDecor(style:String, params:Object = null):ABST_Object
 		{
-			addToGame(new Decor(this, new SWC_Decor(), style, params), System.M_DECOR);
+			return addToGame(new Decor(this, new SWC_Decor(), style, params), System.M_DECOR);
 		}
 
 		/**
