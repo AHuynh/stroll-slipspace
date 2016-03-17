@@ -27,19 +27,22 @@ package vgdev.stroll.props.enemies
 		
 		override public function destroy():void 
 		{
-			// TODO geometric anomaly gibs
-			/*for (var i:int = 5 + System.getRandInt(0, 3); i >= 0; i--)
-				cg.addDecor("gib_eye", {
-											"x": System.getRandNum(mc_object.x - 25, mc_object.x + 25),
-											"y": System.getRandNum(mc_object.y - 25, mc_object.y + 25),
-											"dx": System.getRandNum( -1, 1),
-											"dy": System.getRandNum( -1, 1),
-											"dr": System.getRandNum( -5, 5),
-											"rot": System.getRandNum(0, 360),
-											"alphaDelay": 90 + System.getRandInt(0, 30),
+			var horiz:Boolean;
+			for (var i:int = 5 + System.getRandInt(0, 3); i >= 0; i--)
+			{
+				horiz = Math.random() > .5;
+				cg.addDecor("gib_geometric", {
+											"x": System.getRandNum(mc_object.x - 5, mc_object.x + 5),
+											"y": System.getRandNum(mc_object.y - 5, mc_object.y + 5),
+											"dx": horiz ? (Math.random() > .5 ? 2 : -2) : 0,
+											"dy": !horiz ? (Math.random() > .5 ? 2 : -2) : 0,
+											"rot": 90 * System.getRandInt(0, 3),
+											"alphaDelay": 10,
 											"alphaDelta": 30,
-											"random": true
-										});*/
+											"random": true,
+											"tint": selfColor
+										});
+			}
 			super.destroy();
 		}
 	}

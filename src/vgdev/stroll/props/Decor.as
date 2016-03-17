@@ -57,6 +57,9 @@ package vgdev.stroll.props
 				
 				if (System.setAttribute("random", params, false))
 					mc_object.base.gotoAndStop(System.getRandInt(1, mc_object.base.totalFrames));
+					
+				if (params["tint"] != null)
+					System.tintObject(mc_object, params["tint"]);
 			}
 		}
 		

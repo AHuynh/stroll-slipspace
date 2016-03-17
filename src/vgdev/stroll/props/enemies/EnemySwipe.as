@@ -1,7 +1,6 @@
 package vgdev.stroll.props.enemies 
 {
 	import flash.display.MovieClip;
-	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
@@ -130,16 +129,9 @@ package vgdev.stroll.props.enemies
 		// spawn a shower of decor objects colored to match the impending attack
 		private function spawnTelegraphs():void
 		{
-			var ct:ColorTransform = new ColorTransform();
-			ct.redMultiplier = selfColor >> 16 & 0x0000FF / 255;
-			ct.greenMultiplier = Math.min(selfColor >> 8 & 0x0000FF / 255, (0xFF / 255) * colAlpha);
-			ct.blueMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * colAlpha)
-			
-			var decor:ABST_Object;
-			
 			for (var i:int = 12 + System.getRandInt(0, 5); i >= 0; i--)
 			{
-				decor = cg.addDecor("swipeTelegraph", {
+				cg.addDecor("swipeTelegraph", {
 											"x": isUpOrDown ? System.getRandNum(-System.GAME_WIDTH * .3, System.GAME_WIDTH * .3) * locY : (System.GAME_WIDTH) * (locX > 0 ? 1 : -1),
 											"y": !isUpOrDown ? System.getRandNum(-System.GAME_HEIGHT * .2, System.GAME_HEIGHT * .2) * locX : (System.GAME_HEIGHT) * (locY > 0 ? 1 : -1),
 											"dx": isUpOrDown ? System.getRandNum( -4, 4) : System.getRandNum(9, 15) * -locX,
@@ -147,9 +139,9 @@ package vgdev.stroll.props.enemies
 											"dr": System.getRandNum( -5, 5),
 											"rot": System.getRandNum(0, 360),
 											"alphaDelay": 90 + System.getRandInt(0, 30),
-											"alphaDelta": 15
+											"alphaDelta": 15,
+											"tint": selfColor
 										});
-				decor.mc_object.transform.colorTransform = ct;
 			}
 		}
 	}

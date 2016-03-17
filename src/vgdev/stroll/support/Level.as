@@ -94,7 +94,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_anomalyfieldplain())];
+											//rawEncountersJSON = [JSON.parse(new en_anomalyfieldcolored())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
