@@ -106,6 +106,7 @@ package vgdev.stroll.support
 				hp = System.changeWithLimit(hp, -dmg, 0);
 				adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
 				SoundManager.playSFX("sfx_hithull1");
+				cg.camera.setShake(10);	// TODO set shake duration based on damage taken
 			}
 						
 			updateIntegrity();
@@ -135,7 +136,9 @@ package vgdev.stroll.support
 		{
 			hp = System.changeWithLimit(hp, -dmg, 0);
 			adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
+			SoundManager.playSFX("sfx_hithull1");
 			updateIntegrity();
+			cg.camera.setShake(10);	// TODO set shake duration based on damage taken
 			
 			//if (hp == 0)
 			//	game over

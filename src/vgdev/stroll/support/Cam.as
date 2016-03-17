@@ -1,5 +1,6 @@
 package vgdev.stroll.support 
 {
+	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
@@ -11,6 +12,7 @@ package vgdev.stroll.support
 	public class Cam 
 	{
 		private var cg:ContainerGame;
+		private var ui:MovieClip;
 		
 		private var focus:Point;
 		private var scale:Number = 1;
@@ -29,9 +31,17 @@ package vgdev.stroll.support
 		public var lim_y_min:Number = -System.GAME_HALF_HEIGHT / 2;
 		public var lim_y_max:Number = System.GAME_HALF_HEIGHT / 2.5;
 		
-		public function Cam(_cg:ContainerGame) 
+		private var camShake:int = 0;
+		private var UI_ANCHOR_X:Number;
+		private var UI_ANCHOR_Y:Number;
+		
+		public function Cam(_cg:ContainerGame, _ui:MovieClip) 
 		{
 			cg = _cg;
+			ui = _ui;
+			
+			UI_ANCHOR_X = ui.x;
+			UI_ANCHOR_Y = ui.y;
 			
 			focus = new Point(cg.game.x, cg.game.y);
 			focusTgt = new Point(cg.game.x, cg.game.y);
@@ -49,6 +59,30 @@ package vgdev.stroll.support
 
 			System.GAME_OFFSX = cg.game.x + System.GAME_HALF_WIDTH;
 			System.GAME_OFFSY = cg.game.y + System.GAME_HALF_HEIGHT;
+			
+			updateShake();
+		}
+		
+		public function setShake(frames:int):void
+		{
+			camShake = Math.max(camShake, frames);
+		}
+		
+		private function updateShake():void
+		{
+			if (camShake > 0)
+			{
+				if (--camShake == 0)
+				{
+					ui.x = UI_ANCHOR_X;
+					ui.y = UI_ANCHOR_Y;
+				}
+				else if (camShake % 2 == 1)
+				{
+					ui.x = System.getRandNum( -4, 4);
+					ui.y = System.getRandNum( 0, 6);
+				}
+			}
 		}
 		
 		public function isAtLimit(limIndex:int):Boolean

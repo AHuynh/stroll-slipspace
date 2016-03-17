@@ -96,7 +96,7 @@
 			level = new Level(this);
 			tails = new TAILS(this, gui.mc_tails);
 			ship = new Ship(this);
-			camera = new Cam(this);
+			camera = new Cam(this, gui);
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
