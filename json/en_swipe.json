@@ -2,9 +2,9 @@
   "settings": {
 	"id": "swipe",
 	"background": "default",
-	"difficulty_range": [0, 12],
+	"difficulty_range": [5, 7],
     "jamming_min": 0,
-    "slip_range": 42.0,
+    "slip_range": 52.0,
 	"type": "Enemy",
 	"TAILS": "Whoa! Something's about to take a swipe at the ship!"
   },

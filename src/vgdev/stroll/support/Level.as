@@ -27,14 +27,16 @@ package vgdev.stroll.support
 		private var en_intro_slimes:Class;
 		[Embed(source="../../../../json/en_intro_amoebas.json", mimeType="application/octet-stream")]
 		private var en_intro_amoebas:Class;
-		[Embed(source="../../../../json/en_anomalyfield.json", mimeType="application/octet-stream")]
-		private var en_anomalyfield:Class;
+		[Embed(source="../../../../json/en_anomalyfieldplain.json", mimeType="application/octet-stream")]
+		private var en_anomalyfieldplain:Class;
 		
 		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
 		private var en_boss_peeps:Class;
 		
 		[Embed(source="../../../../json/en_swipe.json", mimeType="application/octet-stream")]
 		private var en_swipe:Class;
+		[Embed(source="../../../../json/en_anomalyfieldcolored.json", mimeType="application/octet-stream")]
+		private var en_anomalyfieldcolored:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -76,9 +78,12 @@ package vgdev.stroll.support
 												JSON.parse(new en_intro_squids()),
 												JSON.parse(new en_intro_slimes()),
 												JSON.parse(new en_intro_amoebas()),
-												//JSON.parse(new en_anomalyfield())
+												JSON.parse(new en_anomalyfieldplain()),
 												
-												JSON.parse(new en_boss_peeps())
+												JSON.parse(new en_boss_peeps()),
+												
+												JSON.parse(new en_anomalyfieldcolored()),
+												JSON.parse(new en_swipe())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -89,7 +94,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
-											rawEncountersJSON = [JSON.parse(new en_swipe())];
+											//rawEncountersJSON = [JSON.parse(new en_anomalyfieldplain())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -273,7 +278,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				//if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
+				if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
 					choices.push(e);
 			}
 			
@@ -292,8 +297,11 @@ package vgdev.stroll.support
 			{
 				switch (encounter["spLevel"])
 				{
-					case "anomalies":
-						spLevel = new SPLevelAnomalies(cg);
+					case "anomaliesColored":
+						spLevel = new SPLevelAnomalies(cg, true);
+					break;
+					case "anomaliesPlain":
+						spLevel = new SPLevelAnomalies(cg, false);
 					break;
 					default:
 						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);

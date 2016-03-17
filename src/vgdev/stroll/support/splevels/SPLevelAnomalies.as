@@ -15,12 +15,19 @@ package vgdev.stroll.support.splevels
 		private const D_TIME:int = -4;		// frames to decrease nextWave by
 		private const MIN_TIME:int = 30;	// minumum delay between spawning waves
 		
-		private var waveColor:uint = System.getRandCol();
+		private var useColors:Boolean;
+		private var waveColor:uint = System.COL_WHITE;
 		private var nextColor:int = System.getRandInt(1, 2);		// wait this many waves before changing colors
 		
-		public function SPLevelAnomalies(_cg:ContainerGame) 
+		private var reminder:Boolean = true;
+		
+		public function SPLevelAnomalies(_cg:ContainerGame, _useColors:Boolean) 
 		{
 			super(_cg);
+			useColors = _useColors;
+			
+			if (useColors)
+				waveColor = System.getRandCol();
 		}
 		
 		override public function step():void 
@@ -45,21 +52,32 @@ package vgdev.stroll.support.splevels
 			}
 			
 			// update the wave color
-			if (--nextColor <= 0)
+			if (useColors && --nextColor <= 0)
 			{
 				waveColor = System.getRandCol([waveColor]);
 				nextColor = System.getRandInt(1, 3);
 			}
 			
 			// TAILS
-			switch (nextWave)
+			if (!useColors)
 			{
-				case 108:
-					cg.tails.show("The field is getting denser!", System.TAILS_NORMAL);
-				break;
-				case 48:
-					cg.tails.show("There's too many! We need to jump away!", System.TAILS_NORMAL);
-				break;
+				if (reminder && !cg.ship.isJumpReadySpecific("range"))
+				{
+					reminder = false;
+					cg.tails.show("We're in range! Let's jump away!", System.TAILS_NORMAL);
+				}
+			}
+			else
+			{
+				switch (nextWave)
+				{
+					case 108:
+						cg.tails.show("The field is getting denser!", System.TAILS_NORMAL);
+					break;
+					case 48:
+						cg.tails.show("There's too many! We need to jump away!", System.TAILS_NORMAL);
+					break;
+				}
 			}
 			
 			// reset the spawn timer

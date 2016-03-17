@@ -1,0 +1,14 @@
+{
+  "settings": {
+	"id": "anomalyfield",
+	"background": "default",
+	"difficulty_range": [2, 3],
+    "jamming_min": 0,
+    "slip_range": 35.0,
+	"type": "Hazard",
+	"TAILS": "Debris ahead. Keep the ship safe until we can jump!",
+	"spLevel": "anomaliesPlain"
+  },
+  "waves": [
+  ]
+}

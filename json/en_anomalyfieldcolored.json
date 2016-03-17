@@ -1,0 +1,14 @@
+{
+  "settings": {
+	"id": "anomalyfield",
+	"background": "default",
+	"difficulty_range": [5, 7],
+    "jamming_min": 0,
+    "slip_range": 65.0,
+	"type": "Hazard",
+	"TAILS": "Oh, colored debris? Get ready to set the shield color!",
+	"spLevel": "anomaliesColored"
+  },
+  "waves": [
+  ]
+}

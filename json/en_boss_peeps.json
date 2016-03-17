@@ -4,9 +4,9 @@
 	"background": "default",
 	"difficulty_range": [4, 4],
     "jamming_min": 1,
-    "slip_range": 100.0,
+    "slip_range": 5.0,
 	"type": "Boss",
-	"TAILS": "A powerful enemy is ahead! Get ready!"
+	"TAILS": "Hey, you two! I'm detecting something really big and ugly. It seems pretty mad!\n\nIt's coming our way right now; get ready for a fight!"
   },
   "waves": [
 	{

@@ -301,6 +301,11 @@ package vgdev.stroll.support
 			return isJumpReadySpecific("range") ? "range" : "ready";
 		}
 		
+		/**
+		 * Checks if the ship can jump given a specific reason
+		 * @param	str		the reason
+		 * @return			true if jump isn't ready (opposite of what you think!)
+		 */
 		public function isJumpReadySpecific(str:String):Boolean
 		{
 			switch (str)

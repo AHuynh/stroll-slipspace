@@ -15,7 +15,7 @@ Wave 4
 ------------------------------------------------
 en_intro_amoebas
 ------------------------------------------------
-Encounter with Amoebas for Sector 2-4
+Encounter with Amoebas for Sector 2-3
 
 Wave 1
 	1x Amoeba (3) in far right
@@ -26,7 +26,7 @@ Wave 2
 ------------------------------------------------
 en_intro_slimes
 ------------------------------------------------
-Encounter with Squids for Sector 2-4
+Encounter with Squids for Sector 2-3
 
 Wave 1
 	3x Slime
@@ -36,16 +36,36 @@ Wave 2
 ------------------------------------------------
 en_intro_squid
 ------------------------------------------------
-Encounter with Squids for Sector 2-4
+Encounter with Squids for Sector 2-3
 
 Wave 1
 	1x Squid in far right
 Wave 2
 	1x Squid in far left
-	
+
 ------------------------------------------------
-en_anomalyfield
+en_anomalyfieldplain
 ------------------------------------------------
-Encounter with colored Geometric Anomalies for Sector X-X
+Encounter with plain Geometric Anomalies for Sector 2-3
 
 Infinite waves of Anomalies with increasing frequency.
+	
+	
+------------------------------------------------
+en_anomalyfieldcolored
+------------------------------------------------
+Encounter with colored Geometric Anomalies for Sector 5-7
+
+Infinite waves of Anomalies with increasing frequency.
+	
+	
+------------------------------------------------
+en_swipe
+------------------------------------------------
+Encounter with Swipe and Plain Geometric Anomalies for Sector 5-7
+
+1x Swipe
+Infinite waves of Plain Geometric Anomalies after several seconds
+	
+
+
