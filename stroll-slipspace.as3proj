@@ -92,6 +92,7 @@
     <asset path="sfx\sfx_UI_Beep_B.mp3" />
     <asset path="sfx\sfx_UI_Beep_C.mp3" />
     <asset path="sfx\sfx_UI_Beep_Cs.mp3" />
+    <asset path="bgm\bgm_boss.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

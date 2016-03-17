@@ -60,7 +60,8 @@ package vgdev.stroll.props
 		private var cooldownPDW:int = 5;		// cooldown time in frames between PDW shots
 		private var damagePDW:int = 7;
 		
-		private var BAR_WIDTH:Number;
+		private var BAR_WIDTH:Number;			// small bar
+		private var bigBar:MovieClip;
 		
 		public function Player(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object)
 		{
@@ -91,6 +92,8 @@ package vgdev.stroll.props
 			
 			mc_object.mc_bar.visible = false;		// hide the HP bar
 			BAR_WIDTH = mc_object.mc_bar.bar.width;
+			
+			bigBar = cg.hudBars[playerID];
 			
 			mc_object.mc_omnitool.visible = false;
 		}
@@ -136,6 +139,7 @@ package vgdev.stroll.props
 			{
 				mc_object.mc_bar.visible = true;
 				mc_object.mc_bar.bar.width = (hp / hpMax) * BAR_WIDTH;
+				bigBar.width = (hp / hpMax) * 227.7;
 			}
 			else
 				mc_object.mc_bar.visible = false;

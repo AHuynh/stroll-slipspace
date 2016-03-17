@@ -40,6 +40,7 @@
 		/// UI consoles; an Array of MovieClips
 		public var hudConsoles:Array;
 		public var hudTitles:Array;
+		public var hudBars:Array;
 		
 		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;			// active external ship hitmask; can be hull or shield
@@ -89,6 +90,7 @@
 			gui.tf_titleL.visible = false;
 			gui.tf_titleR.visible = false;
 			hudTitles = [gui.tf_titleL, gui.tf_titleR];
+			hudBars = [gui.bar_crew1, gui.bar_crew2];
 			
 			// init support classes
 			level = new Level(this);
