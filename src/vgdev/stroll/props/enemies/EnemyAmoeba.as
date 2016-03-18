@@ -56,6 +56,7 @@ package vgdev.stroll.props.enemies
 		{
 			if (!completed)
 			{
+				updatePrevPosition();
 				spd = System.changeWithLimit(spd, D_SPD, MIN_SPEED, spdMax);
 				updatePosition(System.forward(spd, rot, true), System.forward(spd, rot, false));
 				if (!isActive())		// quit if updating position caused this to die

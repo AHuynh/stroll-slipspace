@@ -14,9 +14,14 @@ package vgdev.stroll.support
 		private static var bgm_battle1:Class;
 		[Embed(source="../../../../bgm/bgm_calm.mp3")]
 		private static var bgm_calm:Class;
+		[Embed(source="../../../../bgm/bgm_boss.mp3")]
+		private static var bgm_boss:Class;
 		
-		[Embed(source="../../../../sfx/sfx_bell.mp3")]
-		private static var sfx_bell:Class;
+		[Embed(source="../../../../sfx/sfx_readybeep1B.mp3")]
+		private static var sfx_readybeep1B:Class;
+		[Embed(source="../../../../sfx/sfx_readybeep2G.mp3")]
+		private static var sfx_readybeep2G:Class;
+		
 		[Embed(source="../../../../sfx/sfx_explosionlarge1.mp3")]
 		private static var sfx_explosionlarge1:Class;
 		[Embed(source="../../../../sfx/sfx_hithull1.mp3")]
@@ -32,6 +37,13 @@ package vgdev.stroll.support
 		[Embed(source="../../../../sfx/sfx_slipjump.mp3")]
 		private static var sfx_slipjump:Class;	
 		
+		[Embed(source="../../../../sfx/sfx_UI_Beep_B.mp3")]
+		private static var sfx_UI_Beep_B:Class;	
+		[Embed(source = "../../../../sfx/sfx_UI_Beep_C.mp3")]
+		private static var sfx_UI_Beep_C:Class;	
+		[Embed(source="../../../../sfx/sfx_UI_Beep_Cs.mp3")]
+		private static var sfx_UI_Beep_Cs:Class;	
+		
 		private static var currentBGM:String = "";
 		private static var isInit:Boolean = false;
 		
@@ -45,7 +57,9 @@ package vgdev.stroll.support
 			if (isInit) return;
 			isInit = true;
 			
-			sounds["sfx_bell"] = new sfx_bell();
+			sounds["sfx_readybeep1B"] = new sfx_readybeep1B();
+			sounds["sfx_readybeep2G"] = new sfx_readybeep2G();
+			
 			sounds["sfx_explosionlarge1"] = new sfx_explosionlarge1();
 			sounds["sfx_hithull1"] = new sfx_hithull1();
 			sounds["sfx_hitshield1"] = new sfx_hitshield1();
@@ -53,18 +67,28 @@ package vgdev.stroll.support
 			sounds["sfx_shieldrecharge"] = new sfx_shieldrecharge();
 			sounds["sfx_sliphit"] = new sfx_sliphit();
 			sounds["sfx_slipjump"] = new sfx_slipjump();
+			
+			sounds["sfx_UI_Beep_B"] = new sfx_UI_Beep_B();
+			sounds["sfx_UI_Beep_C"] = new sfx_UI_Beep_C();
+			sounds["sfx_UI_Beep_Cs"] = new sfx_UI_Beep_Cs();
 		}
 		
-		public static function playSFX(sfx:String):void
+		public static function playSFX(sfx:String, volume:Number = 1):void
 		{
 			if (sounds[sfx] == null)
 				trace("WARNING: No sound located for " + sfx + "!");
 			else
-				sounds[sfx].play();
+			{
+				var volTransform:SoundTransform = new SoundTransform(volume);
+				var sc:SoundChannel = sounds[sfx].play();
+				sc.soundTransform = volTransform;
+			}
 		}
 		
 		public static function playBGM(music:String, volume:Number = 1):void
 		{
+			//return;
+			
 			if (currentBGM == music)
 				return;
 			stopBGM();
@@ -73,7 +97,8 @@ package vgdev.stroll.support
 			switch (music)
 			{
 				case "bgm_calm":					snd = new bgm_calm();		break;
-				case "bgm_battle1":					snd = new bgm_battle1();		break;
+				case "bgm_boss":					snd = new bgm_boss();		break;
+				case "bgm_battle1":					snd = new bgm_battle1();	break;
 				default:
 					trace("WARNING: No music located for " + music + "!");
 					return;

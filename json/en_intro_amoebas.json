@@ -2,23 +2,23 @@
   "settings": {
 	"id": "intro_amoebas",
 	"background": "default",
-	"difficulty_range": [2, 4],
+	"difficulty_range": [2, 3],
     "jamming_min": 3,
-    "slip_range": 42.0,
+    "slip_range": 36.0,
 	"type": "Enemies",
-	"TAILS": "Some kind of ... amoeba detected. Don't let them hit the ship!"
+	"TAILS": "Splitting enemies! Don't let any hit us!"
   },
   "waves": [
 	{
 		"time": 4.5,
 		"spawnables":
 			[
-				{"type": "Amoeba", "am_size": 2, "region": "far_right"}
+				{"type": "Amoeba", "am_size": 3, "region": "far_right"}
 			]
 	},
 	{
-		"time": 19,
-		"TAILS": "A big one's coming towards the front!",
+		"time": 25,
+		"TAILS": "Watch out! I'm detecting two more on the left!",
 		"spawnables":
 			[
 			]
@@ -27,7 +27,8 @@
 		"time": 4,
 		"spawnables":
 			[
-				{"type": "Amoeba", "am_size": 3, "region": "top_right"}
+				{"type": "Amoeba", "am_size": 2, "region": "top_right"},
+				{"type": "Amoeba", "am_size": 1, "region": "far_top"}
 			]
 	}
   ]

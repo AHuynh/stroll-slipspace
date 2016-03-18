@@ -7,7 +7,7 @@ package vgdev.stroll.support
 	
 	/**
 	 * Support functionality related to the ship
-	 * @author Alexander Huynh
+	 * @author Alexander Huynh, Jimmy Spearman
 	 */
 	public class Ship 
 	{
@@ -17,12 +17,12 @@ package vgdev.stroll.support
 		private var hp:Number = hpMax;				// current hull strength
 		
 		// -- Shield --------------------------------------------------------------------------------------
-		private var mc_shield:MovieClip;			// reference to the shield MovieClip
+		public var mc_shield:MovieClip;			// reference to the shield MovieClip
 		private var shieldMax:Number = 100;			// actual value of shields
 		private var shield:Number = shieldMax;		// max value of shields
 		
-		private var shieldReCurr:int = 0;			// current reboot timer
-		private var shieldRecharge:int = 90;		// time since last hit until shield starts to recharge
+		public var shieldReCurr:int = 0;			// current reboot timer
+		public var shieldRecharge:int = 90;		// time since last hit until shield starts to recharge
 		private var shieldReAmt:Number = .25;		// amount to recharge shield per frame
 		
 		private const SHIELD_DA:Number = .03;		// amount to fade shield alpha per frame
@@ -37,27 +37,29 @@ package vgdev.stroll.support
 		private var shieldCTF:ColorTransform;
 		// ------------------------------------------------------------------------------------------------
 		
-		// -- Navigation -----------------------------------------------------------------------------------
-		public var shipHeading:Number = 0; //Number determining how far off course ship is. Maintain this at 0 for best navigation.
-		public var navOnline:Boolean = true; 		// boolean determining if slipdrive can function
+		// -- Navigation ----------------------------------------------------------------------------------
+		public var shipHeading:Number = 0;				//Number determining how far off course ship is. Maintain this at 0 for best navigation.
+		public var navOnline:Boolean = true; 			// boolean determining if slipdrive can function
 		
-		private var SHIP_HEADING_MAX:Number = 1; 	//Max value shipHeading can have
-		private var SHIP_HEADING_MIN:Number = -1; 	//Min value shipHeading can have
+		public const SHIP_HEADING_MAX:Number = 1; 		//Max value shipHeading can have
+		public const SHIP_HEADING_MIN:Number = -1; 		//Min value shipHeading can have
 		
-		private var HEADING_RUNAWAY:Number = 1.003;  //Scaling factor applied to heading every game tick
-		private var HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
-		private var DAMAGE_JUMP_FACTOR:Number = 0.01;		//max value of random jumps applied to the heading every game tick 
+		private const HEADING_RUNAWAY:Number = 1.003;  	//Scaling factor applied to heading every game tick
+		private const HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
+		private const DAMAGE_JUMP_FACTOR:Number = 0.01;	//max value of random jumps applied to the heading every game tick 
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Slipdrive -----------------------------------------------------------------------------------
-		public var slipRange:Number = 1;			// 'distance' until slipdrive is in range
+		public var slipRange:Number = 2.5;				// 'distance' until slipdrive is in range
 		private var MAX_SLIP_SPEED:Number = .03;
 		private var MIN_SLIP_SPEED:Number = .01;
 		
 		public var slipSpeed:Number = MAX_SLIP_SPEED;	// amount to reduce slipRange per frame
-		private var slipLimits:Array = [0, 1];		// min and max values of slipSpeed
-		public var jammable:int = 0;				// if non-zeo, prevents jumping if at least jammable enemies are present
+		public var jammable:int = 0;					// if non-zeo, prevents jumping if at least jammable enemies are present
 		// ------------------------------------------------------------------------------------------------
+		
+		private const BAR_BIG_WIDTH:Number = 157.7;		// SP/HP bar
+		private var hpCTF:ColorTransform;
 		
 		public function Ship(_cg:ContainerGame)
 		{
@@ -66,6 +68,10 @@ package vgdev.stroll.support
 			
 			shieldCTF = new ColorTransform();
 			setShieldColor(shieldCol);
+			
+			hpCTF = new ColorTransform();
+			cg.gui.bar_hp.transform.colorTransform = hpCTF;
+			updateIntegrity();
 		}
 		
 		public function getShields():Number
@@ -75,11 +81,15 @@ package vgdev.stroll.support
 		
 		/**
 		 * Deal damage to the ship (with shields in effect)
-		 * @param	dmg		Amount of damage to deal (a positive value to damage)
-		 * @param	col		Color type of damage
+		 * @param	dmg				Amount of damage to deal (a positive value to damage)
+		 * @param	col				Color type of damage
+		 * @param	mitigation		If provided, use this instead of default mitigation
 		 */
-		public function damage(dmg:Number, col:uint = 0):void
+		public function damage(dmg:Number, col:uint = 0, mitigation:Number = -1):void
 		{
+			if (mitigation == -1)
+				mitigation = shieldMitigation;
+			
 			// shields absorb all damage until it breaks
 			// a 10 damage attack against 100 hull and 20 shield results in 100 hull and 10 shield
 			// a 10 damage attack against 100 hull and 1 shield results in 100 hull and 0 shield
@@ -87,7 +97,7 @@ package vgdev.stroll.support
 			if (shield > 0)
 			{
 				if (shieldCol == col)
-					dmg *= shieldMitigation;
+					dmg *= mitigation;
 				shield = System.changeWithLimit(shield, -dmg, 0);
 				SoundManager.playSFX("sfx_hitshield1");
 			}
@@ -96,6 +106,7 @@ package vgdev.stroll.support
 				hp = System.changeWithLimit(hp, -dmg, 0);
 				adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
 				SoundManager.playSFX("sfx_hithull1");
+				cg.camera.setShake(10);	// TODO set shake duration based on damage taken
 			}
 						
 			updateIntegrity();
@@ -125,7 +136,9 @@ package vgdev.stroll.support
 		{
 			hp = System.changeWithLimit(hp, -dmg, 0);
 			adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
+			SoundManager.playSFX("sfx_hithull1");
 			updateIntegrity();
+			cg.camera.setShake(10);	// TODO set shake duration based on damage taken
 			
 			//if (hp == 0)
 			//	game over
@@ -136,8 +149,25 @@ package vgdev.stroll.support
 		 */
 		private function updateIntegrity():void
 		{
-			cg.gui.tf_hull.text = Math.ceil(100 * hp / hpMax).toString();
-			cg.gui.tf_shield.text = Math.ceil(100 * shield / shieldMax).toString();
+			var hpPerc:Number = hp / hpMax;
+			var spPerc:Number = shield / shieldMax;
+			
+			// textfields
+			cg.gui.tf_hull.text = Math.ceil(100 * hpPerc).toString();
+			cg.gui.tf_shield.text = Math.ceil(100 * spPerc).toString();
+			
+			// bars
+			cg.gui.bar_hp.width = hpPerc * BAR_BIG_WIDTH;
+			cg.gui.bar_sp.width = spPerc * BAR_BIG_WIDTH;
+			
+			// colors
+			/*if (hpPerc < .3)
+				hpCTF.color = System.COL_RED;
+			else if (hpPerc < .6)
+				hpCTF.color = System.COL_YELLOW;
+			else
+				hpCTF.color = System.COL_GREEN;*/
+			//cg.gui.bar_hp.transform.colorTransform = hpCTF;
 		}
 		
 		/**
@@ -149,6 +179,12 @@ package vgdev.stroll.support
 			shieldCol = col;
 			shieldCTF.color = shieldCol;
 			mc_shield.transform.colorTransform = shieldCTF;
+			cg.gui.bar_sp.transform.colorTransform = shieldCTF;
+			cg.gui.bar_hp.transform.colorTransform = shieldCTF;
+			cg.gui.tf_titleL.transform.colorTransform = shieldCTF;
+			cg.gui.tf_titleR.transform.colorTransform = shieldCTF;
+			cg.hudBars[0].transform.colorTransform = shieldCTF;
+			cg.hudBars[1].transform.colorTransform = shieldCTF;
 			
 			if (shield > 0)
 			{
@@ -158,6 +194,10 @@ package vgdev.stroll.support
 			}
 		}
 		
+		/**
+		 * Change the heading of the ship
+		 * @param	change		Number, the amount to change by (should be constrained by SHIP_HEADING_MIN, SHIP_HEADING_MAX)
+		 */
 		public function adjustHeading(change:Number):void 
 		{
 			var newHeading:Number = shipHeading + change;
@@ -169,15 +209,21 @@ package vgdev.stroll.support
 			} else {
 				shipHeading = newHeading;
 			}
-		
 		}
 		
+		/**
+		 * ...
+		 * @param	factor		...
+		 */
 		public function scaleHeading(factor:Number):void
 		{
 			var change:Number = shipHeading * factor - shipHeading;
 			adjustHeading(change);
 		}
 		
+		/**
+		 * Helper to update shield cooldowns and graphics
+		 */
 		private function updateShields():void
 		{
 			if (shieldReCurr > 0)
@@ -210,6 +256,9 @@ package vgdev.stroll.support
 			}
 		}
 		
+		/**
+		 * Gradually drift the ship's heading away from the center
+		 */
 		private function updateNavigation():void {
 			scaleHeading(HEADING_RUNAWAY);
 			adjustHeading((Math.random() - 0.5) * HEADING_JUMP);
@@ -217,6 +266,9 @@ package vgdev.stroll.support
 			//trace("Current Heading: " + shipHeading + "Current Slip Speed: " + slipSpeed);
 		}
 		
+		/**
+		 * Advance the ship's progress and update relevant UI
+		 */
 		private function updateSlip():void
 		{
 			if (slipRange > 0)
@@ -224,10 +276,12 @@ package vgdev.stroll.support
 				slipRange = System.changeWithLimit(slipRange, -slipSpeed, 0);
 				if (slipRange == 0)
 				{
-					SoundManager.playSFX("sfx_bell");
-					cg.gui.mc_jumpReady.visible = true;
+					SoundManager.playSFX("sfx_readybeep1B", .7);
+					cg.gui.tf_distance.text = "In range";
+					cg.gui.large_indicator.gotoAndStop("green");
 				}
-				cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
+				else
+					cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
 			}
 		}
 		
@@ -238,26 +292,52 @@ package vgdev.stroll.support
 		public function isJumpReady():String
 		{
 			// TODO add other limiting conditions here
-			if (!isHeadingGood()) {
-				//change to say navigation sucks
-				return "range";
+			if (isJumpReadySpecific("repair")) {
+				return "repair";
 			}
-			
-			if (!navOnline) {
-				//change to say navigation offline
-				return "range";
-			}
-			
-			if (jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable)
+			if (isJumpReadySpecific("jammed")) {
 				return "jammed";
-			return slipRange == 0 ? "ready" : "range";
+			}
+			if (isJumpReadySpecific("heading")) {
+				return "heading";
+			}
+			return isJumpReadySpecific("range") ? "range" : "ready";
 		}
 		
+		/**
+		 * Checks if the ship can jump given a specific reason
+		 * @param	str		the reason
+		 * @return			true if jump isn't ready (opposite of what you think!)
+		 */
+		public function isJumpReadySpecific(str:String):Boolean
+		{
+			switch (str)
+			{
+				case "repair":
+					return !navOnline;
+				break;
+				case "jammed":
+					return jammable != 0 && cg.managerMap[System.M_ENEMY].numObjects() >= jammable;
+				break;
+				case "heading":
+					return !isHeadingGood();
+				break;
+				case "range":
+					return slipRange != 0;
+				break;
+				default:
+					return false;
+			}
+		}
+		
+		/**
+		 * Returns if the ship's heading is close enough to the center to jump
+		 * @return		true if the ship can jump
+		 */
 		public function isHeadingGood():Boolean 
 		{
 			return (Math.abs(shipHeading) < 0.035);
 		}
-		
 		
 		/**
 		 * Attempt to jump the ship to the next sector
@@ -269,6 +349,7 @@ package vgdev.stroll.support
 			{
 				SoundManager.playSFX("sfx_slipjump");
 				cg.jump();
+				cg.gui.large_indicator.gotoAndStop(1);
 				return true;
 			}
 			return false;

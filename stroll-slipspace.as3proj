@@ -86,6 +86,13 @@
     <asset path="sfx\sfx_sliphit.mp3" />
     <asset path="sfx\sfx_slipjump.mp3" />
     <asset path="bgm\bgm_calm.mp3" />
+    <asset path="sfx\sfx_readybeep2G.mp3" />
+    <asset path="sfx\sfx_readybeep1B.mp3" />
+    <asset path="sfx\sfx_readybeep3E.mp3" />
+    <asset path="sfx\sfx_UI_Beep_B.mp3" />
+    <asset path="sfx\sfx_UI_Beep_C.mp3" />
+    <asset path="sfx\sfx_UI_Beep_Cs.mp3" />
+    <asset path="bgm\bgm_boss.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

@@ -20,6 +20,7 @@ package vgdev.stroll.props.enemies
 		{
 			if (!completed)
 			{
+				updatePrevPosition();
 				updatePosition(dX, dY);
 				if (!isActive())		// quit if updating position caused this to die
 					return completed;

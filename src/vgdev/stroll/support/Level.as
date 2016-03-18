@@ -27,8 +27,16 @@ package vgdev.stroll.support
 		private var en_intro_slimes:Class;
 		[Embed(source="../../../../json/en_intro_amoebas.json", mimeType="application/octet-stream")]
 		private var en_intro_amoebas:Class;
-		[Embed(source="../../../../json/en_anomalyfield.json", mimeType="application/octet-stream")]
-		private var en_anomalyfield:Class;
+		[Embed(source="../../../../json/en_anomalyfieldplain.json", mimeType="application/octet-stream")]
+		private var en_anomalyfieldplain:Class;
+		
+		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
+		private var en_boss_peeps:Class;
+		
+		[Embed(source="../../../../json/en_swipe.json", mimeType="application/octet-stream")]
+		private var en_swipe:Class;
+		[Embed(source="../../../../json/en_anomalyfieldcolored.json", mimeType="application/octet-stream")]
+		private var en_anomalyfieldcolored:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -45,7 +53,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		private var sectorIndex:int = 0;
+		public var sectorIndex:int = 0;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -54,7 +62,7 @@ package vgdev.stroll.support
 		private var counter:int = 0;		// keep track of frames elapsed since current encounter started
 		private var counterNext:int = 0;	// the "time" that the next wave spawns
 		
-		private var TAILSmessage:String;
+		private var TAILSmessage:String = "...";
 		
 		private var spLevel:ABST_SPLevel;	// non-null if using a special level that needs code
 		
@@ -70,7 +78,12 @@ package vgdev.stroll.support
 												JSON.parse(new en_intro_squids()),
 												JSON.parse(new en_intro_slimes()),
 												JSON.parse(new en_intro_amoebas()),
-												JSON.parse(new en_anomalyfield())
+												JSON.parse(new en_anomalyfieldplain()),
+												
+												JSON.parse(new en_boss_peeps()),
+												
+												JSON.parse(new en_anomalyfieldcolored()),
+												JSON.parse(new en_swipe())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -80,7 +93,11 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											//rawEncountersJSON = [JSON.parse(new en_intro_slimes())];
+											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
+											//rawEncountersJSON = [JSON.parse(new en_anomalyfieldcolored())];
+											
+											// Peeps boss
+											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -167,12 +184,45 @@ package vgdev.stroll.support
 							var manager:int;
 							switch (type)
 							{
+								case "Amoeba":
+									spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
+																					"x":pos.x,
+																					"y":pos.y
+																					});
+									manager = System.M_ENEMY;
+								break;
 								case "Eye":
 									spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
 																					"x":pos.x,
 																					"y":pos.y,
 																					"attackColor": col,
 																					"hp": 30
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "GeometricAnomalyPlain":
+									waveColor = System.COL_WHITE;
+								case "GeometricAnomaly":
+									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
+																					"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																					"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																					"tint": waveColor,
+																					"dx": -3 - System.getRandNum(0, 1),
+																					"hp": 12
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "Slime":
+									spawn = new EnemySlime(cg, new SWC_Enemy(), {
+																					"attackColor": col,
+																					"attackStrength": 10,
+																					"hp": 30
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "Swipe":
+									spawn = new EnemySwipe(cg, new SWC_Enemy(), {
+																					"attackStrength": 65
 																					});
 									manager = System.M_ENEMY;
 								break;
@@ -186,29 +236,9 @@ package vgdev.stroll.support
 																					});
 									manager = System.M_ENEMY;
 								break;
-								case "Slime":
-									spawn = new EnemySlime(cg, new SWC_Enemy(), {
-																					"attackColor": col,
-																					"attackStrength": 18,
-																					"hp": 40
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "Amoeba":
-									spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
-																					"x":pos.x,
-																					"y":pos.y
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "GeometricAnomaly":
-									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
-																							"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
-																							"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
-																							"tint": waveColor,
-																							"dx": -3 - System.getRandNum(0, 1),
-																							"hp": 12
-																							});
+								
+								case "Peeps":
+									spawn = new EnemyPeeps(cg, new SWC_Enemy(), {});
 									manager = System.M_ENEMY;
 								break;
 								
@@ -248,25 +278,30 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (!System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))
+				if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
 					choices.push(e);
 			}
 			
 			if (choices.length == 0)		// TODO something when there are no valid encounters
 			{
-				trace("[Level] No suitable encounters found for sector", sectorIndex);
+				trace("[Level] WARNING: No suitable encounters found for Sector", sectorIndex);
 				return false;
 			}
 
-			var encounter:Object = choices[int(System.getRandInt(0, choices.length - 1))];
+			var choiceIndex:int = int(System.getRandInt(0, choices.length - 1));
+			var encounter:Object = choices[choiceIndex];
+			parsedEncounters[choices[choiceIndex]["id"]]["used"] = true;
 			trace("Starting encounter called: '" + encounter["id"] + "'");
 			
 			if (encounter["spLevel"] != null)
 			{
 				switch (encounter["spLevel"])
 				{
-					case "anomalies":
-						spLevel = new SPLevelAnomalies(cg);
+					case "anomaliesColored":
+						spLevel = new SPLevelAnomalies(cg, true);
+					break;
+					case "anomaliesPlain":
+						spLevel = new SPLevelAnomalies(cg, false);
 					break;
 					default:
 						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);
@@ -312,7 +347,9 @@ package vgdev.stroll.support
 				case "top_right":		return new Point(System.getRandNum( 100,  400), System.getRandNum(-250, -170));	break;
 				case "bottom_right":	return new Point(System.getRandNum( 100,  400), System.getRandNum( 170,  250));	break;
 				case "top":				return new Point(System.getRandNum(-250,  250), System.getRandNum(-250, -170));	break;
+				case "far_top":			return new Point(System.getRandNum(-250,  250), System.getRandNum(-300, -260));	break;
 				case "bottom":			return new Point(System.getRandNum(-250,  250), System.getRandNum( 170,  250));	break;
+				case "far_bottom":		return new Point(System.getRandNum(-250,  250), System.getRandNum( 300,  260));	break;
 				case "top_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum(-250, -120));	break;
 				case "bottom_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum( 250,  120));	break;
 				case "left":			return new Point(System.getRandNum(-450, -300), System.getRandNum(-200,  200));	break;

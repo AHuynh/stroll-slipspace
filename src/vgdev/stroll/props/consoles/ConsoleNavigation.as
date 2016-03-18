@@ -7,26 +7,23 @@ package vgdev.stroll.props.consoles
 	 * Dictates how on-course the ship is to the next slipsector
 	 * @author Alexander Huynh, Jimmy Spearman
 	 */
-	
-	
 	public class ConsoleNavigation extends ABST_Console 
 	{
-		//determines magnitude of the effect the directional keys have on the ship heading
+		/// Determines magnitude of the effect the directional keys have on the ship heading
 		public var ADJUST_SENSITIVITY:Number = 0.01;
-		
-		
 
-		
 		public function ConsoleNavigation(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "navigation";
+			CONSOLE_NAME = "Navigation";
+			TUT_SECTOR = 0;
+			TUT_TITLE = "Navigation Module";
+			TUT_MSG = "Move the bar to the center to keep the ship on-course and travelling fast.\n\n" +
+					  "The ship can jump using the Slipdrive module only if it's on-course!";
 		}
-		
 		
 		override public function holdKey(keys:Array):void 
 		{
-			
 			if (keys[0]) {
 				cg.ship.adjustHeading(ADJUST_SENSITIVITY);
 			}
@@ -34,31 +31,28 @@ package vgdev.stroll.props.consoles
 			if (keys[2]) {
 				cg.ship.adjustHeading(-ADJUST_SENSITIVITY)
 			}
-			
-			
 		}
 		
 		override protected function updateHUD(isActive:Boolean):void
 		{
 			if (isActive) {
-				getHUD().barCurr.x = 70 * cg.ship.shipHeading;
+				getHUD().mc_navbar.x = 68 * cg.ship.shipHeading;
+				getHUD().mc_okay.visible = cg.ship.isHeadingGood();
 			}
+		}
 		
+		override public function changeHP(amt:Number):Boolean 
+		{
+			var isHPzero:Boolean = super.changeHP(amt);
+			cg.ship.navOnline = !isHPzero;
+			return isHPzero;
 		}
 		
 		override public function step():Boolean 
 		{
-			updateHUD(inUse);
-			if (hp <= 0) {
-				cg.ship.navOnline = false;
-			} else {
-				cg.ship.navOnline = true;
-			}
+			if (inUse)
+				updateHUD(true);
 			return super.step();
 		}
-		
-		
 	}
-	
-	
 }

@@ -4,21 +4,21 @@
 	"background": "default",
 	"difficulty_range": [1, 1],
     "jamming_min": 1,
-    "slip_range": 50.0,
+    "slip_range": 44.0,
 	"type": "Enemies",
 	"TAILS": "Something's moving outside. Get the turrets ready!"
   },
   "waves": [
 	{
 		"time": 4,
-		"repeat": 2,
+		"repeat": 1,
 		"spawnables":
 			[
 				{"type": "Eye", "region": "top_right"}
 			]
 	},
 	{
-		"time": 7,
+		"time": 8,
 		"repeat": 2,
 		"spawnables":
 			[
@@ -26,7 +26,7 @@
 			]
 	},
 	{
-		"time": 7,
+		"time": 9,
 		"TAILS": "Watch out! More coming from the rear!",
 		"spawnables":
 			[
@@ -34,14 +34,14 @@
 	},
 	{
 		"time": 3.5,
-		"repeat": 4,
+		"repeat": 2,
 		"spawnables":
 			[
 				{"type": "Eye", "region": "left"}
 			]
 	},
 	{
-		"time": 11,
+		"time": 8,
 		"TAILS": "They're coming from all directions!",
 		"spawnables":
 			[
@@ -51,12 +51,10 @@
 		"time": 3,
 		"spawnables":
 			[
-				{"type": "Eye", "region": "top_left"},
 				{"type": "Eye", "region": "top_right"},
 				{"type": "Eye", "region": "top"},
-				{"type": "Eye", "region": "bottom_left"},
 				{"type": "Eye", "region": "bottom_right"},
-				{"type": "Eye", "region": "bottom"}
+				{"type": "Eye", "region": "left"}
 			]
 	}
   ]

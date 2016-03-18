@@ -22,7 +22,7 @@ package vgdev.stroll.props.enemies
 			
 			// [Large shot, Small trishot]
 			cdCounts = [45, 90];
-			cooldowns = [120, 160];
+			cooldowns = [100, 140];
 			ranges = [390, 430];
 			drift = .1;
 			spd = .3;

@@ -1,6 +1,7 @@
 package vgdev.stroll.props.consoles 
 {
 	import flash.display.MovieClip;
+	import flash.geom.ColorTransform;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
 	import vgdev.stroll.support.SoundManager;
@@ -26,7 +27,10 @@ package vgdev.stroll.props.consoles
 		public function ConsoleShields(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "shields";
+			CONSOLE_NAME = "Shields";
+			TUT_SECTOR = 0;
+			TUT_TITLE = "Shield Frequency Module";
+			TUT_MSG = "If we match the shield color to the color of enemies' attacks, our shields will take less damage!"
 			mc_shield = cg.game.mc_ship.shield;
 		}
 		
@@ -35,6 +39,8 @@ package vgdev.stroll.props.consoles
 		{
 			if (cdCount > 0)		
 				cdCount--;
+			if (inUse)
+				updateHUD(true);
 			return super.step();
 		}
 		
@@ -62,7 +68,16 @@ package vgdev.stroll.props.consoles
 		override protected function updateHUD(isActive:Boolean):void
 		{
 			if (isActive)
-				getHUD().shieldIndicator.gotoAndStop(currShield + 2);
+			{
+				//getHUD().shieldIndicator.gotoAndStop(currShield + 2);
+				getHUD().tf_cooldown.text =  Math.ceil(100 * (1 - (cdCount / cooldown))).toString();
+				getHUD().tf_recharge.text = Math.ceil(100 * (1 - (cg.ship.shieldReCurr / cg.ship.shieldRecharge))).toString();		
+				
+				var ct:ColorTransform = new ColorTransform();
+				ct.color = currShield == -1 ? System.COL_WHITE : shieldCols[currShield];
+				hud_consoles[0].transform.colorTransform = ct;
+				hud_consoles[1].transform.colorTransform = ct;
+			}
 		}
 	}
 }

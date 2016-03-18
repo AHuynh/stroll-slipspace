@@ -1,5 +1,7 @@
 package vgdev.stroll 
 {
+	import flash.display.MovieClip;
+	import flash.geom.ColorTransform;
 	import flash.ui.Keyboard;
 	
 	/**
@@ -221,6 +223,11 @@ package vgdev.stroll
 			return int(num);
 		} 
 		
+		/**
+		 * Convert the name of a color to the corresponding uint code
+		 * @param	colStr		color name, such as "red"
+		 * @return				corespoinding uint (white if not found)
+		 */
 		public static function stringToCol(colStr:String):uint
 		{
 			switch (colStr)
@@ -231,6 +238,20 @@ package vgdev.stroll
 				case "yellow":	return COL_YELLOW;
 				default:		return COL_WHITE;
 			}
+		}
+		
+		/**
+		 * Tint the given MovieClip
+		 * @param	mc		The MovieClip to tint
+		 * @param	col		The color to tint the MovieClip
+		 */
+		public static function tintObject(mc:MovieClip, col:uint):void
+		{
+			var ct:ColorTransform = new ColorTransform();
+			ct.redMultiplier = col >> 16 & 0x0000FF / 255;
+			ct.greenMultiplier = col >> 8 & 0x0000FF / 255;
+			ct.blueMultiplier = col & 0x0000FF / 255;
+			mc.transform.colorTransform = ct;
 		}
 		
 		// ray and line segment

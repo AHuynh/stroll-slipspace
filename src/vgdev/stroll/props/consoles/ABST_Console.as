@@ -6,6 +6,7 @@ package vgdev.stroll.props.consoles
 	import vgdev.stroll.System;
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.Player;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * Abstract console class
@@ -17,7 +18,7 @@ package vgdev.stroll.props.consoles
 		public const RANGE:int = 20;		// maximum range in px from which a player can activate this console
 		
 		/// Used as a label in the HUD object
-		protected var CONSOLE_NAME:String = "none";
+		protected var CONSOLE_NAME:String = "None";
 		
 		/// The two HUD objects for the consoles, an Array of MovieClips
 		protected var hud_consoles:Array;
@@ -30,6 +31,10 @@ package vgdev.stroll.props.consoles
 		
 		/// The width of the HP bar
 		private var BAR_WIDTH:Number;
+		
+		protected var TUT_SECTOR:int = 0;
+		protected var TUT_TITLE:String = "Unknown Module";
+		protected var TUT_MSG:String = "Hey! I can't find the description for this module...";
 		
 		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array)
 		{
@@ -125,6 +130,15 @@ package vgdev.stroll.props.consoles
 		}
 		
 		/**
+		 * Show the "New!" indicator if the sector is appropriate
+		 * @param	sector	the current sector
+		 */
+		public function showNew(sector:int):void
+		{
+			mc_object.mc_newIndicator.visible = sector == TUT_SECTOR;
+		}
+		
+		/**
 		 * Called when a player is attempting to sit at a console
 		 * Called by ContainerGame
 		 * @param	p		the Player attempting to sit at a console
@@ -141,8 +155,20 @@ package vgdev.stroll.props.consoles
 					mc_object.prompt.visible = false;		// hide the '!'
 	
 					// show the appropriate module UI
-					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME);
+					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME.toLowerCase());
+					cg.hudTitles[closestPlayer.playerID].visible = true;
+					cg.hudTitles[closestPlayer.playerID].text = CONSOLE_NAME;
 					updateHUD(true);
+					if (cg.tails.tutorialMode)
+					{
+						hud_consoles[closestPlayer.playerID].mc_tutorial.visible = true;
+						hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(CONSOLE_NAME.toLowerCase());
+						
+						cg.tails.showHalf(closestPlayer.playerID == 0, TUT_TITLE, TUT_MSG);
+					}
+					mc_object.mc_newIndicator.visible = false;
+					
+					SoundManager.playSFX("sfx_UI_Beep_C", .5);
 				}
 			}
 		}
@@ -158,8 +184,13 @@ package vgdev.stroll.props.consoles
 				mc_object.gotoAndStop(2);									// change console graphic to 'shut off'
 				mc_object.prompt.visible = true;							// show the '!'
 				hud_consoles[closestPlayer.playerID].gotoAndStop("none");	// reset the module UI
+				cg.hudTitles[closestPlayer.playerID].visible = false;
+				hud_consoles[closestPlayer.playerID].mc_tutorial.visible = false;
+				cg.tails.hideHalf(closestPlayer.playerID == 0);
 				updateHUD(false);
 				closestPlayer = null;
+				
+				SoundManager.playSFX("sfx_UI_Beep_B", .5);
 			}
 		}
 		
@@ -182,9 +213,9 @@ package vgdev.stroll.props.consoles
 			if (closestPlayer == null)
 			{
 				trace("[ABST_Console] WARNING: getHUD called without an active player!");
-				return new MovieClip();
+				return hud_consoles[0].mod;
 			}
-			else if (CONSOLE_NAME == "none")
+			else if (CONSOLE_NAME == "None")
 			{
 				trace("[ABST_Console] WARNING: CONSOLE_NAME is not set!");
 			}

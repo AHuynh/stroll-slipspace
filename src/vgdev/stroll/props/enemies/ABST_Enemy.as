@@ -26,6 +26,8 @@ package vgdev.stroll.props.enemies
 		protected var dY:Number = 0;
 		protected var dR:Number = 0;
 		
+		protected var prevPosition:Point;
+		
 		protected var spd:Number = 1;			// speed (in px) at which to move at when going to a target
 		protected var drift:Number = .25;		// speed (in px) at which to move at when idling
 		protected var driftDir:int = 1;			// direction of drift, 1 or -1
@@ -71,6 +73,8 @@ package vgdev.stroll.props.enemies
 			
 			ct = new ColorTransform();
 			mc_object.base.transform.colorTransform = ct;
+			
+			prevPosition = new Point(mc_object.x, mc_object.y);
 		}
 		
 		protected function setStyle(style:String):void
@@ -116,6 +120,7 @@ package vgdev.stroll.props.enemies
 		{
 			if (!completed)
 			{
+				updatePrevPosition();
 				updatePosition(dX, dY);
 				if (!isActive())		// quit if updating position caused this to die
 					return completed;
@@ -125,6 +130,21 @@ package vgdev.stroll.props.enemies
 				updateDamageFlash();				
 			}
 			return completed;
+		}
+		
+		public function updatePrevPosition():void
+		{
+			prevPosition.x = mc_object.x;
+			prevPosition.y = mc_object.y;
+		}
+		
+		/**
+		 * Returns calculated dX and dY of this enemy
+		 * @return		Point (dX, dY)
+		 */
+		public function getDelta():Point
+		{
+			return new Point(mc_object.x - prevPosition.x, mc_object.y - prevPosition.y);
 		}
 		
 		protected function updateDamageFlash():void

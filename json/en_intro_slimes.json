@@ -2,7 +2,7 @@
   "settings": {
 	"id": "intro_slimes",
 	"background": "default",
-	"difficulty_range": [2, 4],
+	"difficulty_range": [2, 3],
     "jamming_min": 2,
     "slip_range": 32.0,
 	"type": "Enemies",
@@ -11,7 +11,7 @@
   "waves": [
 	{
 		"time": 4.5,
-		"repeat": 2,
+		"repeat": 3,
 		"spawnables":
 			[
 				{"type": "Slime"}
@@ -26,7 +26,7 @@
 	},
 	{
 		"time": 3,
-		"repeat": 3,
+		"repeat": 4,
 		"spawnables":
 			[
 				{"type": "Slime"}

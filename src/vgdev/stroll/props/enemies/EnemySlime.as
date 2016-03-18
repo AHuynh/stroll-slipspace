@@ -29,9 +29,9 @@ package vgdev.stroll.props.enemies
 			ELLIPSE_B = 220 + System.getRandNum(0, 35);
 			
 			theta = System.getRandNum(0, 360);
-			dTheta = System.getRandNum(0.3, 0.7) * (Math.random() > .5 ? -1 : 1);
+			dTheta = System.getRandNum(0.5, 1.5) * (Math.random() > .5 ? -1 : 1);
 			
-			cdCounts = [60];
+			cdCounts = [60 + System.getRandInt(0, 45)];
 			cooldowns = [100];
 			
 			updatePosition(0, 0);

@@ -10,12 +10,13 @@
   },
   "waves": [
 	{
-		"time": 60,
+		"time": 6,
 		"spawnables":
 			[
 				{"type": "Fire", "x": -120, "y": -75},
 				{"type": "Fire", "x":  85, "y":  25},
-				{"type": "Fire", "x":  102,"y":   5},
+				{"type": "Fire", "x":  152,"y": -45},
+				{"type": "Fire", "x":  182,"y": -35},
 				{"type": "Fire", "x": -10, "y":   0}
 			]
 	}
