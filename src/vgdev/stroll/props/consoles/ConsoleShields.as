@@ -27,7 +27,7 @@ package vgdev.stroll.props.consoles
 		public function ConsoleShields(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
 		{
 			super(_cg, _mc_object, _players);
-			CONSOLE_NAME = "Shields";
+			CONSOLE_NAME = "Shield Frq";
 			TUT_SECTOR = 0;
 			TUT_TITLE = "Shield Frequency Module";
 			TUT_MSG = "If we match the shield color to the color of enemies' attacks, our shields will take less damage!"
@@ -73,10 +73,10 @@ package vgdev.stroll.props.consoles
 				getHUD().tf_cooldown.text =  Math.ceil(100 * (1 - (cdCount / cooldown))).toString();
 				getHUD().tf_recharge.text = Math.ceil(100 * (1 - (cg.ship.shieldReCurr / cg.ship.shieldRecharge))).toString();		
 				
-				var ct:ColorTransform = new ColorTransform();
+				/*var ct:ColorTransform = new ColorTransform();
 				ct.color = currShield == -1 ? System.COL_WHITE : shieldCols[currShield];
 				hud_consoles[0].transform.colorTransform = ct;
-				hud_consoles[1].transform.colorTransform = ct;
+				hud_consoles[1].transform.colorTransform = ct;*/
 			}
 		}
 	}

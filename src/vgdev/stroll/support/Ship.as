@@ -181,10 +181,11 @@ package vgdev.stroll.support
 			mc_shield.transform.colorTransform = shieldCTF;
 			cg.gui.bar_sp.transform.colorTransform = shieldCTF;
 			cg.gui.bar_hp.transform.colorTransform = shieldCTF;
-			cg.gui.tf_titleL.transform.colorTransform = shieldCTF;
+			
+			/*cg.gui.tf_titleL.transform.colorTransform = shieldCTF;
 			cg.gui.tf_titleR.transform.colorTransform = shieldCTF;
 			cg.hudBars[0].transform.colorTransform = shieldCTF;
-			cg.hudBars[1].transform.colorTransform = shieldCTF;
+			cg.hudBars[1].transform.colorTransform = shieldCTF;*/
 			
 			if (shield > 0)
 			{

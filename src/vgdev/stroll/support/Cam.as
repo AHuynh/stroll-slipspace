@@ -51,11 +51,11 @@ package vgdev.stroll.support
 		{
 			focus.x = updateNumber(focus.x, focusTgt.x, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
 			focus.y = updateNumber(focus.y, focusTgt.y, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
-			scale = updateNumber(scale, scaleTgt, ADD_SCALE, THRESH_SCALE);
+			//scale = updateNumber(scale, scaleTgt, ADD_SCALE, THRESH_SCALE);
 
 			cg.game.x = focus.x;
 			cg.game.y = focus.y;
-			cg.game.scaleX = cg.game.scaleY = scale;
+			//cg.game.scaleX = cg.game.scaleY = scale;
 
 			System.GAME_OFFSX = cg.game.x + System.GAME_HALF_WIDTH;
 			System.GAME_OFFSY = cg.game.y + System.GAME_HALF_HEIGHT;
@@ -63,11 +63,19 @@ package vgdev.stroll.support
 			updateShake();
 		}
 		
+		/**
+		 * Start shaking the camera
+		 * @param	frames		The amount of frames to shake
+		 */
 		public function setShake(frames:int):void
 		{
 			camShake = Math.max(camShake, frames);
+			cg.setModuleColor(System.COL_REDHIT);
 		}
 		
+		/**
+		 * Shake the camera, or reset it back to normal if done
+		 */
 		private function updateShake():void
 		{
 			if (camShake > 0)
@@ -76,6 +84,7 @@ package vgdev.stroll.support
 				{
 					ui.x = UI_ANCHOR_X;
 					ui.y = UI_ANCHOR_Y;
+					cg.setModuleColor(System.COL_WHITE);
 				}
 				else if (camShake % 2 == 1)
 				{
@@ -120,7 +129,7 @@ package vgdev.stroll.support
 		public function setCamera(newFocus:Point, newScale:Number):void
 		{
 			setCameraFocus(newFocus);
-			setCameraScale(newScale);
+			//setCameraScale(newScale);
 		}
 		
 		/**
@@ -148,7 +157,7 @@ package vgdev.stroll.support
 		 */
 		public function setCameraScale(newScale:Number):void
 		{
-			scaleTgt = newScale;
+			//scaleTgt = newScale;
 		}
 	}
 }

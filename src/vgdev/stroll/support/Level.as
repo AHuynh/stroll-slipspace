@@ -259,13 +259,6 @@ package vgdev.stroll.support
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave
 				counter = 0;
 			}
-
-			/*
-			var e:ABST_Enemy = new EnemyColorSwapper(cg, new SWC_Enemy, new Point(500, System.getRandNum(-100, 100)), {"attackColor":System.getRandCol(), "attackStrength":10, "hp":300});
-			e.setScale(2);
-			cg.addToGame(e, System.M_ENEMY);
-			cg.ship.jammable = 1;
-			}*/
 		}
 
 		/**
@@ -278,7 +271,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
+				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
 					choices.push(e);
 			}
 			

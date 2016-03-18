@@ -3,6 +3,7 @@
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.media.Camera;
 	import flash.ui.Keyboard;
@@ -239,6 +240,9 @@
 						game.mc_bg.base.play();
 					gui.mc_pause.visible = isPaused;
 				break;
+			case Keyboard.J:		// TODO remove temporary testing
+				jump();
+			break;
 			}
 		}
 		
@@ -341,8 +345,23 @@
 				
 				tails.tutorialMode = level.sectorIndex % 4 == 0;
 				tails.tutorialMode = false;
-				// TODO TAILS text
 			}
+		}
+		
+		/**
+		 * Set the color of the modules to col
+		 * @param	col		uint of the module color
+		 */
+		public function setModuleColor(col:uint):void
+		{
+			var ct:ColorTransform = new ColorTransform();
+			ct.color = col;
+			gui.tf_titleL.transform.colorTransform = ct;
+			gui.tf_titleR.transform.colorTransform = ct;
+			hudBars[0].transform.colorTransform = ct;
+			hudBars[1].transform.colorTransform = ct;
+			hudConsoles[0].transform.colorTransform = ct;
+			hudConsoles[1].transform.colorTransform = ct;
 		}
 
 		/**

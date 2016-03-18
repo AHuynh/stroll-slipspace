@@ -26,6 +26,9 @@ package vgdev.stroll.support
 			
 			tails.mc_left.visible = false;
 			tails.mc_right.visible = false;
+			
+			tails.mc_left.mc_check.x = -83;
+			tails.mc_right.mc_check.x = 83;
 		}
 		
 		public function isActive():Boolean
