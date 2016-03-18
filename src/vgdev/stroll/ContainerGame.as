@@ -33,6 +33,7 @@
 		public var ship:Ship;
 		public var camera:Cam;
 		public var tails:TAILS;
+		public var background:Background;
 		
 		/// Whether or not the game is paused
 		public var isPaused:Boolean = false;		// from P
@@ -80,7 +81,7 @@
 		{
 			game.removeEventListener(Event.ADDED_TO_STAGE, init);
 			
-			game.mc_bg.gotoAndStop("space");
+			//game.mc_bg.gotoAndStop("space");
 			
 			// init the GUI
 			gui = new SWC_GUI();	
@@ -98,6 +99,8 @@
 			tails = new TAILS(this, gui.mc_tails);
 			ship = new Ship(this);
 			camera = new Cam(this, gui);
+			background = new Background(this, game.mc_bg);
+			background.setStyle("test1");
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -234,10 +237,10 @@
 			{
 				case Keyboard.P:
 					isPaused = !isPaused;
-					if (isTruePaused())					// halt or resume background animation
+					/*if (isTruePaused())					// halt or resume background animation
 						game.mc_bg.base.stop();
 					else
-						game.mc_bg.base.play();
+						game.mc_bg.base.play();*/
 					gui.mc_pause.visible = isPaused;
 				break;
 			case Keyboard.J:		// TODO remove temporary testing
@@ -293,6 +296,7 @@
 			level.step();
 			ship.step();
 			camera.step();
+			background.step(ship.slipSpeed * 150);
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
