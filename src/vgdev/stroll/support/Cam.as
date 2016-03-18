@@ -56,6 +56,8 @@ package vgdev.stroll.support
 			cg.game.x = focus.x;
 			cg.game.y = focus.y;
 			//cg.game.scaleX = cg.game.scaleY = scale;
+			
+			cg.background.setLocation(new Point(cg.game.x / 4, cg.game.y / 4));
 
 			System.GAME_OFFSX = cg.game.x + System.GAME_HALF_WIDTH;
 			System.GAME_OFFSY = cg.game.y + System.GAME_HALF_HEIGHT;

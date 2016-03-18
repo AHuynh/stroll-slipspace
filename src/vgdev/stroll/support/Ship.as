@@ -50,7 +50,7 @@ package vgdev.stroll.support
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Slipdrive -----------------------------------------------------------------------------------
-		public var slipRange:Number = 2.5;				// 'distance' until slipdrive is in range
+		public var slipRange:Number = 0;				// 'distance' until slipdrive is in range
 		private var MAX_SLIP_SPEED:Number = .03;
 		private var MIN_SLIP_SPEED:Number = .01;
 		
@@ -261,6 +261,9 @@ package vgdev.stroll.support
 		 * Gradually drift the ship's heading away from the center
 		 */
 		private function updateNavigation():void {
+			if (cg.atHomeworld())		// quit if at a homeworld
+				return;
+			
 			scaleHeading(HEADING_RUNAWAY);
 			adjustHeading((Math.random() - 0.5) * HEADING_JUMP);
 			slipSpeed = MAX_SLIP_SPEED - ((MAX_SLIP_SPEED - MIN_SLIP_SPEED) * Math.abs(shipHeading));

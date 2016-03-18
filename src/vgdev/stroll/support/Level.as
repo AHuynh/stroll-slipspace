@@ -318,7 +318,12 @@ package vgdev.stroll.support
 			// update progress meter
 			cg.gui.mc_progress.setSectorProgress(sectorIndex);
 			
-			return sectorIndex > 12;		// TODO end state
+			
+			
+			// TODO dynamic background
+			cg.background.setRandomStyle(int(sectorIndex / 5), System.getRandCol());
+			
+			return sectorIndex == 13;		// TODO end state
 		}
 		
 		public function getTAILS():String

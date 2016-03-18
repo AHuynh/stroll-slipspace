@@ -80,6 +80,16 @@ package vgdev.stroll
 		}
 		
 		/**
+		 * Get a random element from the given array
+		 * @param	arr		The choices
+		 * @return			A random element from arr
+		 */
+		public static function getRandFrom(arr:Array):*
+		{
+			return arr[getRandInt(0, arr.length - 1)];
+		}
+		
+		/**
 		 * Returns a random color from the 4 main colors (RGYB)
 		 * @param	excludes	An Array of colors to exclude, else null
 		 * @return				A random color from the 4 main colors, excluding colors in excludes

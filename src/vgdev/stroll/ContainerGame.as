@@ -93,6 +93,7 @@
 			gui.tf_titleR.visible = false;
 			hudTitles = [gui.tf_titleL, gui.tf_titleR];
 			hudBars = [gui.bar_crew1, gui.bar_crew2];
+			gui.tf_distance.text = "Supr Jmp";
 			
 			// init support classes
 			level = new Level(this);
@@ -100,7 +101,8 @@
 			ship = new Ship(this);
 			camera = new Cam(this, gui);
 			background = new Background(this, game.mc_bg);
-			background.setStyle("test1");
+			background.setStyle("homeworld");
+			
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -296,7 +298,7 @@
 			level.step();
 			ship.step();
 			camera.step();
-			background.step(ship.slipSpeed * 150);
+			background.step(atHomeworld() ? 0 : ship.slipSpeed * 150);
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
@@ -366,6 +368,15 @@
 			hudBars[1].transform.colorTransform = ct;
 			hudConsoles[0].transform.colorTransform = ct;
 			hudConsoles[1].transform.colorTransform = ct;
+		}
+		
+		/**
+		 * Check if at the first or last (non-hostile) sectors
+		 * @return
+		 */
+		public function atHomeworld():Boolean
+		{
+			return level.sectorIndex % 13 == 0;
 		}
 
 		/**
