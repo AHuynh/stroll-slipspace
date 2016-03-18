@@ -254,13 +254,14 @@ package vgdev.stroll
 		 * Tint the given MovieClip
 		 * @param	mc		The MovieClip to tint
 		 * @param	col		The color to tint the MovieClip
+		 * @param	mult	Option to reduce the tint
 		 */
-		public static function tintObject(mc:MovieClip, col:uint):void
+		public static function tintObject(mc:MovieClip, col:uint, mult:Number = 1):void
 		{
 			var ct:ColorTransform = new ColorTransform();
-			ct.redMultiplier = col >> 16 & 0x0000FF / 255;
-			ct.greenMultiplier = col >> 8 & 0x0000FF / 255;
-			ct.blueMultiplier = col & 0x0000FF / 255;
+			ct.redMultiplier = (col >> 16 & 0x0000FF / 255) * mult;
+			ct.greenMultiplier = (col >> 8 & 0x0000FF / 255) * mult;
+			ct.blueMultiplier = (col & 0x0000FF / 255) * mult;
 			mc.transform.colorTransform = ct;
 		}
 		

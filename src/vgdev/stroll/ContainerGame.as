@@ -99,9 +99,10 @@
 			level = new Level(this);
 			tails = new TAILS(this, gui.mc_tails);
 			ship = new Ship(this);
-			camera = new Cam(this, gui);
 			background = new Background(this, game.mc_bg);
 			background.setStyle("homeworld");
+			camera = new Cam(this, gui);
+			camera.step();
 			
 			
 			// set up the hitmasks
@@ -324,6 +325,7 @@
 			// remove all external-ship instances
 			managerMap[System.M_EPROJECTILE].killAll();
 			managerMap[System.M_ENEMY].killAll();
+			managerMap[System.M_DECOR].killAll();
 			
 			// game finished state
 			if (level.nextSector())

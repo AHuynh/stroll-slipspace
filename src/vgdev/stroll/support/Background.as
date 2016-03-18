@@ -20,14 +20,16 @@ package vgdev.stroll.support
 		private var bg1:MovieClip;
 		private var bg2:MovieClip;
 		
+		private const REGION_0:Array = ["abstract_00", "abstract_01", "abstract_02"];
+		
 		public function Background(_cg:ContainerGame, _bg:MovieClip)
 		{
 			cg = _cg;
 			bg = _bg;
 			
-			OFFSET = bg.base.base1.width;
 			bg1 = bg.base.base1;
 			bg2 = bg.base.base2;
+			OFFSET = bg1.width;
 		}
 		
 		public function step(shipSpeed:Number):void
@@ -41,6 +43,9 @@ package vgdev.stroll.support
 				bg2 = temp;
 			}
 			bg2.x = bg1.x + System.GAME_WIDTH * 1.8;
+			
+			bg1.x = int(bg1.x);
+			bg2.x = int(bg2.x);
 		}
 		
 		public function setStyle(style:String, col:uint = System.COL_WHITE):void
@@ -48,7 +53,7 @@ package vgdev.stroll.support
 			bg1.gotoAndStop(style);
 			bg2.gotoAndStop(style);
 			
-			System.tintObject(bg.base, col);
+			System.tintObject(bg.base, col, System.getRandNum(.6, .75));
 		}
 		
 		/**
@@ -62,7 +67,7 @@ package vgdev.stroll.support
 			{
 				case 0:
 				default:
-					setStyle(System.getRandFrom(["abstract_00"]), col);
+					setStyle(System.getRandFrom(REGION_0), col);
 					//setStyle(System.getRandFrom(["test1"]), col);
 				break;
 			}

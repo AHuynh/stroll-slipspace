@@ -72,6 +72,13 @@ package vgdev.stroll.props.projectiles
 			cg.ship.damage(dmg, attackColor);
 		}
 		
+		override public function destroySilently():void 
+		{
+			markedToKill = true;
+			hp = 0;
+			super.destroySilently();
+		}
+		
 		override public function destroy():void
 		{
 			if (!markedToKill && hp == 0)
