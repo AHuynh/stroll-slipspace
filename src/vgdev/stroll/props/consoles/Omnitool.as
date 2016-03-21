@@ -25,11 +25,11 @@ package vgdev.stroll.props.consoles
 		private const RANGE_REVIVE:Number = 40;
 		private var reviveProgress:Number = 0;
 		
-		public function Omnitool(_cg:ContainerGame, _mc_object:MovieClip, _players:Array)
+		public function Omnitool(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean)
 		{
-			super(_cg, _mc_object, _players);
+			super(_cg, _mc_object, _players, locked);
 			CONSOLE_NAME = "Omnitool";
-			TUT_SECTOR = 0;
+			TUT_SECTOR = 4;
 			TUT_TITLE = "Omnitool";
 			TUT_MSG = "A restorative tool that you can take with you.\n\n" +
 					  "Press and hold to extinguish fires, repair modules, and revive allies.";
@@ -120,8 +120,7 @@ package vgdev.stroll.props.consoles
 													"y": player.mc_object.y + System.getRandNum(-6, 6),
 													"dy": System.getRandNum(-.5, -1)
 												  });	
-					
-					// TODO reviving graphic
+
 					if (reviveProgress >= GOAL_REVIVE)
 					{
 						player.revive();

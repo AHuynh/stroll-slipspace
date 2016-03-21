@@ -24,13 +24,13 @@ package vgdev.stroll.props.consoles
 		private var shieldCols:Array = [System.COL_GREEN, System.COL_RED, System.COL_YELLOW, System.COL_BLUE];
 		private var currShield:int = -1;
 		
-		public function ConsoleShields(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
+		public function ConsoleShields(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
-			super(_cg, _mc_object, _players);
+			super(_cg, _mc_object, _players, locked);
 			CONSOLE_NAME = "Shield Frq";
-			TUT_SECTOR = 0;
+			TUT_SECTOR = 4;
 			TUT_TITLE = "Shield Frequency Module";
-			TUT_MSG = "If we match the shield color to the color of enemies' attacks, our shields will take less damage!"
+			TUT_MSG = "If you match the shield color to the color of enemies' attacks, our shields will take less damage!"
 			mc_shield = cg.game.mc_ship.shield;
 		}
 		

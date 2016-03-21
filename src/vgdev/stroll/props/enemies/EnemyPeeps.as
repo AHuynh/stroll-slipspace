@@ -36,7 +36,7 @@ package vgdev.stroll.props.enemies
 			// TODO initialize things like x, y, hp, etc. (passed in attributes:Object will have nothing useful)
 			mc_object.x = 400;	// (temporary values)
 			mc_object.y = 0;
-			hp = hpMax = 300;
+			hp = hpMax = 30;
 			
 			// TODO create 2 instances of EnemyPeepsEye
 			//new EnemyPeepsEye(cg, new SWC_Enemy(), this);
@@ -83,6 +83,5 @@ package vgdev.stroll.props.enemies
 		
 		// TODO function to spawn add(s) (EnemyEyeball) where Peeps originally was when teleporting
 		// TODO when vulnerable, only take damage if the alternate hitbox was hit		(maybe, might require another class like EnemyPeepsMainEye and be too much hassle)
-		
 	}
 }

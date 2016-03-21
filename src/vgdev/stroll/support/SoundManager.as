@@ -22,6 +22,9 @@ package vgdev.stroll.support
 		[Embed(source="../../../../sfx/sfx_readybeep2G.mp3")]
 		private static var sfx_readybeep2G:Class;
 		
+		[Embed(source="../../../../sfx/sfx_electricShock.mp3")]
+		private static var sfx_electricShock:Class;
+		
 		[Embed(source="../../../../sfx/sfx_explosionlarge1.mp3")]
 		private static var sfx_explosionlarge1:Class;
 		[Embed(source="../../../../sfx/sfx_hithull1.mp3")]
@@ -60,6 +63,8 @@ package vgdev.stroll.support
 			sounds["sfx_readybeep1B"] = new sfx_readybeep1B();
 			sounds["sfx_readybeep2G"] = new sfx_readybeep2G();
 			
+			sounds["sfx_electricShock"] = new sfx_electricShock();
+			
 			sounds["sfx_explosionlarge1"] = new sfx_explosionlarge1();
 			sounds["sfx_hithull1"] = new sfx_hithull1();
 			sounds["sfx_hitshield1"] = new sfx_hitshield1();
@@ -95,6 +100,7 @@ package vgdev.stroll.support
 			
 			var snd:Sound;
 			switch (music)
+			//switch ("bgm_boss")
 			{
 				case "bgm_calm":					snd = new bgm_calm();		break;
 				case "bgm_boss":					snd = new bgm_boss();		break;

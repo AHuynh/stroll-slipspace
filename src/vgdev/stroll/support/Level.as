@@ -7,6 +7,7 @@ package vgdev.stroll.support
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.support.splevels.ABST_SPLevel;
 	import vgdev.stroll.support.splevels.SPLevelAnomalies;
+	import vgdev.stroll.support.splevels.SPLevelPeeps;
 	import vgdev.stroll.System;
 	
 	/**
@@ -93,8 +94,8 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_anomalyfieldcolored())];
+											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
+											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -242,7 +243,7 @@ package vgdev.stroll.support
 									manager = System.M_ENEMY;
 								break;
 								
-							case "Fire":
+								case "Fire":
 									pos.x -= System.GAME_OFFSX;
 									pos.y -= System.GAME_OFFSY;
 									spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
@@ -271,7 +272,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
+				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
 					choices.push(e);
 			}
 			
@@ -295,6 +296,9 @@ package vgdev.stroll.support
 					break;
 					case "anomaliesPlain":
 						spLevel = new SPLevelAnomalies(cg, false);
+					break;
+					case "bossPeeps":
+						spLevel = new SPLevelPeeps(cg);
 					break;
 					default:
 						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);

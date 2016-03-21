@@ -12,9 +12,9 @@ package vgdev.stroll.props.consoles
 		/// Determines magnitude of the effect the directional keys have on the ship heading
 		public var ADJUST_SENSITIVITY:Number = 0.01;
 
-		public function ConsoleNavigation(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
+		public function ConsoleNavigation(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
-			super(_cg, _mc_object, _players);
+			super(_cg, _mc_object, _players, locked);
 			CONSOLE_NAME = "Navigation";
 			TUT_SECTOR = 0;
 			TUT_TITLE = "Navigation Module";
