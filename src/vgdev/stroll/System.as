@@ -47,7 +47,7 @@ package vgdev.stroll
 		// timing constants
 		public static const SECOND:int = 30;
 		public static const MINUTE:int = SECOND * 60;
-		public static const TAILS_NORMAL:int = SECOND * 4;
+		public static const TAILS_NORMAL:int = SECOND * 5;
 		
 		// color constants
 		public static const COL_WHITE:uint = 0xFFFFFF;
@@ -77,6 +77,16 @@ package vgdev.stroll
 		public static function getRandNum(min:Number, max:Number):Number
 		{
 			return Math.random() * (max - min) + min;
+		}
+		
+		/**
+		 * Get a random element from the given array
+		 * @param	arr		The choices
+		 * @return			A random element from arr
+		 */
+		public static function getRandFrom(arr:Array):*
+		{
+			return arr[getRandInt(0, arr.length - 1)];
 		}
 		
 		/**
@@ -244,13 +254,14 @@ package vgdev.stroll
 		 * Tint the given MovieClip
 		 * @param	mc		The MovieClip to tint
 		 * @param	col		The color to tint the MovieClip
+		 * @param	mult	Option to reduce the tint
 		 */
-		public static function tintObject(mc:MovieClip, col:uint):void
+		public static function tintObject(mc:MovieClip, col:uint, mult:Number = 1):void
 		{
 			var ct:ColorTransform = new ColorTransform();
-			ct.redMultiplier = col >> 16 & 0x0000FF / 255;
-			ct.greenMultiplier = col >> 8 & 0x0000FF / 255;
-			ct.blueMultiplier = col & 0x0000FF / 255;
+			ct.redMultiplier = (col >> 16 & 0x0000FF / 255) * mult;
+			ct.greenMultiplier = (col >> 8 & 0x0000FF / 255) * mult;
+			ct.blueMultiplier = (col & 0x0000FF / 255) * mult;
 			mc.transform.colorTransform = ct;
 		}
 		

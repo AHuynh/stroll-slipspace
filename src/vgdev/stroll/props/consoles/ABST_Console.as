@@ -60,6 +60,8 @@ package vgdev.stroll.props.consoles
 				mc_object.mc_bar.visible = false;		// hide the HP bar
 				BAR_WIDTH = mc_object.mc_bar.bar.width;
 			}
+			if (mc_object.mc_pad != null)
+				mc_object.mc_pad.gotoAndStop(CONSOLE_NAME.toLowerCase());
 		}
 		
 		override public function changeHP(amt:Number):Boolean

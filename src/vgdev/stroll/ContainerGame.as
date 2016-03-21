@@ -3,6 +3,7 @@
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.media.Camera;
 	import flash.ui.Keyboard;
@@ -32,6 +33,7 @@
 		public var ship:Ship;
 		public var camera:Cam;
 		public var tails:TAILS;
+		public var background:Background;
 		
 		/// Whether or not the game is paused
 		public var isPaused:Boolean = false;		// from P
@@ -79,7 +81,7 @@
 		{
 			game.removeEventListener(Event.ADDED_TO_STAGE, init);
 			
-			game.mc_bg.gotoAndStop("space");
+			//game.mc_bg.gotoAndStop("space");
 			
 			// init the GUI
 			gui = new SWC_GUI();	
@@ -91,12 +93,17 @@
 			gui.tf_titleR.visible = false;
 			hudTitles = [gui.tf_titleL, gui.tf_titleR];
 			hudBars = [gui.bar_crew1, gui.bar_crew2];
+			gui.tf_distance.text = "Supr Jmp";
 			
 			// init support classes
 			level = new Level(this);
 			tails = new TAILS(this, gui.mc_tails);
 			ship = new Ship(this);
+			background = new Background(this, game.mc_bg);
+			background.setStyle("homeworld");
 			camera = new Cam(this, gui);
+			camera.step();
+			
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -233,12 +240,15 @@
 			{
 				case Keyboard.P:
 					isPaused = !isPaused;
-					if (isTruePaused())					// halt or resume background animation
+					/*if (isTruePaused())					// halt or resume background animation
 						game.mc_bg.base.stop();
 					else
-						game.mc_bg.base.play();
+						game.mc_bg.base.play();*/
 					gui.mc_pause.visible = isPaused;
 				break;
+			case Keyboard.J:		// TODO remove temporary testing
+				jump();
+			break;
 			}
 		}
 		
@@ -289,6 +299,7 @@
 			level.step();
 			ship.step();
 			camera.step();
+			background.step(atHomeworld() ? 0 : ship.slipSpeed * 150);
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
@@ -314,6 +325,7 @@
 			// remove all external-ship instances
 			managerMap[System.M_EPROJECTILE].killAll();
 			managerMap[System.M_ENEMY].killAll();
+			managerMap[System.M_DECOR].killAll();
 			
 			// game finished state
 			if (level.nextSector())
@@ -341,8 +353,32 @@
 				
 				tails.tutorialMode = level.sectorIndex % 4 == 0;
 				tails.tutorialMode = false;
-				// TODO TAILS text
 			}
+		}
+		
+		/**
+		 * Set the color of the modules to col
+		 * @param	col		uint of the module color
+		 */
+		public function setModuleColor(col:uint):void
+		{
+			var ct:ColorTransform = new ColorTransform();
+			ct.color = col;
+			gui.tf_titleL.transform.colorTransform = ct;
+			gui.tf_titleR.transform.colorTransform = ct;
+			hudBars[0].transform.colorTransform = ct;
+			hudBars[1].transform.colorTransform = ct;
+			hudConsoles[0].transform.colorTransform = ct;
+			hudConsoles[1].transform.colorTransform = ct;
+		}
+		
+		/**
+		 * Check if at the first or last (non-hostile) sectors
+		 * @return
+		 */
+		public function atHomeworld():Boolean
+		{
+			return level.sectorIndex % 13 == 0;
 		}
 
 		/**

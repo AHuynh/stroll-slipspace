@@ -6,7 +6,7 @@
     "jamming_min": 1,
     "slip_range": 5.0,
 	"type": "Boss",
-	"TAILS": "Hey, you two! I'm detecting something really big and ugly. It seems pretty mad!\n\nIt's coming our way right now; get ready for a fight!"
+	"TAILS": "Hey, you two! I'm detecting something really big and ugly. It seems pretty mad!\n\nIt's coming our way right now; get ready to fight!"
   },
   "waves": [
 	{
