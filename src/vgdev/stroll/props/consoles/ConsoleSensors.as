@@ -11,11 +11,11 @@ package vgdev.stroll.props.consoles
 	public class ConsoleSensors extends ABST_Console 
 	{
 		
-		public function ConsoleSensors(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
+		public function ConsoleSensors(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
-			super(_cg, _mc_object, _players);
+			super(_cg, _mc_object, _players, locked);
 			CONSOLE_NAME = "Sensors";
-			TUT_SECTOR = 0;
+			TUT_SECTOR = 4;
 			TUT_TITLE = "Sensors Module";
 			TUT_MSG = "Adjust the ship's sensors to get a better view of outside."
 		}
