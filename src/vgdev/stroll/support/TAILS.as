@@ -25,19 +25,11 @@ package vgdev.stroll.support
 			cg = _cg;
 			tails = _tails;
 			
-<<<<<<< HEAD
-			tails.mc_left.visible = false;
-			tails.mc_right.visible = false;
-			
-			tails.mc_left.mc_check.x = -83;
-			tails.mc_right.mc_check.x = 83;
-=======
 			cg.gui.mc_left.visible = false;
 			cg.gui.mc_right.visible = false;
 			
 			cg.gui.mc_left.mc_check.x = -83;
 			cg.gui.mc_right.mc_check.x = 83;
->>>>>>> remotes/Ahuynh/master
 		}
 		
 		public function isActive():Boolean

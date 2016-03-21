@@ -64,8 +64,8 @@ package vgdev.stroll.props.consoles
 			if (hp == 0) return;
 			
 			//TEMPORARY LEVEL SKIP CHEAT! MUST REMOVE LATER!-----
-			cg.ship.jump();
-			return;
+			//cg.ship.jump();
+			//return;
 			///--------------------------------------------------
 			
 			
