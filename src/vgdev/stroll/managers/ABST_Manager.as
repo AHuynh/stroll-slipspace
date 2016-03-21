@@ -51,6 +51,7 @@ package vgdev.stroll.managers
 		public function addObject(obj:ABST_Object):void
 		{
 			objArray.push(obj);
+			obj.spawnActions();
 		}
 		
 		/**
