@@ -61,6 +61,7 @@ package vgdev.stroll.props.enemies
 			// TODO initialize things like x, y, hp, etc. (passed in attributes:Object will have nothing useful)
 			mc_object.x = 400;	// (temporary values)
 			mc_object.y = 0;
+
 			hp = hpMax = 500;
 			ranges = [290, 400];
 			
@@ -316,6 +317,5 @@ package vgdev.stroll.props.enemies
 		
 		
 		// TODO when vulnerable, only take damage if the alternate hitbox was hit		(maybe, might require another class like EnemyPeepsMainEye and be too much hassle)
-		
 	}
 }

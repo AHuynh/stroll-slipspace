@@ -140,13 +140,13 @@
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
 											players, [-65, 65], [1, 2, 0, 3], 3));
 			consoles[3].rotOff = 180;
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
 			
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players));
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
 			
 			var i:int;
 			
@@ -193,6 +193,8 @@
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			
 			tails.show(TAILS_DEFAULT);
+			tails.showNew = true;
+			camera.setCameraFocus(new Point(0, -100));
 		}
 		
 		/**
@@ -327,6 +329,10 @@
 			managerMap[System.M_ENEMY].killAll();
 			managerMap[System.M_DECOR].killAll();
 			
+			// automatically reset the camera to the center for Sector 0 only
+			if (level.sectorIndex == 0)
+				camera.setCameraFocus(new Point(0, 0));
+	
 			// game finished state
 			if (level.nextSector())
 			{

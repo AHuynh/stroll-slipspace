@@ -36,12 +36,17 @@ package vgdev.stroll.props.consoles
 		protected var TUT_TITLE:String = "Unknown Module";
 		protected var TUT_MSG:String = "Hey! I can't find the description for this module...";
 		
-		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array)
+		protected var unlocked:Boolean = true;
+		
+		// use mc_object.parent class to access the ABST_Console class associated with a console MovieClip
+		
+		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false)
 		{
 			super(_cg, _mc_object);
 			hud_consoles = cg.hudConsoles;
 			players = _players;
 			
+			unlocked = !locked;
 			hp = hpMax = 1000;
 			
 			mc_object.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -55,13 +60,35 @@ package vgdev.stroll.props.consoles
 		private function onAddedToStage(e:Event):void
 		{
 			mc_object.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			mc_object.parentClass = this;
 			if (mc_object.mc_bar != null)
 			{
 				mc_object.mc_bar.visible = false;		// hide the HP bar
 				BAR_WIDTH = mc_object.mc_bar.bar.width;
 			}
+
+			setLocked(!unlocked);
+		}
+		
+		/**
+		 * Set if this console is locked or not
+		 * @param	isLocked
+		 */
+		public function setLocked(isLocked:Boolean):void
+		{
+			unlocked = !isLocked;
 			if (mc_object.mc_pad != null)
-				mc_object.mc_pad.gotoAndStop(CONSOLE_NAME.toLowerCase());
+			{
+				mc_object.mc_pad.gotoAndStop(unlocked ? CONSOLE_NAME.toLowerCase() : 1);
+				if (unlocked)
+					mc_object.base.gotoAndPlay(1);
+				else
+					mc_object.base.gotoAndStop("off");
+			}
+			else	// Omnitool
+			{
+				mc_object.visible = unlocked;
+			}
 		}
 		
 		override public function changeHP(amt:Number):Boolean
@@ -94,6 +121,7 @@ package vgdev.stroll.props.consoles
 		 */
 		public function setProximity(p:Player, dist:Number):void
 		{
+			if (!unlocked) return;
 			if (p != null)
 			{
 				if (closestPlayer == null || (p != closestPlayer && getDistance(p) < dist))
@@ -110,6 +138,7 @@ package vgdev.stroll.props.consoles
 		 */
 		public function setPromptVisible(vis:Boolean):void
 		{
+			if (!unlocked) mc_object.prompt.visible = false;
 			mc_object.prompt.visible = vis;
 		}
 		
@@ -147,7 +176,7 @@ package vgdev.stroll.props.consoles
 		 */
 		public function onAction(p:Player):void
 		{
-			if (!inUse)
+			if (!inUse && unlocked)
 			{
 				if (closestPlayer != null && closestPlayer == p)
 				{

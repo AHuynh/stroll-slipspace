@@ -26,9 +26,11 @@ package vgdev.stroll.props.consoles
 		private var missCounter:int = 0;
 		private var complain:Boolean = false;
 		
-		public function ConsoleSlipdrive(_cg:ContainerGame, _mc_object:MovieClip, _players:Array) 
+		public var forceOverride:Boolean = false;				// generic slipdrive override; if true, don't spool
+		
+		public function ConsoleSlipdrive(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
-			super(_cg, _mc_object, _players);
+			super(_cg, _mc_object, _players, locked);
 			CONSOLE_NAME = "Slipdrive";
 			TUT_SECTOR = 0;
 			TUT_TITLE = "Slipdrive Module";
@@ -72,7 +74,7 @@ package vgdev.stroll.props.consoles
 			{				
 				if (key == 4)
 				{
-					if (cg.ship.isJumpReady() == "ready")
+					if (cg.ship.isJumpReady() == "ready" && !forceOverride)
 					{					
 						isSpooling = true;
 						initArrows();
@@ -123,8 +125,12 @@ package vgdev.stroll.props.consoles
 					case "jammed":	setText("Enemy jamming");	break;
 					case "heading":	setText("Center Nav");		break;
 					case "range":	setText("Not in range");	break;
+					case "error":	setText("Malfunction");		break;
 					case "ready":	setText("Ready to spool");	break;
 				}
+				
+				if (forceOverride)
+					setText("Malfunction");
 				
 				var hud:MovieClip = getHUD();
 				
@@ -132,7 +138,7 @@ package vgdev.stroll.props.consoles
 				hud.mc_jam.visible = cg.ship.isJumpReadySpecific("jammed");
 				hud.mc_center.visible = cg.ship.isJumpReadySpecific("heading");
 				hud.mc_repair.visible = cg.ship.isJumpReadySpecific("repair");
-				hud.mc_error.visible = cg.ship.isJumpReadySpecific("error");
+				hud.mc_error.visible = forceOverride || cg.ship.isJumpReadySpecific("error");
 				
 				hud.mc_nav.y = cg.ship.shipHeading * 23 - 1;
 			}
@@ -199,6 +205,7 @@ package vgdev.stroll.props.consoles
 		
 		private function setText(str:String):void
 		{
+			if (closestPlayer == null) return;
 			if (str == null)
 			{
 				getHUD().tf_problem.visible = false;
@@ -215,7 +222,18 @@ package vgdev.stroll.props.consoles
 		override public function onCancel():void 
 		{
 			removeArrows();
+			missCounter = 0;
+			setText("");
 			super.onCancel();
+		}
+		
+		/**
+		 * Check if the console is being spooled
+		 * @return		isSpooling
+		 */
+		public function getIfSpooling():Boolean
+		{
+			return isSpooling;
 		}
 		
 		/**

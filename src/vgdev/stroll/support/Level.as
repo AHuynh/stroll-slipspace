@@ -7,6 +7,7 @@ package vgdev.stroll.support
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.support.splevels.ABST_SPLevel;
 	import vgdev.stroll.support.splevels.SPLevelAnomalies;
+	import vgdev.stroll.support.splevels.SPLevelPeeps;
 	import vgdev.stroll.System;
 	
 	/**
@@ -93,8 +94,8 @@ package vgdev.stroll.support
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
-											// (you must also CTRL+F and comment out the line containing [COMMENT ME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_anomalyfieldcolored())];
+											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
+											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -243,7 +244,7 @@ package vgdev.stroll.support
 									manager = System.M_ENEMY;
 								break;
 								
-							case "Fire":
+								case "Fire":
 									pos.x -= System.GAME_OFFSX;
 									pos.y -= System.GAME_OFFSY;
 									spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
@@ -260,13 +261,6 @@ package vgdev.stroll.support
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave
 				counter = 0;
 			}
-
-			/*
-			var e:ABST_Enemy = new EnemyColorSwapper(cg, new SWC_Enemy, new Point(500, System.getRandNum(-100, 100)), {"attackColor":System.getRandCol(), "attackStrength":10, "hp":300});
-			e.setScale(2);
-			cg.addToGame(e, System.M_ENEMY);
-			cg.ship.jammable = 1;
-			}*/
 		}
 
 		/**
@@ -279,7 +273,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (parsedEncounters["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENT ME]
+				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
 					choices.push(e);
 			}
 			
@@ -304,6 +298,9 @@ package vgdev.stroll.support
 					case "anomaliesPlain":
 						spLevel = new SPLevelAnomalies(cg, false);
 					break;
+					case "bossPeeps":
+						spLevel = new SPLevelPeeps(cg);
+					break;
 					default:
 						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);
 				}
@@ -326,7 +323,12 @@ package vgdev.stroll.support
 			// update progress meter
 			cg.gui.mc_progress.setSectorProgress(sectorIndex);
 			
-			return sectorIndex > 12;		// TODO end state
+			
+			
+			// TODO dynamic background
+			cg.background.setRandomStyle(int(sectorIndex / 5), System.getRandCol());
+			
+			return sectorIndex == 13;		// TODO end state
 		}
 		
 		public function getTAILS():String

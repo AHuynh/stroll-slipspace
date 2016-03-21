@@ -18,17 +18,26 @@ package vgdev.stroll.support
 		private var tailsLarge:Boolean = false;
 		
 		public var tutorialMode:Boolean = true;
+		public var showNew:Boolean = false;
 		
 		public function TAILS(_cg:ContainerGame, _tails:MovieClip) 
 		{
 			cg = _cg;
 			tails = _tails;
 			
+<<<<<<< HEAD
 			tails.mc_left.visible = false;
 			tails.mc_right.visible = false;
 			
 			tails.mc_left.mc_check.x = -83;
 			tails.mc_right.mc_check.x = 83;
+=======
+			cg.gui.mc_left.visible = false;
+			cg.gui.mc_right.visible = false;
+			
+			cg.gui.mc_left.mc_check.x = -83;
+			cg.gui.mc_right.mc_check.x = 83;
+>>>>>>> remotes/Ahuynh/master
 		}
 		
 		public function isActive():Boolean
@@ -41,9 +50,14 @@ package vgdev.stroll.support
 			if (showDuration > 0 && --showDuration == 1)
 			{
 				tails.visible = false;
+				tails.gotoAndStop(2);
 				cg.isTailsPaused = false;
-				for each (var console:ABST_Console in cg.consoles)
-					console.showNew(cg.level.sectorIndex);
+				if (showNew)
+				{
+					showNew = false;
+					for each (var console:ABST_Console in cg.consoles)
+						console.showNew(cg.level.sectorIndex);
+				}
 			}
 		}
 		
@@ -51,13 +65,17 @@ package vgdev.stroll.support
 		 * Show TAILS and populate its contents
 		 * @param	text			String to show the players
 		 * @param	showForFrames	int, how many frames to show the small popup, or 0 to use the large popup
+		 * @param	emotion			String, frame label to use for TAILS' emotion
 		 */
-		public function show(text:String, showForFrames:int = 0):void
+		public function show(text:String, showForFrames:int = 0, emotion:String = null):void
 		{
 			showDuration = showForFrames;
 			tails.gotoAndStop(showDuration == 0 ? 1 : 2);
 			tails.visible = true;
-			hideHalf(true);	hideHalf(false);
+			if (showDuration == 0)
+			{
+				hideHalf(true);	hideHalf(false);
+			}
 			tails.tf_message.text = text;
 			
 			tailsLarge = showDuration == 0;
@@ -87,10 +105,8 @@ package vgdev.stroll.support
 		 */
 		public function showHalf(isLeft:Boolean, title:String, message:String):void
 		{
-			tails.gotoAndStop(3);
-			tails.visible = true;
 			tailsLarge = false;
-			var mc:MovieClip = isLeft ? tails.mc_left : tails.mc_right;
+			var mc:MovieClip = isLeft ? cg.gui.mc_left : cg.gui.mc_right;
 			mc.visible = true;
 			mc.tf_title.text = title;
 			mc.tf_message.text = message;
@@ -102,7 +118,7 @@ package vgdev.stroll.support
 		 */
 		public function hideHalf(isLeft:Boolean):void
 		{
-			isLeft ? tails.mc_left.visible = false : tails.mc_right.visible = false;
+			isLeft ? cg.gui.mc_left.visible = false : cg.gui.mc_right.visible = false;
 		}
 		
 		/**
