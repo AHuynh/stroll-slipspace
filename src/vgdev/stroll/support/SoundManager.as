@@ -45,7 +45,15 @@ package vgdev.stroll.support
 		[Embed(source = "../../../../sfx/sfx_UI_Beep_C.mp3")]
 		private static var sfx_UI_Beep_C:Class;	
 		[Embed(source="../../../../sfx/sfx_UI_Beep_Cs.mp3")]
-		private static var sfx_UI_Beep_Cs:Class;	
+		private static var sfx_UI_Beep_Cs:Class;
+		
+		[Embed(source="../../../../sfx/sfx_peeps_yell.mp3")]
+		private static var sfx_peeps_yell :Class;
+		
+		[Embed(source="../../../../sfx/sfx_peeps_phase_change.mp3")]
+		private static var sfx_peeps_phase_change :Class;
+		
+		
 		
 		private static var currentBGM:String = "";
 		private static var isInit:Boolean = false;
@@ -76,6 +84,9 @@ package vgdev.stroll.support
 			sounds["sfx_UI_Beep_B"] = new sfx_UI_Beep_B();
 			sounds["sfx_UI_Beep_C"] = new sfx_UI_Beep_C();
 			sounds["sfx_UI_Beep_Cs"] = new sfx_UI_Beep_Cs();
+			
+			sounds["sfx_peeps_yell"] = new sfx_peeps_yell();
+			sounds["sfx_peeps_phase_change"] = new sfx_peeps_phase_change();
 		}
 		
 		public static function playSFX(sfx:String, volume:Number = 1):void

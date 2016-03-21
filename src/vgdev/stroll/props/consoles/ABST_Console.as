@@ -66,6 +66,7 @@ package vgdev.stroll.props.consoles
 				mc_object.mc_bar.visible = false;		// hide the HP bar
 				BAR_WIDTH = mc_object.mc_bar.bar.width;
 			}
+
 			setLocked(!unlocked);
 		}
 		

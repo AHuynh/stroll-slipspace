@@ -150,6 +150,14 @@ package vgdev.stroll.props
 		}
 		
 		/**
+		 * allows for extra actions to be performed when object spawns
+		 */
+		public function spawnActions():void
+		{
+			// -- override this function
+		}
+		
+		/**
 		 * Clean-up function, but without any extra effects like explosions
 		 */
 		public function destroySilently():void

@@ -138,6 +138,7 @@ package vgdev.stroll.support
 		 */
 		public function step():void
 		{
+			timeline++;
 			// hand control over to special level class if one exists for this encounter
 			if (spLevel != null)
 			{
@@ -361,5 +362,11 @@ package vgdev.stroll.support
 					return new Point();
 			}
 		}
+		
+		public function getCounter():int
+		{
+			return timeline;
+		}
 	}
+
 }

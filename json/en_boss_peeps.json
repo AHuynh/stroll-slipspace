@@ -10,5 +10,12 @@
 	"spLevel": "bossPeeps"
   },
   "waves": [
+	{
+		"time": 3,
+		"spawnables":
+			[
+				{"type": "Peeps"}
+			]
+	}
   ]
 }

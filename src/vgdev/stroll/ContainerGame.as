@@ -332,7 +332,7 @@
 			// automatically reset the camera to the center for Sector 0 only
 			if (level.sectorIndex == 0)
 				camera.setCameraFocus(new Point(0, 0));
-			
+	
 			// game finished state
 			if (level.nextSector())
 			{

@@ -63,6 +63,12 @@ package vgdev.stroll.props.consoles
 		{		
 			if (hp == 0) return;
 			
+			//TEMPORARY LEVEL SKIP CHEAT! MUST REMOVE LATER!-----
+			//cg.ship.jump();
+			//return;
+			///--------------------------------------------------
+			
+			
 			// if the slipdrive isn't spooling, start spooling
 			if (!isSpooling)
 			{				
