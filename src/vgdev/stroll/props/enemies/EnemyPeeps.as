@@ -63,7 +63,7 @@ package vgdev.stroll.props.enemies
 			mc_object.y = 0;
 
 			hp = hpMax = 500;
-			ranges = [290, 400];
+			rangeVary = 100;
 			
 			
 			eyes[0] = new EnemyPeepsEye(cg, new SWC_Enemy(), this);
@@ -241,7 +241,7 @@ package vgdev.stroll.props.enemies
 		}
 		
 		override public function changeHP(amt:Number):Boolean 
-		{	
+		{
 			if (incapacitated && !phaseChangeImmune) {
 				return super.changeHP(amt);
 			} else {

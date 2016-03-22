@@ -1,6 +1,7 @@
 package vgdev.stroll.props.enemies 
 {
 	import flash.display.MovieClip;
+	import flash.events.Event;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_IMovable;
@@ -36,10 +37,24 @@ package vgdev.stroll.props.enemies
 			mc_object.gotoAndStop("fire");
 			mc_object.x = _pos.x;
 			mc_object.y = _pos.y;
+			
 			depth = mc_object.y;
 			setSpread();
 			
-			hp = hpMax = 100;
+			hp = System.getRandInt(40, 60);		// don't start at full strength
+			hpMax = 100;
+			
+			mc_object.addEventListener(Event.ADDED_TO_STAGE, init);
+		}
+		
+		private function init(e:Event):void
+		{
+			mc_object.removeEventListener(Event.ADDED_TO_STAGE, init);
+			if (!isPointValid(new Point(mc_object.x, mc_object.y)))
+			{
+				destroySilently();
+				return;
+			}
 		}
 		
 		/**
@@ -62,6 +77,10 @@ package vgdev.stroll.props.enemies
 		{
 			if (!isActive())
 				return super.step();
+				
+			setScale(.5 + .5 * (hp / hpMax));
+			mc_object.alpha = .75 + .25 * (hp / hpMax);	
+			
 			var i:int;
 			
 			// check for fire spreading
@@ -100,19 +119,19 @@ package vgdev.stroll.props.enemies
 			// after first spread check, 10% chance to damage hull per tick
 			if (!contained && Math.random() < .1)
 				cg.ship.damageDirect(HULL_DAMAGE, true);
-				
+							
 			return super.step();
 		}
 		
 		/**
-		 * Deal scaled damage (based on FIRE_RANGE and FIRE_DAMAGE) to an object if it is within range
+		 * Deal scaled damage (based on FIRE_RANGE, FIRE_DAMAGE, and extinguish state) to an object if it is within range
 		 * @param	obj		The object to damage
 		 */
 		private function damageObject(obj:ABST_Object):void
 		{
 			var dist:Number = System.getDistance(mc_object.x, mc_object.y, obj.mc_object.x, obj.mc_object.y);
 			if (dist <= FIRE_RANGE)
-				obj.changeHP(FIRE_DAMAGE * (1 - (dist / FIRE_RANGE)));
+				obj.changeHP(FIRE_DAMAGE * (.5 + .5 * (hp / hpMax)) * (1 - (dist / FIRE_RANGE)));
 		}
 	}
 }

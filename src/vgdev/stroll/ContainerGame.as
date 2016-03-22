@@ -256,9 +256,12 @@
 				/*case Keyboard.K:
 					players[0].changeHP( -9999);
 				break;*/
-				case Keyboard.K:
+				/*case Keyboard.K:
 					managerMap[System.M_ENEMY].killAll();
-				break;
+				break;*/
+				/*case Keyboard.K:
+					addFires(1);
+				break;*/
 			}
 		}
 		
@@ -340,7 +343,7 @@
 			
 			// automatically reset the camera to the center for Sector 0 only
 			if (level.sectorIndex == 0)
-				camera.setCameraFocus(new Point(0, 0));
+				camera.setCameraFocus(new Point(0, 20));
 	
 			// game finished state
 			if (level.nextSector())
@@ -401,6 +404,28 @@
 			return level.sectorIndex % 13 == 0;
 		}
 
+		/**
+		 * Add num fires to random valid positions in the ship
+		 * @param	num		number of fires to ignite
+		 */
+		public function addFires(num:int):void
+		{
+			var pos:Point;
+			var tries:int;		// give up after trying too many times
+			for (var i:int = 0; i < num; i++)
+			{
+				tries = 25;
+				do
+				{
+					pos = new Point(System.getRandNum(-shipInsideMask.width, shipInsideMask.width) * .5  + System.GAME_OFFSX,
+									System.getRandNum( -shipInsideMask.height, shipInsideMask.height) * .5  + System.GAME_OFFSY);
+				} while (shipInsideMask.hitTestPoint(pos.x, pos.y, true) && tries-- > 0);
+				pos.x -= System.GAME_OFFSX;
+				pos.y -= System.GAME_OFFSY;
+				addToGame(new InternalFire(this, new SWC_Decor(), pos, shipInsideMask), System.M_FIRE);
+			}
+		}
+		
 		/**
 		 * Clean-up code
 		 * @param	e	the captured Event, unused

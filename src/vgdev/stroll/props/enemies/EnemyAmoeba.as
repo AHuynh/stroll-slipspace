@@ -42,8 +42,12 @@ package vgdev.stroll.props.enemies
 			// no weapons
 			cdCounts = [];
 			cooldowns = [];
+			
 			// ram the ship
-			ranges = [0, 0];
+			rangeVary = 0;
+			orbitX = 0;
+			orbitY = 0;
+			
 			spd = drift = System.setAttribute("knockback", attributes, 0.1);		// make the amoeba move away at first if it was spawned
 			
 			spdMax = Math.max(1.5 - .3 * amoebaSize, 0.5);

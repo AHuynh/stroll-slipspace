@@ -38,6 +38,8 @@ package vgdev.stroll.support
 		private var en_swipe:Class;
 		[Embed(source="../../../../json/en_anomalyfieldcolored.json", mimeType="application/octet-stream")]
 		private var en_anomalyfieldcolored:Class;
+		[Embed(source="../../../../json/en_skulls.json", mimeType="application/octet-stream")]
+		private var en_skulls:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -84,7 +86,8 @@ package vgdev.stroll.support
 												JSON.parse(new en_boss_peeps()),
 												
 												JSON.parse(new en_anomalyfieldcolored()),
-												JSON.parse(new en_swipe())
+												JSON.parse(new en_swipe()),
+												JSON.parse(new en_skulls())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -95,7 +98,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
+											//rawEncountersJSON = [JSON.parse(new en_skulls())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -214,17 +217,19 @@ package vgdev.stroll.support
 																					});
 									manager = System.M_ENEMY;
 								break;
+								case "Skull":
+									spawn = new EnemySkull(cg, new SWC_Enemy(), {
+																					"attackColor": System.COL_RED,
+																					"attackStrength": 15,
+																					"hp": 16
+																					});
+									manager = System.M_ENEMY;
+								break;
 								case "Slime":
 									spawn = new EnemySlime(cg, new SWC_Enemy(), {
 																					"attackColor": col,
 																					"attackStrength": 10,
 																					"hp": 30
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "Swipe":
-									spawn = new EnemySwipe(cg, new SWC_Enemy(), {
-																					"attackStrength": 65
 																					});
 									manager = System.M_ENEMY;
 								break;
@@ -235,6 +240,12 @@ package vgdev.stroll.support
 																					"attackColor": col,
 																					"attackStrength": 18,
 																					"hp": 200
+																					});
+									manager = System.M_ENEMY;
+								break;
+								case "Swipe":
+									spawn = new EnemySwipe(cg, new SWC_Enemy(), {
+																					"attackStrength": 65
 																					});
 									manager = System.M_ENEMY;
 								break;

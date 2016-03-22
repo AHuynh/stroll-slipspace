@@ -60,6 +60,10 @@ package vgdev.stroll
 		// volume constants
 		public static const VOL_BGM:Number = .4;
 		
+		// range constants
+		public static const ORBIT_0_X:Number = 420;		// suitable for Easy Sector with no Sensors
+		public static const ORBIT_0_Y:Number = 190;
+		
 		/**
 		 * Returns a random int between min and max
 		 * @param	min		The lower bound
@@ -105,7 +109,17 @@ package vgdev.stroll
 					choices.splice(choices.indexOf(col), 1);
 			if (choices.length == 0)
 				return System.COL_WHITE;
-			return choices[System.getRandInt(0, choices.length - 1)];
+			return getRandFrom(choices);
+		}
+		
+		/**
+		 * Gets the sign of the given number
+		 * @param	num			Number to get the sign of
+		 * @return				1 if num is non-negative; -1 otherwise
+		 */
+		public static function getSign(num:Number):int
+		{
+			return num >= 0 ? 1 : -1;
 		}
 
 		/**
@@ -225,17 +239,6 @@ package vgdev.stroll
 			return outOfBounds(val, low, high, buffer) && ((val < low && dVal < 0) || (val > high && dVal > 0))
 		}
 		
-		// TODO fix
-		public static function formatDecimal(num:Number, places:int):Number
-		{
-			if (places >= 0)
-			{
-				var temp:Number = Math.pow(10, places);
-				return (Math.round(num * temp) / temp)
-			}
-			return int(num);
-		} 
-		
 		/**
 		 * Convert the name of a color to the corresponding uint code
 		 * @param	colStr		color name, such as "red"
@@ -262,9 +265,12 @@ package vgdev.stroll
 		public static function tintObject(mc:MovieClip, col:uint, mult:Number = 1):void
 		{
 			var ct:ColorTransform = new ColorTransform();
-			ct.redMultiplier = (col >> 16 & 0x0000FF / 255) * mult;
-			ct.greenMultiplier = (col >> 8 & 0x0000FF / 255) * mult;
-			ct.blueMultiplier = (col & 0x0000FF / 255) * mult;
+			if (col != COL_WHITE)
+			{
+				ct.redMultiplier = (col >> 16 & 0x0000FF / 255) * mult;
+				ct.greenMultiplier = (col >> 8 & 0x0000FF / 255) * mult;
+				ct.blueMultiplier = (col & 0x0000FF / 255) * mult;
+			}
 			mc.transform.colorTransform = ct;
 		}
 		

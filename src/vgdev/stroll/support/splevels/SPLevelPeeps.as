@@ -40,7 +40,8 @@ package vgdev.stroll.support.splevels
 				{
 					boss = null;
 					elapseFlag = true;
-					cg.managerMap[System.M_ENEMY].killAll();		// kill all adds
+					cg.managerMap[System.M_ENEMY].killAll();			// kill all adds
+					cg.managerMap[System.M_EPROJECTILE].killAll();		// kill all enemy projectiles
 				}
 				return;
 			}

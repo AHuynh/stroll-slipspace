@@ -23,7 +23,7 @@ package vgdev.stroll.props.enemies
 			// [Large shot, Small trishot]
 			cdCounts = [45, 90];
 			cooldowns = [100, 140];
-			ranges = [390, 430];
+			rangeVary = 50;
 			drift = .1;
 			spd = .3;
 		}
@@ -84,11 +84,10 @@ package vgdev.stroll.props.enemies
 		}
 		
 		override protected function maintainRange():void
-		{
+		{/*
 			var dist:Number = System.getDistance(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
 			var rot:Number = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
-			//mc_object.rotation = rot;
-			mc_object.scaleX = mc_object.x > 0 ? -1 : 1;
+			mc_object.rotation = rot;
 			if (dist < ranges[0])
 			{
 				updatePosition(System.forward( -spd, rot, true), System.forward( -spd, rot, false));
@@ -100,6 +99,26 @@ package vgdev.stroll.props.enemies
 				driftDir = 1;
 			}
 			else
+				updatePosition(System.forward(drift * driftDir, rot, true), System.forward(drift * driftDir, rot, false));*/
+				
+			var dist:Number = System.getDistance(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
+			var theta:Number = System.getAngle(cg.shipHitMask.x, cg.shipHitMask.y, mc_object.x, mc_object.y);
+			var rot:Number = (theta + 180) % 360;
+			//mc_object.rotation = rot;
+			var tgtPoint:Point = new Point(orbitX * Math.cos(System.degToRad(theta)),  orbitY * Math.sin(System.degToRad(theta)));
+			var tgtDist:Number = System.getDistance(tgtPoint.x, tgtPoint.y, cg.shipHitMask.x, cg.shipHitMask.y);
+			
+			if (dist > tgtDist + rangeVary)			// too far away
+			{
+				updatePosition(System.forward(spd, rot, true), System.forward(spd, rot, false));
+				driftDir = 1;
+			}
+			else if (dist < tgtDist - rangeVary)	// too close
+			{
+				updatePosition(System.forward( -spd, rot, true), System.forward( -spd, rot, false));
+				driftDir = -1;
+			}
+			else									// in-between
 				updatePosition(System.forward(drift * driftDir, rot, true), System.forward(drift * driftDir, rot, false));
 		}
 		

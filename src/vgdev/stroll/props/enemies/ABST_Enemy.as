@@ -19,8 +19,10 @@ package vgdev.stroll.props.enemies
 		protected var cooldowns:Array = [60];
 		protected var cdCounts:Array = [0];
 		
-		/// The min and max range from the ship that this Enemy should keep between
-		protected var ranges:Array = [290, 500];
+		/// The max distance from the enemy's range ellipse the enemy can stray to; default 20
+		protected var rangeVary:Number = 20;
+		protected var orbitX:Number = System.ORBIT_0_X;
+		protected var orbitY:Number = System.ORBIT_0_Y;
 				
 		protected var dX:Number = 0;
 		protected var dY:Number = 0;
@@ -212,24 +214,28 @@ package vgdev.stroll.props.enemies
 		}
 		
 		/**
-		 * Keep distance between self and ship between ranges[0] and ranges[1]
+		 * Keep distance between self and ship within elliptical orbit plus or minus rangeVary
 		 */
 		protected function maintainRange():void
-		{
+		{				
 			var dist:Number = System.getDistance(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
-			var rot:Number = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
+			var theta:Number = System.getAngle(cg.shipHitMask.x, cg.shipHitMask.y, mc_object.x, mc_object.y);
+			var rot:Number = (theta + 180) % 360;
 			mc_object.rotation = rot;
-			if (dist < ranges[0])
-			{
-				updatePosition(System.forward( -spd, rot, true), System.forward( -spd, rot, false));
-				driftDir = -1;
-			}
-			else if (dist > ranges[1])
+			var tgtPoint:Point = new Point(orbitX * Math.cos(System.degToRad(theta)),  orbitY * Math.sin(System.degToRad(theta)));
+			var tgtDist:Number = System.getDistance(tgtPoint.x, tgtPoint.y, cg.shipHitMask.x, cg.shipHitMask.y);
+			
+			if (dist > tgtDist + rangeVary)			// too far away
 			{
 				updatePosition(System.forward(spd, rot, true), System.forward(spd, rot, false));
 				driftDir = 1;
 			}
-			else
+			else if (dist < tgtDist - rangeVary)	// too close
+			{
+				updatePosition(System.forward( -spd, rot, true), System.forward( -spd, rot, false));
+				driftDir = -1;
+			}
+			else									// in-between
 				updatePosition(System.forward(drift * driftDir, rot, true), System.forward(drift * driftDir, rot, false));
 		}
 		

@@ -1,7 +1,6 @@
 package vgdev.stroll.props.projectiles 
 {
 	import flash.display.MovieClip;
-	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	
 	/**

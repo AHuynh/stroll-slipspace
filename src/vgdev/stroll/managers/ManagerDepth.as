@@ -24,7 +24,8 @@ package vgdev.stroll.managers
 			if (!cg.game) return;	
 			objArray.sortOn("depth", Array.NUMERIC);
 			for each (var obj:ABST_Object in objArray)
-				cg.game.mc_ship.addChild(obj.mc_object);
+				if (obj.mc_object != null)
+					cg.game.mc_ship.addChild(obj.mc_object);
 		}
 
 		// untrack items that are no longer active

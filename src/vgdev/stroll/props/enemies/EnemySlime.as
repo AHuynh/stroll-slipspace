@@ -25,8 +25,8 @@ package vgdev.stroll.props.enemies
 			setStyle("slime");
 			mc_object.scaleY = Math.random() > .5 ? -1 : 1;
 			
-			ELLIPSE_A = 420 + System.getRandNum(0, 50);
-			ELLIPSE_B = 220 + System.getRandNum(0, 35);
+			ELLIPSE_A = System.ORBIT_0_X + System.getRandNum(0, 50);
+			ELLIPSE_B = System.ORBIT_0_Y + System.getRandNum(0, 35);
 			
 			theta = System.getRandNum(0, 360);
 			dTheta = System.getRandNum(0.5, 1.5) * (Math.random() > .5 ? -1 : 1);
