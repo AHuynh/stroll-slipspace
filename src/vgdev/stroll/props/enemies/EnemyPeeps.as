@@ -242,7 +242,6 @@ package vgdev.stroll.props.enemies
 		
 		override public function changeHP(amt:Number):Boolean 
 		{	
-			return super.changeHP( -99999);
 			if (incapacitated && !phaseChangeImmune) {
 				return super.changeHP(amt);
 			} else {
