@@ -244,7 +244,7 @@ package vgdev.stroll.props.consoles
 			if (closestPlayer == null)
 			{
 				trace("[ABST_Console] WARNING: getHUD called without an active player!");
-				return hud_consoles[0].mod;
+				return null;
 			}
 			else if (CONSOLE_NAME == "None")
 			{

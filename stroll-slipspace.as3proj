@@ -61,6 +61,7 @@
     <element path="swc\SWC_Decor.swc" />
     <element path="swc\SWC_Debug.swc" />
     <element path="swc\SWC_Mask.swc" />
+    <element path="swc\SWC_ShieldObj.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
@@ -94,6 +95,8 @@
     <asset path="sfx\sfx_UI_Beep_Cs.mp3" />
     <asset path="bgm\bgm_boss.mp3" />
     <asset path="sfx\sfx_electricShock.mp3" />
+    <asset path="sfx\sfx_peeps_yell.mp3" />
+    <asset path="sfx\sfx_peeps_phase_change.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

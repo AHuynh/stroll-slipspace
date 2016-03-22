@@ -74,9 +74,22 @@ package vgdev.stroll.support
 			updateIntegrity();
 		}
 		
+		/**
+		 * Return current ship's current shield value
+		 * @return		ship.shield
+		 */
 		public function getShields():Number
 		{
 			return shield;
+		}
+		
+		/**
+		 * Return current ship's current shield value as a % of max
+		 * @return		ship.shield / ship.shieldMax
+		 */
+		public function getShieldPercent():Number
+		{
+			return shield / shieldMax;
 		}
 		
 		/**
@@ -255,6 +268,22 @@ package vgdev.stroll.support
 			{
 				mc_shield.base.alpha = System.changeWithLimit(mc_shield.base.alpha, -SHIELD_DA, SHIELD_MA);
 			}
+		}
+		
+		/**
+		 * Reboot a % of the ship's shields
+		 * @param	amt		% of shields to reboot
+		 */
+		public function rebootShield(amt:Number):void
+		{
+			if (shield == shieldMax) return;
+			shield = System.changeWithLimit(shield, amt * shieldMax, 0, shieldMax);
+			
+			cg.setHitMask(false);
+			mc_shield.fx.gotoAndPlay("rebootStart");
+			SoundManager.playSFX("sfx_shieldrecharge");
+			
+			updateIntegrity();
 		}
 		
 		/**

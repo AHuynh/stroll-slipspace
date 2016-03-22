@@ -140,6 +140,7 @@
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
 											players, [-65, 65], [1, 2, 0, 3], 3));
 			consoles[3].rotOff = 180;
+			consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
 			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
@@ -356,6 +357,9 @@
 					console.showNew( -1);
 				gui.mod_p1.mc_tutorial.visible = false;
 				gui.mod_p2.mc_tutorial.visible = false;
+				
+				gui.mc_left.visible = false;
+				gui.mc_right.visible = false;
 				
 				tails.tutorialMode = level.sectorIndex % 4 == 0;
 				tails.tutorialMode = false;
