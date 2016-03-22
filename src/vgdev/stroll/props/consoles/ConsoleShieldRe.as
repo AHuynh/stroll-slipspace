@@ -47,6 +47,7 @@ package vgdev.stroll.props.consoles
 			TUT_MSG = "Complete the maze to reboot the ship's shields. The faster you are, the more SP will be restored!\n\n" +
 					  "Find a path from left to right.";
 			
+			// create shield cel grid
 			shields = [];
 			shieldsList = [];
 			var cel:MovieClip;
@@ -86,6 +87,10 @@ package vgdev.stroll.props.consoles
 			setAllVisible(false);
 		}
 		
+		/**
+		 * Set the visibility of all shield cels
+		 * @param	isVis		true if visible
+		 */
 		private function setAllVisible(isVis:Boolean):void
 		{
 			for each (var mc:MovieClip in shieldsList)
@@ -94,48 +99,46 @@ package vgdev.stroll.props.consoles
 		
 		override public function step():Boolean 
 		{
+			// replace overridden text with standard message if appropriate
 			if (textCooldown > 0)
 				if (--textCooldown == 0)
 					setRechargeText(true, puzzleCooldown == 0 ? "Ready" : "Recharging");
 			
+			// update flashing text
 			var ui:MovieClip;
+			if (closestPlayer != null)
+				ui = getHUD();
+			
 			if (complain > 0)
 			{
 				complain--;
-				ui = getHUD();
 				if (ui != null)
 					ui.tf_cooldown.visible = int(complain / 5) % 2 == 0;
 			}
 			
+			// update cooldown on using the module
 			if (puzzleCooldown > 0)
 			{
 				if (--puzzleCooldown == 0)
 					setRechargeText(true, "Ready");
-				if (closestPlayer != null)
+				if (ui != null)
 				{
-					ui = getHUD();
-					if (ui != null)
-					{
-						ui.tf_charge.text = int((puzzleCooldown / System.SECOND)).toString() + "." + int(((puzzleCooldown % 30) / 30) * 10).toString();
-						ui.mc_marker.x = 48 + (puzzleCooldown / COOLDOWN) * 46;
-						ui.mc_recharge.visible = puzzleCooldown != 0;
-					}
+					ui.tf_charge.text = int((puzzleCooldown / System.SECOND)).toString() + "." + int(((puzzleCooldown % 30) / 30) * 10).toString();
+					ui.mc_marker.x = 48 + (puzzleCooldown / COOLDOWN) * 46;
+					ui.mc_recharge.visible = puzzleCooldown != 0;
 				}
 				return false;
 			}
 			
+			// update the puzzle (reduce shields awarded)
 			if (puzzleActive)
 			{
 				shieldCharge = System.changeWithLimit(shieldCharge, SHIELD_DELTA, SHIELD_MIN);
-				if (closestPlayer != null)
+				if (ui != null)
 				{
-					ui = getHUD();
-					if (ui != null)
-					{
-						ui.tf_charge.text = int(100 * shieldCharge).toString() + "%";
-						ui.mc_marker.x = 48 + shieldCharge * 46;
-						ui.mc_limit.visible = shieldCharge == SHIELD_MIN;
-					}
+					ui.tf_charge.text = int(100 * shieldCharge).toString() + "%";
+					ui.mc_marker.x = 48 + shieldCharge * 46;
+					ui.mc_limit.visible = shieldCharge == SHIELD_MIN;
 				}
 			}
 			
@@ -144,6 +147,7 @@ package vgdev.stroll.props.consoles
 		
 		override public function onKey(key:int):void 
 		{
+			// flash text if puzzle unable to start
 			if (puzzleCooldown > 0)
 			{
 				if (key == 4)
@@ -209,10 +213,10 @@ package vgdev.stroll.props.consoles
 			if (closestPlayer == null) return;
 			var ui:MovieClip = getHUD();
 			if (ui == null) return;
-			getHUD().mc_limit.visible = false;
-			getHUD().tf_cooldown.visible = vis;
+			ui.mc_limit.visible = false;
+			ui.tf_cooldown.visible = vis;
 			if (textCooldown == 0)
-				getHUD().tf_cooldown.text = str;
+				ui.tf_cooldown.text = str;
 		}
 		
 		/**
@@ -222,6 +226,8 @@ package vgdev.stroll.props.consoles
 		 */
 		private function moveMarker(dir:int):Boolean
 		{
+			if (dir == 4) return false;		// ACCEPT does nothing
+			
 			var currCel:MovieClip;
 			if (markerPos.x == -1)
 				currCel = startMC;
@@ -235,19 +241,20 @@ package vgdev.stroll.props.consoles
 				return false;
 			}
 			
+			// find the next position and cel
 			var succeeded:Boolean = false;
 			var nextCel:MovieClip;
 			var nextPos:Point;
 			switch (dir)
 			{
-				case 0:
-					if (markerPos.x == 5)
+				case 0:		// right
+					if (markerPos.x == 5)				// last col
 					{
 						if (markerPos.y == endLoc)		// last col and correct row
 						{
 							nextCel = endMC;
 							nextPos = new Point(6, markerPos.y);
-							succeeded = true;
+							succeeded = true;			// reached the end
 						}
 						else
 							return false;
@@ -258,15 +265,15 @@ package vgdev.stroll.props.consoles
 						nextPos = new Point(markerPos.x + 1, markerPos.y);
 					}
 				break;
-				case 1:
+				case 1:		// up
 					if (markerPos.y == 0)
 						return false;
 					else
 						nextCel = shields[markerPos.y - 1][markerPos.x];
 						nextPos = new Point(markerPos.x, markerPos.y - 1);
 				break;
-				case 2:
-					if (markerPos.x == 0)
+				case 2:		// left
+					if (markerPos.x == 0)					// first col
 					{
 						if (markerPos.y == startLoc)		// first col and correct row
 						{
@@ -282,7 +289,7 @@ package vgdev.stroll.props.consoles
 						nextPos = new Point(markerPos.x - 1, markerPos.y);
 					}
 				break;
-				case 3:
+				case 3:		// down
 					if (markerPos.y == 2)
 						return false;
 					else
@@ -331,9 +338,11 @@ package vgdev.stroll.props.consoles
 				shieldsList[i].rotation = 90 * System.getRandInt(0, 3);
 			}
 			
+			// pick random starting row
 			startLoc = System.getRandInt(0, 2);
 			startMC.y = -17 + 18 * startLoc;
 			
+			// place the current position marker at the start
 			marker.x = startMC.x;
 			marker.y = startMC.y;
 			markerPos = new Point( -1, startLoc);
@@ -341,6 +350,7 @@ package vgdev.stroll.props.consoles
 			var currPos:Point = new Point( -1, startLoc);
 			var dir:int = 0;		// -1 UP; 0 RIGHT; 1 DOWN
 			
+			// generate a path by going up, right, or down and never going the same way you came from
 			while (currPos.x < 6)
 			{
 				var enterDir:int;
@@ -374,6 +384,8 @@ package vgdev.stroll.props.consoles
 						exitDir = 3;
 					break;
 				}
+				
+				// update the graphics on the tile (unless it's the end tile)
 				if (currPos.x != 6)
 				{
 					var tileSettings:Array = setTile(enterDir, exitDir);
@@ -382,6 +394,7 @@ package vgdev.stroll.props.consoles
 				}
 			} 
 			
+			// place the end tile at the current row
 			endLoc = currPos.y;
 			endMC.y = -17 + 18 * endLoc;
 			
@@ -400,7 +413,7 @@ package vgdev.stroll.props.consoles
 			do
 			{
 				nextDir = System.getRandInt( -1, 1);
-			} while ((nextDir == -1 && (yLoc == 0 || prevDir == 1)) ||		// don't go the way you came or out of the grid
+			} while ((nextDir == -1 && (yLoc == 0 || prevDir == 1)) ||		// don't go the way you came or go out of the grid
 					 (nextDir == 1 && (yLoc == 2 || prevDir == -1)));
 			return nextDir;
 		}
@@ -415,18 +428,19 @@ package vgdev.stroll.props.consoles
 		{
 			var frame:int;
 			var rot:int;
-			var answer:Array;
+			var validDirs:Array;
 			do
 			{
 				frame = System.getRandInt(3, 6);
 				rot = 90 * System.getRandInt(0, 3);
-				answer = getOpenEnds(frame, rot);
-			} while (!answer[prevDir] || !answer[nextDir] || (frame == 4 && Math.random() < .75));
+				validDirs = getOpenEnds(frame, rot);
+			} while (!validDirs[prevDir] || !validDirs[nextDir] || (frame == 4 && Math.random() < .75));
 			// retry if invalid configuration, or 75% chance if a + was chosen
 			
 			return [frame, rot];
 		}
 		
+		// add the maze to this module
 		override public function onAction(p:Player):void 
 		{
 			super.onAction(p);
@@ -440,6 +454,7 @@ package vgdev.stroll.props.consoles
 			setRechargeText(true, puzzleCooldown == 0 ? "Ready" : "Recharging");
 		}
 		
+		// remove the maze from this module
 		override public function onCancel():void 
 		{
 			if (!inUse) return;

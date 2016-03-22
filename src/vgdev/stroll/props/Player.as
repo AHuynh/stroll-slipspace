@@ -60,8 +60,13 @@ package vgdev.stroll.props
 		private var cooldownPDW:int = 5;		// cooldown time in frames between PDW shots
 		private var damagePDW:int = 7;
 		
-		private var BAR_WIDTH:Number;			// small bar
-		private var bigBar:MovieClip;
+		private var BAR_WIDTH:Number;			// small bar above player sprite width
+		private var bigBar:MovieClip;			// long thin bar above the module screen
+		
+		// helpers for revive S.O.S. text
+		private var reviveExpire:int = 0;
+		private var reviveProgress:Number = 0;
+		private var reviveCounter:int = 0;
 		
 		public function Player(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object)
 		{
@@ -107,10 +112,29 @@ package vgdev.stroll.props
 			if (hp != 0)
 			{
 				handleKeyboard();
-				if (countPDW > 0)
+				if (countPDW > 0)	// update PDW cooldown
 					countPDW--;
 			}
+			else					// update S.O.S. module UI
+			{
+				if (reviveExpire > 0 && --reviveExpire == 0)
+					reviveProgress = 0;
+				reviveCounter = System.changeWithLimit(reviveCounter, 1, 0, 999);
+				cg.hudConsoles[playerID].mod.tf_downtime.text = int(reviveCounter / System.SECOND).toString() + "s";
+				cg.hudConsoles[playerID].mod.tf_revive.text = int(reviveProgress * 100).toString() + "%";
+				
+			}
 			return false;
+		}
+		
+		/**
+		 * Helper to update the S.O.S. revive %
+		 * @param	progress		Number, percent of the way to a finished revive
+		 */
+		public function updateReviveUI(progress:Number):void
+		{
+			reviveExpire = 2;
+			reviveProgress = progress;
 		}
 		
 		/**
@@ -121,6 +145,8 @@ package vgdev.stroll.props
 			if (hp != 0) return;
 			changeHP(hpMax * .4);
 			mc_object.alpha = 1;
+			
+			cg.hudConsoles[playerID].gotoAndStop("none");
 		}
 		
 		override public function changeHP(amt:Number):Boolean
@@ -133,6 +159,11 @@ package vgdev.stroll.props
 				onCancel();
 				mc_object.gotoAndStop("idle");
 				mc_object.alpha = .4;		// TODO incap sprite
+				
+				cg.hudConsoles[playerID].gotoAndStop("incap");
+				reviveProgress = 0;
+				reviveCounter = 0;
+				reviveExpire = 0;
 			}
 			
 			if (hp != hpMax)

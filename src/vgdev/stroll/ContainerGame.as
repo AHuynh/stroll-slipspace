@@ -34,6 +34,7 @@
 		public var camera:Cam;
 		public var tails:TAILS;
 		public var background:Background;
+		public var alerts:Alerts;
 		
 		/// Whether or not the game is paused
 		public var isPaused:Boolean = false;		// from P
@@ -103,7 +104,7 @@
 			background.setStyle("homeworld");
 			camera = new Cam(this, gui);
 			camera.step();
-			
+			alerts = new Alerts(this, gui.mc_alerts);			
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -249,9 +250,15 @@
 						game.mc_bg.base.play();*/
 					gui.mc_pause.visible = isPaused;
 				break;
-			case Keyboard.J:		// TODO remove temporary testing
-				jump();
-			break;
+				case Keyboard.J:		// TODO remove temporary testing
+					jump();
+				break;
+				/*case Keyboard.K:
+					players[0].changeHP( -9999);
+				break;*/
+				case Keyboard.K:
+					managerMap[System.M_ENEMY].killAll();
+				break;
 			}
 		}
 		
@@ -302,6 +309,7 @@
 			level.step();
 			ship.step();
 			camera.step();
+			alerts.step();
 			background.step(atHomeworld() ? 0 : ship.slipSpeed * 150);
 			
 			for (var i:int = 0; i < managers.length; i++)
@@ -345,9 +353,9 @@
 				var boss:Boolean = level.sectorIndex % 4 == 0;
 				
 				if (boss)
-					SoundManager.playBGM("bgm_boss", .4);
+					SoundManager.playBGM("bgm_boss", System.VOL_BGM);
 				else if (level.sectorIndex % 4 == 1)
-					SoundManager.playBGM("bgm_calm", .4);
+					SoundManager.playBGM("bgm_calm", System.VOL_BGM);
 					
 				
 				tails.show(level.getTAILS(), boss ? 0 : 120);
@@ -367,13 +375,15 @@
 		}
 		
 		/**
-		 * Set the color of the modules to col
+		 * Set the color tint of modules
 		 * @param	col		uint of the module color
 		 */
 		public function setModuleColor(col:uint):void
 		{
 			var ct:ColorTransform = new ColorTransform();
-			ct.color = col;
+			if (col != System.COL_WHITE)
+				ct.color = col;
+			
 			gui.tf_titleL.transform.colorTransform = ct;
 			gui.tf_titleR.transform.colorTransform = ct;
 			hudBars[0].transform.colorTransform = ct;

@@ -40,6 +40,7 @@ package vgdev.stroll.support.splevels
 				{
 					boss = null;
 					elapseFlag = true;
+					cg.managerMap[System.M_ENEMY].killAll();		// kill all adds
 				}
 				return;
 			}
@@ -128,7 +129,7 @@ package vgdev.stroll.support.splevels
 													cg.shipInsideMask),
 										System.M_FIRE);
 						}
-						cg.tails.show("Eek! Fire! Quick, use the Omnitool before it spreads!", System.TAILS_NORMAL);
+						cg.tails.show("Eek! Fire! Quick, use the Omnitool before it spreads!", int(System.TAILS_NORMAL * 1.5));
 						framesElapsed = System.SECOND * 44;
 					break;
 				}

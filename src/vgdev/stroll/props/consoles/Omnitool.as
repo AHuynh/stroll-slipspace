@@ -95,7 +95,11 @@ package vgdev.stroll.props.consoles
 		
 		override public function holdKey(keys:Array):void
 		{
-			if (!keys[4]) return;
+			if (!keys[4]) 
+			{
+				reviveProgress = 0;
+				return;
+			}
 			
 			// affect fires
 			if (affectItems(System.M_FIRE, RANGE_EXTINGUISH, RATE_EXTINGUISH, "extinguish"))
@@ -113,6 +117,7 @@ package vgdev.stroll.props.consoles
 				if (System.getDistance(closestPlayer.mc_object.x, closestPlayer.mc_object.y, player.mc_object.x, player.mc_object.y) < RANGE_REVIVE)
 				{					
 					reviveProgress += RATE_REVIVE;
+					player.updateReviveUI(reviveProgress / GOAL_REVIVE);
 					
 					if (Math.random() < .7)
 						cg.addDecor("repair", {

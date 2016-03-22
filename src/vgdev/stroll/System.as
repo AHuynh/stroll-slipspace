@@ -57,6 +57,9 @@ package vgdev.stroll
 		public static const COL_GREEN:uint = 0x00FF00;
 		public static const COL_BLUE:uint = 0x0077FF;
 		
+		// volume constants
+		public static const VOL_BGM:Number = .4;
+		
 		/**
 		 * Returns a random int between min and max
 		 * @param	min		The lower bound

@@ -99,7 +99,7 @@ package vgdev.stroll.props.enemies
 			
 			// after first spread check, 10% chance to damage hull per tick
 			if (!contained && Math.random() < .1)
-				cg.ship.damageDirect(HULL_DAMAGE);
+				cg.ship.damageDirect(HULL_DAMAGE, true);
 				
 			return super.step();
 		}

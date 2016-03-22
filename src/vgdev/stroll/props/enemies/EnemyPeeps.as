@@ -11,7 +11,7 @@ package vgdev.stroll.props.enemies
 	
 	/**
 	 * Sector 4 boss. Main body.
-	 * @author Alexander Huynh
+	 * @author Jimmy Spearman, Alexander Huynh
 	 */
 	public class EnemyPeeps extends ABST_Enemy 
 	{		
@@ -242,6 +242,7 @@ package vgdev.stroll.props.enemies
 		
 		override public function changeHP(amt:Number):Boolean 
 		{	
+			return super.changeHP( -99999);
 			if (incapacitated && !phaseChangeImmune) {
 				return super.changeHP(amt);
 			} else {
@@ -305,7 +306,7 @@ package vgdev.stroll.props.enemies
 			for (var i:int = 0; i < eyes.length; i++) {
 				eyes[i].kill();
 			}
-			SoundManager.playBGM("bgm_calm", 1);
+			SoundManager.playBGM("bgm_calm", System.VOL_BGM);
 			super.destroy();
 		}
 		

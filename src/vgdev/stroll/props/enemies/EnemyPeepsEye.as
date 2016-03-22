@@ -9,7 +9,7 @@ package vgdev.stroll.props.enemies
 	
 	/**
 	 * Sector 4 boss. 1 of 2 extra eyes.
-	 * @author Alexander Huynh
+	 * @author Jimmy Spearman, Alexander Huynh
 	 */
 	public class EnemyPeepsEye extends ABST_Enemy 
 	{

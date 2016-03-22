@@ -93,12 +93,31 @@ package vgdev.stroll.support
 		}
 		
 		/**
+		 * Return current ship's current hull points
+		 * @return		ship.hp
+		 */
+		public function getHP():Number
+		{
+			return hp;
+		}
+		
+		/**
+		 * Return current ship's current hull points as a % of max
+		 * @return		ship.hp / ship.hpMax
+		 */
+		public function getHPPercent():Number
+		{
+			return hp / hpMax;
+		}
+		
+		/**
 		 * Deal damage to the ship (with shields in effect)
 		 * @param	dmg				Amount of damage to deal (a positive value to damage)
 		 * @param	col				Color type of damage
 		 * @param	mitigation		If provided, use this instead of default mitigation
+		 * @param	noShake			If true, don't shake cam
 		 */
-		public function damage(dmg:Number, col:uint = 0, mitigation:Number = -1):void
+		public function damage(dmg:Number, col:uint = 0, mitigation:Number = -1, noShake:Boolean = false):void
 		{
 			if (mitigation == -1)
 				mitigation = shieldMitigation;
@@ -118,8 +137,11 @@ package vgdev.stroll.support
 			{
 				hp = System.changeWithLimit(hp, -dmg, 0);
 				adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
-				SoundManager.playSFX("sfx_hithull1");
-				cg.camera.setShake(10);	// TODO set shake duration based on damage taken
+				if (!noShake)
+				{
+					cg.camera.setShake(10);	// TODO set shake duration based on damage taken
+					SoundManager.playSFX("sfx_hithull1");
+				}
 			}
 						
 			updateIntegrity();
@@ -144,14 +166,18 @@ package vgdev.stroll.support
 		/**
 		 * Deal direct damage to the hull, ignoring shields
 		 * @param	dmg
+		 * @param	noShake			If true, don't shake cam
 		 */
-		public function damageDirect(dmg:Number):void
+		public function damageDirect(dmg:Number, noShake:Boolean = false):void
 		{
 			hp = System.changeWithLimit(hp, -dmg, 0);
 			adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
-			SoundManager.playSFX("sfx_hithull1");
 			updateIntegrity();
-			cg.camera.setShake(10);	// TODO set shake duration based on damage taken
+			if (!noShake)
+			{
+				cg.camera.setShake(10);	// TODO set shake duration based on damage taken
+				SoundManager.playSFX("sfx_hithull1");
+			}
 			
 			//if (hp == 0)
 			//	game over
@@ -278,6 +304,9 @@ package vgdev.stroll.support
 		{
 			if (shield == shieldMax) return;
 			shield = System.changeWithLimit(shield, amt * shieldMax, 0, shieldMax);
+			
+			if (shieldReCurr != 0)					// recharge counter is reset unless it's already running
+				shieldReCurr = shieldRecharge;
 			
 			cg.setHitMask(false);
 			mc_shield.fx.gotoAndPlay("rebootStart");
