@@ -2,6 +2,7 @@ package vgdev.stroll.managers
 {
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.projectiles.ABST_EProjectile;
+	import vgdev.stroll.props.projectiles.EProjectileHardened;
 	import vgdev.stroll.System;
 	import vgdev.stroll.props.ABST_Object;
 	
@@ -22,5 +23,4 @@ package vgdev.stroll.managers
 			return (a as ABST_EProjectile).getAffiliation() == (b as ABST_EProjectile).getAffiliation();
 		}
 	}
-
 }

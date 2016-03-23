@@ -335,12 +335,7 @@
 		 */
 		public function jump():void
 		{
-			game.mc_jump.gotoAndPlay(2);		// play the jump animation
-				
-			// remove all external-ship instances
-			managerMap[System.M_EPROJECTILE].killAll();
-			managerMap[System.M_ENEMY].killAll();
-			managerMap[System.M_DECOR].killAll();
+			playJumpEffect();
 			
 			// automatically reset the camera to the center for Sector 0 only
 			if (level.sectorIndex == 0)
@@ -376,6 +371,20 @@
 				tails.tutorialMode = level.sectorIndex % 4 == 0;
 				tails.tutorialMode = false;
 			}
+		}
+		
+		/**
+		 * Play the effect for jumping and remove all external objects (but don't actually jump)
+		 */
+		public function playJumpEffect():void
+		{
+			SoundManager.playSFX("sfx_slipjump");
+			game.mc_jump.gotoAndPlay(2);		// play the jump animation
+				
+			// remove all external-ship instances
+			managerMap[System.M_EPROJECTILE].killAll();
+			managerMap[System.M_ENEMY].killAll();
+			managerMap[System.M_DECOR].killAll();
 		}
 		
 		/**

@@ -74,7 +74,7 @@ package vgdev.stroll.props.projectiles
 		
 		override public function destroySilently():void 
 		{
-			markedToKill = true;
+			markedToKill = false;
 			hp = 0;
 			super.destroySilently();
 		}

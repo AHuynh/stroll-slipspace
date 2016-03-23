@@ -444,7 +444,6 @@ package vgdev.stroll.support
 		{
 			if (isJumpReady())
 			{
-				SoundManager.playSFX("sfx_slipjump");
 				cg.jump();
 				cg.gui.large_indicator.gotoAndStop(1);
 				return true;

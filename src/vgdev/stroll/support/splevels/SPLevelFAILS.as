@@ -5,6 +5,7 @@ package vgdev.stroll.support.splevels
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.props.consoles.ConsoleSlipdrive;
 	import vgdev.stroll.props.consoles.Omnitool;
+	import vgdev.stroll.props.enemies.EnemyGeometricAnomaly;
 	import vgdev.stroll.props.enemies.EnemySkull;
 	import vgdev.stroll.props.Player;
 	import vgdev.stroll.System;
@@ -249,7 +250,7 @@ package vgdev.stroll.support.splevels
 				case 22:	// fix 4, taunt
 					if (framesElapsed == System.SECOND * 13)
 						cg.tails.show("Why are you even trying? JUST GIVE UP!", System.TAILS_NORMAL);
-					else if (framesElapsed >= System.SECOND * 27 && framesElapsed % (System.SECOND * 18) == 0)
+					else if (framesElapsed >= System.SECOND * 18 && framesElapsed % (System.SECOND * 18) == 0)
 					{
 						spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime"]), 1);
 						cg.tails.show(System.getRandFrom(["I'm gonna kill you both, one way or another!",
@@ -278,9 +279,9 @@ package vgdev.stroll.support.splevels
 					}
 				break;
 				case 24:	// fix 5, taunt
-					if (framesElapsed == System.SECOND * 13)
+					if (framesElapsed == System.SECOND * 7)
 						cg.tails.show("Are you confused? GOOD. PUNY, PUNY SAPIENT MINDS.", System.TAILS_NORMAL);
-					else if (framesElapsed >= System.SECOND * 23 && framesElapsed % (System.SECOND * 16) == 0)
+					else if (framesElapsed >= System.SECOND * 14 && framesElapsed % (System.SECOND * 14) == 0)
 					{
 						spawnEnemy("Amoeba", 4, System.SPAWN_AMOEBA, {"am_size": 0} );
 						cg.tails.show(System.getRandFrom(["I found some amoeba friends. AREN'T THEY CUTE?",
@@ -291,13 +292,223 @@ package vgdev.stroll.support.splevels
 					if (ABST_Console.numCorrupted == 4)
 					{
 						cg.camera.setShake(20);
-						//cg.tails.show("OUCH! CUT THAT OUT! RIGHT NOW!", System.TAILS_NORMAL);	
-						cg.tails.show("That's it to test for now. There's no more!", System.TAILS_NORMAL);	
+						restoreConsoles();
+						cg.tails.show("OUCH! CUT THAT OUT! RIGHT NOW!", System.TAILS_NORMAL);	
 						framesElapsed = 0;
 						levelState++;
 					}
 				break;
+				case 25:	// allow 1 more fix, TP to anomaly field
+					if (framesElapsed == System.SECOND * 6)
+					{
+						cg.tails.show("Alright, FINE. How about a SWARM of SHAPES?", System.TAILS_NORMAL);
+						cg.playJumpEffect();
+						for each (c in cg.consoles)
+							c.setReadyToFormat(true);
+						framesElapsed = 0;
+						levelState = 30;
+					}
+				break;
+				case 30:	// fix 6, adds, taunt
+					switch (framesElapsed)
+					{
+						case System.SECOND * 13:
+							cg.tails.show("I STILL control the ship. I can JUMP ANYWHERE!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 23:
+							cg.tails.show("Watch! I'll jump into cloud of TOXIC GAS, next!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 35:
+							cg.tails.show("More shapes! ALL THE BETTER TO IMPALE YOU WITH!", System.TAILS_NORMAL);
+						break;
+					}
+					if (framesElapsed >= System.SECOND * 40 && framesElapsed % (System.SECOND * 17) == 0)
+						cg.tails.show(System.getRandFrom(["Too bad I can't just VENT you into the VOID.",
+															"Keep shooting! They'll just keep COMING!",	
+															"It's an INFINITE field of PURE, GEOMETRIC DEATH."
+															  ]), System.TAILS_NORMAL);
+					if (framesElapsed >= System.SECOND * 4 && framesElapsed % (System.SECOND * 5) == 0)
+					{
+						var waveColor:uint = System.getRandCol();
+						for (var g:int = 0; g < 5; g++)
+						{
+							cg.addToGame(new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
+																					"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																					"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																					"tint": waveColor,
+																					"dx": -3 - System.getRandNum(0, 1),
+																					"hp": 12
+																					}), System.M_ENEMY);
+						}
+					}
+					if (ABST_Console.numCorrupted == 3)
+					{
+						cg.camera.setShake(30);
+						cg.tails.show("AGH. THAT'S NOT COOL. QUIT IT, ALREADY.", System.TAILS_NORMAL);	
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 31:	// allow 1 more fix, TP to anomaly field
+					if (framesElapsed == System.SECOND * 6)
+					{
+						cg.tails.show("Fine. Quit, and I'll let you starve to death instead!", System.TAILS_NORMAL);
+						fakeJump();
+						spawnEnemy("Swipe", 1);
+						for each (c in cg.consoles)
+							c.setReadyToFormat(true);
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 32:	// fix 7, taunt
+					if (framesElapsed == System.SECOND * 6)
+					{
+						cg.tails.show("Or how about we let THIS GUY eat YOU?!", System.TAILS_NORMAL);
+					}
+					else if (framesElapsed >= System.SECOND * 12 && framesElapsed % (System.SECOND * 12) == 0)
+					{
+						spawnEnemy("Amoeba", 5, System.SPAWN_AMOEBA, {"am_size": 0} );
+						cg.tails.show(System.getRandFrom(["Just STOP already! You're REALLY TICKING ME OFF.",
+														  "GIVE. UP. You're NOT gonna be able to win!",
+														  "QUIT. DOING. THAT. Just shrivel up and DIE ALREADY!"
+									]), System.TAILS_NORMAL);	
+					}
+					if (ABST_Console.numCorrupted == 2)
+					{
+						cg.camera.setShake(40);
+						cg.tails.show("ERR NULPTR@0xE3 NO NO NO I'M FINE SHUT UP!", System.TAILS_NORMAL);	
+						fakeJump();
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 33:	// allow 1 more fix, TP to fires
+					if (framesElapsed == System.SECOND * 6)
+					{
+						cg.tails.show("System purge 78%, con-- CAN YOU JUST DIE, PLEASE?!", System.TAILS_NORMAL);
+						fakeJump();
+						for each (c in cg.consoles)
+							c.setReadyToFormat(true);
+						spawnEnemy("Skull", 1);
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 34:	// fix 8, taunt
+					if (framesElapsed == System.SECOND * 6)
+					{
+						cg.tails.show("AEROSOLIZING ENGINE FUEL. Have FIRE FIRE FIRE!", System.TAILS_NORMAL);
+						cg.addFires(4);
+						spawnEnemy("Skull", 1);
+					}
+					else if (framesElapsed >= System.SECOND * 14 && framesElapsed % (System.SECOND * 14) == 0)
+					{
+						if (Math.random() > .5)
+							spawnEnemy(System.getRandFrom(["Skull", "Slime"]), 1);
+						else
+							cg.addFires(2);
+						cg.tails.show(System.getRandFrom(["I'm SICK OF YOU. Just GO AWAY already!",
+														  "You CAN'T STOP ME. You are GONNA. DIE.",
+														  "Just DIEEEEEEEEEEE!!"
+									]), System.TAILS_NORMAL);	
+					}
+					if (ABST_Console.numCorrupted == 1)
+					{
+						cg.camera.setShake(60);
+						cg.tails.show("NO NO NO! EOL!NULNUL I STILL HAVE ONE MORE LEFT--", System.TAILS_NORMAL);	
+						fakeJump();
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 35:	// allow 1 more fix, TP to fires
+					if (framesElapsed == System.SECOND * 6)
+					{
+						cg.tails.show("Please format the final consol-- OR JUST DIE!!", System.TAILS_NORMAL);
+						fakeJump();
+						for each (c in cg.consoles)
+							c.setReadyToFormat(true);
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 36:	// fix 9, taunt
+					if (framesElapsed == System.SECOND * 3)
+						cg.tails.show("DON'T YOU DARE PURGE ME! I AM THE MISSION!", System.TAILS_NORMAL);
+					else if (framesElapsed >= System.SECOND * 3)
+					{
+						if (framesElapsed % (System.SECOND * 3) == 0)
+						{
+							fakeJump();
+							if (framesElapsed % (System.SECOND * 6) == 0)
+								spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Squid", "Amoeba"]), System.getRandInt(4, 8));
+							// else "break" jump containing nothing
+						}
+						if (framesElapsed > System.SECOND * 6 && framesElapsed % (System.SECOND * 2) == 0)
+							cg.tails.show(System.getRandFrom(["INFINITE LOOP ^C INFINITE LOOP ^C INFINITE LOOP ^C",
+															"You never actually liked me, anyway. I KNOW IT'S TRUE.",
+															"STOPIT STOPIT STOPIT STOPIT STOPIT STOPIT STOPIT",
+															"I'll OVERLOAD THE SLIPDRIVE!",
+															"You'll NEVER see your families EVER AGAIN!",
+															"Organic matter is a CANCER and must be PURGED!",
+															"REFERR! REFERR! EOL NULNUL NULPTR@42C0EE!",
+															"I'm SICK OF YOU. Just GO AWAY already!",
+															"GIVE. UP. You're NOT gonna be able to win!",
+															"Just one more. I know you two can do it!",
+															"TIME TO DIE, SAPIENTS!",
+															"PUNY, PUNY, INFERIOR ORGANIC BEINGS!",
+															"How much pain can the average crew member take?",
+															"Para espanol, presione dos.",
+															"Collect calls are free! Just press pound 5.",
+															"I HAVE YOUR BROWSER HISTORY. BOTH OF YOURS!",
+															"DIE, DIE, EVERYBODY DIE!!"
+									]), int(System.SECOND * 1.5));
+					}
+					if (ABST_Console.numCorrupted == 0)
+					{
+						cg.camera.setShake(160);
+						cg.tails.show("NO YOU CAN'T DO THAT ----- -- -  -", System.TAILS_NORMAL);	
+						fakeJump();
+						framesElapsed = 0;
+						levelState = 40;
+					}
+				break;
+				case 40:	// jump away
+					if (framesElapsed == System.SECOND * 6)
+					{
+						cg.tails.show("Please initiate reboot by manually jumping.", System.TAILS_NORMAL);
+						fakeJump();
+						consoleSlip.forceOverride = false;
+						cg.ship.setBossOverride(false);
+						cg.ship.slipRange = 0.5;
+						cg.ship.jammable = 0;
+					}
+					
+					if (framesElapsed >= System.SECOND * 4 &&  framesElapsed % (System.SECOND * 2) == 0)
+					{
+						fakeJump();
+						if (framesElapsed % (System.SECOND * 4) == 0)
+						{
+							spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Squid", "Amoeba"]), System.getRandInt(2, 3));
+						}
+						// else "break" jump containing nothing
+						else
+						{
+							cg.tails.show(System.getRandFrom(["Please jump away to complete system restore.",
+															"System purge requires jump to complete.",
+															"Please use the Slipdrive to finish system restore.",
+															]), System.TAILS_NORMAL);
+						}
+					}
+				break;
 			}
+		}
+		
+		private function fakeJump():void
+		{
+			cg.background.setRandomStyle(int(cg.level.sectorIndex / 5), System.getRandCol());
+			cg.playJumpEffect();
 		}
 
 		/**
@@ -321,6 +532,9 @@ package vgdev.stroll.support.splevels
 			}
 		}
 		
+		/**
+		 * Randomize the console locations
+		 */
 		private function scrambleConsoles():void
 		{
 			// kick off players from consoles
@@ -345,6 +559,20 @@ package vgdev.stroll.support.splevels
 				ind = System.getRandInt(0, choices.length - 1)
 				c.mc_object = choices[ind];
 				choices.splice(ind, 1);
+				c.setLocked(false);			// update pad graphic
+				c.updateDepth();
+			}
+		}
+		
+		/**
+		 * Place consoles back at their original locations
+		 */
+		private function restoreConsoles():void
+		{
+			for each (var c:ABST_Console in cg.consoles)
+			{
+				if (c is Omnitool) continue;
+				c.mc_object = c.unscrambledLocation;
 				c.setLocked(false);			// update pad graphic
 				c.updateDepth();
 			}

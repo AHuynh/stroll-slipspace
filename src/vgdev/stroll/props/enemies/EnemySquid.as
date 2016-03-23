@@ -20,6 +20,9 @@ package vgdev.stroll.props.enemies
 			super(_cg, _mc_object, attributes);
 			setStyle("squid");
 			
+			if (mc_object.x > 0)
+				mc_object.scaleX = -1;
+			
 			// [Large shot, Small trishot]
 			cdCounts = [45, 90];
 			cooldowns = [100, 140];

@@ -291,6 +291,9 @@ package vgdev.stroll.support
 		 */
 		public function nextSector():Boolean
 		{
+			if (spLevel)
+				spLevel = null;
+			
 			sectorIndex++;
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
@@ -299,7 +302,7 @@ package vgdev.stroll.support
 					choices.push(e);
 			}
 			
-			if (choices.length == 0)		// TODO something when there are no valid encounters
+			if (choices.length == 0)		// no valid encounters
 			{
 				trace("[Level] WARNING: No suitable encounters found for Sector", sectorIndex);
 				return false;
