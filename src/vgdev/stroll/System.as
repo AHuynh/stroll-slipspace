@@ -64,6 +64,11 @@ package vgdev.stroll
 		public static const ORBIT_0_X:Number = 420;		// suitable for Easy Sector with no Sensors
 		public static const ORBIT_0_Y:Number = 190;
 		
+		// spawning constants
+		public static const SPAWN_STD:Array = ["right", "left", "top", "bottom", "top_left", "bottom_left", "top_right", "bottom_right"];
+		public static const SPAWN_SQUID:Array = ["far_left", "far_right"];
+		public static const SPAWN_AMOEBA:Array = ["top_right", "bottom_right", "top_left", "bottom_left"];
+		
 		/**
 		 * Returns a random int between min and max
 		 * @param	min		The lower bound

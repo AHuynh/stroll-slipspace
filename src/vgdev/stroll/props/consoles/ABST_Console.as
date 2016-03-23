@@ -42,13 +42,15 @@ package vgdev.stroll.props.consoles
 		// --- FAILS helper ------------------------------------
 		public var corrupted:Boolean = false;				// if true, console is either "corrupt" or "fails"
 		public var debuggable:Boolean = false;				// if true, this console can be debugged ("fails")
-		public static var debugConsole:ABST_Console = null;	// the current console being debugged
+		public static var numCorrupted:int = 0;
 		protected var consoleFAILS:ConsoleFAILS = null;		// the ConsoleFAILS class to use if corrupt
+		public var unscrambledLocation:MovieClip;
 		// ----------------------------------------------------
 		
 		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false)
 		{
 			super(_cg, _mc_object);
+			unscrambledLocation = mc_object;
 			hud_consoles = cg.hudConsoles;
 			players = _players;
 			
@@ -72,7 +74,6 @@ package vgdev.stroll.props.consoles
 				mc_object.mc_bar.visible = false;		// hide the HP bar
 				BAR_WIDTH = mc_object.mc_bar.bar.width;
 			}
-
 			setLocked(!unlocked);
 		}
 		
@@ -241,14 +242,14 @@ package vgdev.stroll.props.consoles
 				inUse = false;
 				mc_object.gotoAndStop(2);									// change console graphic to 'shut off'
 				mc_object.prompt.visible = true;							// show the '!'
-				//hud_consoles[closestPlayer.playerID].gotoAndStop("none");	// reset the module UI
-				//cg.hudTitles[closestPlayer.playerID].visible = false;
-				//hud_consoles[closestPlayer.playerID].mc_tutorial.visible = false;
 				setHUD("none");
 				cg.tails.hideHalf(closestPlayer.playerID == 0);
 				updateHUD(false);
-				closestPlayer = null;
 				
+				if (corrupted)
+					consoleFAILS.onCancel();
+				
+				closestPlayer = null;
 				SoundManager.playSFX("sfx_UI_Beep_B", .5);
 			}
 		}
@@ -286,6 +287,13 @@ package vgdev.stroll.props.consoles
 		{
 			// -- override this function
 		}
+		/**
+		 * Potentially do a one-off good thing if the console is enabled
+		 */
+		public function enableConsole():void
+		{
+			// -- override this function
+		}
 		
 		/**
 		 * Do something when the player first arrives, or leaves, this console
@@ -305,6 +313,8 @@ package vgdev.stroll.props.consoles
 		 */
 		public function setCorrupt(isCorrupt:Boolean):void
 		{
+			if (CONSOLE_NAME == "Omnitool") return;
+			
 			corrupted = isCorrupt;
 			if (corrupted)
 			{
@@ -312,11 +322,13 @@ package vgdev.stroll.props.consoles
 				if (inUse)
 					closestPlayer.onCancel();
 				disableConsole();
+				numCorrupted++;
 			}
 			else
 			{
 				consoleFAILS.destroy();
 				consoleFAILS = null;
+				numCorrupted--;
 			}
 		}
 		
@@ -326,6 +338,7 @@ package vgdev.stroll.props.consoles
 		 */
 		public function setReadyToFormat(isDebuggable:Boolean):void
 		{
+			if (CONSOLE_NAME == "Omnitool") return;
 			if (!corrupted) return;
 			if (consoleFAILS != null && consoleFAILS.freeTimer != -1) return;
 			debuggable = isDebuggable;

@@ -12,10 +12,10 @@ package vgdev.stroll.props.consoles
 	 */
 	public class ConsoleFAILS extends ABST_Console 
 	{
-		private var originalConsole:ABST_Console;
-		
 		public static var puzzleActive:Boolean = false;
-		private var localPuzzleActive:Boolean = false;
+		private var localPuzzleActive:Boolean = false
+		
+		private var originalConsole:ABST_Console;
 		
 		public static var difficulty:int = 0;
 		private const MAX_DIFFICULTY:int = 6;
@@ -44,7 +44,7 @@ package vgdev.stroll.props.consoles
 		
 		override public function onKey(key:int):void 
 		{
-			if (!puzzleActive && originalConsole.debuggable)
+			if (!puzzleActive && freeTimer == -1 && originalConsole.debuggable)
 			{
 				if (key == 4)		// start debugging this
 				{
@@ -70,10 +70,9 @@ package vgdev.stroll.props.consoles
 			{
 				targets.push(new Point(System.getRandNum( -ARENA_WIDTH, ARENA_WIDTH) * .5,
 									   System.getRandNum( -ARENA_HEIGHT, ARENA_HEIGHT) * .5));
-				targetDeltas.push(new Point(System.getRandNum(0, difficulty * .5) * (Math.random() > .5 ? 1 : -1),
-											System.getRandNum(0, difficulty * .5) * (Math.random() > .5 ? 1 : -1)));
+				targetDeltas.push(new Point(System.getRandNum(0, Math.max(0, difficulty - 2) * .5) * (Math.random() > .5 ? 1 : -1),
+											System.getRandNum(0, Math.max(0, difficulty - 2) * .5) * (Math.random() > .5 ? 1 : -1)));
 			}
-			difficulty++;
 			
 			closestPlayer = originalConsole.closestPlayer;
 			var ui:MovieClip = getHUD();
@@ -95,7 +94,8 @@ package vgdev.stroll.props.consoles
 				freeTimer--;
 				if (freeTimer == 0)
 				{
-					if (closestPlayer != null)
+					originalConsole.enableConsole();		// trigger the beneficial effects on some consoles for being alive
+					if (originalConsole.closestPlayer != null)
 						originalConsole.closestPlayer.onCancel();
 					originalConsole.setCorrupt(false);
 				}
@@ -154,6 +154,7 @@ package vgdev.stroll.props.consoles
 				ui.tf_cooldown.visible = true;
 				ui.tf_cooldown.text = "System\nformatted!";
 				freeTimer = 60;
+				difficulty++;
 			}
 			
 			return false;
@@ -194,12 +195,16 @@ package vgdev.stroll.props.consoles
 		override public function onCancel():void 
 		{
 			// do not call originalConsole.onCancel(), as originalConsole continues after calling this onCancel()
+			
+			if (freeTimer != -1)
+				return;
+			
 			if (localPuzzleActive)
 				puzzleActive = false;
 			localPuzzleActive = false;
 			targets = [];
 			targetDeltas = [];
-			setReadyToFormat(false);		// missed the opportunity
+			//setReadyToFormat(false);		// missed the opportunity
 		}
 		
 		override public function destroy():void 

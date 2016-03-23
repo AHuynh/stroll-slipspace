@@ -75,6 +75,18 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		override public function changeHP(amt:Number):Boolean 
+		{
+			var isZero:Boolean = super.changeHP(amt);
+			if (isZero) cg.ship.setShieldColor(System.COL_WHITE);
+			return isZero;
+		}
+		
+		override public function disableConsole():void 
+		{
+			cg.ship.setShieldColor(System.COL_WHITE);
+		}
+		
 		// update the active color displayed on the module HUD
 		override public function updateHUD(isActive:Boolean):void
 		{

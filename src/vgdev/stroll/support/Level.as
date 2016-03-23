@@ -59,11 +59,12 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		public var sectorIndex:int = 7;
+		public var sectorIndex:int = 0;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
 		private var waveIndex:int;			// current wave in waves
+		private var waveColor:uint;
 
 		private var counter:int = 0;		// keep track of frames elapsed since current encounter started
 		private var counterNext:int = 0;	// the "time" that the next wave spawns
@@ -103,7 +104,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											rawEncountersJSON = [JSON.parse(new en_boss_fails())];
+											//rawEncountersJSON = [JSON.parse(new en_boss_fails())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -160,15 +161,12 @@ package vgdev.stroll.support
 			
 			// if we're at the next time to spawn things
 			if (++counter >= counterNext)
-			{
-				//trace("[Level] Starting wave at index", waveIndex);
-				
+			{				
 				if (waves[waveIndex]["TAILS"] != null)
 					cg.tails.show(waves[waveIndex]["TAILS"], System.TAILS_NORMAL);
 					
 				var repeat:int = waves[waveIndex]["repeat"] == null ? 1 : waves[waveIndex]["repeat"];
-				//trace("[Level]\tEnemies to spawn:", (waves[waveIndex]["spawnables"].length * repeat));
-				var waveColor:uint = System.getRandCol();
+				waveColor = System.getRandCol();
 				if (waves[waveIndex]["spawnables"].length != 0)
 				{
 					for (var r:int = 0; r < repeat; r++)
@@ -185,89 +183,9 @@ package vgdev.stroll.support
 							else if (spawnItem["x"] != null && spawnItem["y"] != null)
 								pos = new Point(spawnItem["x"] + System.GAME_OFFSX, spawnItem["y"] + System.GAME_OFFSY);
 							else
-							{
 								pos = new Point();
-								//trace("[Level] No spawn location defined for", type);
-							}
 
-							var spawn:ABST_Object;
-							var manager:int;
-							switch (type)
-							{
-								case "Amoeba":
-									spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
-																					"x":pos.x,
-																					"y":pos.y
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "Eye":
-									spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
-																					"x":pos.x,
-																					"y":pos.y,
-																					"attackColor": col,
-																					"hp": 30
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "GeometricAnomalyPlain":
-									waveColor = System.COL_WHITE;
-								case "GeometricAnomaly":
-									spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
-																					"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
-																					"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
-																					"tint": waveColor,
-																					"dx": -3 - System.getRandNum(0, 1),
-																					"hp": 12
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "Skull":
-									spawn = new EnemySkull(cg, new SWC_Enemy(), {
-																					"attackColor": System.COL_RED,
-																					"attackStrength": 15,
-																					"hp": 16
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "Slime":
-									spawn = new EnemySlime(cg, new SWC_Enemy(), {
-																					"attackColor": col,
-																					"attackStrength": 10,
-																					"hp": 30
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "Squid":
-									spawn = new EnemySquid(cg, new SWC_Enemy(), {
-																					"x":pos.x,
-																					"y":pos.y,
-																					"attackColor": col,
-																					"attackStrength": 18,
-																					"hp": 200
-																					});
-									manager = System.M_ENEMY;
-								break;
-								case "Swipe":
-									spawn = new EnemySwipe(cg, new SWC_Enemy(), {
-																					"attackStrength": 65
-																					});
-									manager = System.M_ENEMY;
-								break;
-								
-								case "Peeps":
-									spawn = new EnemyPeeps(cg, new SWC_Enemy(), {});
-									manager = System.M_ENEMY;
-								break;
-								
-								case "Fire":
-									pos.x -= System.GAME_OFFSX;
-									pos.y -= System.GAME_OFFSY;
-									spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
-									manager = System.M_FIRE;
-								break;
-							}
-							cg.addToGame(spawn, manager);					
+							spawn(spawnItem, pos, type, col);		
 						}
 					}		
 				}
@@ -277,6 +195,94 @@ package vgdev.stroll.support
 					counterNext = waves[waveIndex]["time"];		// prepare to spawn the next wave
 				counter = 0;
 			}
+		}
+		
+		/**
+		 * Spawn an enemy
+		 * @param	spawnItem		Additional spawn parameters
+		 * @param	pos				Location to spawn at
+		 * @param	type			Type of enemy
+		 */
+		public function spawn(spawnItem:Object, pos:Point, type:String, col:uint = System.COL_WHITE):void
+		{
+			var spawn:ABST_Object;
+			var manager:int;
+			switch (type)
+			{
+				case "Amoeba":
+					spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
+																	"x":pos.x,
+																	"y":pos.y
+																	});
+					manager = System.M_ENEMY;
+				break;
+				case "Eye":
+					spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
+																	"x":pos.x,
+																	"y":pos.y,
+																	"attackColor": col,
+																	"hp": 30
+																	});
+					manager = System.M_ENEMY;
+				break;
+				case "GeometricAnomalyPlain":
+					waveColor = System.COL_WHITE;
+				case "GeometricAnomaly":
+					spawn = new EnemyGeometricAnomaly(cg, new SWC_Enemy(), {
+																	"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
+																	"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
+																	"tint": waveColor,
+																	"dx": -3 - System.getRandNum(0, 1),
+																	"hp": 12
+																	});
+					manager = System.M_ENEMY;
+				break;
+				case "Skull":
+					spawn = new EnemySkull(cg, new SWC_Enemy(), {
+																	"attackColor": System.COL_RED,
+																	"attackStrength": 15,
+																	"hp": 16
+																	});
+					manager = System.M_ENEMY;
+				break;
+				case "Slime":
+					spawn = new EnemySlime(cg, new SWC_Enemy(), {
+																	"attackColor": col,
+																	"attackStrength": 10,
+																	"hp": 30
+																	});
+					manager = System.M_ENEMY;
+				break;
+				case "Squid":
+					spawn = new EnemySquid(cg, new SWC_Enemy(), {
+																	"x":pos.x,
+																	"y":pos.y,
+																	"attackColor": col,
+																	"attackStrength": 18,
+																	"hp": 200
+																	});
+					manager = System.M_ENEMY;
+				break;
+				case "Swipe":
+					spawn = new EnemySwipe(cg, new SWC_Enemy(), {
+																	"attackStrength": 65
+																	});
+					manager = System.M_ENEMY;
+				break;
+				
+				case "Peeps":
+					spawn = new EnemyPeeps(cg, new SWC_Enemy(), {});
+					manager = System.M_ENEMY;
+				break;
+				
+				case "Fire":
+					pos.x -= System.GAME_OFFSX;
+					pos.y -= System.GAME_OFFSY;
+					spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
+					manager = System.M_FIRE;
+				break;
+			}
+			cg.addToGame(spawn, manager);	
 		}
 
 		/**
@@ -289,7 +295,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				//if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
+				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
 					choices.push(e);
 			}
 			
@@ -357,7 +363,7 @@ package vgdev.stroll.support
 		 * @param	region		String indicating region (ex: "top_right")
 		 * @return				Point, a valid spawn point
 		 */
-		private function getRandomPointInRegion(region:String):Point
+		public function getRandomPointInRegion(region:String):Point
 		{
 			switch (region)
 			{

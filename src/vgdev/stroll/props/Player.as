@@ -50,7 +50,7 @@ package vgdev.stroll.props
 		public var moveSpeed:Number = 4;
 		
 		/// If not null, the instance of ABST_Console this Player is currently paired with
-		private var activeConsole:ABST_Console = null;
+		public var activeConsole:ABST_Console = null;
 		
 		/// If true, the console being used prevents player movement
 		private var rooted:Boolean = false;

@@ -17,7 +17,7 @@ package vgdev.stroll.support
 		private var hp:Number = hpMax;				// current hull strength
 		
 		// -- Shield --------------------------------------------------------------------------------------
-		public var shieldsEnabled:Boolean = true;	// if false, shields don't recharge
+		private var shieldsEnabled:Boolean = true;	// if false, shields don't recharge
 		
 		public var mc_shield:MovieClip;				// reference to the shield MovieClip
 		private var shieldMax:Number = 100;			// actual value of shields
@@ -220,15 +220,13 @@ package vgdev.stroll.support
 		public function setShieldColor(col:uint):void
 		{
 			shieldCol = col;
-			shieldCTF.color = shieldCol;
+			if (col == System.COL_WHITE)
+				shieldCTF = new ColorTransform();
+			else
+				shieldCTF.color = shieldCol;
 			mc_shield.transform.colorTransform = shieldCTF;
 			cg.gui.bar_sp.transform.colorTransform = shieldCTF;
 			cg.gui.bar_hp.transform.colorTransform = shieldCTF;
-			
-			/*cg.gui.tf_titleL.transform.colorTransform = shieldCTF;
-			cg.gui.tf_titleR.transform.colorTransform = shieldCTF;
-			cg.hudBars[0].transform.colorTransform = shieldCTF;
-			cg.hudBars[1].transform.colorTransform = shieldCTF;*/
 			
 			if (shield > 0)
 			{
@@ -263,6 +261,25 @@ package vgdev.stroll.support
 		{
 			var change:Number = shipHeading * factor - shipHeading;
 			adjustHeading(change);
+		}
+		
+		public function setShieldsEnabled(enabled:Boolean):void
+		{
+			shieldsEnabled = enabled;
+			if (!shieldsEnabled)
+			{
+				shieldCD = SHIELD_CD;
+				shieldReCurr = shieldRecharge;
+				if (shield != 0)
+				{
+					shield = 0;
+					cg.setHitMask(shield == 0);
+					
+					mc_shield.fx.gotoAndPlay("offline");
+					mc_shield.base.alpha = 0;
+				}
+			}
+			updateIntegrity();
 		}
 		
 		/**

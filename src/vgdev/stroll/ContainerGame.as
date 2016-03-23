@@ -196,7 +196,8 @@
 			
 			tails.show(TAILS_DEFAULT);
 			tails.showNew = true;
-			//camera.setCameraFocus(new Point(0, -100));
+			camera.setCameraFocus(new Point(0, -100));
+			//camera.setCameraFocus(new Point(0, -20));
 		}
 		
 		/**
@@ -450,8 +451,8 @@
 			var tries:int = 25;		// give up after trying too many times
 			do
 			{
-				pos = new Point(System.getRandNum(-shipInsideMask.width, shipInsideMask.width) * .5  + System.GAME_OFFSX,
-								System.getRandNum( -shipInsideMask.height, shipInsideMask.height) * .5  + System.GAME_OFFSY);
+				pos = new Point(System.getRandNum(-shipInsideMask.width, shipInsideMask.width) * .4  + System.GAME_OFFSX,
+								System.getRandNum( -shipInsideMask.height, shipInsideMask.height) * .4  + System.GAME_OFFSY);
 			} while (shipInsideMask.hitTestPoint(pos.x, pos.y, true) && tries-- > 0);
 			pos.x -= System.GAME_OFFSX;
 			pos.y -= System.GAME_OFFSY;

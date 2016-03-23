@@ -457,6 +457,7 @@ package vgdev.stroll.props.consoles
 			if (corrupted) return;
 			if (closestPlayer == null) return;
 			var ui:MovieClip = getHUD();
+			if (ui == null) return;
 			for each (var mc:MovieClip in shieldsList)
 				ui.addChild(mc);
 			ui.mc_limit.visible = false;
@@ -484,13 +485,18 @@ package vgdev.stroll.props.consoles
 		
 		override public function disableConsole():void 
 		{
-			cg.ship.shieldsEnabled = false;
+			cg.ship.setShieldsEnabled(false);
+		}
+		
+		override public function enableConsole():void 
+		{
+			cg.ship.setShieldsEnabled(true);
 		}
 		
 		override public function changeHP(amt:Number):Boolean 
 		{
-			var isZero:Boolean =  super.changeHP(amt);
-			cg.ship.shieldsEnabled = !corrupted && !isZero;
+			var isZero:Boolean = super.changeHP(amt);
+			cg.ship.setShieldsEnabled(!corrupted && hp != 0);
 			return isZero;
 		}
 		
