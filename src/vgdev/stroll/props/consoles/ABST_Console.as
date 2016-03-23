@@ -14,11 +14,11 @@ package vgdev.stroll.props.consoles
 	 */
 	public class ABST_Console extends ABST_Object 
 	{
-		private var players:Array;
+		protected var players:Array;
 		public const RANGE:int = 20;		// maximum range in px from which a player can activate this console
 		
 		/// Used as a label in the HUD object
-		protected var CONSOLE_NAME:String = "None";
+		public var CONSOLE_NAME:String = "None";
 		
 		/// The two HUD objects for the consoles, an Array of MovieClips
 		protected var hud_consoles:Array;
@@ -37,8 +37,14 @@ package vgdev.stroll.props.consoles
 		protected var TUT_MSG:String = "Hey! I can't find the description for this module...";
 		
 		protected var unlocked:Boolean = true;
+		// use mc_object.parentClass to access the ABST_Console class associated with a console MovieClip
 		
-		// use mc_object.parent class to access the ABST_Console class associated with a console MovieClip
+		// --- FAILS helper ------------------------------------
+		public var corrupted:Boolean = false;				// if true, console is either "corrupt" or "fails"
+		public var debuggable:Boolean = false;				// if true, this console can be debugged ("fails")
+		public static var debugConsole:ABST_Console = null;	// the current console being debugged
+		protected var consoleFAILS:ConsoleFAILS = null;		// the ConsoleFAILS class to use if corrupt
+		// ----------------------------------------------------
 		
 		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false)
 		{
@@ -99,7 +105,7 @@ package vgdev.stroll.props.consoles
 			if (hp == 0)
 			{
 				onCancel();
-				//setConsoleEnabled(false);		// TODO stop the beneficial effects of this console
+				disableConsole();	//stop the beneficial effects of this console
 			}
 			
 			if (hp != hpMax)
@@ -142,6 +148,13 @@ package vgdev.stroll.props.consoles
 			mc_object.prompt.visible = vis;
 		}
 		
+		override public function step():Boolean 
+		{
+			if (corrupted)		// relinquish control if corrupted
+				return consoleFAILS.step();
+			return super.step();
+		}
+		
 		/**
 		 * Performs some sort of functionality based on keys PRESSED by this console's active player
 		 * @param	key		[0-4] representing R, U, L, D, Action
@@ -149,6 +162,11 @@ package vgdev.stroll.props.consoles
 		public function onKey(key:int):void
 		{
 			// -- override this function
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.onKey(key);
+				return;
+			}
 		}
 		
 		/**
@@ -158,6 +176,11 @@ package vgdev.stroll.props.consoles
 		public function holdKey(keys:Array):void
 		{
 			// -- override this function
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.holdKey(keys);
+				return;
+			}
 		}
 		
 		/**
@@ -186,20 +209,24 @@ package vgdev.stroll.props.consoles
 					mc_object.prompt.visible = false;		// hide the '!'
 	
 					// show the appropriate module UI
-					hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME.toLowerCase());
-					cg.hudTitles[closestPlayer.playerID].visible = true;
-					cg.hudTitles[closestPlayer.playerID].text = CONSOLE_NAME;
+					//hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME.toLowerCase());
+					//cg.hudTitles[closestPlayer.playerID].visible = true;
+					//cg.hudTitles[closestPlayer.playerID].text = CONSOLE_NAME;
+					setHUD(CONSOLE_NAME);
 					updateHUD(true);
 					if (cg.tails.tutorialMode)
 					{
-						hud_consoles[closestPlayer.playerID].mc_tutorial.visible = true;
-						hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(CONSOLE_NAME.toLowerCase());
+						//hud_consoles[closestPlayer.playerID].mc_tutorial.visible = true;
+						//hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(CONSOLE_NAME.toLowerCase());
 						
 						cg.tails.showHalf(closestPlayer.playerID == 0, TUT_TITLE, TUT_MSG);
 					}
 					mc_object.mc_newIndicator.visible = false;
 					
 					SoundManager.playSFX("sfx_UI_Beep_C", .5);
+					
+					if (corrupted)
+						consoleFAILS.onAction(p);
 				}
 			}
 		}
@@ -208,15 +235,16 @@ package vgdev.stroll.props.consoles
 		 * Called when a player leaves this console
 		 */
 		public function onCancel():void
-		{
+		{			
 			if (inUse)
 			{
 				inUse = false;
 				mc_object.gotoAndStop(2);									// change console graphic to 'shut off'
 				mc_object.prompt.visible = true;							// show the '!'
-				hud_consoles[closestPlayer.playerID].gotoAndStop("none");	// reset the module UI
-				cg.hudTitles[closestPlayer.playerID].visible = false;
-				hud_consoles[closestPlayer.playerID].mc_tutorial.visible = false;
+				//hud_consoles[closestPlayer.playerID].gotoAndStop("none");	// reset the module UI
+				//cg.hudTitles[closestPlayer.playerID].visible = false;
+				//hud_consoles[closestPlayer.playerID].mc_tutorial.visible = false;
+				setHUD("none");
 				cg.tails.hideHalf(closestPlayer.playerID == 0);
 				updateHUD(false);
 				closestPlayer = null;
@@ -226,13 +254,85 @@ package vgdev.stroll.props.consoles
 		}
 		
 		/**
+		 * Update the module HUD
+		 * @param	label		Name of the module
+		 */
+		protected function setHUD(label:String):void
+		{			
+			var cName:String = label;
+			if (label != "none" && corrupted)
+			{
+				label = debuggable ? "fails" : "corrupt";
+				cName = "ERROR";
+			}
+			
+			hud_consoles[closestPlayer.playerID].gotoAndStop(label.toLowerCase());
+			hud_consoles[closestPlayer.playerID].mc_tutorial.visible = label != "none";
+			cg.hudTitles[closestPlayer.playerID].visible = label != "none";
+			cg.hudTitles[closestPlayer.playerID].text = cName;
+			if (cg.tails.tutorialMode && label != "none")
+			{
+				hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(label.toLowerCase());
+				cg.hudTitles[closestPlayer.playerID].text = label;
+			}
+			
+			//trace("[ABST_Console] Setting HUD for", CONSOLE_NAME, label, closestPlayer.playerID);
+		}
+		
+		/**
+		 * Potentially do a one-off bad thing if the console is disabled
+		 */
+		public function disableConsole():void
+		{
+			// -- override this function
+		}
+		
+		/**
 		 * Do something when the player first arrives, or leaves, this console
 		 * @param	isActive		true if the player just got here; false if the player is leaving
 		 */
-		protected function updateHUD(isActive:Boolean):void
+		public function updateHUD(isActive:Boolean):void
 		{
 			// override this function
+			if (corrupted)
+				consoleFAILS.updateHUD(isActive);
 		}
+		
+		// ------- FAILS METHODS BELOW ----------------------------------------------------------------
+		/**
+		 * Corrupt or uncorrupt the console
+		 * @param	isCorrupt		true if the console should be corrupted
+		 */
+		public function setCorrupt(isCorrupt:Boolean):void
+		{
+			corrupted = isCorrupt;
+			if (corrupted)
+			{
+				consoleFAILS = new ConsoleFAILS(cg, mc_object, players, this);
+				if (inUse)
+					closestPlayer.onCancel();
+				disableConsole();
+			}
+			else
+			{
+				consoleFAILS.destroy();
+				consoleFAILS = null;
+			}
+		}
+		
+		/**
+		 * Make this console available to format (ignored if not corrupted)
+		 * @param	isDebuggable		true if the console can be debugged
+		 */
+		public function setReadyToFormat(isDebuggable:Boolean):void
+		{
+			if (!corrupted) return;
+			if (consoleFAILS != null && consoleFAILS.freeTimer != -1) return;
+			debuggable = isDebuggable;
+			if (inUse)
+				setHUD(CONSOLE_NAME);
+		}
+		// ------- FAILS METHODS ABOVE ----------------------------------------------------------------
 				
 		/**
 		 * Gets the MovieClip representing the module
@@ -243,7 +343,7 @@ package vgdev.stroll.props.consoles
 		{
 			if (closestPlayer == null)
 			{
-				trace("[ABST_Console] WARNING: getHUD called without an active player!");
+				trace("[ABST_Console] WARNING: getHUD called without an active player!", CONSOLE_NAME);
 				return null;
 			}
 			else if (CONSOLE_NAME == "None")

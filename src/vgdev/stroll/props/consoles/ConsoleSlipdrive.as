@@ -40,7 +40,10 @@ package vgdev.stroll.props.consoles
 		
 		override public function step():Boolean 
 		{
-			if (inUse && !isSpooling)		// "range" or "jammed"
+			if (corrupted)		// relinquish control if corrupted
+				return consoleFAILS.step();
+			
+			if (inUse && !isSpooling)
 				updateHUD(true);
 			
 			if (missCounter > 0)
@@ -61,13 +64,13 @@ package vgdev.stroll.props.consoles
 		
 		override public function onKey(key:int):void
 		{		
-			if (hp == 0) return;
+			if (hp == 0) return;			
 			
-			//TEMPORARY LEVEL SKIP CHEAT! MUST REMOVE LATER!-----
-			//cg.ship.jump();
-			//return;
-			///--------------------------------------------------
-			
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.onKey(key);
+				return;
+			}
 			
 			// if the slipdrive isn't spooling, start spooling
 			if (!isSpooling)
@@ -115,8 +118,14 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
-		override protected function updateHUD(isActive:Boolean):void 
+		override public function updateHUD(isActive:Boolean):void 
 		{
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.updateHUD(isActive);
+				return;
+			}
+			
 			if (isActive && missCounter == 0)
 			{
 				switch (cg.ship.isJumpReady())
@@ -205,22 +214,29 @@ package vgdev.stroll.props.consoles
 		
 		private function setText(str:String):void
 		{
-			if (closestPlayer == null) return;
+			if (closestPlayer == null || corrupted) return;
+			
+			var ui:MovieClip = getHUD();
+			if (ui == null) return;
+			
 			if (str == null)
 			{
-				getHUD().tf_problem.visible = false;
-				getHUD().mc_cover.visible = true;
+				ui.tf_problem.visible = false;
+				ui.mc_cover.visible = true;
 			}
 			else
 			{
-				getHUD().tf_problem.visible = true;
-				getHUD().tf_problem.text = str;
-				getHUD().mc_cover.visible = false;
+				ui.tf_problem.visible = true;
+				ui.tf_problem.text = str;
+				ui.mc_cover.visible = false;
 			}
 		}
 		
 		override public function onCancel():void 
 		{
+			if (corrupted)		// relinquish control if corrupted
+				consoleFAILS.onCancel();
+
 			removeArrows();
 			missCounter = 0;
 			setText("");

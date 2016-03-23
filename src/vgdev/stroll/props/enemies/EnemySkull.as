@@ -17,6 +17,8 @@ package vgdev.stroll.props.enemies
 		private var moveTgt:Point = new Point(System.getRandInt(-2, 1), System.getRandInt(-2, 1));
 		private var atTgt:Boolean = false;
 		
+		public var projSizeMult:Number = 1;		// helper for 'fake boss' in FAILS
+		
 		public function EnemySkull(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			super(_cg, _mc_object, attributes);
@@ -82,7 +84,8 @@ package vgdev.stroll.props.enemies
 																		"life":			300,
 																		"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 																		"spd":			2,
-																		"style":		"fireball"
+																		"style":		"fireball",
+																		"scale":		projSizeMult
 																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}

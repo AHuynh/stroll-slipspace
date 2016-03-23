@@ -240,6 +240,21 @@ package vgdev.stroll
 		}
 		
 		/**
+		 * Place the given value inside the limits using wrapping
+		 * @param	val		The value to wrap
+		 * @param	limit	The max/min value
+		 * @return			The wrapped value
+		 */
+		public static function wrap(val:Number, limit:Number):Number
+		{
+			if (val > limit)
+				val -= limit * 2;
+			else if (val < -limit)
+				val += limit * 2;
+			return val;
+		}
+		
+		/**
 		 * Convert the name of a color to the corresponding uint code
 		 * @param	colStr		color name, such as "red"
 		 * @return				corespoinding uint (white if not found)

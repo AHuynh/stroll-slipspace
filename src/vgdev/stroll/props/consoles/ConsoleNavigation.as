@@ -24,6 +24,13 @@ package vgdev.stroll.props.consoles
 		
 		override public function holdKey(keys:Array):void 
 		{
+			if (hp == 0) return;
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.holdKey(keys);
+				return;
+			}
+			
 			if (keys[0]) {
 				cg.ship.adjustHeading(ADJUST_SENSITIVITY);
 			}
@@ -33,9 +40,15 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
-		override protected function updateHUD(isActive:Boolean):void
+		override public function updateHUD(isActive:Boolean):void
 		{
 			if (isActive) {
+				if (corrupted)		// relinquish control if corrupted
+				{
+					consoleFAILS.updateHUD(isActive);
+					return;
+				}
+			
 				getHUD().mc_navbar.x = 68 * cg.ship.shipHeading;
 				getHUD().mc_okay.visible = cg.ship.isHeadingGood();
 			}
@@ -51,7 +64,11 @@ package vgdev.stroll.props.consoles
 		override public function step():Boolean 
 		{
 			if (inUse)
+			{
+				if (corrupted)		// relinquish control if corrupted
+					return consoleFAILS.step();
 				updateHUD(true);
+			}
 			return super.step();
 		}
 	}

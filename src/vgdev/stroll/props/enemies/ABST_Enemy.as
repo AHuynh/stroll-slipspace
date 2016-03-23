@@ -97,6 +97,22 @@ package vgdev.stroll.props.enemies
 		}
 		
 		/**
+		 * Directly set a protected member
+		 * @param	attr	key
+		 * @param	val		value to set the key
+		 */
+		public function setAttribute(attr:String, val:*):void
+		{
+			switch (attr)
+			{
+				case "spd":			spd = val;			return;
+				case "drift":		drift = val;		return;
+				case "cooldowns":	cooldowns = val;	return;
+				default:		trace("[ABST_Enemy] Couldn't handle setting", attr, val);
+			}
+		}
+		
+		/**
 		 * Set the color tint of this enemy, accounting for the 'hit flash'
 		 * @param	col		uint color to use
 		 */

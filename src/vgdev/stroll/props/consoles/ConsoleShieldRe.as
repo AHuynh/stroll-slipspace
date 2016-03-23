@@ -8,6 +8,7 @@ package vgdev.stroll.props.consoles
 	
 	/**
 	 * Module that can reboot the shields
+	 * Shields cannot charge if this module is destroyed/disabled (HP is 0)
 	 * @author Alexander Huynh
 	 */
 	public class ConsoleShieldRe extends ABST_Console 
@@ -99,6 +100,9 @@ package vgdev.stroll.props.consoles
 		
 		override public function step():Boolean 
 		{
+			if (corrupted)		// relinquish control if corrupted
+				return consoleFAILS.step();
+			
 			// replace overridden text with standard message if appropriate
 			if (textCooldown > 0)
 				if (--textCooldown == 0)
@@ -147,6 +151,12 @@ package vgdev.stroll.props.consoles
 		
 		override public function onKey(key:int):void 
 		{
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.onKey(key);
+				return;
+			}
+			
 			// flash text if puzzle unable to start
 			if (puzzleCooldown > 0)
 			{
@@ -444,6 +454,7 @@ package vgdev.stroll.props.consoles
 		override public function onAction(p:Player):void 
 		{
 			super.onAction(p);
+			if (corrupted) return;
 			if (closestPlayer == null) return;
 			var ui:MovieClip = getHUD();
 			for each (var mc:MovieClip in shieldsList)
@@ -457,6 +468,9 @@ package vgdev.stroll.props.consoles
 		// remove the maze from this module
 		override public function onCancel():void 
 		{
+			if (corrupted)		// relinquish control if corrupted
+				consoleFAILS.onCancel();
+			
 			if (!inUse) return;
 			var ui:MovieClip = getHUD();
 			for each (var mc:MovieClip in shieldsList)
@@ -466,6 +480,18 @@ package vgdev.stroll.props.consoles
 			if (puzzleActive)
 				stopPuzzle();
 			super.onCancel();
+		}
+		
+		override public function disableConsole():void 
+		{
+			cg.ship.shieldsEnabled = false;
+		}
+		
+		override public function changeHP(amt:Number):Boolean 
+		{
+			var isZero:Boolean =  super.changeHP(amt);
+			cg.ship.shieldsEnabled = !corrupted && !isZero;
+			return isZero;
 		}
 		
 		/*	Puzzle Tile reference

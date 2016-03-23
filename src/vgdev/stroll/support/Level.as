@@ -7,6 +7,7 @@ package vgdev.stroll.support
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.support.splevels.ABST_SPLevel;
 	import vgdev.stroll.support.splevels.SPLevelAnomalies;
+	import vgdev.stroll.support.splevels.SPLevelFAILS;
 	import vgdev.stroll.support.splevels.SPLevelPeeps;
 	import vgdev.stroll.System;
 	
@@ -33,6 +34,8 @@ package vgdev.stroll.support
 		
 		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
 		private var en_boss_peeps:Class;
+		[Embed(source="../../../../json/en_boss_fails.json", mimeType="application/octet-stream")]
+		private var en_boss_fails:Class;
 		
 		[Embed(source="../../../../json/en_swipe.json", mimeType="application/octet-stream")]
 		private var en_swipe:Class;
@@ -56,7 +59,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		public var sectorIndex:int = 0;
+		public var sectorIndex:int = 7;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -87,7 +90,9 @@ package vgdev.stroll.support
 												
 												JSON.parse(new en_anomalyfieldcolored()),
 												JSON.parse(new en_swipe()),
-												JSON.parse(new en_skulls())
+												JSON.parse(new en_skulls()),
+											
+												JSON.parse(new en_boss_fails())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -98,7 +103,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_skulls())];
+											rawEncountersJSON = [JSON.parse(new en_boss_fails())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -284,7 +289,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
+				//if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
 					choices.push(e);
 			}
 			
@@ -299,6 +304,10 @@ package vgdev.stroll.support
 			parsedEncounters[choices[choiceIndex]["id"]]["used"] = true;
 			trace("Starting encounter called: '" + encounter["id"] + "'");
 			
+			cg.ship.slipRange = encounter["slip_range"];
+			cg.ship.jammable = encounter["jamming_min"];
+			TAILSmessage = encounter["TAILS"];
+			
 			if (encounter["spLevel"] != null)
 			{
 				switch (encounter["spLevel"])
@@ -312,6 +321,9 @@ package vgdev.stroll.support
 					case "bossPeeps":
 						spLevel = new SPLevelPeeps(cg);
 					break;
+					case "bossFails":
+						spLevel = new SPLevelFAILS(cg);
+					break;
 					default:
 						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);
 				}
@@ -324,18 +336,11 @@ package vgdev.stroll.support
 			}
 			
 			waveIndex = 0;
-			
-			cg.ship.slipRange = encounter["slip_range"];
-			cg.ship.jammable = encounter["jamming_min"];
-			TAILSmessage = encounter["TAILS"];
-
 			counter = 0;					// reset time elapsed in this encounter		
 			
 			// update progress meter
 			cg.gui.mc_progress.setSectorProgress(sectorIndex);
-			
-			
-			
+	
 			// TODO dynamic background
 			cg.background.setRandomStyle(int(sectorIndex / 5), System.getRandCol());
 			

@@ -39,6 +39,9 @@ package vgdev.stroll.props.consoles
 		// reduce shield switch cooldown
 		override public function step():Boolean
 		{
+			if (corrupted)		// relinquish control if corrupted
+				return consoleFAILS.step();
+			
 			if (cdCount > 0)		
 				cdCount--;
 			if (inUse)
@@ -48,6 +51,12 @@ package vgdev.stroll.props.consoles
 		
 		override public function onKey(key:int):void
 		{
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.onKey(key);
+				return;
+			}
+			
 			if (cdCount != 0 || hp == 0)		// quit if shield switch is on cooldown or console is destroyed
 				return;
 				
@@ -67,8 +76,14 @@ package vgdev.stroll.props.consoles
 		}
 		
 		// update the active color displayed on the module HUD
-		override protected function updateHUD(isActive:Boolean):void
+		override public function updateHUD(isActive:Boolean):void
 		{
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.updateHUD(isActive);
+				return;
+			}
+			
 			if (isActive)
 			{
 				//getHUD().shieldIndicator.gotoAndStop(currShield + 2);

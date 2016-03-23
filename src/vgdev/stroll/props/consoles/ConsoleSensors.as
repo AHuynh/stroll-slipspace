@@ -20,15 +20,28 @@ package vgdev.stroll.props.consoles
 			TUT_MSG = "Adjust the ship's sensors to get a better view of outside."
 		}
 		
-		override protected function updateHUD(isActive:Boolean):void 
+		override public function updateHUD(isActive:Boolean):void 
 		{
 			if (isActive)
+			{
+				if (corrupted)		// relinquish control if corrupted
+				{
+					consoleFAILS.updateHUD(isActive);
+					return;
+				}
 				holdKey([false, false, false, false]);
+			}
 		}
 		
 		override public function holdKey(keys:Array):void
 		{
 			if (hp == 0) return;
+			
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.holdKey(keys);
+				return;
+			}
 			
 			if (keys[0])
 				cg.camera.moveCameraFocus(new Point(-1, 0));

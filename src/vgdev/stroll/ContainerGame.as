@@ -144,11 +144,11 @@
 			consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, false));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, false));
 			
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, false));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, false));
 			
 			var i:int;
 			
@@ -196,7 +196,7 @@
 			
 			tails.show(TAILS_DEFAULT);
 			tails.showNew = true;
-			camera.setCameraFocus(new Point(0, -100));
+			//camera.setCameraFocus(new Point(0, -100));
 		}
 		
 		/**
@@ -411,19 +411,51 @@
 		public function addFires(num:int):void
 		{
 			var pos:Point;
-			var tries:int;		// give up after trying too many times
 			for (var i:int = 0; i < num; i++)
 			{
-				tries = 25;
-				do
-				{
-					pos = new Point(System.getRandNum(-shipInsideMask.width, shipInsideMask.width) * .5  + System.GAME_OFFSX,
-									System.getRandNum( -shipInsideMask.height, shipInsideMask.height) * .5  + System.GAME_OFFSY);
-				} while (shipInsideMask.hitTestPoint(pos.x, pos.y, true) && tries-- > 0);
-				pos.x -= System.GAME_OFFSX;
-				pos.y -= System.GAME_OFFSY;
+				pos = getRandomShipLocation();
+				if (pos == null) continue;
 				addToGame(new InternalFire(this, new SWC_Decor(), pos, shipInsideMask), System.M_FIRE);
 			}
+		}
+		
+		/**
+		 * Create sparks randomly in the ship
+		 * @param	num		number of sparks
+		 */
+		public function addSparks(num:int):void
+		{
+			var pos:Point;
+			for (var i:int = 0; i < num; i++)
+			{
+				pos = getRandomShipLocation();
+				if (pos == null) continue;
+				addDecor("electricSparks", {
+						"x": pos.x,
+						"y": pos.y,
+						"dr": System.getRandNum( -40, 40),
+						"rot": System.getRandNum(0, 360),
+						"scale": System.getRandNum(.7, 1.5)
+				});
+			}
+		}
+		
+		/**
+		 * Get a random valid point in the ship
+		 * @return		random point in the ship, or null if one wasn't found
+		 */
+		public function getRandomShipLocation():Point
+		{
+			var pos:Point;
+			var tries:int = 25;		// give up after trying too many times
+			do
+			{
+				pos = new Point(System.getRandNum(-shipInsideMask.width, shipInsideMask.width) * .5  + System.GAME_OFFSX,
+								System.getRandNum( -shipInsideMask.height, shipInsideMask.height) * .5  + System.GAME_OFFSY);
+			} while (shipInsideMask.hitTestPoint(pos.x, pos.y, true) && tries-- > 0);
+			pos.x -= System.GAME_OFFSX;
+			pos.y -= System.GAME_OFFSY;
+			return tries == 0 ? null : pos;
 		}
 		
 		/**

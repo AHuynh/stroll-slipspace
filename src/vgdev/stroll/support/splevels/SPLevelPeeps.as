@@ -29,6 +29,8 @@ package vgdev.stroll.support.splevels
 		{
 			super(_cg);
 			consoleSlip = cg.game.mc_ship.mc_console_slipdrive.parentClass;
+			consoleSlip.forceOverride = true;
+			cg.ship.setBossOverride(true);
 		}
 		
 		override public function step():void 
@@ -42,6 +44,9 @@ package vgdev.stroll.support.splevels
 					elapseFlag = true;
 					cg.managerMap[System.M_ENEMY].killAll();			// kill all adds
 					cg.managerMap[System.M_EPROJECTILE].killAll();		// kill all enemy projectiles
+					consoleSlip.forceOverride = false;
+					cg.ship.setBossOverride(false);
+					cg.ship.slipRange = 1;
 				}
 				return;
 			}

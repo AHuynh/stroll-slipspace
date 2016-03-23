@@ -1,0 +1,16 @@
+{
+  "settings": {
+	"id": "boss_fails",
+	"background": "default",
+	"difficulty_range": [8, 8],
+    "jamming_min": 1,
+    "slip_range": 5.0,
+	"type": "Boss",
+	"TAILS": "Look out! I've detected another one of those really strong monsters! A boss? Uhh, yeah. One of those.\n\nGet ready to defeat it!",
+	"spLevel": "bossFails"
+  },
+  "waves": [
+	{
+	}
+  ]
+}

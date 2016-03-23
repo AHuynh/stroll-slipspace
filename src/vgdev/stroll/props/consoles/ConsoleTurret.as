@@ -71,6 +71,9 @@ package vgdev.stroll.props.consoles
 		// update cooldown
 		override public function step():Boolean
 		{
+			if (corrupted)		// relinquish control if corrupted
+				return consoleFAILS.step();
+			
 			if (cdCount > 0)
 				cdCount--;
 			if (inUse)
@@ -85,6 +88,12 @@ package vgdev.stroll.props.consoles
 		override public function holdKey(keys:Array):void
 		{
 			if (hp == 0) return;
+			
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.holdKey(keys);
+				return;
+			}
 			
 			var used:Array = [false, false];
 			
@@ -128,8 +137,14 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
-		override protected function updateHUD(isActive:Boolean):void 
+		override public function updateHUD(isActive:Boolean):void 
 		{
+			if (corrupted)		// relinquish control if corrupted
+			{
+				consoleFAILS.updateHUD(isActive);
+				return;
+			}
+			
 			if (isActive)
 			{
 				var trot:Number = turret.nozzle.rotation;

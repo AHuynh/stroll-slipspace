@@ -17,12 +17,14 @@ package vgdev.stroll.support
 		private var hp:Number = hpMax;				// current hull strength
 		
 		// -- Shield --------------------------------------------------------------------------------------
-		public var mc_shield:MovieClip;			// reference to the shield MovieClip
+		public var shieldsEnabled:Boolean = true;	// if false, shields don't recharge
+		
+		public var mc_shield:MovieClip;				// reference to the shield MovieClip
 		private var shieldMax:Number = 100;			// actual value of shields
 		private var shield:Number = shieldMax;		// max value of shields
 		
 		public var shieldReCurr:int = 0;			// current reboot timer
-		public var shieldRecharge:int = 90;		// time since last hit until shield starts to recharge
+		public var shieldRecharge:int = 90;			// time since last hit until shield starts to recharge
 		private var shieldReAmt:Number = .25;		// amount to recharge shield per frame
 		
 		private const SHIELD_DA:Number = .03;		// amount to fade shield alpha per frame
@@ -56,6 +58,8 @@ package vgdev.stroll.support
 		
 		public var slipSpeed:Number = MAX_SLIP_SPEED;	// amount to reduce slipRange per frame
 		public var jammable:int = 0;					// if non-zeo, prevents jumping if at least jammable enemies are present
+		
+		private var bossOverride:Boolean = false;		// if true, override normal vars; something special is happening
 		// ------------------------------------------------------------------------------------------------
 		
 		private const BAR_BIG_WIDTH:Number = 157.7;		// SP/HP bar
@@ -266,6 +270,8 @@ package vgdev.stroll.support
 		 */
 		private function updateShields():void
 		{
+			if (!shieldsEnabled) return;
+			
 			if (shieldReCurr > 0)
 			{
 				if (--shieldReCurr == 0)
@@ -319,7 +325,7 @@ package vgdev.stroll.support
 		 * Gradually drift the ship's heading away from the center
 		 */
 		private function updateNavigation():void {
-			if (cg.atHomeworld())		// quit if at a homeworld
+			if (cg.atHomeworld() || bossOverride)		// quit if at a homeworld or in a special sector
 				return;
 			
 			scaleHeading(HEADING_RUNAWAY);
@@ -333,6 +339,7 @@ package vgdev.stroll.support
 		 */
 		private function updateSlip():void
 		{
+			if (bossOverride) return;
 			if (slipRange > 0)
 			{
 				slipRange = System.changeWithLimit(slipRange, -slipSpeed, 0);
@@ -345,6 +352,17 @@ package vgdev.stroll.support
 				else
 					cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
 			}
+		}
+		
+		/**
+		 * Halt progress in special scenarios
+		 * @param	isOverride		true to override slipdrive progress
+		 */
+		public function setBossOverride(isOverride:Boolean):void
+		{
+			bossOverride = isOverride;
+			if (bossOverride)
+				cg.gui.tf_distance.text = "ERROR";
 		}
 		
 		/**
