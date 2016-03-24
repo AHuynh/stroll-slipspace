@@ -20,5 +20,10 @@ package vgdev.stroll.support.splevels
 			framesElapsed++;
 			// -- override this function
 		}
+		
+		public function destroy():void
+		{
+			// -- override this function
+		}
 	}
 }

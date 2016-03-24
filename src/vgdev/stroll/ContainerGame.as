@@ -35,6 +35,7 @@
 		public var tails:TAILS;
 		public var background:Background;
 		public var alerts:Alerts;
+		public var bossBar:BossBar;
 		
 		/// Whether or not the game is paused
 		public var isPaused:Boolean = false;		// from P
@@ -104,7 +105,8 @@
 			background.setStyle("homeworld");
 			camera = new Cam(this, gui);
 			camera.step();
-			alerts = new Alerts(this, gui.mc_alerts);			
+			alerts = new Alerts(this, gui.mc_alerts);	
+			bossBar = new BossBar(this, gui.mc_bossbar);
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -315,6 +317,7 @@
 			camera.step();
 			alerts.step();
 			background.step(atHomeworld() ? 0 : ship.slipSpeed * 150);
+			bossBar.step();
 			
 			for (var i:int = 0; i < managers.length; i++)
 				managers[i].step();
@@ -356,8 +359,10 @@
 				else if (level.sectorIndex % 4 == 1)
 					SoundManager.playBGM("bgm_calm", System.VOL_BGM);
 					
-				
-				tails.show(level.getTAILS(), boss ? 0 : 120);
+				if (level.sectorIndex == 9)
+					boss = true;
+					
+				tails.show(level.getTAILS(), boss ? 0 : 120, (level.sectorIndex > 8 ? "HEADS" : null));
 				
 				// hide all "New!" and console tutorial messages
 				for each (var console:ABST_Console in consoles)
@@ -430,6 +435,15 @@
 		}
 		
 		/**
+		 * Add fire to the given position in the ship
+		 * @param	loc		location of fire
+		 */
+		public function addFireAt(loc:Point):void
+		{
+			addToGame(new InternalFire(this, new SWC_Decor(), loc, shipInsideMask), System.M_FIRE);
+		}
+		
+		/**
 		 * Create sparks randomly in the ship
 		 * @param	num		number of sparks
 		 */
@@ -440,6 +454,27 @@
 			{
 				pos = getRandomShipLocation();
 				if (pos == null) continue;
+				addDecor("electricSparks", {
+						"x": pos.x,
+						"y": pos.y,
+						"dr": System.getRandNum( -40, 40),
+						"rot": System.getRandNum(0, 360),
+						"scale": System.getRandNum(.7, 1.5)
+				});
+			}
+		}
+		
+		/**
+		 * Create sparks at the give position, with some vary
+		 * @param	num		number of sparks
+		 * @param	loc		location of sparks
+		 */
+		public function addSparksAt(num:int, loc:Point):void
+		{
+			var pos:Point;
+			for (var i:int = 0; i < num; i++)
+			{
+				pos = new Point(loc.x + System.getRandNum( -5, 5), loc.y + System.getRandNum( -5, 5));
 				addDecor("electricSparks", {
 						"x": pos.x,
 						"y": pos.y,

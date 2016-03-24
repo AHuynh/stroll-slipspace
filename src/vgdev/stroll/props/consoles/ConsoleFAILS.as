@@ -27,6 +27,7 @@ package vgdev.stroll.props.consoles
 		
 		private var targets:Array;
 		private var targetDeltas:Array;
+		private var tgtTotal:int = 1;
 		
 		private const ARENA_HEIGHT:Number = 48;
 		private const ARENA_WIDTH:Number = 136;
@@ -66,7 +67,8 @@ package vgdev.stroll.props.consoles
 			targets = [];
 			targetDeltas = [];
 			// create targets
-			for (var i:int = 2 + int(difficulty / 2); i >= 0; i--)
+			tgtTotal = 3 + int(difficulty / 2);
+			for (var i:int = 0; i < tgtTotal; i++)
 			{
 				targets.push(new Point(System.getRandNum( -ARENA_WIDTH, ARENA_WIDTH) * .5,
 									   System.getRandNum( -ARENA_HEIGHT, ARENA_HEIGHT) * .5));
@@ -103,7 +105,7 @@ package vgdev.stroll.props.consoles
 				{
 					ui = getHUD();
 					if (ui != null && MovieClip(ui.parent).currentFrameLabel == "fails")
-						ui.tf_cooldown.text = "Rebooting";
+						ui.tf_cooldown.text = "Rebooting\nnow...";
 				}
 				return false;
 			}
@@ -126,13 +128,27 @@ package vgdev.stroll.props.consoles
 			ui.mc_container.graphics.clear();
 			ui.mc_container.graphics.lineStyle(1, System.COL_WHITE);
 			
+			var len:int = targets.length;
+			ui.tf_data.text = (tgtTotal - len).toString() + "/" + tgtTotal.toString();
+			
 			var tgt:Point;
-			for (var i:int = targets.length - 1; i >= 0; i--)
+			for (var i:int = len - 1; i >= 0; i--)
 			{
 				tgt = targets[i];
+				// chance to reset existing targets
+				if (difficulty >= 4 && Math.random() > .99)
+				{
+					tgt.x = System.getRandNum( -ARENA_WIDTH, ARENA_WIDTH) * .5;
+					tgt.y = System.getRandNum( -ARENA_HEIGHT, ARENA_HEIGHT) * .5;
+					targetDeltas[i].x = System.getRandNum(0, Math.max(0, difficulty - 2) * .5) * (Math.random() > .5 ? 1 : -1);
+					targetDeltas[i].y = System.getRandNum(0, Math.max(0, difficulty - 2) * .5) * (Math.random() > .5 ? 1 : -1);
+				}
 				// update position with wrapping
-				tgt.x = System.wrap(tgt.x + targetDeltas[i].x, .5 * ARENA_WIDTH);
-				tgt.y = System.wrap(tgt.y + targetDeltas[i].y, .5 * ARENA_HEIGHT);
+				else
+				{
+					tgt.x = System.wrap(tgt.x + targetDeltas[i].x, .5 * ARENA_WIDTH);
+					tgt.y = System.wrap(tgt.y + targetDeltas[i].y, .5 * ARENA_HEIGHT);
+				}
 				
 				// orb collected
 				if (System.getDistance(marker.x, marker.y, tgt.x, tgt.y) < COLLECT_RANGE)
@@ -153,9 +169,13 @@ package vgdev.stroll.props.consoles
 				marker.visible = false;
 				ui.tf_cooldown.visible = true;
 				ui.tf_cooldown.text = "System\nformatted!";
+				ui.tf_data.text = "OK";
+				ui.mc_marker.x = 94;
 				freeTimer = 60;
 				difficulty++;
 			}
+			else
+				ui.mc_marker.x = 48 + 46 * ((tgtTotal - len) / tgtTotal);
 			
 			return false;
 		}
@@ -188,8 +208,9 @@ package vgdev.stroll.props.consoles
 			var ui:MovieClip = getHUD();
 			if (ui == null || MovieClip(ui.parent).currentFrameLabel != "fails") return;
 			
-			ui.mc_error.visible = false;
 			ui.mc_container.mc_marker.visible = false;
+			ui.mc_marker.x = 48;
+			ui.tf_data.text = "RDY";
 		}
 		
 		override public function onCancel():void 

@@ -82,11 +82,39 @@ package vgdev.stroll.support
 
 			cg.isTailsPaused = showForFrames == 0;
 
-			// TODO dynamically
-			if (Math.random() > .5)
-				tails.avatar.talkForLoops(6);
-			else
-				tails.avatar.gotoAndPlay("idleSide");
+			switch (emotion)
+			{
+				case null:
+					if (Math.random() > .5)
+						tails.avatar.talkForLoops(6, "talk");
+					else
+						tails.avatar.gotoAndPlay("idleSide");
+					tails.base.gotoAndStop(1);
+				break;
+				case "FAILS_idle":
+					if (Math.random() > .5)
+						tails.avatar.gotoAndPlay("idleFails");
+					else
+						tails.avatar.gotoAndPlay("idleSideFails");
+					tails.base.gotoAndStop(2);
+				break;
+				case "FAILS_talk":
+					tails.avatar.talkForLoops(6, "talkFails");
+					tails.base.gotoAndStop(2);
+				break;
+				case "FAILS_pissed":
+					tails.avatar.talkForLoops(8, "talkPissed");
+					tails.base.gotoAndStop(2);
+				break;
+				case "FAILS_incredulous":
+					tails.avatar.talkForLoops(10, "talkIncredulous");
+					tails.base.gotoAndStop(2);
+				break;
+				case "HEADS":
+					tails.avatar.gotoAndPlay("idleHeads");
+					tails.base.gotoAndStop(3);
+				break;
+			}
 		}
 		
 		/**

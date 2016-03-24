@@ -3,6 +3,7 @@ package vgdev.stroll.props.consoles
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.System;
 	
 	/**
 	 * Adjusts the view
@@ -10,6 +11,7 @@ package vgdev.stroll.props.consoles
 	 */
 	public class ConsoleSensors extends ABST_Console 
 	{
+		private var corruptTimer:int = -1;
 		
 		public function ConsoleSensors(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
@@ -18,6 +20,23 @@ package vgdev.stroll.props.consoles
 			TUT_SECTOR = 4;
 			TUT_TITLE = "Sensors Module";
 			TUT_MSG = "Adjust the ship's sensors to get a better view of outside."
+		}
+		
+		override public function step():Boolean 
+		{
+			if (corruptTimer != -1)
+			{
+				corruptTimer--;
+				if (corruptTimer % 60 == 0)
+					cg.camera.setCameraFocus(new Point(System.getRandNum( -System.GAME_HALF_WIDTH, System.GAME_HALF_WIDTH) * .7,
+														System.getRandNum(-System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) * .7));
+			}
+			return super.step();
+		}
+		
+		public function corrupt(time:int):void
+		{
+			corruptTimer = time;
 		}
 		
 		override public function updateHUD(isActive:Boolean):void 

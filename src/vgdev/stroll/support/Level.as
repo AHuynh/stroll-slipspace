@@ -163,7 +163,7 @@ package vgdev.stroll.support
 			if (++counter >= counterNext)
 			{				
 				if (waves[waveIndex]["TAILS"] != null)
-					cg.tails.show(waves[waveIndex]["TAILS"], System.TAILS_NORMAL);
+					cg.tails.show(waves[waveIndex]["TAILS"], System.TAILS_NORMAL, (sectorIndex > 8 ? "HEADS" : null));
 					
 				var repeat:int = waves[waveIndex]["repeat"] == null ? 1 : waves[waveIndex]["repeat"];
 				waveColor = System.getRandCol();
@@ -292,7 +292,10 @@ package vgdev.stroll.support
 		public function nextSector():Boolean
 		{
 			if (spLevel)
+			{
+				spLevel.destroy();
 				spLevel = null;
+			}
 			
 			sectorIndex++;
 			var choices:Array = [];
@@ -358,6 +361,8 @@ package vgdev.stroll.support
 		
 		public function getTAILS():String
 		{
+			if (sectorIndex == 9)
+				return "TAILS not found.\nBackup AI now in control.\n\nContinue mission imperative. Deliver slipportal. Y/N?";
 			return TAILSmessage;
 		}
 		

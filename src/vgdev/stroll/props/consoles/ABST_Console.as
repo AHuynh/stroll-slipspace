@@ -88,9 +88,12 @@ package vgdev.stroll.props.consoles
 			{
 				mc_object.mc_pad.gotoAndStop(unlocked ? CONSOLE_NAME.toLowerCase() : 1);
 				if (unlocked)
-					mc_object.base.gotoAndPlay(1);
+					mc_object.base.gotoAndPlay(corrupted ? "corrupt" : 1);
 				else
 					mc_object.base.gotoAndStop("off");
+			
+				mc_object.mc_corruption.visible = corrupted;
+				mc_object.mc_fixIndicator.visible = false;
 			}
 			else	// Omnitool
 			{
@@ -206,8 +209,8 @@ package vgdev.stroll.props.consoles
 				{
 					inUse = true;
 					closestPlayer.sitAtConsole(this);
-					mc_object.gotoAndStop(3);				// change console graphic to 'on'
-					mc_object.prompt.visible = false;		// hide the '!'
+					mc_object.gotoAndStop(corrupted ? 4 : 3);	// change console graphic to 'on'
+					mc_object.prompt.visible = false;			// hide the '!'
 	
 					// show the appropriate module UI
 					//hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME.toLowerCase());
@@ -326,10 +329,13 @@ package vgdev.stroll.props.consoles
 			}
 			else
 			{
+				mc_object.mc_fixIndicator.visible = false;
 				consoleFAILS.destroy();
 				consoleFAILS = null;
 				numCorrupted--;
 			}
+			mc_object.mc_corruption.visible = corrupted;
+			mc_object.base.gotoAndPlay(corrupted ? "corrupt" : 1);
 		}
 		
 		/**
@@ -344,6 +350,7 @@ package vgdev.stroll.props.consoles
 			debuggable = isDebuggable;
 			if (inUse)
 				setHUD(CONSOLE_NAME);
+			mc_object.mc_fixIndicator.visible = debuggable;
 		}
 		// ------- FAILS METHODS ABOVE ----------------------------------------------------------------
 				

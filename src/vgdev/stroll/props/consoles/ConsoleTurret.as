@@ -208,6 +208,15 @@ package vgdev.stroll.props.consoles
 		}
 		
 		/**
+		 * Overwrite the current cooldown count with a new value
+		 * @param	time		Frames to set the cooldown count
+		 */
+		public function setActiveCooldown(time:int):void
+		{
+			cdCount = time;
+		}
+		
+		/**
 		 * Traverse the turret's nozzle by gimbalSpeed in the dir direction with respect to gimbal limits
 		 * @param	dir		direction multiplier, either 1 or -1 for now
 		 */

@@ -85,6 +85,7 @@ package vgdev.stroll.props.consoles
 		override public function disableConsole():void 
 		{
 			cg.ship.setShieldColor(System.COL_WHITE);
+			currShield = -1;
 		}
 		
 		// update the active color displayed on the module HUD

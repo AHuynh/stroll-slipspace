@@ -60,6 +60,7 @@ package vgdev.stroll.support.splevels
 					case System.SECOND * 3:		// spawn boss
 						boss = new EnemyPeeps(cg, new SWC_Enemy(), {} );
 						cg.addToGame(boss, System.M_ENEMY);
+						cg.bossBar.startFight(boss);
 						elapseFlag = false;
 					break;
 					case System.SECOND * 6:		// boss defeated

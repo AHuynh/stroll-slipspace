@@ -17,7 +17,7 @@ package vgdev.stroll.props.enemies
 	{
 		// cooldowns for weapons; can keep track of more than one weapon if desired
 		protected var cooldowns:Array = [60];
-		protected var cdCounts:Array = [0];
+		protected var cdCounts:Array = [30];
 		
 		/// The max distance from the enemy's range ellipse the enemy can stray to; default 20
 		protected var rangeVary:Number = 20;
