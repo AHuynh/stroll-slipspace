@@ -68,6 +68,9 @@ package vgdev.stroll.props
 		private var reviveProgress:Number = 0;
 		private var reviveCounter:int = 0;
 		
+		// animation helpers
+		private var isMoving:Boolean = false;
+		
 		public function Player(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object)
 		{
 			super(_cg, _mc_object, _hitMask);
@@ -256,6 +259,8 @@ package vgdev.stroll.props
 		{
 			activeConsole = console;
 			rooted = isRooted;
+			if (rooted)
+				mc_object.gotoAndStop("idle_rear");
 		}
 		
 		/**
@@ -267,6 +272,8 @@ package vgdev.stroll.props
 			{
 				activeConsole.onCancel();
 				activeConsole = null;
+				if (rooted)
+					mc_object.gotoAndStop("idle_front");
 				rooted = false;
 				manProx.updateProximities(this);
 				updateDepth();
@@ -294,8 +301,8 @@ package vgdev.stroll.props
 				case KEY_RIGHT:
 					if (!rooted)
 					{
-						mc_object.scaleX = -1;
-						mc_object.mc_bar.scaleX = -1;
+						mc_object.scaleX = 1;
+						mc_object.mc_bar.scaleX = 1;
 						pressed = true;
 					}
 					else if (!keysDown[RIGHT])
@@ -318,8 +325,8 @@ package vgdev.stroll.props
 				case KEY_LEFT:
 					if (!rooted)
 					{
-						mc_object.scaleX = 1;
-						mc_object.mc_bar.scaleX = 1;
+						mc_object.scaleX = -1;
+						mc_object.mc_bar.scaleX = -1;
 						pressed = true;
 					}
 					else if (!keysDown[LEFT])
@@ -355,8 +362,8 @@ package vgdev.stroll.props
 					onCancel();
 				break;
 			}
-			if (pressed && mc_object.currentLabel == "idle")
-				mc_object.gotoAndPlay("walk");
+			
+			updateAnimation(false);
 		}
 		
 		/**
@@ -394,8 +401,31 @@ package vgdev.stroll.props
 				break;
 			}
 			
-			if (released && !keysDown[RIGHT] && !keysDown[UP] && !keysDown[LEFT] && !keysDown[DOWN])
-				mc_object.gotoAndStop("idle");
+			updateAnimation(released);
+		}
+		
+		private function updateAnimation(released:Boolean):void
+		{
+			if (released && isMoving && !keysDown[RIGHT] && !keysDown[UP] && !keysDown[LEFT] && !keysDown[DOWN])		// stopped moving
+			{
+				mc_object.gotoAndStop(mc_object.idleFallback);
+				isMoving = false;
+			}
+			else if (!rooted)
+			{
+				var bx:int = (keysDown[RIGHT] ? 1 : 0) + (keysDown[LEFT] ? -1 : 0);
+				var by:int = (keysDown[DOWN] ? 1 : 0) + (keysDown[UP] ? -1 : 0);
+					
+				if (bx != 0 && (!isMoving || mc_object.idleFallback != "idle_side"))
+					mc_object.gotoAndPlay("walk_side");
+				if (by == -1 && (!isMoving || mc_object.idleFallback != "idle_rear"))
+					mc_object.gotoAndPlay("walk_rear");
+				else if (by == 1 && (!isMoving || mc_object.idleFallback != "idle_front"))
+					mc_object.gotoAndPlay("walk_front");
+					
+				if (bx != 0 || by != 0)
+					isMoving = true;
+			}
 		}
 		
 	}

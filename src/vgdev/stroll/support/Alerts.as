@@ -17,6 +17,8 @@ package vgdev.stroll.support
 		private var counter:int = -1;
 		private var ct:ColorTransform;
 		
+		public var isCorrupt:Boolean = false;
+		
 		public function Alerts(_cg:ContainerGame, _alerts:MovieClip) 
 		{
 			cg = _cg;
@@ -30,6 +32,7 @@ package vgdev.stroll.support
 			alerts.mc_incap.visible = false;
 			alerts.mc_fire.visible = false;
 			alerts.mc_intruders.visible = false;
+			alerts.mc_corruption.visible = false;
 		}
 		
 		public function step():void
@@ -47,6 +50,7 @@ package vgdev.stroll.support
 				alerts.mc_fire.visible = cg.managerMap[System.M_FIRE].numObjects() != 0;
 				//alerts.mc_intruders.visible = cg.managerMap[System.M_BOARDERS].numObjects() != 0;
 				alerts.mc_intruders.visible = false;
+				alerts.mc_corruption.visible = isCorrupt;
 			}
 			else if (counter == 15)
 			{

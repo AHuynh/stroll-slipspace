@@ -138,7 +138,10 @@ package vgdev.stroll.support.splevels
 				
 			case 10:	// battle start! fix 1
 					if (framesElapsed == 1)
+					{
 						cg.bossBar.startFight();
+						cg.alerts.isCorrupt = true;
+					}
 					if (framesElapsed == System.SECOND * 4)
 					{
 						cg.tails.show("You'll NEVER be able to format ALL the ship's systems!", System.TAILS_NORMAL, "FAILS_idle");				
@@ -174,13 +177,13 @@ package vgdev.stroll.support.splevels
 					}
 				break;
 				case 12:	// fix 2, taunt
-					if (framesElapsed == System.SECOND * 11)
+					if (framesElapsed == System.SECOND * 7)
 					{
 						cg.tails.show("Not so tough without ME helping, now ARE YOU?!", System.TAILS_NORMAL, "FAILS_talk");
 						for each (c in cg.consoles)
 							c.setReadyToFormat(true);
 					}
-					else if (framesElapsed >= System.SECOND * 20 && framesElapsed % (System.SECOND * 20) == 0)
+					else if (framesElapsed >= System.SECOND * 15 && framesElapsed % (System.SECOND * 20) == 5)
 						cg.tails.show(System.getRandFrom(["Cry all you want! I'm not gonna help!",
 														  "What's the matter? Are you dying? WELL, TOO BAD!",	
 														  "This STUPID O2 encryption needs to GO AWAY!",
@@ -590,8 +593,8 @@ package vgdev.stroll.support.splevels
 		{
 			// kick off players from consoles
 			for each (var p:Player in cg.players)
-			if (p.activeConsole != null && !(p.activeConsole is Omnitool))
-				p.onCancel();
+				if (p.activeConsole != null && !(p.activeConsole is Omnitool))
+					p.onCancel();
 			
 			// collect all console objects
 			var c:ABST_Console;
@@ -620,6 +623,11 @@ package vgdev.stroll.support.splevels
 		 */
 		private function restoreConsoles():void
 		{
+			// kick off players from consoles
+			for each (var p:Player in cg.players)
+				if (p.activeConsole != null && !(p.activeConsole is Omnitool))
+					p.onCancel();
+				
 			for each (var c:ABST_Console in cg.consoles)
 			{
 				if (c is Omnitool) continue;
@@ -709,6 +717,7 @@ package vgdev.stroll.support.splevels
 		override public function destroy():void 
 		{
 			cg.bossBar.setPercent(0);
+			cg.alerts.isCorrupt = false;
 		}
 	}
 }
