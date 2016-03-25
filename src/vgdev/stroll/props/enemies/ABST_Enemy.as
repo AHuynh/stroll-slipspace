@@ -5,6 +5,7 @@ package vgdev.stroll.props.enemies
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_EMovable;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.System;
 	import vgdev.stroll.props.projectiles.*;
 	import vgdev.stroll.support.SoundManager;
@@ -85,6 +86,12 @@ package vgdev.stroll.props.enemies
 			mc_object.base.transform.colorTransform = ct;
 			
 			prevPosition = new Point(mc_object.x, mc_object.y);
+			
+			if (attributes["noSpawnFX"] == null)
+			{
+				var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "rot": System.getRandNum(0, 360), "scale": mc_object.scaleX * 2 } );
+				spawnFX.mc_object.base.setTint(attackColor);
+			}
 		}
 		
 		protected function setStyle(style:String):void

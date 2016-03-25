@@ -25,6 +25,7 @@ package vgdev.stroll.props.enemies
 		
 		public function EnemyAmoeba(_cg:ContainerGame, _mc_object:MovieClip, _amoebaSize:int, attributes:Object) 
 		{
+			attackColor = System.COL_GREEN;
 			attributes["customHitbox"] = true;
 			super(_cg, _mc_object, attributes);
 			setStyle("amoeba");
@@ -99,7 +100,8 @@ package vgdev.stroll.props.enemies
 					cg.addToGame(new EnemyAmoeba(cg, new SWC_Enemy(), amoebaSize - 1, {
 																		"x": mc_object.x + System.getRandNum(-30, 30) + System.GAME_OFFSX,
 																		"y": mc_object.y + System.getRandNum( -30, 30) + System.GAME_OFFSY,
-																		"knockback": System.getRandNum( -1, -.6)
+																		"knockback": System.getRandNum( -1, -.6),
+																		"noSpawnFX": true
 																		}),
 								System.M_ENEMY);
 				}

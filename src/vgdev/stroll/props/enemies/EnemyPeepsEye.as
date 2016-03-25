@@ -27,7 +27,7 @@ package vgdev.stroll.props.enemies
 		
 		public function EnemyPeepsEye(_cg:ContainerGame, _mc_object:MovieClip, _mainBody:EnemyPeeps) 
 		{
-			super(_cg, _mc_object, {});
+			super(_cg, _mc_object, {"noSpawnFX":true});
 			setStyle("peeps_eye");
 			mainBody = _mainBody;
 			

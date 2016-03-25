@@ -3,6 +3,7 @@ package vgdev.stroll.props.enemies
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.projectiles.ABST_EProjectile;
 	import vgdev.stroll.props.projectiles.EProjectileGeneric;
 	import vgdev.stroll.props.projectiles.EProjectileHardened;
@@ -22,6 +23,7 @@ package vgdev.stroll.props.enemies
 		
 		public function EnemyManta(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
+			attributes["noSpawnFX"] = true;		// do it after updating position
 			attributes["customHitbox"] = true;
 			super(_cg, _mc_object, attributes);
 			setStyle("manta");
@@ -37,6 +39,8 @@ package vgdev.stroll.props.enemies
 			cooldowns = [180 + System.getRandInt(0, 60)];
 			
 			updatePosition(0, 0);
+			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "rot": System.getRandNum(0, 360), "scale": mc_object.scaleX * 2 } );
+			spawnFX.mc_object.base.setTint(attackColor);
 		}
 		
 		override public function getJammingValue():int 

@@ -55,12 +55,14 @@ package vgdev.stroll.props.enemies
 		public function EnemyPeeps(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			attributes["customHitbox"] = true;
-			super(_cg, _mc_object, {});
+			super(_cg, _mc_object, {"noSpawnFX": true});
 			setStyle("peeps");
 			
 			// TODO initialize things like x, y, hp, etc. (passed in attributes:Object will have nothing useful)
 			mc_object.x = 400;	// (temporary values)
 			mc_object.y = 0;
+			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "rot": System.getRandNum(0, 360), "scale": mc_object.scaleX * 2 } );
+			spawnFX.mc_object.base.setTint(attackColor);
 
 			hp = hpMax = 500;
 			rangeVary = 100;

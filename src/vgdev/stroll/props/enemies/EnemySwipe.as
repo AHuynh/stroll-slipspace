@@ -19,6 +19,7 @@ package vgdev.stroll.props.enemies
 		
 		public function EnemySwipe(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
+			attributes["noSpawnFX"] = true;
 			super(_cg, _mc_object, attributes);
 			setStyle("swipe");
 			mc_object.base.stop();

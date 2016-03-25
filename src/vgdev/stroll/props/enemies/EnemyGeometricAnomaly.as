@@ -13,11 +13,11 @@ package vgdev.stroll.props.enemies
 	{
 		public function EnemyGeometricAnomaly(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
+			attributes["noSpawnFX"] = true;
 			super(_cg, _mc_object, attributes);
 			setStyle("geometricAnomaly");
 			var frame:int = System.getRandInt(1, mc_object.base.totalFrames);
 			mc_object.base.gotoAndStop(frame);
-
 		}
 		
 		override public function getJammingValue():int 

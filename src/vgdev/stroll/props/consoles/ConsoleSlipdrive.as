@@ -14,7 +14,7 @@ package vgdev.stroll.props.consoles
 		private var isSpooling:Boolean = false;
 		private var arrows:Array;
 		
-		private var arrowSpeed:Number = 5;
+		private var arrowSpeed:Number = 4;
 		private var arrowDifficulty:int = 3;
 		private var arrowVarySpacing:Number = 20;
 		
@@ -30,7 +30,7 @@ package vgdev.stroll.props.consoles
 		private var complain:Boolean = false;
 		
 		public var forceOverride:Boolean = false;				// generic slipdrive override; if true, don't spool
-		public var fakeJumpNext:Boolean = true;					// if true, next successful jump will be a 'fake jump'
+		public var fakeJumpNext:Boolean = false;				// if true, next successful jump will be a 'fake jump'
 		
 		public function ConsoleSlipdrive(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
@@ -169,7 +169,7 @@ package vgdev.stroll.props.consoles
 		public function setArrowDifficulty(sector:int):void
 		{
 			arrowDifficulty = 3 + int(sector / 3);
-			arrowSpeed = 5 + sector * .2;
+			arrowSpeed = 4 + sector * .3;
 			arrowVarySpacing = 20 + sector;
 		}
 		

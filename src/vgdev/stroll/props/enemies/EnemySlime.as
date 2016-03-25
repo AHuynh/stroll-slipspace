@@ -3,6 +3,7 @@ package vgdev.stroll.props.enemies
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.projectiles.ABST_EProjectile;
 	import vgdev.stroll.props.projectiles.EProjectileGeneric;
 	import vgdev.stroll.System;
@@ -21,6 +22,7 @@ package vgdev.stroll.props.enemies
 		
 		public function EnemySlime(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
+			attributes["noSpawnFX"] = true;		// do it after updating position
 			super(_cg, _mc_object, attributes);
 			setStyle("slime");
 			mc_object.scaleY = Math.random() > .5 ? -1 : 1;
@@ -35,6 +37,8 @@ package vgdev.stroll.props.enemies
 			cooldowns = [100];
 			
 			updatePosition(0, 0);
+			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "rot": System.getRandNum(0, 360), "scale": mc_object.scaleX * 2 } );
+			spawnFX.mc_object.base.setTint(attackColor);
 		}
 		
 		// parameters don't matter here
