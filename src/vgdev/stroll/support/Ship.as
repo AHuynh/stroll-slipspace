@@ -13,6 +13,7 @@ package vgdev.stroll.support
 	{		
 		private var hpMax:Number = 1000;			// maximum hull strength
 		private var hp:Number = hpMax;				// current hull strength
+		private var hullBlink:int = -1;				// helper for flashing low HP
 		
 		// -- Shield --------------------------------------------------------------------------------------
 		private var shieldsEnabled:Boolean = true;	// if false, shields don't recharge
@@ -154,9 +155,11 @@ package vgdev.stroll.support
 			
 			if (hp == 0)
 			{
-				cg.killShip();
+				destroyShip();
 				return;
 			}
+			else if (hp <= 300 && hullBlink == -1)
+				hullBlink = 30;
 			
 			if (shield > 0)
 				mc_shield.base.alpha = .75;
@@ -188,8 +191,11 @@ package vgdev.stroll.support
 				SoundManager.playSFX("sfx_hithull1");
 			}
 			
+			if (hp <= 300 && hullBlink == -1)
+				hullBlink = 30;
+			
 			if (hp == 0)
-				cg.killShip();
+				destroyShip();
 		}
 		
 		/**
@@ -461,6 +467,21 @@ package vgdev.stroll.support
 			updateSlip();
 			updateNavigation();
 			updateShields();
+			
+			// low HP blink
+			if (hullBlink != -1)
+			{
+				if (--hullBlink < 0)
+					hullBlink = 100 * (hp / hpMax) + 3;
+				cg.gui.tf_hull.visible = hullBlink > 2;
+			}
+		}
+		
+		private function destroyShip():void
+		{
+			hullBlink = -1;
+			cg.gui.tf_hull.visible = true;
+			cg.killShip();
 		}
 		
 		override public function destroy():void 

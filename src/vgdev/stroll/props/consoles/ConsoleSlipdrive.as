@@ -30,6 +30,7 @@ package vgdev.stroll.props.consoles
 		private var complain:Boolean = false;
 		
 		public var forceOverride:Boolean = false;				// generic slipdrive override; if true, don't spool
+		public var fakeJumpNext:Boolean = true;					// if true, next successful jump will be a 'fake jump'
 		
 		public function ConsoleSlipdrive(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
@@ -114,8 +115,17 @@ package vgdev.stroll.props.consoles
 					if (++currentArrow == arrows.length && !anyMiss)
 					{
 						removeArrows();
-						cg.ship.jump();
-						if (cg) updateHUD(true);
+						if (fakeJumpNext)
+						{
+							fakeJumpNext = false;
+							cg.background.setRandomStyle(int(cg.level.sectorIndex / 5), System.getRandCol());
+							cg.playJumpEffect();
+						}
+						else
+						{
+							cg.ship.jump();
+							if (cg) updateHUD(true);
+						}
 					}
 				}
 			}

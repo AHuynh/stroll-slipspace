@@ -382,8 +382,6 @@ package vgdev.stroll.support
 		
 		public function getTAILS():String
 		{
-			if (sectorIndex == 9)
-				return "TAILS not found.\nBackup AI now in control.\n\nContinue mission imperative. Deliver slipportal. Y/N?";
 			return TAILSmessage;
 		}
 		

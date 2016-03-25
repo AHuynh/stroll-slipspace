@@ -30,7 +30,7 @@ package vgdev.stroll.managers
 			// -- override this function
 			if (objArray)
 				for (var i:int = objArray.length - 1; i >= 0; i--)
-					if (objArray[i].step())
+					if (objArray[i] && objArray[i].step())
 						objArray.splice(i, 1);
 		}
 		

@@ -19,6 +19,8 @@ package vgdev.stroll.support
 		public var tutorialMode:Boolean = true;
 		public var showNew:Boolean = false;
 		
+		private var important:Boolean = false;
+		
 		public function TAILS(_cg:ContainerGame, _tails:MovieClip) 
 		{
 			super(_cg);
@@ -57,9 +59,13 @@ package vgdev.stroll.support
 		 * @param	text			String to show the players
 		 * @param	showForFrames	int, how many frames to show the small popup, or 0 to use the large popup
 		 * @param	emotion			String, frame label to use for TAILS' emotion
+		 * @param	important		if true, don't allow future non-important messages to override this one
 		 */
-		public function show(text:String, showForFrames:int = 0, emotion:String = null):void
+		public function show(text:String, showForFrames:int = 0, emotion:String = null, isImportant:Boolean = false):void
 		{
+			if (important && !isImportant) return;
+			important = isImportant;
+			
 			showDuration = showForFrames;
 			tails.gotoAndStop(showDuration == 0 ? 1 : 2);
 			tails.visible = true;

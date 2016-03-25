@@ -34,9 +34,9 @@ package vgdev.stroll.support.splevels
 			consoleSlip.forceOverride = true;
 			cg.ship.setBossOverride(true);
 			
-			// DEBUG CODE
-			/*levelState = 22;
-			framesElapsed = 300;
+			/*// DEBUG CODE
+			levelState = 40;
+			framesElapsed = 0;
 			var corr:int = 0;
 			for each (var c:ABST_Console in cg.consoles)
 			{
@@ -77,7 +77,7 @@ package vgdev.stroll.support.splevels
 					if (!cg.managerMap[System.M_ENEMY].hasObjects() && !cg.managerMap[System.M_FIRE].hasObjects())
 					{
 						cg.tails.show("Oh, that wasn't too bad. Good job, both of you!", System.TAILS_NORMAL);
-						SoundManager.playBGM("bgm_calm", System.VOL_BGM);
+						SoundManager.crossFadeBGM("bgm_calm", System.VOL_BGM);
 						framesElapsed = 0;
 						levelState++;
 					}
@@ -105,6 +105,7 @@ package vgdev.stroll.support.splevels
 						break;
 						case System.SECOND * 20:
 							cg.tails.show("01000010 01100001 01100100 --- NOT FEELING UP TO IT", System.SECOND * .6);
+							SoundManager.crossFadeBGM(null, System.VOL_BGM);
 						break;
 						case System.SECOND * 21:
 							cg.tails.show("USER LOCKOUT - ALL SYSTEMS CORRUPTED", System.SECOND * .6);				// corrupt all modules					
@@ -119,10 +120,12 @@ package vgdev.stroll.support.splevels
 							cg.tails.show("@*REF!? imsorryGEIOJ% REF!REF!EOLNULEOLforgivemeNULREF!", System.SECOND * 3);
 							spawnParticles();
 						break;
+						case System.SECOND * 24:
+							SoundManager.crossFadeBGM("bgm_FAILS", System.VOL_BGM);
+						break;
 						case System.SECOND * 29:
 							cg.tails.show("Actually, you know what? This is dumb. You two are dumb. Why do I have to waste my time helping YOU?\n\n" +
 										  "It's time to DIE in the VOID, sapient featherbags! ", 0, "FAILS_talk");
-							SoundManager.playBGM("bgm_boss", System.VOL_BGM);
 							framesElapsed = 0;
 							levelState = 10;
 						break;
@@ -404,7 +407,7 @@ package vgdev.stroll.support.splevels
 					}
 					else if (framesElapsed >= System.SECOND * 12 && framesElapsed % (System.SECOND * 8) == 0)
 					{
-						if (framesElapsed / 16 == 0)
+						if (framesElapsed % (System.SECOND * 16) == 0)
 						{
 							spawnEnemy("Amoeba", 5, System.SPAWN_AMOEBA, {"am_size": 0} );
 							cg.tails.show(System.getRandFrom(["Just STOP already! You're REALLY TICKING ME OFF.",
@@ -535,7 +538,7 @@ package vgdev.stroll.support.splevels
 					if (framesElapsed == System.SECOND * 6)
 					{
 						cg.tails.show("Please initiate reboot by manually jumping.", System.TAILS_NORMAL, "HEADS");
-						fakeJump();
+						consoleSlip.fakeJumpNext = true;
 						consoleSlip.forceOverride = false;
 						cg.ship.setBossOverride(false);
 						cg.ship.slipRange = 0.5;
@@ -556,10 +559,27 @@ package vgdev.stroll.support.splevels
 															]), System.TAILS_NORMAL, "HEADS");
 						}
 					}
+					
+					if (framesElapsed > System.SECOND * 6 && !consoleSlip.fakeJumpNext)
+					{
+						SoundManager.crossFadeBGM("bgm_calm", System.VOL_BGM);
+						cg.bossBar.setPercent(0);
+						cg.alerts.isCorrupt = false;
+						cg.ship.slipRange = 4;
+						framesElapsed = 0;
+						levelState = 50;
+					}
+				break;	// escaped
+				case 50:
+					if (framesElapsed == System.SECOND * 5)
+					{
+						cg.tails.show("TAILS not found.\nBackup AI now in control.\n\nContinue mission imperative. Deliver slipportal. Y/N?", 0, "HEADS");
+						levelState++;
+					}
 				break;
 			}
 		}
-		
+
 		private function fakeJump():void
 		{
 			cg.background.setRandomStyle(int(cg.level.sectorIndex / 5), System.getRandCol());
@@ -704,7 +724,7 @@ package vgdev.stroll.support.splevels
 			{
 				cg.tails.show("How about a CHANGE IN SCENERY?! JUMP JUMP JUMP!", System.TAILS_NORMAL, "FAILS_talk");
 				fakeJump();
-				spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Amoeba"]), System.getRandInt(3, 5));
+				spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Amoeba"]), System.getRandInt(2, 4));
 			}
 			else if (console is ConsoleTurret)
 			{
@@ -717,8 +737,7 @@ package vgdev.stroll.support.splevels
 		
 		override public function destroy():void 
 		{
-			cg.bossBar.setPercent(0);
-			cg.alerts.isCorrupt = false;
+			consoleSlip = null;
 		}
 	}
 }

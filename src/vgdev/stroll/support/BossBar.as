@@ -25,6 +25,8 @@ package vgdev.stroll.support
 		private var isActive:Boolean = false;
 		private var finishTimer:int = -1;
 		
+		private var blink:int = -1;
+		
 		public function BossBar(_cg:ContainerGame, _mc:MovieClip)
 		{
 			super(_cg);
@@ -40,6 +42,8 @@ package vgdev.stroll.support
 			mc.gotoAndPlay("in");
 			mc.base.mc_bar.width = 0;
 			mc.base.tf_percent.text = "0%";
+			mc.base.tf_percent.visible = true;
+			blink = -1;
 			
 			percent = 1;
 			tgtPercent = 0;
@@ -77,6 +81,15 @@ package vgdev.stroll.support
 				}
 			}
 			
+			if (finishTimer == -1 && percent <= .3 && blink == -1)
+				blink = 30;
+			if (blink != -1)
+			{
+				if (--blink < 0)
+					blink = 100 * percent + 3;
+				mc.base.tf_percent.visible = blink > 2;
+			}
+			
 			if (tgtPercent > percent)
 				tgtPercent = System.changeWithLimit(tgtPercent, -DELTA_DELAY, percent, 1);
 			else if (tgtPercent < percent)
@@ -87,8 +100,13 @@ package vgdev.stroll.support
 			mc.base.mc_bar.width = tgtPercent * BAR_WIDTH;
 			mc.base.tf_percent.text = int(100 * tgtPercent) + "%";
 			
+			
 			if (finishTimer == -1 && percent == 0)
+			{
+				blink = -1;
+				mc.base.tf_percent.visible = true;
 				finishTimer = 90;
+			}
 		}
 		
 		override public function destroy():void 

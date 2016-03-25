@@ -117,7 +117,7 @@
 			alerts = new Alerts(this, gui.mc_alerts);	
 			bossBar = new BossBar(this, gui.mc_bossbar);
 			
-			supportClasses = [level, tails, ship, camera, alerts, bossBar];
+			supportClasses = [level, ship, camera, alerts, bossBar];
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -129,20 +129,6 @@
 			// link the game's assets
 			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
 					   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
-
-			// placeholder ship
-			/*consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console00, game.mc_ship.turret_0,		// front
-											players, [-120, 120], [1, -1, 3, -1]));
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console02, game.mc_ship.turret_1,		// left
-											players, [-165, 15], [2, -1, 0, -1]));
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console04, game.mc_ship.turret_2,		// right
-											players, [-15, 165], [0, -1, 2, -1]));
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console05, game.mc_ship.turret_4,		// rear
-											players, [-90, 90], [3, -1, 1, -1]));
-			consoles[3].rotOff = 180;
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console03, players));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console06, players));
-			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slip, players));*/
 			
 			// Eagle
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
@@ -157,11 +143,11 @@
 			consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, false));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, false));
 			
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, false));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, false));
 			
 			var i:int;
 			
@@ -283,15 +269,12 @@
 				case Keyboard.J:		// TODO remove temporary testing
 					jump();
 				break;
-				case Keyboard.K:/*
-					players[System.getRandInt(0, 1)].changeHP( -9999);
+				case Keyboard.K:
+					//players[System.getRandInt(0, 1)].changeHP( -9999);
+					//killShip();
+					//addFires(1);
+					ship.damageDirect(50);
 				break;
-				/*case Keyboard.K:
-					killShip();
-				break;*/
-				/*case Keyboard.K:
-					addFires(1);
-				break;*/
 			}
 		}
 		
@@ -329,9 +312,11 @@
 		 * @return		completed, true if this container is done
 		 */
 		override public function step():Boolean
-		{			
+		{
 			if (completed)
 				return completed;
+		
+			SoundManager.step();
 				
 			if (!isPaused)
 				tails.step();
@@ -441,9 +426,6 @@
 					SoundManager.playBGM("bgm_boss", System.VOL_BGM);
 				else if (level.sectorIndex % 4 == 1)
 					SoundManager.playBGM("bgm_calm", System.VOL_BGM);
-					
-				if (level.sectorIndex == 9)
-					boss = true;
 					
 				tails.show(level.getTAILS(), boss ? 0 : 120, (level.sectorIndex > 8 ? "HEADS" : null));
 				
@@ -625,6 +607,22 @@
 			ship.setShieldsEnabled(false);
 			
 			game.mc_ship.mc_shipBase.gotoAndPlay("death");
+			
+			if (SoundManager.getBGMname() == "bgm_FAILS")
+				tails.show(System.getRandFrom([ "Hah! See ya later, suckers!",
+												"See? I TOLD you that you're gonna die!",
+												"Big explosion! BIG SUCCESS!"
+												]), System.TAILS_NORMAL * 2, "FAILS_talk", true);
+			else if (level.sectorIndex <= 8)
+				tails.show(System.getRandFrom([ "Aaah! I'm sorry! I'm sorry...",
+												"Oh no! No, no, no!",
+												"Eeek! This isn't supposed to happen!"
+												]), System.TAILS_NORMAL * 2, null, true);
+			else
+				tails.show(System.getRandFrom([ "Ship integrity compromised.",
+												"Mission failed.",
+												"System failure. Shutting down."
+												]), System.TAILS_NORMAL * 2, "HEADS", true);
 		}
 		
 		/**

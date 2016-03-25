@@ -4,18 +4,31 @@ package vgdev.stroll.support
 	import flash.media.SoundChannel;
 	import flash.media.SoundMixer;
 	import flash.media.SoundTransform;
+	import vgdev.stroll.System;
 	
 	public class SoundManager 
 	{
 		private static var bgm:SoundChannel;		
+		private static var bgmFade:SoundChannel;
 		private static var sounds:Object = new Object();
 		
-		[Embed(source="../../../../bgm/bgm_battle1.mp3")]
-		private static var bgm_battle1:Class;
+		private static var currVolume:Number = 0;
+		private static var fadeVolume:Number = 0;
+		private static var fadeVolumeTgt:Number = 0;
+		private static const DELTA_VOL:Number = .004;
+		private static var currSTF:SoundTransform = new SoundTransform();
+		private static var fadeSTF:SoundTransform = new SoundTransform();
+		
+		private static var currentBGM:String = "";
+		private static var fadeBGM:String = "";
+		private static var isInit:Boolean = false;
+		
 		[Embed(source="../../../../bgm/bgm_calm.mp3")]
 		private static var bgm_calm:Class;
 		[Embed(source="../../../../bgm/bgm_boss.mp3")]
 		private static var bgm_boss:Class;
+		[Embed(source="../../../../bgm/bgm_FAILS.mp3")]
+		private static var bgm_FAILS:Class;
 		
 		[Embed(source="../../../../sfx/sfx_readybeep1B.mp3")]
 		private static var sfx_readybeep1B:Class;
@@ -64,11 +77,6 @@ package vgdev.stroll.support
 		
 		[Embed(source="../../../../sfx/sfx_peeps_phase_change.mp3")]
 		private static var sfx_peeps_phase_change :Class;
-		
-		
-		
-		private static var currentBGM:String = "";
-		private static var isInit:Boolean = false;
 		
 		public function SoundManager() 
 		{
@@ -128,43 +136,108 @@ package vgdev.stroll.support
 				return;
 			stopBGM();
 			
-			var snd:Sound;
-			switch (music)
-			{
-				case "bgm_calm":					snd = new bgm_calm();		break;
-				case "bgm_boss":					snd = new bgm_boss();		break;
-				case "bgm_battle1":					snd = new bgm_battle1();	break;
-				default:
-					trace("WARNING: No music located for " + music + "!");
-					return;
-			}
+			var snd:Sound = getBGM(music);
 			currentBGM = music;
 			
 			var volTransform:SoundTransform = new SoundTransform(volume);
 			bgm = snd.play(0, 9999);
 			bgm.soundTransform = volTransform;
+			currVolume = volume;
+		}
+		
+		private static function getBGM(music:String):Sound
+		{
+			switch (music)
+			{
+				case "bgm_calm":		return new bgm_calm();
+				case "bgm_boss":		return new bgm_boss();
+				case "bgm_FAILS":		return new bgm_FAILS();	
+				default:
+					//trace("WARNING: No music located for " + music + "!");
+					return null;
+			}
+		}
+		
+		public static function getBGMname():String
+		{
+			return currentBGM;
+		}
+		
+		/**
+		 * Fade out the current music and fade in the new music
+		 * @param	music		Name of the new BGM, null is OK
+		 * @param	volume		Target volume
+		 */
+		public static function crossFadeBGM(music:String, volume:Number = 1):void
+		{
+			fadeVolume = 0;
+			fadeVolumeTgt = volume;
+			
+			var newBGM:Sound = getBGM(music);
+			fadeBGM = music;
+			if (newBGM != null)
+				bgmFade = newBGM.play(0, 9999);
+
+			fadeSTF.volume = fadeVolume;
+			currSTF.volume = currVolume;
+		}
+		
+		public static function step():void
+		{
+			if (fadeVolume == fadeVolumeTgt) return;
+			
+			fadeVolume = System.changeWithLimit(fadeVolume, DELTA_VOL, 0, fadeVolumeTgt);
+			currVolume = System.changeWithLimit(currVolume, -DELTA_VOL, 0, 1);
+			
+			fadeSTF.volume = fadeVolume;
+			currSTF.volume = currVolume;
+			
+			if (bgmFade != null)
+				bgmFade.soundTransform = fadeSTF;
+			if (bgm != null)
+				bgm.soundTransform = currSTF;
+			
+			if (fadeSTF.volume == fadeVolumeTgt && currSTF.volume == 0)
+			{
+				currentBGM = fadeBGM;
+				fadeBGM = null;
+				currVolume = fadeVolumeTgt;
+				if (bgm)
+					bgm.stop();
+				bgm = bgmFade;
+				bgmFade = null;
+			}
 		}
 		
 		public static function stopBGM():void
 		{
-			if (bgm)
+			if (bgm != null)
 			{
 				bgm.stop();
 				bgm = null;
+				currentBGM = "";
 			}
+			if (bgmFade != null)
+			{
+				bgmFade.stop();
+				bgmFade = null;
+				fadeBGM = "";
+			}
+			fadeVolume = fadeVolumeTgt = 1;
 		}
 		
 		public static function isBGMplaying():Boolean
 		{
-			return (bgm != null);
+			return (bgm != null || fadeBGM != null);
 		}
 		
+		/**
+		 * Stop ALL sounds
+		 */
 		public static function shutUp():void
 		{
+			stopBGM();
 			SoundMixer.stopAll();
-			currentBGM = null;
 		}
-		
 	}
-
 }
