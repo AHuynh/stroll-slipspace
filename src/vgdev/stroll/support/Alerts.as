@@ -9,9 +9,8 @@ package vgdev.stroll.support
 	 * Helper that shows warnings
 	 * @author Alexander Huynh
 	 */
-	public class Alerts 
+	public class Alerts extends ABST_Support
 	{
-		private var cg:ContainerGame;
 		private var alerts:MovieClip;
 		
 		private var counter:int = -1;
@@ -21,7 +20,7 @@ package vgdev.stroll.support
 		
 		public function Alerts(_cg:ContainerGame, _alerts:MovieClip) 
 		{
-			cg = _cg;
+			super(_cg);
 			alerts = _alerts;
 			
 			ct = new ColorTransform;
@@ -35,7 +34,7 @@ package vgdev.stroll.support
 			alerts.mc_corruption.visible = false;
 		}
 		
-		public function step():void
+		override public function step():void
 		{
 			if (++counter == 30)
 			{
@@ -58,6 +57,13 @@ package vgdev.stroll.support
 				ct.alphaMultiplier = .75;
 				alerts.transform.colorTransform = ct;
 			}
+		}
+		
+		override public function destroy():void 
+		{
+			alerts = null;
+			ct = null;
+			super.destroy();
 		}
 	}
 }

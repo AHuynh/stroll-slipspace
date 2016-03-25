@@ -9,9 +9,8 @@ package vgdev.stroll.support
 	 * Helper to manage the game's background
 	 * @author Alexander Huynh
 	 */
-	public class Background 
+	public class Background extends ABST_Support
 	{
-		private var cg:ContainerGame;
 		private var bg:MovieClip;
 		
 		private const LIM_LEFT:Number = -System.GAME_HALF_WIDTH / 1.8;
@@ -24,7 +23,7 @@ package vgdev.stroll.support
 		
 		public function Background(_cg:ContainerGame, _bg:MovieClip)
 		{
-			cg = _cg;
+			super(_cg);
 			bg = _bg;
 			
 			bg1 = bg.base.base1;
@@ -32,12 +31,11 @@ package vgdev.stroll.support
 			OFFSET = bg1.width;
 		}
 		
-		public function step(shipSpeed:Number):void
+		public function stepBG(shipSpeed:Number):void
 		{
 			bg1.x -= shipSpeed;
 			if (bg1.x + OFFSET < LIM_LEFT)
 			{
-				//bg1.x += System.GAME_WIDTH * 1.8;
 				var temp:MovieClip = bg1;
 				bg1 = bg2;
 				bg2 = temp;
@@ -77,6 +75,14 @@ package vgdev.stroll.support
 		{
 			bg.base.x = loc.x;
 			bg.base.y = loc.y;
+		}
+		
+		override public function destroy():void 
+		{
+			bg = null;
+			bg1 = null;
+			bg2 = null;
+			super.destroy();
 		}
 	}
 }

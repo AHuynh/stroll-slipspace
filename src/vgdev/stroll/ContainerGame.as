@@ -29,6 +29,7 @@
 		public var gui:SWC_GUI;
 		public var engine:Engine;
 
+		private var supportClasses:Array = [];
 		public var level:Level;
 		public var ship:Ship;
 		public var camera:Cam;
@@ -38,8 +39,10 @@
 		public var bossBar:BossBar;
 		
 		/// Whether or not the game is paused
-		public var isPaused:Boolean = false;		// from P
-		public var isTailsPaused:Boolean = false;	// from TAILS
+		public var isPaused:Boolean = false;			// from P
+		public var isTailsPaused:Boolean = false;		// from TAILS
+		public var isDefeatedPaused:Boolean = false;	// ship is exploding
+		public var isGameOver:Boolean = false;			// game over screen
 		
 		/// UI consoles; an Array of MovieClips
 		public var hudConsoles:Array;
@@ -61,7 +64,6 @@
 		public var managers:Array = [];
 		public var managerMap:Object = new Object();
 		
-		// TEMPORARY
 		private const TAILS_DEFAULT:String = "Hi! I'm TAILS; the ship AI.\n\n" +
 											 "I've booted up the ship's basic systems. Check them out before we jump.\n\n" +
 											 "OK, are both of you ready?";
@@ -90,6 +92,8 @@
 			gui = new SWC_GUI();	
 			engine.superContainer.mc_container.addChild(gui);
 			gui.mc_pause.visible = false;
+			gui.mc_pause.mc_confirm.visible = false;
+			gui.mc_lose.visible = false;
 			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			gui.tf_titleL.visible = false;
@@ -98,6 +102,8 @@
 			hudBars = [gui.bar_crew1, gui.bar_crew2];
 			painIndicators = [gui.mc_painL, gui.mc_painR];
 			gui.tf_distance.text = "Supr Jmp";
+			
+			game.mc_ship.mc_shipBase.tintShip(System.COL_BLUE);
 			
 			// init support classes
 			level = new Level(this);
@@ -109,6 +115,8 @@
 			camera.step();
 			alerts = new Alerts(this, gui.mc_alerts);	
 			bossBar = new BossBar(this, gui.mc_bossbar);
+			
+			supportClasses = [level, tails, ship, camera, alerts, bossBar];
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -148,11 +156,11 @@
 			consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, false));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, false));
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
 			
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, false));
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, false));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
 			
 			var i:int;
 			
@@ -201,7 +209,6 @@
 			tails.show(TAILS_DEFAULT);
 			tails.showNew = true;
 			camera.setCameraFocus(new Point(0, -100));
-			//camera.setCameraFocus(new Point(0, -20));
 		}
 		
 		/**
@@ -248,22 +255,37 @@
 			switch (e.keyCode)
 			{
 				case Keyboard.P:
+					if (isDefeatedPaused) return;
+					if (!isPaused)
+						gui.mc_pause.mc_confirm.visible = false;
 					isPaused = !isPaused;
-					/*if (isTruePaused())					// halt or resume background animation
-						game.mc_bg.base.stop();
-					else
-						game.mc_bg.base.play();*/
 					gui.mc_pause.visible = isPaused;
 				break;
+				
+				case Keyboard.R:
+					if (isPaused)
+					{
+						if (gui.mc_pause.mc_confirm.visible == false)
+							gui.mc_pause.mc_confirm.visible = true;
+						else
+							destroy(null);
+					}
+					else if (isDefeatedPaused)
+					{
+						if (game.mc_ship.mc_shipBase.currentFrame == game.mc_ship.mc_shipBase.totalFrames)
+							destroy(null);
+					}
+				break;
+				
 				case Keyboard.J:		// TODO remove temporary testing
-					jump();
+				/*	jump();
 				break;
 				case Keyboard.K:
 					players[System.getRandInt(0, 1)].changeHP( -9999);
-				break;
-				/*case Keyboard.K:
-					managerMap[System.M_ENEMY].killAll();
 				break;*/
+				case Keyboard.K:
+					killShip();
+				break;
 				/*case Keyboard.K:
 					addFires(1);
 				break;*/
@@ -276,7 +298,7 @@
 		 */
 		public function isTruePaused():Boolean
 		{
-			return isPaused || isTailsPaused;
+			return isPaused || isTailsPaused || isGameOver;
 		}
 		
 		/**
@@ -314,14 +336,28 @@
 			if (isTruePaused())
 				return completed;
 
-			level.step();
-			ship.step();
-			camera.step();
-			alerts.step();
-			background.step(atHomeworld() ? 0 : ship.slipSpeed * 150);
-			bossBar.step();
+			if (isDefeatedPaused)
+			{
+				var cf:int = game.mc_ship.mc_shipBase.currentFrame;
+				if (!isGameOver && cf == game.mc_ship.mc_shipBase.totalFrames)
+				{
+					gui.mc_lose.visible = true;
+					gui.mc_lose.tf_lose.text = "Ship lost in Sector " + level.sectorIndex;
+					isGameOver = true;
+				}
+				else if (cf <= 55 && cf % 5 == 0)
+					addExplosions(System.getRandInt(2, 5));
+				else if (cf == 72)
+					addExplosions(System.getRandInt(5, 12));
+			}
 			
-			for (var i:int = 0; i < managers.length; i++)
+			var i:int;
+			for (i = 0; i < supportClasses.length; i++)
+				supportClasses[i].step();
+			
+			background.stepBG(atHomeworld() ? 0 : ship.slipSpeed * 150);
+			
+			for (i = 0; i < managers.length; i++)
 				managers[i].step();
 			return completed;
 		}
@@ -376,7 +412,7 @@
 				gui.mc_right.visible = false;
 				
 				tails.tutorialMode = level.sectorIndex % 4 == 0;
-				tails.tutorialMode = false;
+				//tails.tutorialMode = false;
 			}
 		}
 		
@@ -433,6 +469,22 @@
 				pos = getRandomShipLocation();
 				if (pos == null) continue;
 				addToGame(new InternalFire(this, new SWC_Decor(), pos, shipInsideMask), System.M_FIRE);
+			}
+		}
+
+		/**
+		 * Add num explosions to random valid positions in the ship
+		 * @param	num		number of explosions
+		 */
+		public function addExplosions(num:int):void
+		{
+			var pos:Point;
+			SoundManager.playSFX("sfx_explosionlarge1");
+			for (var i:int = 0; i < num; i++)
+			{
+				pos = getRandomShipLocation();
+				if (pos == null) continue;
+				addDecor("explosion_small", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(2, 6) } );
 			}
 		}
 		
@@ -505,6 +557,27 @@
 			return tries == 0 ? null : pos;
 		}
 		
+		public function killShip():void
+		{
+			if (isDefeatedPaused) return;
+			isDefeatedPaused = true;
+			
+			// hide ship interior
+			game.mc_ship.mc_interior.visible = false;
+			game.mc_ship.shield.visible = false;
+			game.mc_ship.mc_player0.visible = false;
+			game.mc_ship.mc_player1.visible = false;
+			for each (var c:ABST_Console in consoles)
+				c.mc_object.visible = false;
+			game.mc_ship.turret_f.visible = false;
+			game.mc_ship.turret_l.visible = false;
+			game.mc_ship.turret_r.visible = false;
+			game.mc_ship.turret_b.visible = false;
+			managerMap[System.M_FIRE].killAll();
+			
+			game.mc_ship.mc_shipBase.gotoAndPlay("death");
+		}
+		
 		/**
 		 * Clean-up code
 		 * @param	e	the captured Event, unused
@@ -514,7 +587,8 @@
 			if (engine.stage.hasEventListener(KeyboardEvent.KEY_DOWN))
 				engine.stage.removeEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			
-			for (var i:int = 0; i < managers.length; i++)
+			var i:int;
+			for (i = 0; i < managers.length; i++)
 			{
 				managers[i].destroy();
 				managers[i] = null;
@@ -524,8 +598,15 @@
 			if (game != null && contains(game))
 				removeChild(game);
 			game = null;
-
-			engine = null;
+			
+			for (i = 0; i < supportClasses.length; i++)
+			{
+				supportClasses[i].destroy();
+				supportClasses[i] = null;
+			}
+			supportClasses = null;
+			
+			completed = true;
 		}
 	}
 }

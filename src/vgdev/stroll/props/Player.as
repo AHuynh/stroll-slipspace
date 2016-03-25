@@ -113,6 +113,8 @@ package vgdev.stroll.props
 		 */
 		override public function step():Boolean
 		{
+			if (!cg || cg.isDefeatedPaused) return false;		// quit if ship is exploding
+			
 			if (hp != 0)
 			{
 				handleKeyboard();
@@ -153,6 +155,11 @@ package vgdev.stroll.props
 			reviveExpire = 0;
 			mc_object.gotoAndStop("idle_front");
 			mc_object.mc_sos.visible = false;
+			
+			keysDown[RIGHT] = false;
+			keysDown[UP] = false;
+			keysDown[LEFT] = false;
+			keysDown[DOWN] = false;
 		
 			cg.hudConsoles[playerID].gotoAndStop("none");
 		}
@@ -175,7 +182,7 @@ package vgdev.stroll.props
 				reviveExpire = 0;
 			}
 			
-			if (amt < 0)
+			if (amt < 0 && hp > 0)
 				cg.painIndicators[playerID].gotoAndPlay(2);
 			
 			if (hp != hpMax)
@@ -195,6 +202,8 @@ package vgdev.stroll.props
 		 */
 		private function handleKeyboard():void
 		{
+			if (!cg || cg.isDefeatedPaused) return;		// quit if ship is exploding
+			
 			if (!rooted)
 			{
 				if (keysDown[RIGHT])
@@ -233,6 +242,8 @@ package vgdev.stroll.props
 		 */
 		private function handlePDW():void
 		{
+			if (!cg || cg.isDefeatedPaused) return;		// quit if ship is exploding
+			
 			var shot:ABST_IProjectile = new IProjectileGeneric(cg, new SWC_Bullet(), hitMask,
 																	{	 
 																		"affiliation":	System.AFFIL_PLAYER,
@@ -293,6 +304,8 @@ package vgdev.stroll.props
 		 */
 		public function downKeyboard(e:KeyboardEvent):void
 		{
+			if (!cg || cg.isDefeatedPaused) return;		// quit if ship is exploding
+			
 			if (cg.isTruePaused())		
 			{
 				if (e.keyCode == KEY_ACTION && cg.tails.isActive())		// only allow acknowledgement to go through
@@ -379,6 +392,7 @@ package vgdev.stroll.props
 		 */
 		public function upKeyboard(e:KeyboardEvent):void
 		{
+			if (!cg || cg.isDefeatedPaused) return;		// quit if ship is exploding
 			if (hp == 0) return;
 			
 			var released:Boolean = false;
@@ -435,5 +449,19 @@ package vgdev.stroll.props
 			}
 		}
 		
+		override public function destroy():void
+		{
+			if (cg && cg.stage)
+			{
+				cg.stage.removeEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
+				cg.stage.removeEventListener(KeyboardEvent.KEY_UP, upKeyboard);
+			}
+			cg = null;
+			mc_object = null;
+			manProx = null;
+			bigBar = null;
+			
+			super.destroy();
+		}
 	}
 }

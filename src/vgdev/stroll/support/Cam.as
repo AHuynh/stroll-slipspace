@@ -9,9 +9,8 @@ package vgdev.stroll.support
 	 * Controls the location and scale of the view
 	 * @author Alexander Huynh
 	 */
-	public class Cam 
+	public class Cam extends ABST_Support
 	{
-		private var cg:ContainerGame;
 		private var ui:MovieClip;
 		
 		private var focus:Point;
@@ -35,9 +34,9 @@ package vgdev.stroll.support
 		private var UI_ANCHOR_X:Number;
 		private var UI_ANCHOR_Y:Number;
 		
-		public function Cam(_cg:ContainerGame, _ui:MovieClip) 
+		public function Cam(_cg:ContainerGame, _ui:MovieClip)
 		{
-			cg = _cg;
+			super(_cg);
 			ui = _ui;
 			
 			UI_ANCHOR_X = ui.x;
@@ -47,7 +46,7 @@ package vgdev.stroll.support
 			focusTgt = new Point(cg.game.x, cg.game.y);
 		}
 		
-		public function step():void
+		override public function step():void
 		{
 			focus.x = updateNumber(focus.x, focusTgt.x, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
 			focus.y = updateNumber(focus.y, focusTgt.y, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
@@ -160,6 +159,12 @@ package vgdev.stroll.support
 		public function setCameraScale(newScale:Number):void
 		{
 			//scaleTgt = newScale;
+		}
+		
+		override public function destroy():void 
+		{
+			ui = null;
+			super.destroy();
 		}
 	}
 }

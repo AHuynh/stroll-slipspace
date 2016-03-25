@@ -9,10 +9,8 @@ package vgdev.stroll.support
 	 * Support functionality related to the ship
 	 * @author Alexander Huynh, Jimmy Spearman
 	 */
-	public class Ship 
-	{
-		private var cg:ContainerGame;
-		
+	public class Ship extends ABST_Support
+	{		
 		private var hpMax:Number = 1000;			// maximum hull strength
 		private var hp:Number = hpMax;				// current hull strength
 		
@@ -67,7 +65,7 @@ package vgdev.stroll.support
 		
 		public function Ship(_cg:ContainerGame)
 		{
-			cg = _cg;
+			super(_cg);
 			mc_shield = cg.game.mc_ship.shield;
 			
 			shieldCTF = new ColorTransform();
@@ -154,8 +152,11 @@ package vgdev.stroll.support
 						
 			updateIntegrity();
 			
-			//if (hp == 0)
-			//	game over
+			if (hp == 0)
+			{
+				cg.killShip();
+				return;
+			}
 			
 			if (shield > 0)
 				mc_shield.base.alpha = .75;
@@ -187,8 +188,8 @@ package vgdev.stroll.support
 				SoundManager.playSFX("sfx_hithull1");
 			}
 			
-			//if (hp == 0)
-			//	game over
+			if (hp == 0)
+				cg.killShip();
 		}
 		
 		/**
@@ -455,11 +456,17 @@ package vgdev.stroll.support
 			return false;
 		}
 		
-		public function step():void
+		override public function step():void
 		{
 			updateSlip();
 			updateNavigation();
 			updateShields();
+		}
+		
+		override public function destroy():void 
+		{
+			mc_shield = null;
+			super.destroy();
 		}
 	}
 }

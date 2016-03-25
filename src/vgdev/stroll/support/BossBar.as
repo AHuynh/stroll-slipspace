@@ -9,11 +9,10 @@ package vgdev.stroll.support
 	 * Helper for the boss HP bar
 	 * @author Alexander Huynh
 	 */
-	public class BossBar 
+	public class BossBar extends ABST_Support
 	{
 		private var mc:MovieClip;
 		
-		private var cg:ContainerGame;
 		private var boss:ABST_Enemy;
 		private var bossCheck:Boolean = false;
 		
@@ -28,7 +27,7 @@ package vgdev.stroll.support
 		
 		public function BossBar(_cg:ContainerGame, _mc:MovieClip)
 		{
-			cg = _cg;
+			super(_cg);
 			mc = _mc;
 		}
 		
@@ -52,7 +51,7 @@ package vgdev.stroll.support
 			percent = perc;
 		}
 		
-		public function step():void
+		override public function step():void
 		{
 			if (!isActive) return;
 			
@@ -90,6 +89,14 @@ package vgdev.stroll.support
 			
 			if (finishTimer == -1 && percent == 0)
 				finishTimer = 90;
+		}
+		
+		override public function destroy():void 
+		{
+			isActive = false;
+			mc = null;
+			boss = null;
+			super.destroy();
 		}
 	}
 }

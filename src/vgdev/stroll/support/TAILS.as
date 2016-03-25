@@ -7,9 +7,8 @@ package vgdev.stroll.support
 	 * Helper class for handling the TAILS window
 	 * @author Alexander Huynh
 	 */
-	public class TAILS 
+	public class TAILS extends ABST_Support
 	{
-		private var cg:ContainerGame;
 		private var tails:MovieClip;
 		
 		private var playerReady:Array = [false, false];
@@ -22,7 +21,7 @@ package vgdev.stroll.support
 		
 		public function TAILS(_cg:ContainerGame, _tails:MovieClip) 
 		{
-			cg = _cg;
+			super(_cg);
 			tails = _tails;
 			
 			cg.gui.mc_left.visible = false;
@@ -37,7 +36,7 @@ package vgdev.stroll.support
 			return tailsLarge && tails.visible;
 		}
 		
-		public function step():void
+		override public function step():void
 		{
 			if (showDuration > 0 && --showDuration == 1)
 			{
@@ -170,6 +169,12 @@ package vgdev.stroll.support
 				SoundManager.playSFX("sfx_UI_Beep_Cs", .5);
 			
 			return false;
+		}
+		
+		override public function destroy():void 
+		{
+			tails = null;
+			super.destroy();
 		}
 	}
 }

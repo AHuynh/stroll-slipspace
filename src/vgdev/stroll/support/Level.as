@@ -5,19 +5,15 @@ package vgdev.stroll.support
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.enemies.*;
 	import vgdev.stroll.ContainerGame;
-	import vgdev.stroll.support.splevels.ABST_SPLevel;
-	import vgdev.stroll.support.splevels.SPLevelAnomalies;
-	import vgdev.stroll.support.splevels.SPLevelFAILS;
-	import vgdev.stroll.support.splevels.SPLevelPeeps;
+	import vgdev.stroll.support.splevels.*;
 	import vgdev.stroll.System;
 	
 	/**
 	 * Support functionality related to the level
 	 * @author Alexander Huynh
 	 */
-	public class Level 
+	public class Level extends ABST_Support
 	{
-		private var cg:ContainerGame;
 		private var timeline:int = 0;
 		
 		// -- EASY REGION ---------------------------------------------------------------------------------------
@@ -79,7 +75,7 @@ package vgdev.stroll.support
 		
 		public function Level(_cg:ContainerGame)
 		{
-			cg = _cg;
+			super(_cg);
 			
 			parsedEncounters = new Object();
 			
@@ -151,7 +147,7 @@ package vgdev.stroll.support
 		/**
 		 * Handle the spawning of objects in the current encounter
 		 */
-		public function step():void
+		override public function step():void
 		{
 			timeline++;
 			// hand control over to special level class if one exists for this encounter
@@ -433,6 +429,12 @@ package vgdev.stroll.support
 		{
 			return timeline;
 		}
+		
+		override public function destroy():void 
+		{
+			parsedEncounters = null;
+			spLevel = null;
+			super.destroy();
+		}
 	}
-
 }

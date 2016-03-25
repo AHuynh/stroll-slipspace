@@ -271,11 +271,11 @@ package vgdev.stroll.props.consoles
 			}
 			
 			hud_consoles[closestPlayer.playerID].gotoAndStop(label.toLowerCase());
-			hud_consoles[closestPlayer.playerID].mc_tutorial.visible = label != "none";
 			cg.hudTitles[closestPlayer.playerID].visible = label != "none";
 			cg.hudTitles[closestPlayer.playerID].text = cName;
 			if (cg.tails.tutorialMode && label != "none")
 			{
+				hud_consoles[closestPlayer.playerID].mc_tutorial.visible = label != "none";
 				hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(label.toLowerCase());
 				cg.hudTitles[closestPlayer.playerID].text = label;
 			}
