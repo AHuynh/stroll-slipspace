@@ -45,6 +45,7 @@
 		public var hudConsoles:Array;
 		public var hudTitles:Array;
 		public var hudBars:Array;
+		public var painIndicators:Array;
 		
 		/// The current ship's hitbox, either hull or shields
 		public var shipHitMask:MovieClip;			// active external ship hitmask; can be hull or shield
@@ -95,6 +96,7 @@
 			gui.tf_titleR.visible = false;
 			hudTitles = [gui.tf_titleL, gui.tf_titleR];
 			hudBars = [gui.bar_crew1, gui.bar_crew2];
+			painIndicators = [gui.mc_painL, gui.mc_painR];
 			gui.tf_distance.text = "Supr Jmp";
 			
 			// init support classes
@@ -256,9 +258,9 @@
 				case Keyboard.J:		// TODO remove temporary testing
 					jump();
 				break;
-				/*case Keyboard.K:
-					players[0].changeHP( -9999);
-				break;*/
+				case Keyboard.K:
+					players[System.getRandInt(0, 1)].changeHP( -9999);
+				break;
 				/*case Keyboard.K:
 					managerMap[System.M_ENEMY].killAll();
 				break;*/

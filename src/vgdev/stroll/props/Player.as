@@ -104,6 +104,7 @@ package vgdev.stroll.props
 			bigBar = cg.hudBars[playerID];
 			
 			mc_object.mc_omnitool.visible = false;
+			mc_object.mc_sos.visible = false;
 		}
 		
 		/**
@@ -150,6 +151,8 @@ package vgdev.stroll.props
 			reviveProgress = 0;
 			reviveCounter = 0;
 			reviveExpire = 0;
+			mc_object.gotoAndStop("idle_front");
+			mc_object.mc_sos.visible = false;
 		
 			cg.hudConsoles[playerID].gotoAndStop("none");
 		}
@@ -162,14 +165,18 @@ package vgdev.stroll.props
 			if (hp == 0 && reviveCounter == 0)
 			{
 				onCancel();
-				mc_object.gotoAndStop("idle");
-				mc_object.alpha = .4;		// TODO incap sprite
+				mc_object.gotoAndStop("incap");
+				mc_object.mc_sos.visible = true;
+				mc_object.mc_sos.scaleX = mc_object.scaleX;
 				
 				cg.hudConsoles[playerID].gotoAndStop("incap");
 				reviveProgress = 0;
 				reviveCounter = 0;
 				reviveExpire = 0;
 			}
+			
+			if (amt < 0)
+				cg.painIndicators[playerID].gotoAndPlay(2);
 			
 			if (hp != hpMax)
 			{
