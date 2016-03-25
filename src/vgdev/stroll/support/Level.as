@@ -45,6 +45,8 @@ package vgdev.stroll.support
 		private var en_skulls:Class;
 		[Embed(source="../../../../json/en_mantas.json", mimeType="application/octet-stream")]
 		private var en_mantas:Class;
+		[Embed(source="../../../../json/en_breeders.json", mimeType="application/octet-stream")]
+		private var en_breeders:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -95,6 +97,7 @@ package vgdev.stroll.support
 												JSON.parse(new en_swipe()),
 												JSON.parse(new en_skulls()),
 												JSON.parse(new en_mantas()),
+												JSON.parse(new en_breeders()),
 											
 												JSON.parse(new en_boss_fails())
 												
@@ -107,7 +110,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_mantas())];
+											//rawEncountersJSON = [JSON.parse(new en_breeders())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -217,6 +220,16 @@ package vgdev.stroll.support
 																	"x":pos.x,
 																	"y":pos.y,
 																	"collideColor": System.COL_GREEN
+																	});
+					manager = System.M_ENEMY;
+				break;
+				case "Breeder":
+					spawn = new EnemyBreeder(cg, new SWC_Enemy(), {
+																	"attackColor": System.COL_GREEN,
+																	"attackStrength": System.getRandInt(6, 13),
+																	"hp": 90,
+																	"x":pos.x,
+																	"y":pos.y
 																	});
 					manager = System.M_ENEMY;
 				break;
@@ -385,6 +398,7 @@ package vgdev.stroll.support
 		 */
 		public function getRandomPointInRegion(region:String):Point
 		{
+			var theta:Number;
 			switch (region)
 			{
 				case "right":			return new Point(System.getRandNum( 290,  400), System.getRandNum(-150,  150));	break;
@@ -399,6 +413,16 @@ package vgdev.stroll.support
 				case "bottom_left":		return new Point(System.getRandNum(-400, -230), System.getRandNum( 250,  120));	break;
 				case "left":			return new Point(System.getRandNum(-450, -300), System.getRandNum(-200,  200));	break;
 				case "far_left":		return new Point(System.getRandNum(-450, -400), System.getRandNum(-200,  200));	break;
+				case "near_orbit":
+					theta = System.getRandNum(0, 360);
+					return new Point((System.ORBIT_0_X + System.getRandNum( -30, 50)) * Math.cos(System.degToRad(theta)),
+									 (System.ORBIT_0_Y + System.getRandNum( -10, 40)) * Math.sin(System.degToRad(theta)));
+				break;
+				case "distant_orbit":
+					theta = System.getRandNum(0, 360);
+					return new Point((System.ORBIT_2_X + System.getRandNum( -70, 40)) * Math.cos(System.degToRad(theta)),
+									 (System.ORBIT_2_Y + System.getRandNum( -50, 0)) * Math.sin(System.degToRad(theta)));
+				break;
 				default:
 					trace("[Level] Region not known:", region);
 					return new Point();

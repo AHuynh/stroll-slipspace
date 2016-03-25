@@ -233,7 +233,8 @@ package vgdev.stroll.props.enemies
 		 */
 		override public function changeHP(amt:Number):Boolean 
 		{
-			colAlpha = .3;
+			if (amt < 0)
+				colAlpha = .3;
 			hp = System.changeWithLimit(hp, amt, 0, hpMax);
 			if (hp == 0)
 				destroy();

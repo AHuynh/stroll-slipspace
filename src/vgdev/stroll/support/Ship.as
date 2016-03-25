@@ -125,6 +125,10 @@ package vgdev.stroll.support
 		{
 			if (mitigation == -1)
 				mitigation = shieldMitigation;
+				
+			// pretend colored attacks don't exist if shield freq hasn't been unlocked yet
+			if (cg.level.sectorIndex <= 4)
+				col = 0;
 			
 			// shields absorb all damage until it breaks
 			// a 10 damage attack against 100 hull and 20 shield results in 100 hull and 10 shield

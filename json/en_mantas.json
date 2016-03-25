@@ -60,6 +60,7 @@
 	{
 		"time": 38,
 		"repeat": 2,
+		"recur": 33,
 		"spawnables":
 			[
 				{"type": "Slime"}
