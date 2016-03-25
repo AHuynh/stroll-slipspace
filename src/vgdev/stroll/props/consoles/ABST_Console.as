@@ -213,18 +213,10 @@ package vgdev.stroll.props.consoles
 					mc_object.prompt.visible = false;			// hide the '!'
 	
 					// show the appropriate module UI
-					//hud_consoles[closestPlayer.playerID].gotoAndStop(CONSOLE_NAME.toLowerCase());
-					//cg.hudTitles[closestPlayer.playerID].visible = true;
-					//cg.hudTitles[closestPlayer.playerID].text = CONSOLE_NAME;
 					setHUD(CONSOLE_NAME);
 					updateHUD(true);
-					if (cg.tails.tutorialMode)
-					{
-						//hud_consoles[closestPlayer.playerID].mc_tutorial.visible = true;
-						//hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(CONSOLE_NAME.toLowerCase());
-						
+					if (cg.tails.tutorialMode)						
 						cg.tails.showHalf(closestPlayer.playerID == 0, TUT_TITLE, TUT_MSG);
-					}
 					mc_object.mc_newIndicator.visible = false;
 					
 					SoundManager.playSFX("sfx_UI_Beep_C", .5);

@@ -11,12 +11,14 @@ package vgdev.stroll.props.enemies
 	public class EnemyRammable extends ABST_Enemy 
 	{
 		private var atkDir:Number;
+		private var gib:String;
 		
 		public function EnemyRammable(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			super(_cg, _mc_object, attributes);
 			setStyle(System.setAttribute("style", attributes, "ice"));
 			atkDir = System.setAttribute("atkDir", attributes, "0");
+			gib = System.setAttribute("gib", attributes, null);
 			
 			if (System.setAttribute("random", attributes, false))
 				mc_object.base.gotoAndStop(System.getRandInt(1, mc_object.base.totalFrames));
@@ -49,6 +51,25 @@ package vgdev.stroll.props.enemies
 				updateDamageFlash();				
 			}
 			return completed;
+		}
+		
+		override public function destroy():void 
+		{
+			if (gib != null)
+				for (var i:int = 3 + System.getRandInt(0, 2); i >= 0; i--)
+					cg.addDecor(gib, {
+												"x": System.getRandNum(mc_object.x - 5, mc_object.x + 5),
+												"y": System.getRandNum(mc_object.y - 5, mc_object.y + 5),
+												"dx": System.getRandNum( -1.5, 1.5),
+												"dy": System.getRandNum( -1.5, 1.5),
+												"dr": System.getRandNum( -5, 5),
+												"rot": System.getRandNum(0, 360),
+												"scale": System.getRandNum(1, 1.5),
+												"alphaDelay": 30 + System.getRandInt(0, 20),
+												"alphaDelta": 15,
+												"random": true
+											});
+			super.destroy();
 		}
 	}
 }

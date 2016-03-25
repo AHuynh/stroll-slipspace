@@ -42,14 +42,21 @@ package vgdev.stroll.support
 				ct.color = System.COL_WHITE;
 				ct.alphaMultiplier = .75;
 				alerts.transform.colorTransform = ct;
+				
+				checkForAlert(alerts.mc_shields, cg.ship.getShields() == 0);
+				checkForAlert(alerts.mc_hull, cg.ship.getHPPercent() < .3);
+				checkForAlert(alerts.mc_incap, cg.players[0].getHP() == 0 || cg.players[1].getHP() == 0);
+				checkForAlert(alerts.mc_fire, cg.managerMap[System.M_FIRE].numObjects() != 0);
+				checkForAlert(alerts.mc_intruders, false);
+				checkForAlert(alerts.mc_corruption, isCorrupt);
 			
-				alerts.mc_shields.visible = cg.ship.getShields() == 0;
+				/*alerts.mc_shields.visible = cg.ship.getShields() == 0;
 				alerts.mc_hull.visible = cg.ship.getHPPercent() < .3;
 				alerts.mc_incap.visible = cg.players[0].getHP() == 0 || cg.players[1].getHP() == 0;
 				alerts.mc_fire.visible = cg.managerMap[System.M_FIRE].numObjects() != 0;
 				//alerts.mc_intruders.visible = cg.managerMap[System.M_BOARDERS].numObjects() != 0;
 				alerts.mc_intruders.visible = false;
-				alerts.mc_corruption.visible = isCorrupt;
+				alerts.mc_corruption.visible = isCorrupt;*/
 			}
 			else if (counter == 15)
 			{
@@ -57,6 +64,13 @@ package vgdev.stroll.support
 				ct.alphaMultiplier = .75;
 				alerts.transform.colorTransform = ct;
 			}
+		}
+		
+		private function checkForAlert(mc:MovieClip, newState:Boolean):void
+		{
+			if (!mc.visible && newState && mc != alerts.mc_incap)
+				SoundManager.playSFX("sfx_warn2", .7);
+			mc.visible = newState;
 		}
 		
 		override public function destroy():void 

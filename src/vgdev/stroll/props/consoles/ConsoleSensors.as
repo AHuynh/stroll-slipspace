@@ -3,7 +3,9 @@ package vgdev.stroll.props.consoles
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.Player;
 	import vgdev.stroll.System;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * Adjusts the view
@@ -12,6 +14,7 @@ package vgdev.stroll.props.consoles
 	public class ConsoleSensors extends ABST_Console 
 	{
 		private var corruptTimer:int = -1;
+		private var isMoving:Boolean = false;
 		
 		public function ConsoleSensors(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
@@ -52,6 +55,20 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		override public function onAction(p:Player):void 
+		{
+			isMoving = false;
+			super.onAction(p);
+		}
+		
+		override public function onCancel():void 
+		{
+			if (corrupted)		// relinquish control if corrupted
+				consoleFAILS.onCancel();
+			isMoving = false;
+			super.onCancel();
+		}
+		
 		override public function holdKey(keys:Array):void
 		{
 			if (hp == 0) return;
@@ -70,6 +87,16 @@ package vgdev.stroll.props.consoles
 				cg.camera.moveCameraFocus(new Point(1, 0));
 			if (keys[3])
 				cg.camera.moveCameraFocus(new Point(0, -1));
+				
+			if (!isMoving && (keys[0] || keys[1] || keys[2] || keys[3]))
+			{
+				isMoving = true;
+				SoundManager.playSFX("sfx_servo", .5);
+			} else if (isMoving && !keys[0] && !keys[1] && !keys[2] && !keys[3])
+			{
+				isMoving = false;
+				SoundManager.playSFX("sfx_servoEnd", .5);
+			}
 		
 			var hud:MovieClip = getHUD();
 				

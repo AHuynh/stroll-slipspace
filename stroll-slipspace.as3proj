@@ -97,6 +97,11 @@
     <asset path="sfx\sfx_electricShock.mp3" />
     <asset path="sfx\sfx_peeps_yell.mp3" />
     <asset path="sfx\sfx_peeps_phase_change.mp3" />
+    <asset path="sfx\sfx_warn2.mp3" />
+    <asset path="sfx\sfx_warn2vitals.mp3" />
+    <asset path="sfx\sfx_ekg.mp3" />
+    <asset path="sfx\sfx_servo.mp3" />
+    <asset path="sfx\sfx_servoEnd.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

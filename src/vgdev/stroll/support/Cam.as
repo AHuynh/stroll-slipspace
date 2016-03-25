@@ -119,6 +119,7 @@ package vgdev.stroll.support
 			num += add[num < tgt ? 1 : 0];
 			if (Math.abs(num - tgt) < thresh)
 				num = tgt;
+				
 			return num;
 		}
 		

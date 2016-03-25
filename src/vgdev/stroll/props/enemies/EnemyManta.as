@@ -75,6 +75,7 @@ package vgdev.stroll.props.enemies
 																		"dr":			System.getRandNum(-1, 1),
 																		"spd":			System.getRandNum(0.7, 1.1),
 																		"style":		"ice",
+																		"gib":			"gib_ice",
 																		"random":		true
 																	});
 					cg.addToGame(proj, System.M_ENEMY);
@@ -90,18 +91,19 @@ package vgdev.stroll.props.enemies
 		
 		override public function destroy():void 
 		{
-			/*for (var i:int = 5 + System.getRandInt(0, 3); i >= 0; i--)
-				cg.addDecor("gib_slime", {
-											"x": System.getRandNum(mc_object.x - 20, mc_object.x + 20),
-											"y": System.getRandNum(mc_object.y - 20, mc_object.y + 20),
+			for (var i:int = 6 + System.getRandInt(0, 3); i >= 0; i--)
+				cg.addDecor("gib_manta", {
+											"x": System.getRandNum(mc_object.x - 30, mc_object.x + 30),
+											"y": System.getRandNum(mc_object.y - 30, mc_object.y + 30),
 											"dx": System.getRandNum( -2, 2),
 											"dy": System.getRandNum( -2, 2),
-											"dr": System.getRandNum( -11, 11),
+											"dr": System.getRandNum( -2, 2),
 											"rot": System.getRandNum(0, 360),
-											"alphaDelay": 70 + System.getRandInt(0, 20),
-											"alphaDelta": 30,
+											"scale": System.getRandNum(1, 3),
+											"alphaDelay": 90 + System.getRandInt(0, 20),
+											"alphaDelta": 45,
 											"random": true
-										});*/
+										});
 			super.destroy();
 		}
 	}

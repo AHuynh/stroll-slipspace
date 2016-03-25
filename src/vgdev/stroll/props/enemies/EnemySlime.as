@@ -64,7 +64,7 @@ package vgdev.stroll.props.enemies
 																		"life":			150,
 																		"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 																		"spd":			3,
-																		"style":		null
+																		"style":		"slime"
 																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}

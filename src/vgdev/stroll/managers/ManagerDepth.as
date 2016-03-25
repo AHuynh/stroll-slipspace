@@ -21,7 +21,7 @@ package vgdev.stroll.managers
 		 */
 		public function updateDepths():void
 		{
-			if (!cg.game) return;	
+			if (!cg.game || !objArray) return;	
 			objArray.sortOn("depth", Array.NUMERIC);
 			for each (var obj:ABST_Object in objArray)
 				if (obj.mc_object != null)
@@ -31,6 +31,7 @@ package vgdev.stroll.managers
 		// untrack items that are no longer active
 		override public function step():void 
 		{
+			if (!objArray) return;
 			var shouldUpdate:Boolean = false;
 			for (var i:int = objArray.length - 1; i >= 0; i--)
 				if (!objArray[i].isActive())
@@ -44,6 +45,7 @@ package vgdev.stroll.managers
 		
 		override public function addObject(obj:ABST_Object):void 
 		{
+			if (!objArray) return;
 			super.addObject(obj);
 			updateDepths();
 		}

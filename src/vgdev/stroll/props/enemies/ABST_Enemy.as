@@ -64,7 +64,7 @@ package vgdev.stroll.props.enemies
 			dR = System.setAttribute("dr", attributes, 0);
 			mc_object.rotation = System.setAttribute("rot", attributes, 0);
 			setScale(System.setAttribute("scale", attributes, 1));
-			spd = System.setAttribute("spd", attributes, 0);
+			spd = System.setAttribute("spd", attributes, 1);
 				
 			attackColor = System.setAttribute("attackColor", attributes, System.COL_WHITE);
 			attackStrength = System.setAttribute("attackStrength", attributes, 8);
@@ -206,7 +206,7 @@ package vgdev.stroll.props.enemies
 																		"life":			150,
 																		"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 																		"spd":			3,
-																		"style":		null
+																		"style":		"eye"
 																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
@@ -264,7 +264,9 @@ package vgdev.stroll.props.enemies
 				driftDir = -1;
 			}
 			else									// in-between
+			{
 				updatePosition(System.forward(drift * driftDir, rot, true), System.forward(drift * driftDir, rot, false));
+			}
 		}
 		
 		override public function destroySilently():void 

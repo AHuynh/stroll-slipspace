@@ -43,6 +43,7 @@
 		public var isTailsPaused:Boolean = false;		// from TAILS
 		public var isDefeatedPaused:Boolean = false;	// ship is exploding
 		public var isGameOver:Boolean = false;			// game over screen
+		public var isAllIncap:Boolean = false;
 		
 		/// UI consoles; an Array of MovieClips
 		public var hudConsoles:Array;
@@ -209,6 +210,8 @@
 			tails.show(TAILS_DEFAULT);
 			tails.showNew = true;
 			camera.setCameraFocus(new Point(0, -100));
+			
+			stage.focus = game;
 		}
 		
 		/**
@@ -278,14 +281,14 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-				/*	jump();
+					jump();
 				break;
-				case Keyboard.K:
+				case Keyboard.K:/*
 					players[System.getRandInt(0, 1)].changeHP( -9999);
-				break;*/
-				case Keyboard.K:
-					killShip();
 				break;
+				/*case Keyboard.K:
+					killShip();
+				break;*/
 				/*case Keyboard.K:
 					addFires(1);
 				break;*/
@@ -336,6 +339,7 @@
 			if (isTruePaused())
 				return completed;
 
+			var i:int;
 			if (isDefeatedPaused)
 			{
 				var cf:int = game.mc_ship.mc_shipBase.currentFrame;
@@ -345,13 +349,35 @@
 					gui.mc_lose.tf_lose.text = "Ship lost in Sector " + level.sectorIndex;
 					isGameOver = true;
 				}
-				else if (cf <= 55 && cf % 5 == 0)
-					addExplosions(System.getRandInt(2, 5));
-				else if (cf == 72)
-					addExplosions(System.getRandInt(5, 12));
+				else
+				{
+					if (cf <= 55 && cf % 5 == 0)
+						addExplosions(System.getRandInt(2, 5));
+					else if (cf == 72)
+						addExplosions(System.getRandInt(5, 12));
+					if (cf < 86 && cf % 3 == 0)
+					{
+						var pt:Point = getRandomShipLocation();
+						for (i = System.getRandInt(3, 9); i >= 0; i--)
+						{
+							
+							addDecor("gib_ship", {
+														"x": pt.x + System.getRandNum(-5, 5),
+														"y": pt.y + System.getRandNum(-5, 5),
+														"dx": System.getRandNum( -2, 2),
+														"dy": System.getRandNum( -2, 2),
+														"dr": System.getRandNum( -15, 15),
+														"rot": System.getRandNum(0, 360),
+														"scale": System.getRandNum(1, 1.5),
+														"alphaDelay": 30 + System.getRandInt(0, 300),
+														"alphaDelta": 15,
+														"random": true
+													});
+						}
+					}
+				}
 			}
 			
-			var i:int;
 			for (i = 0; i < supportClasses.length; i++)
 				supportClasses[i].step();
 			
@@ -359,6 +385,25 @@
 			
 			for (i = 0; i < managers.length; i++)
 				managers[i].step();
+				
+			if (isAllIncap)
+			{
+				var minDown:int = Math.min(players[0].reviveCounter, players[1].reviveCounter);
+				switch (minDown)
+				{
+					case System.SECOND * 3:
+						tails.show("All crew disabled. Initiate self-destruct sequence.", System.TAILS_NORMAL, "HEADS");
+					break;
+					case System.SECOND * 9:
+						tails.show("Shutting down AI. Scuttling slipship.", System.TAILS_NORMAL, "HEADS");
+					break;
+					case System.SECOND * 10:
+						isAllIncap = false;
+						killShip();
+					break;
+				}
+			}
+				
 			return completed;
 		}
 		
@@ -411,8 +456,10 @@
 				gui.mc_left.visible = false;
 				gui.mc_right.visible = false;
 				
-				tails.tutorialMode = level.sectorIndex % 4 == 0;
-				//tails.tutorialMode = false;
+				//tails.tutorialMode = level.sectorIndex % 4 == 0;
+				tails.tutorialMode = false;
+				
+				game.mc_ship.mc_console_slipdrive.parentClass.setArrowDifficulty(level.sectorIndex);
 			}
 		}
 		
@@ -562,6 +609,8 @@
 			if (isDefeatedPaused) return;
 			isDefeatedPaused = true;
 			
+			managerMap[System.M_FIRE].killAll();
+			
 			// hide ship interior
 			game.mc_ship.mc_interior.visible = false;
 			game.mc_ship.shield.visible = false;
@@ -573,7 +622,7 @@
 			game.mc_ship.turret_l.visible = false;
 			game.mc_ship.turret_r.visible = false;
 			game.mc_ship.turret_b.visible = false;
-			managerMap[System.M_FIRE].killAll();
+			ship.setShieldsEnabled(false);
 			
 			game.mc_ship.mc_shipBase.gotoAndPlay("death");
 		}
@@ -606,6 +655,7 @@
 			}
 			supportClasses = null;
 			
+			SoundManager.shutUp();
 			completed = true;
 		}
 	}

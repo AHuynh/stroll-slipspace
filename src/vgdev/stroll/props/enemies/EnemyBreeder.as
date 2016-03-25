@@ -77,18 +77,19 @@ package vgdev.stroll.props.enemies
 		
 		override public function destroy():void 
 		{
-			/*for (var i:int = 5 + System.getRandInt(0, 3); i >= 0; i--)
-				cg.addDecor("gib_slime", {
-											"x": System.getRandNum(mc_object.x - 20, mc_object.x + 20),
-											"y": System.getRandNum(mc_object.y - 20, mc_object.y + 20),
-											"dx": System.getRandNum( -2, 2),
-											"dy": System.getRandNum( -2, 2),
-											"dr": System.getRandNum( -11, 11),
+			for (var i:int = 7 + System.getRandInt(0, 5); i >= 0; i--)
+				cg.addDecor("gib_breeder", {
+											"x": System.getRandNum(mc_object.x - 40, mc_object.x + 40),
+											"y": System.getRandNum(mc_object.y - 40, mc_object.y + 40),
+											"dx": System.getRandNum( -1, 1),
+											"dy": System.getRandNum( -1, 1),
+											"dr": System.getRandNum( -5, 5),
 											"rot": System.getRandNum(0, 360),
+											"scale": System.getRandNum(1, 2),
 											"alphaDelay": 70 + System.getRandInt(0, 20),
 											"alphaDelta": 30,
 											"random": true
-										});*/
+										});
 			super.destroy();
 		}
 	}

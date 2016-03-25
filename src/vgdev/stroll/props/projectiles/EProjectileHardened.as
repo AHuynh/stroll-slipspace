@@ -69,6 +69,7 @@ package vgdev.stroll.props.projectiles
 		override protected function onShipHit():void
 		{
 			hp = 0;
+			addShipDebris();
 			cg.ship.damage(dmg, attackColor);
 		}
 		

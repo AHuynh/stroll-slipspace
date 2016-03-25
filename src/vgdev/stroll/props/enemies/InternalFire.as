@@ -50,7 +50,7 @@ package vgdev.stroll.props.enemies
 		private function init(e:Event):void
 		{
 			mc_object.removeEventListener(Event.ADDED_TO_STAGE, init);
-			if (!isPointValid(new Point(mc_object.x, mc_object.y)))
+			if (!isPointValid(new Point(mc_object.x, mc_object.y)) || cg.isDefeatedPaused)
 			{
 				destroySilently();
 				return;

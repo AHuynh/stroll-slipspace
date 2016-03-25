@@ -11,6 +11,7 @@ package vgdev.stroll.props
 	import vgdev.stroll.props.projectiles.ABST_IProjectile;
 	import vgdev.stroll.props.projectiles.IProjectileGeneric;
 	import vgdev.stroll.System;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * Instance of the player
@@ -66,7 +67,7 @@ package vgdev.stroll.props
 		// helpers for revive S.O.S. text
 		private var reviveExpire:int = 0;
 		private var reviveProgress:Number = 0;
-		private var reviveCounter:int = 0;
+		public var reviveCounter:int = 0;
 		
 		// animation helpers
 		private var isMoving:Boolean = false;
@@ -128,6 +129,8 @@ package vgdev.stroll.props
 				reviveCounter = System.changeWithLimit(reviveCounter, 1, 0, System.SECOND * 999);
 				cg.hudConsoles[playerID].mod.tf_downtime.text = int(reviveCounter / System.SECOND).toString() + "s";
 				cg.hudConsoles[playerID].mod.tf_revive.text = int(reviveProgress * 100).toString() + "%";
+				if (reviveCounter % 30 == 0)
+					SoundManager.playSFX("sfx_ekg", .7);
 			}
 			return false;
 		}
@@ -180,6 +183,11 @@ package vgdev.stroll.props
 				reviveProgress = 0;
 				reviveCounter = 0;
 				reviveExpire = 0;
+				
+				SoundManager.playSFX("sfx_warn2vitals", .75);
+				
+				if (cg.players[0].getHP() == 0 && cg.players[1].getHP() == 0)
+					cg.isAllIncap = true;
 			}
 			
 			if (amt < 0 && hp > 0)

@@ -127,5 +127,23 @@ package vgdev.stroll.props.enemies
 		{
 			mc_object.rotation = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x + System.getRandNum(-10, 10), cg.shipHitMask.y + System.getRandNum(-10, 10));
 		}
+		
+		override public function destroy():void 
+		{
+			for (var i:int = 5 + System.getRandInt(0, 3); i >= 0; i--)
+				cg.addDecor("gib_skull", {
+											"x": System.getRandNum(mc_object.x - 10, mc_object.x + 10),
+											"y": System.getRandNum(mc_object.y - 10, mc_object.y + 10),
+											"dx": System.getRandNum( -1, 1),
+											"dy": System.getRandNum( -1, 1),
+											"dr": System.getRandNum( -5, 5),
+											"rot": System.getRandNum(0, 360),
+											"scale": System.getRandNum(1, 1.5),
+											"alphaDelay": 60 + System.getRandInt(0, 20),
+											"alphaDelta": 20,
+											"random": true
+										});
+			super.destroy();
+		}
 	}
 }

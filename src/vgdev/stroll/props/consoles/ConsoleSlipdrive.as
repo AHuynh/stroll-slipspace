@@ -13,8 +13,11 @@ package vgdev.stroll.props.consoles
 	{
 		private var isSpooling:Boolean = false;
 		private var arrows:Array;
+		
 		private var arrowSpeed:Number = 5;
 		private var arrowDifficulty:int = 3;
+		private var arrowVarySpacing:Number = 20;
+		
 		private var currentArrow:int = 0;
 		private var anyMiss:Boolean = false;
 		
@@ -153,6 +156,13 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		public function setArrowDifficulty(sector:int):void
+		{
+			arrowDifficulty = 3 + int(sector / 3);
+			arrowSpeed = 5 + sector * .2;
+			arrowVarySpacing = 20 + sector;
+		}
+		
 		/**
 		 * Start spooling the slipdrive
 		 * Arrows will spawn from the right and move left
@@ -171,7 +181,7 @@ package vgdev.stroll.props.consoles
 				getHUD().mc_container.addChild(mc);
 				arrows.push(mc);
 				
-				anchor += 40 + System.getRandNum(0, 20);
+				anchor += 40 + System.getRandNum(0, arrowVarySpacing);
 			}
 			setText(null);
 			missCounter = 0;

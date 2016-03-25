@@ -36,6 +36,7 @@ package vgdev.stroll.props.projectiles
 		//  35% chance of fire if shields are down
 		override protected function onShipHit():void
 		{
+			addShipDebris();
 			var shieldsUp:Boolean = cg.ship.getShields() > 0;
 			cg.ship.damage(dmg * (shieldsUp ? 1 : .1), attackColor);
 			if ((shieldsUp && Math.random() < .15) || (!shieldsUp && Math.random() < .35))

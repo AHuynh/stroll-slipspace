@@ -29,6 +29,7 @@ package vgdev.stroll.managers
 		 */
 		public function updateProximities(p:Player):void
 		{
+			if (!objArray) return;
 			var c:ABST_Console;
 			
 			// don't check proximity for this player if they are incapacitated

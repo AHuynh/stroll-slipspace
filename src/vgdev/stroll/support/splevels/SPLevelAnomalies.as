@@ -45,6 +45,7 @@ package vgdev.stroll.support.splevels
 																		"x": System.getRandNum(0, 100) + System.GAME_WIDTH + System.GAME_OFFSX,
 																		"y": System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT) + System.GAME_OFFSY,
 																		"tint": waveColor,
+																		"useTint": useColors,
 																		"dx": -3 - System.getRandNum(0, 1),
 																		"hp": 12
 																		});

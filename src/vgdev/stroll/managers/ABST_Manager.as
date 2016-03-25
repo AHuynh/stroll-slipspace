@@ -28,9 +28,10 @@ package vgdev.stroll.managers
 		public function step():void
 		{
 			// -- override this function
-			for (var i:int = objArray.length - 1; i >= 0; i--)
-				if (objArray[i].step())
-					objArray.splice(i, 1);
+			if (objArray)
+				for (var i:int = objArray.length - 1; i >= 0; i--)
+					if (objArray[i].step())
+						objArray.splice(i, 1);
 		}
 		
 		/**
@@ -39,8 +40,9 @@ package vgdev.stroll.managers
 		 */
 		public function setObjects(objs:Array):void
 		{
-			for (var i:int = objArray.length - 1; i >= 0; i--)
-				objArray[i].kill();
+			if (objArray)
+				for (var i:int = objArray.length - 1; i >= 0; i--)
+					objArray[i].kill();
 			objArray = objs;
 		}
 		
@@ -50,8 +52,11 @@ package vgdev.stroll.managers
 		 */
 		public function addObject(obj:ABST_Object):void
 		{
-			objArray.push(obj);
-			obj.spawnActions();
+			if (objArray)
+			{
+				objArray.push(obj);
+				obj.spawnActions();
+			}
 		}
 		
 		/**
@@ -60,6 +65,7 @@ package vgdev.stroll.managers
 		 */
 		public function numObjects():int
 		{
+			if (!objArray) return 0;
 			return objArray.length;
 		}
 		
@@ -69,6 +75,7 @@ package vgdev.stroll.managers
 		 */
 		public function hasObjects():Boolean
 		{
+			if (!objArray) return false;
 			return objArray.length > 0;
 		}
 		
@@ -80,6 +87,7 @@ package vgdev.stroll.managers
 		 */
 		public function collideWithOther(o:ABST_Object, precise:Boolean = false):ABST_Object
 		{
+			if (!objArray) return null;
 			if (!o.isActive())
 				return null;
 			var other:ABST_Object;
@@ -117,6 +125,7 @@ package vgdev.stroll.managers
 		 */
 		public function isNearOther(o:ABST_Object, distance:Number):Boolean
 		{
+			if (!objArray) return false;
 			var other:ABST_Object;
 			var dist:Number;
 			for (var i:int = 0; i < objArray.length; i++)
@@ -148,6 +157,7 @@ package vgdev.stroll.managers
 		 */
 		public function getNearby(o:ABST_Object, distance:Number):Array
 		{
+			if (!objArray) return null;
 			var nearby:Array = [];
 			var other:ABST_Object;
 			var dist:Number;
@@ -172,8 +182,9 @@ package vgdev.stroll.managers
 		 */
 		public function killAll():void
 		{
-			for (var i:int = objArray.length - 1; i >= 0; i--)
-				objArray[i].destroySilently();
+			if (objArray)
+				for (var i:int = objArray.length - 1; i >= 0; i--)
+					objArray[i].destroySilently();
 			objArray = [];
 		}
 		

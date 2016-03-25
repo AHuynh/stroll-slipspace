@@ -22,6 +22,13 @@ package vgdev.stroll.support
 		[Embed(source="../../../../sfx/sfx_readybeep2G.mp3")]
 		private static var sfx_readybeep2G:Class;
 		
+		[Embed(source="../../../../sfx/sfx_warn2.mp3")]
+		private static var sfx_warn2:Class;
+		[Embed(source="../../../../sfx/sfx_warn2vitals.mp3")]
+		private static var sfx_warn2vitals:Class;
+		[Embed(source="../../../../sfx/sfx_ekg.mp3")]
+		private static var sfx_ekg:Class;
+		
 		[Embed(source="../../../../sfx/sfx_electricShock.mp3")]
 		private static var sfx_electricShock:Class;
 		
@@ -39,6 +46,11 @@ package vgdev.stroll.support
 		private static var sfx_sliphit:Class;	
 		[Embed(source="../../../../sfx/sfx_slipjump.mp3")]
 		private static var sfx_slipjump:Class;	
+			
+		[Embed(source="../../../../sfx/sfx_servo.mp3")]
+		private static var sfx_servo:Class;	
+		[Embed(source="../../../../sfx/sfx_servoEnd.mp3")]
+		private static var sfx_servoEnd:Class;	
 		
 		[Embed(source="../../../../sfx/sfx_UI_Beep_B.mp3")]
 		private static var sfx_UI_Beep_B:Class;	
@@ -73,6 +85,10 @@ package vgdev.stroll.support
 			
 			sounds["sfx_electricShock"] = new sfx_electricShock();
 			
+			sounds["sfx_warn2"] = new sfx_warn2();
+			sounds["sfx_warn2vitals"] = new sfx_warn2vitals();
+			sounds["sfx_ekg"] = new sfx_ekg();
+			
 			sounds["sfx_explosionlarge1"] = new sfx_explosionlarge1();
 			sounds["sfx_hithull1"] = new sfx_hithull1();
 			sounds["sfx_hitshield1"] = new sfx_hitshield1();
@@ -80,6 +96,9 @@ package vgdev.stroll.support
 			sounds["sfx_shieldrecharge"] = new sfx_shieldrecharge();
 			sounds["sfx_sliphit"] = new sfx_sliphit();
 			sounds["sfx_slipjump"] = new sfx_slipjump();
+			
+			sounds["sfx_servo"] = new sfx_servo();
+			sounds["sfx_servoEnd"] = new sfx_servoEnd();
 			
 			sounds["sfx_UI_Beep_B"] = new sfx_UI_Beep_B();
 			sounds["sfx_UI_Beep_C"] = new sfx_UI_Beep_C();
@@ -103,7 +122,7 @@ package vgdev.stroll.support
 		
 		public static function playBGM(music:String, volume:Number = 1):void
 		{
-			return;
+			//return;
 			
 			if (currentBGM == music)
 				return;
@@ -111,7 +130,6 @@ package vgdev.stroll.support
 			
 			var snd:Sound;
 			switch (music)
-			//switch ("bgm_boss")
 			{
 				case "bgm_calm":					snd = new bgm_calm();		break;
 				case "bgm_boss":					snd = new bgm_boss();		break;
@@ -144,6 +162,7 @@ package vgdev.stroll.support
 		public static function shutUp():void
 		{
 			SoundMixer.stopAll();
+			currentBGM = null;
 		}
 		
 	}

@@ -109,6 +109,27 @@ package vgdev.stroll.props.projectiles
 		override protected function onShipHit():void
 		{
 			cg.ship.damage(dmg, attackColor);
+			addShipDebris();
+		}
+		
+		public function addShipDebris():void
+		{
+			if (cg.ship.getShields() == 0 && getAffiliation() == System.AFFIL_ENEMY)
+			{
+				for (var i:int = System.getRandInt(0, 3); i >= 0; i--)
+					cg.addDecor("gib_ship", {
+												"x": System.getRandNum(mc_object.x - 5, mc_object.x + 5),
+												"y": System.getRandNum(mc_object.y - 5, mc_object.y + 5),
+												"dx": System.getRandNum( -2, 2),
+												"dy": System.getRandNum( -2, 2),
+												"dr": System.getRandNum( -9, 9),
+												"rot": System.getRandNum(0, 360),
+												"scale": System.getRandNum(.5, 1),
+												"alphaDelay": 30 + System.getRandInt(0, 60),
+												"alphaDelta": 15,
+												"random": true
+											});
+			}
 		}
 	}
 }
