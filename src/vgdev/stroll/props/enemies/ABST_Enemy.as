@@ -52,6 +52,8 @@ package vgdev.stroll.props.enemies
 		/// If null, use mc_object as normal for collisions, else use hitbox specifically
 		public var hitbox:MovieClip = null;
 		private var useHitbox:Boolean = false;
+		private var useRandom:Boolean = false;
+		private var useTint:Boolean = false;
 		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
@@ -62,6 +64,7 @@ package vgdev.stroll.props.enemies
 			dR = System.setAttribute("dr", attributes, 0);
 			mc_object.rotation = System.setAttribute("rot", attributes, 0);
 			setScale(System.setAttribute("scale", attributes, 1));
+			spd = System.setAttribute("spd", attributes, 0);
 				
 			attackColor = System.setAttribute("attackColor", attributes, System.COL_WHITE);
 			attackStrength = System.setAttribute("attackStrength", attributes, 8);
@@ -69,7 +72,12 @@ package vgdev.stroll.props.enemies
 			
 			if (attributes["tint"] != null)
 				selfColor = attributes["tint"] == "random" ? System.getRandCol() : attributes["tint"];
+			else
+				selfColor = System.setAttribute("collideColor", attributes, System.COL_WHITE);
+			
 			useHitbox = attributes["customHitbox"] != null;
+			useRandom = attributes["random"] != null;
+			useTint =  System.setAttribute("useTint", attributes, false);
 			
 			hpMax = hp = System.setAttribute("hp", attributes, 30);
 			
@@ -83,7 +91,10 @@ package vgdev.stroll.props.enemies
 		{
 			mc_object.gotoAndStop(style);
 			mc_object.spawn.visible = false;
-			setBaseColor(selfColor);
+			if (useRandom)
+				mc_object.base.gotoAndStop(System.getRandInt(1, mc_object.base.totalFrames));
+			if (useTint)
+				setBaseColor(selfColor);
 			if (useHitbox)
 			{
 				if (mc_object.hitbox == null)

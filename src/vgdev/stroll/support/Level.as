@@ -43,6 +43,8 @@ package vgdev.stroll.support
 		private var en_anomalyfieldcolored:Class;
 		[Embed(source="../../../../json/en_skulls.json", mimeType="application/octet-stream")]
 		private var en_skulls:Class;
+		[Embed(source="../../../../json/en_mantas.json", mimeType="application/octet-stream")]
+		private var en_mantas:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -92,6 +94,7 @@ package vgdev.stroll.support
 												JSON.parse(new en_anomalyfieldcolored()),
 												JSON.parse(new en_swipe()),
 												JSON.parse(new en_skulls()),
+												JSON.parse(new en_mantas()),
 											
 												JSON.parse(new en_boss_fails())
 												
@@ -104,7 +107,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_boss_fails())];
+											//rawEncountersJSON = [JSON.parse(new en_mantas())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -212,7 +215,8 @@ package vgdev.stroll.support
 				case "Amoeba":
 					spawn = new EnemyAmoeba(cg, new SWC_Enemy(), spawnItem["am_size"], {
 																	"x":pos.x,
-																	"y":pos.y
+																	"y":pos.y,
+																	"collideColor": System.COL_GREEN
 																	});
 					manager = System.M_ENEMY;
 				break;
@@ -220,7 +224,7 @@ package vgdev.stroll.support
 					spawn = new EnemyEyeball(cg, new SWC_Enemy(), {
 																	"x":pos.x,
 																	"y":pos.y,
-																	"attackColor": col,
+																	"attackColor": System.COL_RED,
 																	"hp": 30
 																	});
 					manager = System.M_ENEMY;
@@ -237,6 +241,14 @@ package vgdev.stroll.support
 																	});
 					manager = System.M_ENEMY;
 				break;
+				case "Manta":
+					spawn = new EnemyManta(cg, new SWC_Enemy(), {
+																	"attackColor": System.COL_BLUE,
+																	"attackStrength": 25,
+																	"hp": 70
+																	});
+					manager = System.M_ENEMY;
+				break;
 				case "Skull":
 					spawn = new EnemySkull(cg, new SWC_Enemy(), {
 																	"attackColor": System.COL_RED,
@@ -247,7 +259,7 @@ package vgdev.stroll.support
 				break;
 				case "Slime":
 					spawn = new EnemySlime(cg, new SWC_Enemy(), {
-																	"attackColor": col,
+																	"attackColor": System.COL_BLUE,
 																	"attackStrength": 10,
 																	"hp": 30
 																	});
@@ -257,7 +269,7 @@ package vgdev.stroll.support
 					spawn = new EnemySquid(cg, new SWC_Enemy(), {
 																	"x":pos.x,
 																	"y":pos.y,
-																	"attackColor": col,
+																	"attackColor": System.COL_YELLOW,
 																	"attackStrength": 18,
 																	"hp": 200
 																	});

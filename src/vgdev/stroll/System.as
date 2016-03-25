@@ -61,8 +61,10 @@ package vgdev.stroll
 		public static const VOL_BGM:Number = .4;
 		
 		// range constants
-		public static const ORBIT_0_X:Number = 420;		// suitable for Easy Sector with no Sensors
+		public static const ORBIT_0_X:Number = 420;		// close orbit;  suitable for Easy Sector with no Sensors
 		public static const ORBIT_0_Y:Number = 190;
+		public static const ORBIT_2_X:Number = 700;		// far orbit; suitable for Medium Sector+ with Sensors
+		public static const ORBIT_2_Y:Number = 420;
 		
 		// spawning constants
 		public static const SPAWN_STD:Array = ["right", "left", "top", "bottom", "top_left", "bottom_left", "top_right", "bottom_right"];

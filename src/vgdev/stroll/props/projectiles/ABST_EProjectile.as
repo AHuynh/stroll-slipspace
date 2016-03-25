@@ -56,9 +56,11 @@ package vgdev.stroll.props.projectiles
 			
 			// display the correct graphic
 			mc_object.gotoAndStop(System.setAttribute("style", attributes, 1));
+			if (System.setAttribute("random", attributes, false))
+				mc_object.base.gotoAndStop(System.getRandInt(1, mc_object.base.totalFrames));
 			
-			// tint the graphic
-			if (attackColor != System.COL_WHITE)
+			// tint the graphic if needed
+			if (attackColor != System.COL_WHITE && attributes["useTint"] != null)
 			{
 				colorTrans = new ColorTransform();
 				colorTrans.color = attackColor;
