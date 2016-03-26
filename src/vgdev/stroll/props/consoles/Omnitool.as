@@ -73,6 +73,16 @@ package vgdev.stroll.props.consoles
 		}
 		
 		/**
+		 * Helper to get the distance from this object to another
+		 * @param	other		the other ABST_Obect
+		 * @return				the distance in pixels
+		 */
+		override public function getDistance(other:ABST_Object):Number
+		{
+			return System.getDistance(mc_object.x, mc_object.y, other.mc_object.x, other.mc_object.y);
+		}
+		
+		/**
 		 * Called when a player drops this item
 		 */
 		override public function onCancel():void

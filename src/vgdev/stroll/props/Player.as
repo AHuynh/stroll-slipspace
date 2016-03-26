@@ -286,7 +286,7 @@ package vgdev.stroll.props
 			activeConsole = console;
 			rooted = isRooted;
 			if (rooted)
-				mc_object.gotoAndStop("idle_rear");
+				mc_object.gotoAndStop("console");
 		}
 		
 		/**

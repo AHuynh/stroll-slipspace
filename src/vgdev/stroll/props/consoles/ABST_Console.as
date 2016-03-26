@@ -15,7 +15,7 @@ package vgdev.stroll.props.consoles
 	public class ABST_Console extends ABST_Object 
 	{
 		protected var players:Array;
-		public const RANGE:int = 20;		// maximum range in px from which a player can activate this console
+		public const RANGE:int = 12;		// maximum range in px from which a player can activate this console
 		
 		/// Used as a label in the HUD object
 		public var CONSOLE_NAME:String = "None";
@@ -143,9 +143,19 @@ package vgdev.stroll.props.consoles
 		}
 		
 		/**
+		 * Helper to get the distance from this object to another
+		 * @param	other		the other ABST_Obect
+		 * @return				the distance in pixels
+		 */
+		override public function getDistance(other:ABST_Object):Number
+		{
+			return System.getDistance(mc_object.x, mc_object.y + 17, other.mc_object.x, other.mc_object.y);
+		}
+		
+		/**
 		 * Override this in ABST_Item
 		 * @param	vis
-		 */
+		 */	
 		public function setPromptVisible(vis:Boolean):void
 		{
 			if (!unlocked) mc_object.prompt.visible = false;

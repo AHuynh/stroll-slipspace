@@ -46,7 +46,7 @@ package vgdev.stroll.support
 			bg2.x = int(bg2.x);
 		}
 		
-		public function setStyle(style:String, col:uint = System.COL_WHITE):void
+		public function setStyle(style:String, col:uint = 0xFFFFFF):void
 		{
 			bg1.gotoAndStop(style);
 			bg2.gotoAndStop(style);
@@ -59,7 +59,7 @@ package vgdev.stroll.support
 		 * @param	region	int, [0-2]
 		 * @param	col
 		 */
-		public function setRandomStyle(region:int, col:uint = System.COL_WHITE):void
+		public function setRandomStyle(region:int, col:uint = 0xFFFFFF):void
 		{		
 			switch (region)
 			{
