@@ -104,7 +104,7 @@
 			painIndicators = [gui.mc_painL, gui.mc_painR];
 			gui.tf_distance.text = "Supr Jmp";
 			
-			game.mc_ship.mc_shipBase.tintShip(System.COL_BLUE);
+			game.mc_ship.mc_shipBase.tintShip(engine.shipColor);
 			
 			// init support classes
 			level = new Level(this);
@@ -198,6 +198,7 @@
 			camera.setCameraFocus(new Point(0, -100));
 			
 			stage.focus = game;
+			gui.mc_fade.gotoAndPlay(2);		// fade in
 		}
 		
 		/**
@@ -448,10 +449,10 @@
 		/**
 		 * Play the effect for jumping and remove all external objects (but don't actually jump)
 		 */
-		public function playJumpEffect():void
+		public function playJumpEffect(label:String = null):void
 		{
 			SoundManager.playSFX("sfx_slipjump");
-			game.mc_jump.gotoAndPlay(2);		// play the jump animation
+			game.mc_jump.gotoAndPlay(label == null ? 2 : label);		// play the jump animation
 				
 			// remove all external-ship instances
 			managerMap[System.M_EPROJECTILE].killAll();

@@ -29,8 +29,9 @@ package vgdev.stroll.props.consoles
 		private var missCounter:int = 0;
 		private var complain:Boolean = false;
 		
-		public var forceOverride:Boolean = false;				// generic slipdrive override; if true, don't spool
-		public var fakeJumpNext:Boolean = false;				// if true, next successful jump will be a 'fake jump'
+		public var forceOverride:Boolean = false;		// generic slipdrive override; if true, don't spool
+		public var fakeJumpNext:Boolean = false;		// if true, next successful jump will be a 'fake jump'
+		public var fakeJumpLbl:String = null;			// label to use for fake jump (i.e. to play the longer jump animation)
 		
 		public function ConsoleSlipdrive(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false) 
 		{
@@ -119,7 +120,7 @@ package vgdev.stroll.props.consoles
 						{
 							fakeJumpNext = false;
 							cg.background.setRandomStyle(int(cg.level.sectorIndex / 5), System.getRandCol());
-							cg.playJumpEffect();
+							cg.playJumpEffect(fakeJumpLbl);
 						}
 						else
 						{

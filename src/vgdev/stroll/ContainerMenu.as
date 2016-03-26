@@ -4,7 +4,8 @@
 	import flash.display.SimpleButton;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-
+	import flash.ui.Keyboard;
+	
 	/**
 	 * Main menu and level select screen
 	 * 
@@ -14,6 +15,7 @@
 	{
 		private var engine:Engine;
 		private var menu:SWC_MainMenu;
+		private var checkStory:Boolean = false;
 		
 		/**
 		 * A MovieClip handling the main menu
@@ -36,19 +38,42 @@
 		
 		private function onStart(e:MouseEvent):void
 		{
+			menu.play();
+			menu.btn_start.removeEventListener(MouseEvent.CLICK, onStart);
+			menu.mc_story.setActionKeys(Keyboard.F, Keyboard.PERIOD);
+			checkStory = true;
+		}
+		
+		override public function step():Boolean 
+		{
+			if (!checkStory) return completed;
+			if (menu.mc_story.currentFrame == menu.mc_story.totalFrames)
+			{
+				checkStory = false;
+				engine.shipColor = menu.mc_story.cp_colorpicker.selectedColor;
+				destroy();
+				completed = true;
+			}
+			return completed;
+		}
+		
+		/**
+		 * Called by Story once it's done
+		 * @param	col		The color to tint the slipship
+		 */
+		public function isDone(col:uint):void
+		{
+			destroy();
 			completed = true;
-			destroy(null);
 		}
 		
 		/**
 		 * Clean-up code
-		 * @param	e	the captured Event, unused
 		 */
-		protected function destroy(e:Event):void
+		protected function destroy():void
 		{
 			if (menu != null)
 			{
-				menu.btn_start.removeEventListener(MouseEvent.CLICK, onStart);
 				if (contains(menu))
 					removeChild(menu);
 			}

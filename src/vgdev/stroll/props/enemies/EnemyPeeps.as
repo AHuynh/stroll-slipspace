@@ -3,6 +3,7 @@ package vgdev.stroll.props.enemies
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.System;
 	import vgdev.stroll.support.SoundManager;
 	import vgdev.stroll.props.projectiles.ABST_EProjectile;

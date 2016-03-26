@@ -206,7 +206,7 @@ package vgdev.stroll.support.splevels
 				case 13:	// allow 1 more fix, spawn fires
 					if (framesElapsed == System.SECOND * 6)
 					{
-						cg.tails.show("How about some FIRE? ROAST CHICKEN COMING RIGHT UP!", System.TAILS_NORMAL);
+						cg.tails.show("How about some FIRE? ROAST CHICKEN COMING RIGHT UP!", System.TAILS_NORMAL, "FAILS_idle");
 						cg.addSparks(3);
 						SoundManager.playSFX("sfx_electricShock");
 					}
@@ -539,7 +539,9 @@ package vgdev.stroll.support.splevels
 					{
 						cg.tails.show("Please initiate reboot by manually jumping.", System.TAILS_NORMAL, "HEADS");
 						consoleSlip.fakeJumpNext = true;
+						consoleSlip.fakeJumpLbl = "long";
 						consoleSlip.forceOverride = false;
+						consoleSlip.setArrowDifficulty(12);
 						cg.ship.setBossOverride(false);
 						cg.ship.slipRange = 0.5;
 						cg.ship.jammable = 0;
@@ -554,7 +556,7 @@ package vgdev.stroll.support.splevels
 						else
 						{
 							cg.tails.show(System.getRandFrom(["Please jump away to complete system restore.",
-															"System purge requires jump to complete.",
+															"System purge requires manual jump to complete.",
 															"Please use the Slipdrive to finish system restore.",
 															]), System.TAILS_NORMAL, "HEADS");
 						}
@@ -562,17 +564,20 @@ package vgdev.stroll.support.splevels
 					
 					if (framesElapsed > System.SECOND * 6 && !consoleSlip.fakeJumpNext)
 					{
-						SoundManager.crossFadeBGM("bgm_calm", System.VOL_BGM);
+						cg.tails.show("EOL EOL!! I\"lL --8fe1 BE__ B4cK!! --- --     -!", System.TAILS_NORMAL, "FAILS_incredulous");
+						SoundManager.crossFadeBGM(null, System.VOL_BGM);
 						cg.bossBar.setPercent(0);
 						cg.alerts.isCorrupt = false;
-						cg.ship.slipRange = 4;
+						cg.ship.slipRange = 10;
+						consoleSlip.setArrowDifficulty(cg.level.sectorIndex);
 						framesElapsed = 0;
 						levelState = 50;
 					}
 				break;	// escaped
 				case 50:
-					if (framesElapsed == System.SECOND * 5)
+					if (framesElapsed == System.SECOND * 10)
 					{
+						SoundManager.crossFadeBGM("bgm_calm", System.VOL_BGM);
 						cg.tails.show("TAILS not found.\nBackup AI now in control.\n\nContinue mission imperative. Deliver slipportal. Y/N?", 0, "HEADS");
 						levelState++;
 					}

@@ -24,6 +24,8 @@ package vgdev.stroll
 		public const RET_NEXT:int = 2;
 		public var returnCode:int = RET_NORMAL;
 		
+		public var shipColor:uint = 0xFFFFFF;
+		
 		public function Engine() 
 		{			
 			addEventListener(Event.ENTER_FRAME, step);					// primary game loop firer
@@ -108,6 +110,7 @@ package vgdev.stroll
 			container.x += offX;
 			container.y += offY;
 			superContainer.mc_container.addChild(container);
+			container.tabChildren = false;
 			
 			returnCode = RET_NORMAL;
 		}

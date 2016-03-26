@@ -25,7 +25,7 @@ package vgdev.stroll.support
 		
 		private var camMoveRate:Number = 10;
 		
-		public var lim_x_min:Number = -System.GAME_HALF_WIDTH / 1.8;
+		public var lim_x_min:Number = -System.GAME_HALF_WIDTH / 2.2;
 		public var lim_x_max:Number = System.GAME_HALF_WIDTH / 1.8;
 		public var lim_y_min:Number = -System.GAME_HALF_HEIGHT / 2;
 		public var lim_y_max:Number = System.GAME_HALF_HEIGHT / 2.5;
