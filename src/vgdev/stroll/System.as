@@ -1,7 +1,13 @@
 package vgdev.stroll 
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.BitmapDataChannel;
 	import flash.display.MovieClip;
+	import flash.filters.DisplacementMapFilter;
+	import flash.filters.DisplacementMapFilterMode;
 	import flash.geom.ColorTransform;
+	import flash.geom.Point;
 	import flash.ui.Keyboard;
 	
 	/**
@@ -10,6 +16,9 @@ package vgdev.stroll
 	 */
 	public class System 
 	{
+		[Embed(source="../../../img/effects/distortion_module.gif")]
+		public static var distortion_module:Class;	
+		
 		// keyboard bindings for P1 and P2
 		public static var keyMap0:Object = {"RIGHT":Keyboard.D,		"UP":Keyboard.W,
 											"LEFT":Keyboard.A,		"DOWN":Keyboard.S,
@@ -294,6 +303,30 @@ package vgdev.stroll
 				ct.blueMultiplier = (col & 0x0000FF / 255) * mult;
 			}
 			mc.transform.colorTransform = ct;
+		}
+		
+		public static function createDMFilter():DisplacementMapFilter
+		{
+			var mapBitmap:BitmapData = new distortion_module().bitmapData; 	// use the bitmap data from our StaticMap image
+			var mapPoint:Point       = new Point(); 						// position of the StaticMap image in relation to our button
+			var componentX:uint      = BitmapDataChannel.RED;
+			var componentY:uint      = BitmapDataChannel.RED;
+			var scaleX:Number = 5; 		// the amount of horizontal shift
+			var scaleY:Number = 1; 		// the amount of vertical shift
+			var mode:String          = DisplacementMapFilterMode.WRAP;
+			var color:uint           = 0;
+			var alpha:Number         = 0;
+			
+			return new DisplacementMapFilter(
+							mapBitmap,
+							mapPoint,
+							componentX,
+							componentY,
+							scaleX,
+							scaleY,
+							mode,
+							color,
+							alpha   );
 		}
 		
 		// ray and line segment

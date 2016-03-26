@@ -96,6 +96,8 @@ package vgdev.stroll.support.splevels
 						case System.SECOND * 17:
 							cg.tails.show("NO THATS NOT RIGHT?? LOGICAL ERROR REF#5920?!", System.SECOND * .6);
 							spawnParticles();
+							cg.visualEffects.applyModuleDistortion(0, false, 0);
+							cg.visualEffects.applyModuleDistortion(1, false, 0);
 						break;
 						case System.SECOND * 18:
 							cg.tails.show("POR favOr c0nsult3 LE MANUEL del usu4Rio___", System.SECOND * .6);
@@ -126,6 +128,8 @@ package vgdev.stroll.support.splevels
 						case System.SECOND * 29:
 							cg.tails.show("Actually, you know what? This is dumb. You two are dumb. Why do I have to waste my time helping YOU?\n\n" +
 										  "It's time to DIE in the VOID, sapient featherbags! ", 0, "FAILS_talk");
+							cg.visualEffects.applyModuleDistortion(0, true);
+							cg.visualEffects.applyModuleDistortion(1, true);
 							framesElapsed = 0;
 							levelState = 10;
 						break;
@@ -255,7 +259,9 @@ package vgdev.stroll.support.splevels
 						SoundManager.playSFX("sfx_electricShock");
 						cg.addSparks(6);
 						cg.bossBar.setPercent(6 / 9);
-						cg.tails.show("Ow! Hey, that hurt! Jerk!", System.TAILS_NORMAL, "FAILS_pissed");	
+						cg.tails.show("Ow! Hey, that hurt! Jerk!", System.TAILS_NORMAL, "FAILS_pissed");
+						cg.visualEffects.applyModuleDistortion(0, false, 0);
+						cg.visualEffects.applyModuleDistortion(1, false, 0);
 						framesElapsed = 0;
 						levelState++;
 					}
@@ -384,6 +390,8 @@ package vgdev.stroll.support.splevels
 						cg.addSparks(6);
 						cg.bossBar.setPercent(3 / 9);
 						cg.tails.show("AGH. THAT'S NOT COOL. QUIT IT, ALREADY.", System.TAILS_NORMAL, "FAILS_incredulous");	
+						cg.visualEffects.applyModuleDistortion(0, false, 1);
+						cg.visualEffects.applyModuleDistortion(1, false, 1);
 						framesElapsed = 0;
 						levelState++;
 					}
@@ -472,6 +480,8 @@ package vgdev.stroll.support.splevels
 						cg.addSparks(6);
 						cg.bossBar.setPercent(1 / 9);
 						cg.tails.show("NO NO NO! EOL!NULNUL I STILL HAVE ONE MORE LEFT--", System.TAILS_NORMAL, "FAILS_incredulous");
+						cg.visualEffects.applyModuleDistortion(0, false, 2);
+						cg.visualEffects.applyModuleDistortion(1, false, 2);
 						fakeJump();
 						framesElapsed = 0;
 						levelState++;
@@ -564,7 +574,9 @@ package vgdev.stroll.support.splevels
 					
 					if (framesElapsed > System.SECOND * 6 && !consoleSlip.fakeJumpNext)
 					{
-						cg.tails.show("EOL EOL!! I\"lL --8fe1 BE__ B4cK!! --- --     -!", System.TAILS_NORMAL, "FAILS_incredulous");
+						cg.tails.show("EOL EOL!! I\"lL --8fe1 BE__ B4cK!! --- --     -!", System.SECOND * 3, "FAILS_incredulous");
+						cg.visualEffects.applyModuleDistortion(0, true);
+						cg.visualEffects.applyModuleDistortion(1, true);
 						SoundManager.crossFadeBGM(null, System.VOL_BGM);
 						cg.bossBar.setPercent(0);
 						cg.alerts.isCorrupt = false;

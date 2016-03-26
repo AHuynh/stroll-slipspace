@@ -1,5 +1,7 @@
 ﻿package vgdev.stroll
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
@@ -37,6 +39,7 @@
 		public var background:Background;
 		public var alerts:Alerts;
 		public var bossBar:BossBar;
+		public var visualEffects:VisualEffects;
 		
 		/// Whether or not the game is paused
 		public var isPaused:Boolean = false;			// from P
@@ -116,8 +119,9 @@
 			camera.step();
 			alerts = new Alerts(this, gui.mc_alerts);	
 			bossBar = new BossBar(this, gui.mc_bossbar);
+			visualEffects = new VisualEffects(this);
 			
-			supportClasses = [level, ship, camera, alerts, bossBar];
+			supportClasses = [level, ship, camera, alerts, bossBar, visualEffects];
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;

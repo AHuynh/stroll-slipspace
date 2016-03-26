@@ -42,6 +42,8 @@
 			menu.btn_start.removeEventListener(MouseEvent.CLICK, onStart);
 			menu.mc_story.setActionKeys(Keyboard.F, Keyboard.PERIOD);
 			checkStory = true;
+			
+			completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
 		}
 		
 		override public function step():Boolean 

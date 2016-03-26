@@ -51,7 +51,7 @@ package vgdev.stroll.support
 					for each (var console:ABST_Console in cg.consoles)
 						console.showNew(cg.level.sectorIndex);
 				}
-			}
+			}			
 		}
 		
 		/**
