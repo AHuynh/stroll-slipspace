@@ -71,6 +71,7 @@ package vgdev.stroll.props
 		
 		// animation helpers
 		private var isMoving:Boolean = false;
+		public var highFive:int = 0;
 		
 		public function Player(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object)
 		{
@@ -106,6 +107,12 @@ package vgdev.stroll.props
 			
 			mc_object.mc_omnitool.visible = false;
 			mc_object.mc_sos.visible = false;
+			mc_object.prompt.visible = false;
+		}
+		
+		public function stopHighFive():void
+		{
+			
 		}
 		
 		/**
@@ -118,9 +125,34 @@ package vgdev.stroll.props
 			
 			if (hp != 0)
 			{
+				if (highFive > 0)
+				{
+					highFive--;
+					if (cg.players[0].highFive > 0 && cg.players[1].highFive > 0)
+					{
+						mc_object.gotoAndStop("five");
+						highFive = 0;
+						
+						var other:Player = cg.players[1 - playerID];
+						other.mc_object.gotoAndStop("five");
+						other.highFive = 0;
+						
+						cg.addDecor("five", { "scale": 2, "x":(mc_object.x + other.mc_object.x) * .5, "y":(mc_object.y + other.mc_object.y) * .5 - 40 } );
+						cg.reactToFive();
+					}
+					if (highFive == 1)
+					{
+						mc_object.gotoAndStop(mc_object.idleFallback);
+					}
+				}
+				
 				handleKeyboard();
 				if (countPDW > 0)	// update PDW cooldown
 					countPDW--;
+					
+				if (mc_object.currentFrameLabel == "five") return false;					
+				var prev:Boolean = mc_object.prompt.visible;
+				mc_object.prompt.visible = highFiveCheck();
 			}
 			else					// update S.O.S. module UI
 			{
@@ -275,6 +307,30 @@ package vgdev.stroll.props
 			super.updatePosition(dx, dy);
 		}
 		
+		private function highFiveCheck():Boolean
+		{
+			if (activeConsole != null || hp == 0 || highFive != 0)
+				return false;
+			if (keysDown[RIGHT] || keysDown[UP] || keysDown[LEFT] || keysDown[DOWN])
+				return false;
+			if (facing == 1 || facing == 3)
+				return false;
+			var other:Player = cg.players[1 - playerID];
+			if (other.facing == 1 || other.facing == 3)
+				return false;
+			var dist:Number = getDistance(other);
+			if (dist < 22 || dist > 40)
+				return false;
+			if (Math.abs(mc_object.y - other.mc_object.y) > 15)
+				return false;
+			var isLeft:Boolean = mc_object.x < other.mc_object.x;
+			if (isLeft && (facing != 0 || other.facing != 2))
+				return false;
+			if (!isLeft && (facing != 2 || other.facing != 0))
+				return false;
+			return true;
+		}
+		
 		/**
 		 * Set this Player's active console to the one provided
 		 * Called by ABST_Console
@@ -313,6 +369,7 @@ package vgdev.stroll.props
 		public function downKeyboard(e:KeyboardEvent):void
 		{
 			if (!cg || cg.isDefeatedPaused) return;		// quit if ship is exploding
+			if (mc_object.currentFrameLabel == "five") return;
 			
 			if (cg.isTruePaused())		
 			{
@@ -331,6 +388,7 @@ package vgdev.stroll.props
 					{
 						mc_object.scaleX = 1;
 						mc_object.mc_bar.scaleX = 1;
+						mc_object.prompt.scaleX = 1;
 						pressed = true;
 					}
 					else if (!keysDown[RIGHT])
@@ -355,6 +413,7 @@ package vgdev.stroll.props
 					{
 						mc_object.scaleX = -1;
 						mc_object.mc_bar.scaleX = -1;
+						mc_object.prompt.scaleX = -1;
 						pressed = true;
 					}
 					else if (!keysDown[LEFT])
@@ -375,7 +434,13 @@ package vgdev.stroll.props
 					keysDown[DOWN] = true;
 				break;
 				case KEY_ACTION:
-					if (!rooted)
+					if (mc_object.prompt.visible && highFive == 0)
+					{
+						mc_object.prompt.visible = false;
+						highFive = 90;
+						mc_object.gotoAndStop("idle_five");
+					}
+					else if (!rooted)
 					{
 						cg.onAction(this);
 					}
@@ -433,9 +498,9 @@ package vgdev.stroll.props
 			updateAnimation(released);
 		}
 		
-		private function updateAnimation(released:Boolean):void
+		private function updateAnimation(released:Boolean, forceUpdate:Boolean = false):void
 		{
-			if (released && isMoving && !keysDown[RIGHT] && !keysDown[UP] && !keysDown[LEFT] && !keysDown[DOWN])		// stopped moving
+			if (((released && isMoving) || forceUpdate) && !keysDown[RIGHT] && !keysDown[UP] && !keysDown[LEFT] && !keysDown[DOWN])		// stopped moving
 			{
 				mc_object.gotoAndStop(mc_object.idleFallback);
 				isMoving = false;

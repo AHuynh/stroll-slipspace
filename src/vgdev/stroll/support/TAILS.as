@@ -12,7 +12,7 @@ package vgdev.stroll.support
 		private var tails:MovieClip;
 		
 		private var playerReady:Array = [false, false];
-		private var showDuration:int = 0;
+		public var showDuration:int = 0;
 		
 		private var tailsLarge:Boolean = false;
 		

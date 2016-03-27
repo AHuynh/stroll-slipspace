@@ -129,11 +129,10 @@ package vgdev.stroll.props.consoles
 					reviveProgress += RATE_REVIVE;
 					player.updateReviveUI(reviveProgress / GOAL_REVIVE);
 					
-					if (Math.random() < .7)
+					if (Math.random() > .7)
 						cg.addDecor("repair", {
 													"x": player.mc_object.x + System.getRandNum(-6, 6),
-													"y": player.mc_object.y + System.getRandNum(-6, 6),
-													"dy": System.getRandNum(-.5, -1)
+													"y": player.mc_object.y - 20 + System.getRandNum(-6, 6)
 												  });	
 
 					if (reviveProgress >= GOAL_REVIVE)
@@ -190,14 +189,17 @@ package vgdev.stroll.props.consoles
 														"x": closestPlayer.mc_object.x + System.getRandNum(-5, 5),
 														"y": closestPlayer.mc_object.y - 10 + System.getRandNum(-5, 5),
 														"dx": System.forward(System.getRandNum(3, 5), angle + System.getRandNum(-10, 10), true),
-														"dy": System.forward(System.getRandNum(3, 5), angle + System.getRandNum(-10, 10), false)
+														"dy": System.forward(System.getRandNum(3, 5), angle + System.getRandNum( -10, 10), false),
+														"random": true,
+														"alphaDelay": 1,
+														"alphaDelta": 30
 													  });	
 							break;
 							case "repair":
+								if (Math.random() > .7)
 								cg.addDecor(visualEffect, {
 														"x": item.mc_object.x + System.getRandNum(-6, 6),
-														"y": item.mc_object.y + System.getRandNum(-6, 6),
-														"dy": System.getRandNum(-.5, -1)
+														"y": item.mc_object.y + System.getRandNum(-6, 6)
 													  });	
 							break;
 						}

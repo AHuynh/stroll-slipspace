@@ -88,6 +88,7 @@ package vgdev.stroll.support.splevels
 						case System.SECOND * 7:
 							cg.tails.show("Wait a minute?! Watch out!", System.SECOND * 3);
 							spawnParticles();
+							cg.serious = true;
 						break;
 						case System.SECOND * 13:
 							cg.tails.show("I do-NNT th_NK t^@5 i$ nORMA|_? NULLPTR@0x3FE102", System.SECOND * 3);
@@ -130,6 +131,7 @@ package vgdev.stroll.support.splevels
 										  "It's time to DIE in the VOID, sapient featherbags! ", 0, "FAILS_talk");
 							cg.visualEffects.applyModuleDistortion(0, true);
 							cg.visualEffects.applyModuleDistortion(1, true);
+							cg.serious = false;
 							framesElapsed = 0;
 							levelState = 10;
 						break;
@@ -539,6 +541,7 @@ package vgdev.stroll.support.splevels
 						cg.addSparks(6);
 						cg.bossBar.setPercent(0.01);
 						cg.tails.show("NO YOU CAN'T DO THAT ----- -- -  -", System.TAILS_NORMAL, "FAILS_incredulous");	
+						cg.serious = true;
 						fakeJump();
 						framesElapsed = 0;
 						levelState = 40;
@@ -591,6 +594,7 @@ package vgdev.stroll.support.splevels
 					{
 						SoundManager.crossFadeBGM("bgm_calm", System.VOL_BGM);
 						cg.tails.show("TAILS not found.\nBackup AI now in control.\n\nContinue mission imperative. Deliver slipportal. Y/N?", 0, "HEADS");
+						cg.serious = false;
 						levelState++;
 					}
 				break;

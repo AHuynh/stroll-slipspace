@@ -48,6 +48,8 @@
 		public var isGameOver:Boolean = false;			// game over screen
 		public var isAllIncap:Boolean = false;
 		
+		public var serious:Boolean = false;				// prevent reacting to high-fives
+		
 		/// UI consoles; an Array of MovieClips
 		public var hudConsoles:Array;
 		public var hudTitles:Array;
@@ -278,7 +280,9 @@
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
 					//killShip();
 					//addFires(1);
-					ship.damageDirect(50);
+					//ship.damageDirect(50);
+					consoles[0].changeHP( -100);
+					addFires(1);
 				break;
 			}
 		}
@@ -628,6 +632,26 @@
 												"Mission failed.",
 												"System failure. Shutting down."
 												]), System.TAILS_NORMAL * 2, "HEADS", true);
+		}
+		
+		public function reactToFive():void
+		{
+			if (tails.showDuration > 0 || serious) return;
+			if (SoundManager.getBGMname() == "bgm_FAILS")
+				tails.show(System.getRandFrom([ "What? Don't high-five! I'M TRYING TO KILL YOU!",
+												"You two are even dumber than I thought!",
+												"The both of you look like HUGE DORKS, you know..."
+												]), System.SECOND * 3, "FAILS_pissed");
+			else if (level.sectorIndex <= 8)
+				tails.show(System.getRandFrom([ "Aww, you two are so cute!",
+												"Yeah! Keep your spirits up!",
+												"Woo! I know we can do it!"
+												]), System.SECOND * 3, null);
+			else
+				tails.show(System.getRandFrom([ "Error. Meaning of gesture unknown.",
+												"That action is not conducive to mission imperative.",
+												"Please cease friendship and return to mission."
+												]), System.SECOND * 3, "HEADS");
 		}
 		
 		/**
