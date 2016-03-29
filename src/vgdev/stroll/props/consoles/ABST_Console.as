@@ -28,6 +28,7 @@ package vgdev.stroll.props.consoles
 		
 		/// The active player if this console is inUse; otherwise the nearest player
 		public var closestPlayer:Player;
+		protected var playerProximities:Array;
 		
 		/// The width of the HP bar
 		private var BAR_WIDTH:Number;
@@ -53,6 +54,8 @@ package vgdev.stroll.props.consoles
 			unscrambledLocation = mc_object;
 			hud_consoles = cg.hudConsoles;
 			players = _players;
+			
+			playerProximities = [9999, 9999];
 			
 			unlocked = !locked;
 			hp = hpMax = 1000;
@@ -126,20 +129,28 @@ package vgdev.stroll.props.consoles
 		/**
 		 * Updates the closest player and '!' display for this console
 		 * Called by ManagerProximity
-		 * @param	p		if not null, p is the closest Player in range of this console
-		 * @param	dist	how far away p is
+		 * @param	p		Player to update proximities for
 		 */
-		public function setProximity(p:Player, dist:Number):void
+		public function setProximity(p:Player):void
 		{
-			if (!unlocked) return;
-			if (p != null)
+			if (!unlocked || inUse) return;
+			
+			playerProximities[p.playerID] = p.getHP() == 0 ? 99999 : getDistance(p);
+			var closest:Player = null;
+			var closestDist:Number = 99999;
+			
+			for (var i:int = 0; i < playerProximities.length; i++)
 			{
-				if (closestPlayer == null || (p != closestPlayer && getDistance(p) < dist))
-					closestPlayer = p;
+				if (playerProximities[i] > RANGE) continue;
+				if (playerProximities[i] < closestDist)
+				{
+					closestDist = playerProximities[i];
+					closest = players[i];
+				}
 			}
-			else if (!inUse)
-				closestPlayer = null;
-			setPromptVisible(p != null);
+			
+			closestPlayer = closest;
+			setPromptVisible(closestPlayer != null)
 		}
 		
 		/**

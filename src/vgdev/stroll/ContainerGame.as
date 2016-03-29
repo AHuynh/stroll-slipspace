@@ -281,8 +281,8 @@
 					//killShip();
 					//addFires(1);
 					//ship.damageDirect(50);
-					consoles[0].changeHP( -100);
-					addFires(1);
+					//consoles[0].changeHP( -100);
+					//addFires(1);
 				break;
 			}
 		}
