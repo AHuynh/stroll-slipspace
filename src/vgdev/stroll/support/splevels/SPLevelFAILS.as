@@ -34,10 +34,10 @@ package vgdev.stroll.support.splevels
 			consoleSlip.forceOverride = true;
 			cg.ship.setBossOverride(true);
 			
-			/*// DEBUG CODE
-			levelState = 40;
-			framesElapsed = 0;
-			var corr:int = 0;
+			// DEBUG CODE
+			//levelState = 2;
+			//framesElapsed = 20 * 30;
+			/*var corr:int = 0;
 			for each (var c:ABST_Console in cg.consoles)
 			{
 				if (--corr <= 0)

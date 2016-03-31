@@ -8,8 +8,8 @@ package vgdev.stroll.support
 	
 	public class SoundManager 
 	{
-		private static var bgm:SoundChannel;		
-		private static var bgmFade:SoundChannel;
+		private static var channelCurr:SoundChannel;		
+		private static var channelNew:SoundChannel;
 		private static var sounds:Object = new Object();
 		
 		private static var currVolume:Number = 0;
@@ -18,9 +18,11 @@ package vgdev.stroll.support
 		private static const DELTA_VOL:Number = .004;
 		private static var currSTF:SoundTransform = new SoundTransform();
 		private static var fadeSTF:SoundTransform = new SoundTransform();
+		private static var keepAlive:Boolean = false;
 		
-		private static var currentBGM:String = "";
-		private static var fadeBGM:String = "";
+		private static var nameCurr:String = "";
+		private static var nameNew:String = "";
+		
 		private static var isInit:Boolean = false;
 		
 		[Embed(source="../../../../bgm/bgm_calm.mp3")]
@@ -130,18 +132,18 @@ package vgdev.stroll.support
 		
 		public static function playBGM(music:String, volume:Number = 1):void
 		{
-			return;	// DEBUGGING - mute BGM
+			//return;	// DEBUGGING - mute BGM
 			
-			if (currentBGM == music)
+			if (nameCurr == music)
 				return;
 			stopBGM();
 			
 			var snd:Sound = getBGM(music);
-			currentBGM = music;
+			nameCurr = music;
 			
 			var volTransform:SoundTransform = new SoundTransform(volume);
-			bgm = snd.play(0, 9999);
-			bgm.soundTransform = volTransform;
+			channelCurr = snd.play(0, 9999);
+			channelCurr.soundTransform = volTransform;
 			currVolume = volume;
 		}
 		
@@ -160,23 +162,28 @@ package vgdev.stroll.support
 		
 		public static function getBGMname():String
 		{
-			return currentBGM;
+			return nameCurr;
 		}
 		
 		/**
 		 * Fade out the current music and fade in the new music
 		 * @param	music		Name of the new BGM, null is OK
 		 * @param	volume		Target volume
+		 * @param	keepAlive	if true, don't stop the faded BGM (so future fades will resume from a place other than the start)
 		 */
-		public static function crossFadeBGM(music:String, volume:Number = 1):void
+		public static function crossFadeBGM(music:String, volume:Number = 1, _keepAlive:Boolean = false):void
 		{
 			fadeVolume = 0;
 			fadeVolumeTgt = volume;
+			keepAlive = _keepAlive;
 			
-			var newBGM:Sound = getBGM(music);
-			fadeBGM = music;
-			if (newBGM != null)
-				bgmFade = newBGM.play(0, 9999);
+			if (!keepAlive || channelNew == null)
+			{
+				var newBGM:Sound = getBGM(music);
+				nameNew = music;
+				if (newBGM != null)
+					channelNew = newBGM.play(0, 9999);
+			}
 
 			fadeSTF.volume = fadeVolume;
 			currSTF.volume = currVolume;
@@ -192,43 +199,55 @@ package vgdev.stroll.support
 			fadeSTF.volume = fadeVolume;
 			currSTF.volume = currVolume;
 			
-			if (bgmFade != null)
-				bgmFade.soundTransform = fadeSTF;
-			if (bgm != null)
-				bgm.soundTransform = currSTF;
+			if (channelNew != null)
+				channelNew.soundTransform = fadeSTF;
+			if (channelCurr != null)
+				channelCurr.soundTransform = currSTF;
 			
 			if (fadeSTF.volume == fadeVolumeTgt && currSTF.volume == 0)
-			{
-				currentBGM = fadeBGM;
-				fadeBGM = null;
+			{				
 				currVolume = fadeVolumeTgt;
-				if (bgm)
-					bgm.stop();
-				bgm = bgmFade;
-				bgmFade = null;
+				
+				var nameTemp:String = nameCurr;
+				var channelTemp:SoundChannel = channelCurr;
+			
+				nameCurr = nameNew;
+				channelCurr = channelNew;
+				
+				if (keepAlive)
+				{
+					nameNew = nameTemp;
+					channelNew = channelTemp;
+				}
+				else
+				{
+					if (channelCurr)
+						channelCurr.stop();
+					nameCurr = "";
+				}
 			}
 		}
 		
 		public static function stopBGM():void
 		{
-			if (bgm != null)
+			if (channelCurr != null)
 			{
-				bgm.stop();
-				bgm = null;
-				currentBGM = "";
+				channelCurr.stop();
+				channelCurr = null;
+				nameCurr = "";
 			}
-			if (bgmFade != null)
+			if (channelNew != null)
 			{
-				bgmFade.stop();
-				bgmFade = null;
-				fadeBGM = "";
+				channelNew.stop();
+				channelNew = null;
+				nameNew = "";
 			}
 			fadeVolume = fadeVolumeTgt = 1;
 		}
 		
 		public static function isBGMplaying():Boolean
 		{
-			return (bgm != null || fadeBGM != null);
+			return (channelCurr != null || nameNew != null);
 		}
 		
 		/**

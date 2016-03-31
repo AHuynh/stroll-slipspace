@@ -18,6 +18,8 @@ package vgdev.stroll
 	{
 		[Embed(source="../../../img/effects/distortion_module.gif")]
 		public static var distortion_module:Class;	
+		[Embed(source="../../../img/effects/distortion_squares.png")]
+		public static var distortion_squares:Class;	
 		
 		// keyboard bindings for P1 and P2
 		public static var keyMap0:Object = {"RIGHT":Keyboard.D,		"UP":Keyboard.W,
@@ -305,9 +307,15 @@ package vgdev.stroll
 			mc.transform.colorTransform = ct;
 		}
 		
-		public static function createDMFilter():DisplacementMapFilter
+		public static function createDMFilter(type:String):DisplacementMapFilter
 		{
-			var mapBitmap:BitmapData = new distortion_module().bitmapData; 	// use the bitmap data from our StaticMap image
+			var mapBitmap:BitmapData;
+			switch (type)
+			{
+				case "module":		mapBitmap = new distortion_module().bitmapData;		break;
+				case "bg_squares":	mapBitmap = new distortion_squares().bitmapData;	break;
+				default: "[SYSTEM] Unknown DMfilter for", type;
+			}
 			var mapPoint:Point       = new Point(); 						// position of the StaticMap image in relation to our button
 			var componentX:uint      = BitmapDataChannel.RED;
 			var componentY:uint      = BitmapDataChannel.RED;

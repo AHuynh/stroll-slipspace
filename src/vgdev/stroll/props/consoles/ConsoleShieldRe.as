@@ -203,13 +203,14 @@ package vgdev.stroll.props.consoles
 		}
 		
 		/**
-		 * Stop the puzzle, reset shield charge, and set puzzle cooldown
+		 * Stop the puzzle, reset shield charge, and optionally set puzzle cooldown
+		 * @param	fullPenalty		true for COOLDOWN; false for 25% of COOLDOWN
 		 */
-		private function stopPuzzle():void
+		private function stopPuzzle(fullPenalty:Boolean = true):void
 		{
 			puzzleActive = false;
 			shieldCharge = 0;
-			puzzleCooldown = COOLDOWN;
+			puzzleCooldown = int(COOLDOWN * (fullPenalty ? 1 : .25));
 			setAllVisible(false);
 		}
 		
@@ -479,7 +480,7 @@ package vgdev.stroll.props.consoles
 					ui.removeChild(mc);
 			setAllVisible(false);
 			if (puzzleActive)
-				stopPuzzle();
+				stopPuzzle(false);
 			super.onCancel();
 		}
 		

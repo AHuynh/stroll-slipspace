@@ -13,7 +13,9 @@ package vgdev.stroll.support
 	{
 		private var moduleDistortion:Array = [null, null];
 		private var moduleIntensity:Array = [0, 0];
-		private const INTENSITY_MAP:Array = [[5, 1, 25], [10, 2, 50], [25, 4, 100],];		// x, y, translate
+		private const INTENSITY_MAP:Array = [[5, 1, 25], [10, 2, 50], [25, 4, 100], ];		// x, y, translate
+		
+		private var bgDistortion:DisplacementMapFilter;
 		
 		public function VisualEffects(_cg:ContainerGame) 
 		{
@@ -31,8 +33,14 @@ package vgdev.stroll.support
 			}
 			
 			moduleIntensity[module] = intensity;
-			moduleDistortion[module] = System.createDMFilter();
+			moduleDistortion[module] = System.createDMFilter("module");
 			cg.hudConsoles[module].filters = [moduleDistortion[module]];
+		}
+		
+		public function applyBGDistortion():void
+		{
+			bgDistortion = System.createDMFilter("bg_squares");
+			cg.game.mc_bg.filters = [bgDistortion];
 		}
 		
 		override public function step():void 
@@ -46,6 +54,14 @@ package vgdev.stroll.support
 				dmf.scaleX = System.getRandInt(INTENSITY_MAP[moduleIntensity[i]][0], INTENSITY_MAP[moduleIntensity[i]][1]);
 				dmf.mapPoint = new Point(0, System.getRandNum(-INTENSITY_MAP[moduleIntensity[i]][2], INTENSITY_MAP[moduleIntensity[i]][2]));
 				cg.hudConsoles[i].filters = [dmf];
+			}
+			
+			if (bgDistortion != null)
+			{
+				if (Math.random() < .2)
+				{
+				//	bgDistortion.mapPoint = new Point(0, System.getRandNum(0, 600));
+				}
 			}
 		}
 	}

@@ -221,11 +221,14 @@ package vgdev.stroll.props.consoles
 				return;
 			
 			if (localPuzzleActive)
+			{
 				puzzleActive = false;
+				for each (var c:ABST_Console in cg.consoles)		// allow any corrupted console to be tried again
+					c.setReadyToFormat(true);
+			}
 			localPuzzleActive = false;
 			targets = [];
 			targetDeltas = [];
-			//setReadyToFormat(false);		// missed the opportunity
 		}
 		
 		override public function destroy():void 

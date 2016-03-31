@@ -205,6 +205,8 @@
 			
 			stage.focus = game;
 			gui.mc_fade.gotoAndPlay(2);		// fade in
+			
+			//visualEffects.applyBGDistortion();
 		}
 		
 		/**
