@@ -111,6 +111,7 @@ package vgdev.stroll
 			container.y += offY;
 			superContainer.mc_container.addChild(container);
 			container.tabChildren = false;
+			container.tabEnabled = false;
 			
 			returnCode = RET_NORMAL;
 		}

@@ -28,6 +28,14 @@ package vgdev.stroll
 		public static var keyMap1:Object = {"RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
 											"LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
 											"ACTION":Keyboard.PERIOD,"CANCEL":Keyboard.SLASH };
+											
+		// default keyboard bindings for P1 and P2
+		public static const KEYMAP0:Object = {"RIGHT":Keyboard.D,		"UP":Keyboard.W,
+											"LEFT":Keyboard.A,		"DOWN":Keyboard.S,
+											"ACTION":Keyboard.F, 	"CANCEL":Keyboard.G };
+		public static const KEYMAP1:Object = {"RIGHT":Keyboard.RIGHT,	"UP":Keyboard.UP,
+											"LEFT":Keyboard.LEFT,	"DOWN":Keyboard.DOWN,
+											"ACTION":Keyboard.PERIOD,"CANCEL":Keyboard.SLASH };
 		
 		// global constants
 		public static const GAME_WIDTH:int = 960;
