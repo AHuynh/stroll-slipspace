@@ -12,7 +12,7 @@ package vgdev.stroll.props
 	 */
 	public class ABST_IMovable extends ABST_Object 
 	{
-		protected var hitMask:MovieClip;
+		public var hitMask:MovieClip;
 
 		public function ABST_IMovable(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip) 
 		{

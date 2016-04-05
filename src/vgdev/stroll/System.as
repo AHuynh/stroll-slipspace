@@ -4,11 +4,13 @@ package vgdev.stroll
 	import flash.display.BitmapData;
 	import flash.display.BitmapDataChannel;
 	import flash.display.MovieClip;
+	import flash.display.Stage;
 	import flash.filters.DisplacementMapFilter;
 	import flash.filters.DisplacementMapFilterMode;
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.ui.Keyboard;
+	import vgdev.stroll.props.ABST_IMovable;
 	
 	/**
 	 * Helper functionality
@@ -57,6 +59,7 @@ package vgdev.stroll
 		// constants used in ContainerGame.managerMap
 		public static const M_PLAYER:int = 0;		
 		public static const M_ENEMY:int = 1;
+		public static const M_BOARDER:int = 2;
 		public static const M_CONSOLE:int = 10;
 		public static const M_PROXIMITY:int = 11;
 		public static const M_EPROJECTILE:int = 20;
@@ -346,6 +349,29 @@ package vgdev.stroll
 							mode,
 							color,
 							alpha   );
+		}
+
+		/**
+		 * Determine if a line can be drawn between origin and target without colliding with the ship
+		 * @param	anchor		Any instance of an ABST_IMovable; helps with collision detection
+		 * @param	origin		Origin of LOS check
+		 * @param	target		Target that origin is looking at
+		 * @return				true if origin has LOS on target
+		 */
+		public static function hasLineOfSight(origin:ABST_IMovable, target:Point):Boolean
+		{			
+			var angle:Number = getAngle(origin.mc_object.x, origin.mc_object.y, target.x, target.y);
+			var distMax:int = int(getDistance(origin.mc_object.x, origin.mc_object.y, target.x, target.y));
+			var dist:int = 1;
+			const DIST_STEP:int = 5;
+			while (dist < distMax)
+			{
+				var ptL:Point = MovieClip(origin.mc_object.parent).localToGlobal(new Point(origin.mc_object.x + forward(dist, angle, true), origin.mc_object.y + forward(dist, angle, false)));
+				if (origin.hitMask.hitTestPoint(ptL.x, ptL.y, true))
+					return false;
+				dist += DIST_STEP;
+			}
+			return true;
 		}
 		
 		// ray and line segment

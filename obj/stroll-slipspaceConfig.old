@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'4/4/2016'</value>
+      <value>'4/5/2016'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -46,6 +46,7 @@
       <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Debug.swc</path-element>
       <path-element>D:\GitHub\stroll-slipspace\swc\SWC_Mask.swc</path-element>
       <path-element>D:\GitHub\stroll-slipspace\swc\SWC_ShieldObj.swc</path-element>
+      <path-element>D:\GitHub\stroll-slipspace\swc\SWC_HitRectangle.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>

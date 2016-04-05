@@ -9,6 +9,7 @@ package vgdev.stroll.props.projectiles
 	import vgdev.stroll.managers.ManagerGeneric;
 	import vgdev.stroll.props.ABST_IMovable;
 	import vgdev.stroll.props.ABST_Object;
+	import vgdev.stroll.props.enemies.ABST_Boarder;
 	import vgdev.stroll.props.enemies.ABST_Enemy;
 	import vgdev.stroll.props.Player;
 	import vgdev.stroll.System;
@@ -33,7 +34,7 @@ package vgdev.stroll.props.projectiles
 		protected var colorTrans:ColorTransform;
 		
 		protected var managerProj:ManagerProjectile;
-		protected var managerEnem:ManagerEnemy;
+		protected var managerEnem:ManagerGeneric;
 		protected var managerPlay:ManagerGeneric;
 												
 		public function ABST_IProjectile(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, attributes:Object) 
@@ -52,7 +53,7 @@ package vgdev.stroll.props.projectiles
 			setScale(System.setAttribute("scale", attributes, 1));
 			
 			managerProj = cg.managerMap[System.M_IPROJECTILE];
-			managerEnem = cg.managerMap[System.M_ENEMY];			// TODO internal enemies
+			managerEnem = cg.managerMap[System.M_BOARDER];
 			managerPlay = cg.managerMap[System.M_PLAYER];
 			
 			mc_object.rotation = dir;
@@ -102,15 +103,11 @@ package vgdev.stroll.props.projectiles
 			}
 			else if (getAffiliation() == System.AFFIL_PLAYER)	// projectile is a player's; check for hits on enemies
 			{
-				var hitEnemy:ABST_Enemy = managerEnem.collideWithOther(this, true) as ABST_Enemy;		// check for any hit
+				var hitEnemy:ABST_Boarder = managerEnem.collideWithOther(this, true) as ABST_Boarder;		// check for any hit
 				if (hitEnemy != null)
 				{
-					// if the enemy is using a hitbox, check on that as well (otherwise accept as a hit)
-					if (hitEnemy.hitbox == null || hitEnemy.mc_object.hitbox.hitTestPoint(mc_object.x + System.GAME_OFFSX, mc_object.y + System.GAME_OFFSY, true))
-					{
-						(hitEnemy as ABST_Enemy).changeHP(-dmg);
-						destroy();
-					}
+					(hitEnemy as ABST_Boarder).changeHP(-dmg);
+					destroy();
 				}
 			}
 		}

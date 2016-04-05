@@ -62,6 +62,7 @@
     <element path="swc\SWC_Debug.swc" />
     <element path="swc\SWC_Mask.swc" />
     <element path="swc\SWC_ShieldObj.swc" />
+    <element path="swc\SWC_HitRectangle.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

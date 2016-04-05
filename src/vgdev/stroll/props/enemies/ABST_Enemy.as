@@ -98,6 +98,7 @@ package vgdev.stroll.props.enemies
 		{
 			mc_object.gotoAndStop(style);
 			mc_object.spawn.visible = false;
+			mc_object.mc_bar.visible = false;
 			if (useRandom)
 				mc_object.base.gotoAndStop(System.getRandInt(1, mc_object.base.totalFrames));
 			if (useTint)

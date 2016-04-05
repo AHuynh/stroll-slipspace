@@ -18,6 +18,8 @@
 	import vgdev.stroll.props.enemies.*;
 	import vgdev.stroll.support.*;
 	import vgdev.stroll.managers.*;
+	import vgdev.stroll.support.graph.GraphMaster;
+	import vgdev.stroll.support.graph.GraphNode;
 	
 	/**
 	 * Primary game container and controller
@@ -36,6 +38,7 @@
 		public var ship:Ship;
 		public var camera:Cam;
 		public var tails:TAILS;
+		public var graph:GraphMaster;
 		public var background:Background;
 		public var alerts:Alerts;
 		public var bossBar:BossBar;
@@ -126,8 +129,9 @@
 			alerts = new Alerts(this, gui.mc_alerts);	
 			bossBar = new BossBar(this, gui.mc_bossbar);
 			visualEffects = new VisualEffects(this);
+			graph = new GraphMaster(this);
 			
-			supportClasses = [level, ship, camera, alerts, bossBar, visualEffects];
+			supportClasses = [level, ship, camera, alerts, bossBar, visualEffects, graph];
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -140,7 +144,7 @@
 			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
 					   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
 			
-			// Eagle
+			// --- Eagle --------------------------------------------------------------------------------------------------------
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
 											players, [-120, 120], [1, 2, 0, 3], 0));
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
@@ -158,6 +162,9 @@
 			
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, false));
 			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, false));
+			
+			graph.initShip("Eagle");
+			// --- Eagle --------------------------------------------------------------------------------------------------------
 			
 			var i:int;
 			
@@ -185,6 +192,9 @@
 			managerMap[System.M_ENEMY] = new ManagerEnemy(this);
 			managers.push(managerMap[System.M_ENEMY]);
 			
+			managerMap[System.M_BOARDER] = new ManagerGeneric(this);
+			managers.push(managerMap[System.M_BOARDER]);
+			
 			managerMap[System.M_DEPTH] = new ManagerDepth(this);
 			managers.push(managerMap[System.M_DEPTH]);
 			for (i = 0; i < players.length; i++)
@@ -211,7 +221,11 @@
 			stage.focus = game;
 			gui.mc_fade.gotoAndPlay(2);		// fade in
 			
-			visualEffects.applyBGDistortion(true, "bg_bars");
+			//visualEffects.applyBGDistortion(true, "bg_bars");
+			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
+			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
+			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
+			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
 		}
 		
 		/**
@@ -228,6 +242,7 @@
 				case System.M_CONSOLE:
 				case System.M_DEPTH:
 				case System.M_FIRE:
+				case System.M_BOARDER:
 					game.mc_ship.addChild(obj.mc_object);
 					managerMap[System.M_DEPTH].addObject(obj);
 				break;
