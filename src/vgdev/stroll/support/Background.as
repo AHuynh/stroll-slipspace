@@ -11,12 +11,12 @@ package vgdev.stroll.support
 	 */
 	public class Background extends ABST_Support
 	{
-		private var bg:MovieClip;
+		public var bg:MovieClip;
 		
 		private const LIM_LEFT:Number = -System.GAME_HALF_WIDTH / 1.8;
 		private var OFFSET:Number;
 		
-		private var bg1:MovieClip;
+		public var bg1:MovieClip;
 		private var bg2:MovieClip;
 		
 		private const REGION_0:Array = ["abstract_00", "abstract_01", "abstract_02"];

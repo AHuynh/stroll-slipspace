@@ -13,15 +13,22 @@ package vgdev.stroll.support
 	{
 		private var moduleDistortion:Array = [null, null];
 		private var moduleIntensity:Array = [0, 0];
-		private const INTENSITY_MAP:Array = [[5, 1, 25], [10, 2, 50], [25, 4, 100], ];		// x, y, translate
+		private const INTENSITY_MAP:Array = [[3, 1, 15], [5, 1, 25], [10, 2, 50], ];		// x, y, translate
 		
 		private var bgDistortion:DisplacementMapFilter;
+		private var bgDistortionID:int = -1;
+		
+		private var dirHelper:int = 1;
+		private var locHelper:int = 0;
 		
 		public function VisualEffects(_cg:ContainerGame) 
 		{
 			super(_cg);
 		}
 		
+		/**
+		 * Create a glitchy-screen distortion on a module for FAILS
+		 */
 		public function applyModuleDistortion(module:int, remove:Boolean = false, intensity:int = 0):void
 		{			
 			if (remove)
@@ -37,10 +44,36 @@ package vgdev.stroll.support
 			cg.hudConsoles[module].filters = [moduleDistortion[module]];
 		}
 		
-		public function applyBGDistortion():void
+		/**
+		 * Create a background distortion
+		 */
+		public function applyBGDistortion(isOn:Boolean, type:String = null):void
 		{
-			bgDistortion = System.createDMFilter("bg_squares");
-			cg.game.mc_bg.filters = [bgDistortion];
+			if (isOn)
+			{
+				bgDistortion = System.createDMFilter(type);
+				switch (type)
+				{
+					case "bg_squares":
+						bgDistortionID = 0;
+						bgDistortion.scaleX = 50;
+						bgDistortion.scaleY = 50;
+						cg.game.filters = [bgDistortion];
+					break;
+					case "bg_bars":
+						bgDistortionID = 1;
+						bgDistortion.scaleX = 60;
+						cg.game.mc_bg.filters = [bgDistortion];
+					break;
+				}
+			}
+			else
+			{
+				bgDistortion = null;
+				bgDistortionID = -1;
+				cg.game.filters = [];
+				cg.game.mc_bg.filters = [];
+			}
 		}
 		
 		override public function step():void 
@@ -58,9 +91,30 @@ package vgdev.stroll.support
 			
 			if (bgDistortion != null)
 			{
-				if (Math.random() < .2)
+				switch (bgDistortionID)
 				{
-				//	bgDistortion.mapPoint = new Point(0, System.getRandNum(0, 600));
+					case 0:
+						if (Math.random() < .2)
+							bgDistortion.mapPoint = new Point(-cg.background.bg1.x + System.GAME_HALF_WIDTH - cg.camera.focusTgt.x, System.GAME_HALF_HEIGHT + System.getRandNum(-600, 600) - cg.camera.focusTgt.y);
+						else
+							bgDistortion.mapPoint = new Point(-cg.background.bg1.x + System.GAME_HALF_WIDTH - cg.camera.focusTgt.x, bgDistortion.mapPoint.y);
+						cg.game.filters = [bgDistortion];
+					break;
+					case 1:
+						locHelper += dirHelper * 2;
+						if (locHelper < 0)
+						{
+							locHelper = 0;
+							dirHelper *= -1;
+						}
+						else if (locHelper > 300)
+						{
+							locHelper = 300;
+							dirHelper *= -1;
+						}
+						bgDistortion.mapPoint = new Point(-cg.background.bg1.x + System.GAME_HALF_WIDTH - 200 - cg.game.x, locHelper - cg.game.y);
+						cg.game.mc_bg.filters = [bgDistortion];
+					break;
 				}
 			}
 		}

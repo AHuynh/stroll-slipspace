@@ -132,7 +132,7 @@ package vgdev.stroll.support
 		
 		public static function playBGM(music:String, volume:Number = 1):void
 		{
-			//return;	// DEBUGGING - mute BGM
+			return;	// DEBUGGING - mute BGM
 			
 			if (nameCurr == music)
 				return;

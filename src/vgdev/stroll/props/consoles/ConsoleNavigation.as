@@ -24,7 +24,7 @@ package vgdev.stroll.props.consoles
 		
 		override public function holdKey(keys:Array):void 
 		{
-			if (hp == 0) return;
+			if (broken) return;
 			if (corrupted)		// relinquish control if corrupted
 			{
 				consoleFAILS.holdKey(keys);

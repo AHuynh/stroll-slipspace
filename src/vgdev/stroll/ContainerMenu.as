@@ -9,6 +9,7 @@
 	import flash.ui.Keyboard;
 	import flash.utils.Dictionary;
 	import flash.utils.describeType;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * Main menu and level select screen
@@ -67,11 +68,13 @@
 		{
 			menu.mc_options.gotoAndPlay("in");
 			setKeybindings(true);
+			SoundManager.playSFX("sfx_UI_Beep_C");
 		}
 		
 		private function onCredits(e:MouseEvent):void
 		{
 			menu.mc_credits.gotoAndPlay("in");
+			SoundManager.playSFX("sfx_UI_Beep_C");
 		}
 		
 		private function onAcceptOptions(e:MouseEvent):void
@@ -90,12 +93,14 @@
 				// set up Story
 				menu.mc_story.setActionKeys(System.keyMap0["ACTION"], System.keyMap1["ACTION"]);
 				checkStory = true;
+				SoundManager.playSFX("sfx_readybeep2G");
 				
-				//completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
+				completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
 			}
 			else
 			{
 				setKeybindings(false);
+				SoundManager.playSFX("sfx_UI_Beep_Cs");
 			}
 			menu.mc_options.gotoAndPlay("out");
 		}
@@ -103,6 +108,7 @@
 		private function onAcceptCredits(e:MouseEvent):void
 		{
 			menu.mc_credits.gotoAndPlay("out");
+			SoundManager.playSFX("sfx_UI_Beep_Cs");
 		}
 		
 		/**
@@ -162,6 +168,7 @@
 			}
 			setKeybindings(true);
 			checkForConflicts();
+			SoundManager.playSFX("sfx_UI_Beep_C");
 		}
 		
 		private function onBGClick(e:MouseEvent):void
@@ -172,6 +179,7 @@
 			reassignTF = null;
 			menu.mc_options.base.mc_helper.visible = true;
 			menu.mc_options.base.mc_helper.gotoAndStop("idle");
+			SoundManager.playSFX("sfx_UI_Beep_B");
 		}
 		
 		private function onTFClick(e:MouseEvent):void
@@ -182,6 +190,7 @@
 			menu.mc_options.base.mc_helper.visible = true;
 			reassignTF = e.target as TextField;
 			menu.mc_options.base.mc_helper.gotoAndStop("reassign");
+			SoundManager.playSFX("sfx_UI_Beep_C");
 		}
 		
 		private function onKeyPressed(e:KeyboardEvent):void
@@ -212,11 +221,13 @@
 			
 			reassignTF.text = keycodeToString(e.keyCode);
 			blink = -1;
+			menu.mc_options.base.mc_helper.visible = true;
 			reassignTF.visible = true;
 			reassignTF = null;
 			menu.mc_options.base.mc_helper.gotoAndStop("idle");
 			
 			checkForConflicts();
+			SoundManager.playSFX("sfx_UI_Beep_Cs");
 		}
 		
 		private function checkForConflicts():Boolean
@@ -238,6 +249,7 @@
 					}
 				}
 			}
+			menu.mc_options.base.btn_accept.visible = !conflict;			
 			return conflict;
 		}
 		

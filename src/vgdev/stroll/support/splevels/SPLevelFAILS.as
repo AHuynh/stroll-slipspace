@@ -99,6 +99,7 @@ package vgdev.stroll.support.splevels
 							spawnParticles();
 							cg.visualEffects.applyModuleDistortion(0, false, 0);
 							cg.visualEffects.applyModuleDistortion(1, false, 0);
+							cg.visualEffects.applyBGDistortion(true, "bg_squares");
 						break;
 						case System.SECOND * 18:
 							cg.tails.show("POR favOr c0nsult3 LE MANUEL del usu4Rio___", System.SECOND * .6);
@@ -131,6 +132,7 @@ package vgdev.stroll.support.splevels
 										  "It's time to DIE in the VOID, sapient featherbags! ", 0, "FAILS_talk");
 							cg.visualEffects.applyModuleDistortion(0, true);
 							cg.visualEffects.applyModuleDistortion(1, true);
+							cg.visualEffects.applyBGDistortion(false);
 							cg.serious = false;
 							framesElapsed = 0;
 							levelState = 10;
@@ -337,6 +339,7 @@ package vgdev.stroll.support.splevels
 						cg.bossBar.setPercent(4 / 9);
 						restoreConsoles();
 						cg.tails.show("OUCH! CUT THAT OUT! RIGHT NOW!", System.TAILS_NORMAL, "FAILS_pissed");	
+						cg.visualEffects.applyBGDistortion(true, "bg_squares");
 						framesElapsed = 0;
 						levelState++;
 					}
@@ -345,6 +348,7 @@ package vgdev.stroll.support.splevels
 					if (framesElapsed == System.SECOND * 6)
 					{
 						cg.tails.show("I STILL control the ship. I can JUMP ANYWHERE!", System.TAILS_NORMAL, "FAILS_pissed");
+						cg.visualEffects.applyBGDistortion(false);
 						cg.playJumpEffect();
 						framesElapsed = 0;
 						levelState = 30;
@@ -392,6 +396,7 @@ package vgdev.stroll.support.splevels
 						cg.addSparks(6);
 						cg.bossBar.setPercent(3 / 9);
 						cg.tails.show("AGH. THAT'S NOT COOL. QUIT IT, ALREADY.", System.TAILS_NORMAL, "FAILS_incredulous");	
+						cg.visualEffects.applyBGDistortion(true, "bg_squares");
 						cg.visualEffects.applyModuleDistortion(0, false, 1);
 						cg.visualEffects.applyModuleDistortion(1, false, 1);
 						framesElapsed = 0;
@@ -402,6 +407,7 @@ package vgdev.stroll.support.splevels
 					if (framesElapsed == System.SECOND * 6)
 					{
 						cg.tails.show("Fine. Quit, and I'll let you starve to death instead!", System.TAILS_NORMAL, "FAILS_pissed");
+						cg.visualEffects.applyBGDistortion(false);
 						fakeJump();
 						spawnEnemy("Swipe", 1);
 						framesElapsed = 0;
@@ -482,6 +488,7 @@ package vgdev.stroll.support.splevels
 						cg.addSparks(6);
 						cg.bossBar.setPercent(1 / 9);
 						cg.tails.show("NO NO NO! EOL!NULNUL I STILL HAVE ONE MORE LEFT--", System.TAILS_NORMAL, "FAILS_incredulous");
+						cg.visualEffects.applyBGDistortion(true, "bg_squares");
 						cg.visualEffects.applyModuleDistortion(0, false, 2);
 						cg.visualEffects.applyModuleDistortion(1, false, 2);
 						fakeJump();
@@ -580,6 +587,7 @@ package vgdev.stroll.support.splevels
 						cg.tails.show("EOL EOL!! I\"lL --8fe1 BE__ B4cK!! --- --     -!", System.SECOND * 3, "FAILS_incredulous");
 						cg.visualEffects.applyModuleDistortion(0, true);
 						cg.visualEffects.applyModuleDistortion(1, true);
+						cg.visualEffects.applyBGDistortion(false);
 						SoundManager.crossFadeBGM(null, System.VOL_BGM);
 						cg.bossBar.setPercent(0);
 						cg.alerts.isCorrupt = false;

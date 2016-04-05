@@ -13,6 +13,7 @@ package vgdev.stroll.support
 	{		
 		private var hpMax:Number = 1000;			// maximum hull strength
 		private var hp:Number = hpMax;				// current hull strength
+		private const MIN_HP:Number = hpMax * .2;	// amount of hull to restore to on a jump, if below that amount
 		private var hullBlink:int = -1;				// helper for flashing low HP
 		
 		// -- Shield --------------------------------------------------------------------------------------
@@ -111,6 +112,15 @@ package vgdev.stroll.support
 		public function getHPPercent():Number
 		{
 			return hp / hpMax;
+		}
+		
+		/**
+		 * Restore the ship's HP to the minumum amount, if below that amount
+		 */
+		public function minRestore():void
+		{
+			hp = Math.max(hp, MIN_HP);
+			updateIntegrity();
 		}
 		
 		/**
@@ -367,7 +377,7 @@ package vgdev.stroll.support
 		 */
 		private function updateSlip():void
 		{
-			if (bossOverride) return;
+			if (bossOverride || hp == 0) return;
 			if (slipRange > 0)
 			{
 				slipRange = System.changeWithLimit(slipRange, -slipSpeed, 0);

@@ -110,11 +110,6 @@ package vgdev.stroll.props
 			mc_object.prompt.visible = false;
 		}
 		
-		public function stopHighFive():void
-		{
-			
-		}
-		
 		/**
 		 * Update the player
 		 * @return		false; player will never be complete

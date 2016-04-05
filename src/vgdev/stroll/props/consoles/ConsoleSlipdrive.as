@@ -69,7 +69,7 @@ package vgdev.stroll.props.consoles
 		
 		override public function onKey(key:int):void
 		{		
-			if (hp == 0) return;			
+			if (broken) return;			
 			
 			if (corrupted)		// relinquish control if corrupted
 			{
@@ -167,11 +167,15 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		/**
+		 * Set how many/fast/the spacing of the arrows
+		 * @param	sector		difficulty, 0-12
+		 */
 		public function setArrowDifficulty(sector:int):void
 		{
 			arrowDifficulty = 3 + int(sector / 3);
-			arrowSpeed = 4 + sector * .3;
-			arrowVarySpacing = 20 + sector;
+			arrowSpeed = 3.5 + sector * .25;
+			arrowVarySpacing = 20 + int(sector * 1.2);
 		}
 		
 		/**

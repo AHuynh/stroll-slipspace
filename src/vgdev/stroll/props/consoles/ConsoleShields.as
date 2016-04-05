@@ -57,7 +57,7 @@ package vgdev.stroll.props.consoles
 				return;
 			}
 			
-			if (cdCount != 0 || hp == 0)		// quit if shield switch is on cooldown or console is destroyed
+			if (cdCount != 0 || broken)		// quit if shield switch is on cooldown or console is destroyed
 				return;
 				
 			// if a direction key was hit and the corresponding color isn't already active

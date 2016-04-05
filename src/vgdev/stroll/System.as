@@ -20,6 +20,8 @@ package vgdev.stroll
 		public static var distortion_module:Class;	
 		[Embed(source="../../../img/effects/distortion_squares.png")]
 		public static var distortion_squares:Class;	
+		[Embed(source="../../../img/effects/distortion_bars.png")]
+		public static var distortion_bars:Class;	
 		
 		// keyboard bindings for P1 and P2
 		public static var keyMap0:Object = {"RIGHT":Keyboard.D,		"UP":Keyboard.W,
@@ -322,6 +324,7 @@ package vgdev.stroll
 			{
 				case "module":		mapBitmap = new distortion_module().bitmapData;		break;
 				case "bg_squares":	mapBitmap = new distortion_squares().bitmapData;	break;
+				case "bg_bars":		mapBitmap = new distortion_bars().bitmapData;		break;
 				default: "[SYSTEM] Unknown DMfilter for", type;
 			}
 			var mapPoint:Point       = new Point(); 						// position of the StaticMap image in relation to our button

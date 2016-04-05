@@ -73,6 +73,10 @@
 		private const TAILS_DEFAULT:String = "Hi! I'm TAILS; the ship AI.\n\n" +
 											 "I've booted up the ship's basic systems. Check them out before we jump.\n\n" +
 											 "OK, are both of you ready?";
+											 
+		private var escDown:Boolean = false;
+		private var resetCounter:int = 0;
+		private var justPaused:Boolean = false;
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -98,7 +102,7 @@
 			gui = new SWC_GUI();	
 			engine.superContainer.mc_container.addChild(gui);
 			gui.mc_pause.visible = false;
-			gui.mc_pause.mc_confirm.visible = false;
+			gui.mc_pause.tf_reset.visible = false;
 			gui.mc_lose.visible = false;
 			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
@@ -198,6 +202,7 @@
 			SoundManager.playBGM("bgm_calm", .4);
 						
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
+			engine.stage.addEventListener(KeyboardEvent.KEY_UP, upKeyboard);
 			
 			tails.show(TAILS_DEFAULT);
 			tails.showNew = true;
@@ -206,7 +211,7 @@
 			stage.focus = game;
 			gui.mc_fade.gotoAndPlay(2);		// fade in
 			
-			//visualEffects.applyBGDistortion();
+			visualEffects.applyBGDistortion(true, "bg_bars");
 		}
 		
 		/**
@@ -252,27 +257,28 @@
 		{			
 			switch (e.keyCode)
 			{
-				case Keyboard.P:
-					if (isDefeatedPaused) return;
-					if (!isPaused)
-						gui.mc_pause.mc_confirm.visible = false;
-					isPaused = !isPaused;
-					gui.mc_pause.visible = isPaused;
-				break;
-				
-				case Keyboard.R:
-					if (isPaused)
-					{
-						if (gui.mc_pause.mc_confirm.visible == false)
-							gui.mc_pause.mc_confirm.visible = true;
-						else
-							destroy(null);
-					}
-					else if (isDefeatedPaused)
+				case Keyboard.ESCAPE:
+					if (escDown) return;
+					
+					escDown = true;
+					resetCounter = 0;
+					
+					if (isDefeatedPaused)
 					{
 						if (game.mc_ship.mc_shipBase.currentFrame == game.mc_ship.mc_shipBase.totalFrames)
 							destroy(null);
+						return;
 					}
+					
+					if (!isPaused)
+					{
+						isPaused = true;
+						justPaused = true;
+					}
+					gui.mc_pause.visible = isPaused;
+					if (!justPaused)
+						gui.mc_pause.tf_reset.visible = true;
+					
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
@@ -282,10 +288,31 @@
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
 					//killShip();
 					//addFires(1);
-					//ship.damageDirect(50);
-					//consoles[0].changeHP( -100);
+					//ship.damageDirect(500);
+					consoles[0].changeHP( -250);
 					//addFires(1);
 				break;
+			}
+		}
+		
+		private function upKeyboard(e:KeyboardEvent):void
+		{
+			if (e.keyCode == Keyboard.ESCAPE)
+			{
+				escDown = false;
+				gui.mc_pause.tf_reset.visible = false;
+				
+				if (justPaused)
+				{
+					justPaused = false;
+					return;
+				}				
+				if (resetCounter <= 6)
+				{
+					gui.mc_pause.visible = false;
+					isPaused = false;
+				}
+				resetCounter = 0;
 			}
 		}
 		
@@ -328,6 +355,20 @@
 				return completed;
 		
 			SoundManager.step();
+			if (escDown && !justPaused && gui.mc_pause.visible)
+			{
+				resetCounter++;
+				if (resetCounter > 35)
+					gui.mc_pause.tf_reset.text = "Resetting... 1";
+				else if (resetCounter > 20)
+					gui.mc_pause.tf_reset.text = "Resetting... 2";
+				else if (resetCounter > 6)
+					gui.mc_pause.tf_reset.text = "Resetting... 3";
+				else
+					gui.mc_pause.tf_reset.text = "";
+				if (resetCounter == 50)
+					destroy(null);
+			}
 				
 			if (!isPaused)
 				tails.step();
@@ -448,11 +489,11 @@
 				
 				gui.mc_left.visible = false;
 				gui.mc_right.visible = false;
-				
-				//tails.tutorialMode = level.sectorIndex % 4 == 0;
+
 				tails.tutorialMode = false;
 				
 				game.mc_ship.mc_console_slipdrive.parentClass.setArrowDifficulty(level.sectorIndex);
+				ship.minRestore();		// replenish HP to minimum
 			}
 		}
 		
@@ -647,12 +688,13 @@
 			else if (level.sectorIndex <= 8)
 				tails.show(System.getRandFrom([ "Aww, you two are so cute!",
 												"Yeah! Keep your spirits up!",
+												"I'd high-five you, too! If I had hands, that is...",
 												"Woo! I know we can do it!"
 												]), System.SECOND * 3, null);
 			else
 				tails.show(System.getRandFrom([ "Error. Meaning of gesture unknown.",
 												"That action is not conducive to mission imperative.",
-												"Please cease friendship and return to mission."
+												"Cease friendship and return to mission."
 												]), System.SECOND * 3, "HEADS");
 		}
 		
@@ -664,6 +706,8 @@
 		{
 			if (engine.stage.hasEventListener(KeyboardEvent.KEY_DOWN))
 				engine.stage.removeEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
+			if (engine.stage.hasEventListener(KeyboardEvent.KEY_UP))
+				engine.stage.removeEventListener(KeyboardEvent.KEY_UP, upKeyboard);
 			
 			var i:int;
 			for (i = 0; i < managers.length; i++)

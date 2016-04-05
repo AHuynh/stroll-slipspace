@@ -98,6 +98,7 @@ package vgdev.stroll.props.consoles
 				hud_consoles[closestPlayer.playerID].mc_tutorial.visible = false;
 				cg.hudTitles[closestPlayer.playerID].visible = false;
 				cg.tails.hideHalf(closestPlayer.playerID == 0);
+				updateDepth();
 				closestPlayer = null;
 				updateHUD(false);
 			}

@@ -48,6 +48,9 @@ package vgdev.stroll.props.consoles
 		public var unscrambledLocation:MovieClip;
 		// ----------------------------------------------------
 		
+		private var HP_THRESH:int;
+		protected var broken:Boolean = false;
+		
 		public function ABST_Console(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean = false)
 		{
 			super(_cg, _mc_object);
@@ -59,6 +62,7 @@ package vgdev.stroll.props.consoles
 			
 			unlocked = !locked;
 			hp = hpMax = 1000;
+			HP_THRESH = int(hpMax * .3);
 			
 			mc_object.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
@@ -109,10 +113,26 @@ package vgdev.stroll.props.consoles
 			hp = System.changeWithLimit(hp, amt, 0, hpMax);		
 			
 			// disable console
-			if (hp == 0)
+			if (hp == 0 && !broken)
 			{
-				onCancel();
+				broken = true;
+				mc_object.gotoAndStop(4);
+				if (inUse)
+					closestPlayer.onCancel();
+				else
+					onCancel();
 				disableConsole();	//stop the beneficial effects of this console
+			}
+			// repair console
+			else if (broken && amt > 0)
+			{
+				if (hp > HP_THRESH)
+				{
+					broken = false;
+					mc_object.gotoAndStop(corrupted ? 4 : 2);
+					if (inUse)
+						setHUD(CONSOLE_NAME);
+				}
 			}
 			
 			if (hp != hpMax)
@@ -135,7 +155,7 @@ package vgdev.stroll.props.consoles
 		{
 			if (!unlocked || inUse) return;
 			
-			playerProximities[p.playerID] = p.getHP() == 0 ? 99999 : getDistance(p);
+			playerProximities[p.playerID] = broken ? 99999 : getDistance(p);
 			var closest:Player = null;
 			var closestDist:Number = 99999;
 			
@@ -282,11 +302,13 @@ package vgdev.stroll.props.consoles
 				label = debuggable ? "fails" : "corrupt";
 				cName = "ERROR";
 			}
+			else if (label != "none" && broken)
+				label = "broken";
 			
 			hud_consoles[closestPlayer.playerID].gotoAndStop(label.toLowerCase());
 			cg.hudTitles[closestPlayer.playerID].visible = label != "none";
 			cg.hudTitles[closestPlayer.playerID].text = cName;
-			if (cg.tails.tutorialMode && label != "none")
+			if (cg.tails.tutorialMode && label != "none" && label != "broken")
 			{
 				hud_consoles[closestPlayer.playerID].mc_tutorial.visible = label != "none";
 				hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(label.toLowerCase());
@@ -303,6 +325,7 @@ package vgdev.stroll.props.consoles
 		{
 			// -- override this function
 		}
+		
 		/**
 		 * Potentially do a one-off good thing if the console is enabled
 		 */
