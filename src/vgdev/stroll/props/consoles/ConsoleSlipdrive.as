@@ -104,7 +104,8 @@ package vgdev.stroll.props.consoles
 					if (arrowMap[key] == mc.rotation)
 					{
 						mc.gotoAndStop(3);		// turn green
-						SoundManager.playSFX("sfx_sliphit");
+						if (currentArrow + 1 != arrows.length)
+							SoundManager.playSFX("sfx_readybeep3E", .4);
 					}
 					// else the wrong button was pressed
 					else

@@ -132,7 +132,7 @@ package vgdev.stroll.props.consoles
 																		"style":		"turret_small_orange"
 																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
-					SoundManager.playSFX("sfx_laser1");
+					SoundManager.playSFX("sfx_laser1", .6);
 				}
 			}
 		}

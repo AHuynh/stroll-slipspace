@@ -104,6 +104,17 @@
     <asset path="sfx\sfx_servo.mp3" />
     <asset path="sfx\sfx_servoEnd.mp3" />
     <asset path="bgm\bgm_FAILS.mp3" />
+    <asset path="bgm\bgm_title.mp3" />
+    <asset path="sfx\sfx_explosion1.mp3" />
+    <asset path="sfx\sfx_explosion2.mp3" />
+    <asset path="sfx\sfx_fire_ignited.mp3" />
+    <asset path="sfx\sfx_monsterdeath_1.mp3" />
+    <asset path="sfx\sfx_monsterdeath_2.mp3" />
+    <asset path="sfx\sfx_monsterdeath_3.mp3" />
+    <asset path="sfx\sfx_monsterdeath_4.mp3" />
+    <asset path="sfx\sfx_monsterdeath_5.mp3" />
+    <asset path="sfx\sfx_monsterdeath_6.mp3" />
+    <asset path="sfx\sfx_monsterdeath_7.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

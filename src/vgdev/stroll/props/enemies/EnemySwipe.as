@@ -141,7 +141,8 @@ package vgdev.stroll.props.enemies
 											"rot": System.getRandNum(0, 360),
 											"alphaDelay": 90 + System.getRandInt(0, 30),
 											"alphaDelta": 15,
-											"tint": selfColor
+											"tint": selfColor,
+											"style": "swipeTelegraph"
 										});
 			}
 		}

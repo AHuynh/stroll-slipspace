@@ -56,6 +56,8 @@ package vgdev.stroll.props.enemies
 		private var useRandom:Boolean = false;
 		private var useTint:Boolean = false;
 		
+		protected var playDeathSFX:Boolean = true;
+		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			super(_cg, _mc_object, new Point(System.setAttribute("x", attributes, 0), System.setAttribute("y", attributes, 0)), System.AFFIL_ENEMY);
@@ -284,8 +286,11 @@ package vgdev.stroll.props.enemies
 		
 		override public function destroy():void 
 		{
-			SoundManager.playSFX("sfx_explosionlarge1");
-			cg.addDecor("explosion_small", { "x":mc_object.x, "y":mc_object.y, "scale":4 } );
+			SoundManager.playSFX("sfx_explosionlarge1", 0.5);
+			if (playDeathSFX)
+				SoundManager.playSFX("sfx_monsterdeath");
+			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale":1 } );
+			spawnFX.mc_object.base.setTint(System.COL_ORANGE);
 			super.destroy();
 		}
 	}

@@ -9,13 +9,7 @@ package vgdev.stroll.props
 	 * @author Alexander Huynh
 	 */
 	public class Decor extends ABST_Object 
-	{
-		/* Supported labels
-		 * explosion_small
-		 * extinguish
-		 * repair
-		 */
-		
+	{		
 		/// If true, calculate when to remove the decor dynamically
 		private var codeAnimation:Boolean = false;
 		

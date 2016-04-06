@@ -41,6 +41,8 @@
 			menu = new SWC_MainMenu();
 			addChild(menu);
 			menu.addEventListener(Event.ADDED_TO_STAGE, init);
+			
+			SoundManager.playBGM("bgm_title");
 		}
 		
 		protected function init(e:Event):void

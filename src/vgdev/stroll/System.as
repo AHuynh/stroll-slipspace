@@ -80,6 +80,7 @@ package vgdev.stroll
 		public static const COL_YELLOW:uint = 0xFFFF00;
 		public static const COL_GREEN:uint = 0x00FF00;
 		public static const COL_BLUE:uint = 0x0077FF;
+		public static const COL_ORANGE:uint = 0xFFA800;
 		
 		// volume constants
 		public static const VOL_BGM:Number = .4;

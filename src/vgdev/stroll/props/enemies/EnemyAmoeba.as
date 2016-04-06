@@ -2,6 +2,7 @@ package vgdev.stroll.props.enemies
 {
 	import flash.display.MovieClip;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.System;
 	import vgdev.stroll.support.SoundManager;
 	/**
@@ -89,8 +90,9 @@ package vgdev.stroll.props.enemies
 		// if size is > 0, spawn 2 amoebas with size 1 less than current size
 		override public function destroy():void 
 		{
-			SoundManager.playSFX("sfx_explosionlarge1");
-			cg.addDecor("explosion_small", { "x":mc_object.x, "y":mc_object.y, "scale":4 } );
+			SoundManager.playSFX("sfx_explosionlarge1", 0.3);
+			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale":1 } );
+			spawnFX.mc_object.base.setTint(System.COL_ORANGE);
 			var i:int;
 			
 			if (amoebaSize > 0)

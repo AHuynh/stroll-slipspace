@@ -74,6 +74,7 @@ package vgdev.stroll.support
 											//    a list of objects to spawn, "spawnables"
 		private var waveIndex:int;			// current wave in waves
 		private var waveColor:uint;
+		private var fireSound:Boolean = true;
 
 		private var counter:int = 0;		// keep track of frames elapsed since current encounter started
 		private var counterNext:int = 0;	// the "time" that the next wave spawns
@@ -184,6 +185,7 @@ package vgdev.stroll.support
 				waveColor = System.getRandCol();
 				if (waves[waveIndex]["spawnables"].length != 0)
 				{
+					fireSound = true;
 					for (var r:int = 0; r < repeat; r++)
 					{
 						// iterate over things to spawn
@@ -328,6 +330,9 @@ package vgdev.stroll.support
 					pos.y -= System.GAME_OFFSY;
 					spawn = new InternalFire(cg, new SWC_Decor(), pos, cg.shipInsideMask);
 					manager = System.M_FIRE;
+					if (fireSound)
+						SoundManager.playSFX("sfx_fire_ignited");
+					fireSound = false;
 				break;
 			}
 			cg.addToGame(spawn, manager);	

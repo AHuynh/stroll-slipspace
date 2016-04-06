@@ -36,6 +36,8 @@ package vgdev.stroll.props.enemies
 			rangeVary = 0;
 			orbitX = 0;
 			orbitY = 0;
+			
+			playDeathSFX = false;
 		}
 		
 		override public function getJammingValue():int 

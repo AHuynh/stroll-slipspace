@@ -31,11 +31,15 @@ package vgdev.stroll.support
 		private static var bgm_boss:Class;
 		[Embed(source="../../../../bgm/bgm_FAILS.mp3")]
 		private static var bgm_FAILS:Class;
+		[Embed(source="../../../../bgm/bgm_title.mp3")]
+		private static var bgm_title:Class;
 		
 		[Embed(source="../../../../sfx/sfx_readybeep1B.mp3")]
 		private static var sfx_readybeep1B:Class;
 		[Embed(source="../../../../sfx/sfx_readybeep2G.mp3")]
 		private static var sfx_readybeep2G:Class;
+		[Embed(source="../../../../sfx/sfx_readybeep3E.mp3")]
+		private static var sfx_readybeep3E:Class;
 		
 		[Embed(source="../../../../sfx/sfx_warn2.mp3")]
 		private static var sfx_warn2:Class;
@@ -49,18 +53,42 @@ package vgdev.stroll.support
 		
 		[Embed(source="../../../../sfx/sfx_explosionlarge1.mp3")]
 		private static var sfx_explosionlarge1:Class;
+		[Embed(source="../../../../sfx/sfx_explosion1.mp3")]
+		private static var sfx_explosion1:Class;
+		[Embed(source="../../../../sfx/sfx_explosion2.mp3")]
+		private static var sfx_explosion2:Class;
+		[Embed(source="../../../../sfx/sfx_fire_ignited.mp3")]
+		private static var sfx_fire_ignited:Class;
+		
 		[Embed(source="../../../../sfx/sfx_hithull1.mp3")]
 		private static var sfx_hithull1:Class;
 		[Embed(source="../../../../sfx/sfx_hitshield1.mp3")]
 		private static var sfx_hitshield1:Class;
+		
 		[Embed(source="../../../../sfx/sfx_laser1.mp3")]
-		private static var sfx_laser1:Class;	
+		private static var sfx_laser1:Class;
+		[Embed(source="../../../../sfx/sfx_monsterdeath_1.mp3")]
+		private static var sfx_monsterdeath_1:Class;
+		[Embed(source="../../../../sfx/sfx_monsterdeath_2.mp3")]
+		private static var sfx_monsterdeath_2:Class;
+		[Embed(source="../../../../sfx/sfx_monsterdeath_3.mp3")]
+		private static var sfx_monsterdeath_3:Class;
+		[Embed(source="../../../../sfx/sfx_monsterdeath_4.mp3")]
+		private static var sfx_monsterdeath_4:Class;
+		[Embed(source="../../../../sfx/sfx_monsterdeath_5.mp3")]
+		private static var sfx_monsterdeath_5:Class;
+		[Embed(source="../../../../sfx/sfx_monsterdeath_6.mp3")]
+		private static var sfx_monsterdeath_6:Class;
+		[Embed(source="../../../../sfx/sfx_monsterdeath_7.mp3")]
+		private static var sfx_monsterdeath_7:Class;
+		
 		[Embed(source="../../../../sfx/sfx_shieldrecharge.mp3")]
-		private static var sfx_shieldrecharge:Class;	
+		private static var sfx_shieldrecharge:Class;
+		
 		[Embed(source="../../../../sfx/sfx_sliphit.mp3")]
 		private static var sfx_sliphit:Class;	
 		[Embed(source="../../../../sfx/sfx_slipjump.mp3")]
-		private static var sfx_slipjump:Class;	
+		private static var sfx_slipjump:Class;
 			
 		[Embed(source="../../../../sfx/sfx_servo.mp3")]
 		private static var sfx_servo:Class;	
@@ -92,6 +120,7 @@ package vgdev.stroll.support
 			
 			sounds["sfx_readybeep1B"] = new sfx_readybeep1B();
 			sounds["sfx_readybeep2G"] = new sfx_readybeep2G();
+			sounds["sfx_readybeep3E"] = new sfx_readybeep3E();
 			
 			sounds["sfx_electricShock"] = new sfx_electricShock();
 			
@@ -100,12 +129,22 @@ package vgdev.stroll.support
 			sounds["sfx_ekg"] = new sfx_ekg();
 			
 			sounds["sfx_explosionlarge1"] = new sfx_explosionlarge1();
+			sounds["sfx_explosion1"] = new sfx_explosion1();
+			sounds["sfx_explosion2"] = new sfx_explosion2();
 			sounds["sfx_hithull1"] = new sfx_hithull1();
 			sounds["sfx_hitshield1"] = new sfx_hitshield1();
+			sounds["sfx_fire_ignited"] = new sfx_fire_ignited();
 			sounds["sfx_laser1"] = new sfx_laser1();
 			sounds["sfx_shieldrecharge"] = new sfx_shieldrecharge();
 			sounds["sfx_sliphit"] = new sfx_sliphit();
 			sounds["sfx_slipjump"] = new sfx_slipjump();
+			sounds["sfx_monsterdeath_1"] = new sfx_monsterdeath_1();
+			sounds["sfx_monsterdeath_2"] = new sfx_monsterdeath_2();
+			sounds["sfx_monsterdeath_3"] = new sfx_monsterdeath_3();
+			sounds["sfx_monsterdeath_4"] = new sfx_monsterdeath_4();
+			sounds["sfx_monsterdeath_5"] = new sfx_monsterdeath_5();
+			sounds["sfx_monsterdeath_6"] = new sfx_monsterdeath_6();
+			sounds["sfx_monsterdeath_7"] = new sfx_monsterdeath_7();
 			
 			sounds["sfx_servo"] = new sfx_servo();
 			sounds["sfx_servoEnd"] = new sfx_servoEnd();
@@ -120,6 +159,11 @@ package vgdev.stroll.support
 		
 		public static function playSFX(sfx:String, volume:Number = 1):void
 		{
+			if (sfx == "sfx_explosionlarge1")
+				sfx = System.getRandFrom(["sfx_explosionlarge1", "sfx_explosion1", "sfx_explosion2"]);
+			else if (sfx == "sfx_monsterdeath")
+				sfx += "_" + System.getRandInt(1, 7).toString();
+				
 			if (sounds[sfx] == null)
 				trace("WARNING: No sound located for " + sfx + "!");
 			else
@@ -154,6 +198,7 @@ package vgdev.stroll.support
 				case "bgm_calm":		return new bgm_calm();
 				case "bgm_boss":		return new bgm_boss();
 				case "bgm_FAILS":		return new bgm_FAILS();	
+				case "bgm_title":		return new bgm_title();	
 				default:
 					//trace("WARNING: No music located for " + music + "!");
 					return null;

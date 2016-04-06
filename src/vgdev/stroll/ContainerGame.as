@@ -301,8 +301,8 @@
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
 					//killShip();
 					//addFires(1);
-					//ship.damageDirect(500);
-					consoles[0].changeHP( -250);
+					ship.damageDirect(500);
+					//consoles[0].changeHP( -250);
 					//addFires(1);
 				break;
 			}
@@ -564,6 +564,7 @@
 				if (pos == null) continue;
 				addToGame(new InternalFire(this, new SWC_Decor(), pos, shipInsideMask), System.M_FIRE);
 			}
+			SoundManager.playSFX("sfx_fire_ignited");
 		}
 
 		/**
@@ -573,12 +574,14 @@
 		public function addExplosions(num:int):void
 		{
 			var pos:Point;
+			var spawnFX:ABST_Object;
 			SoundManager.playSFX("sfx_explosionlarge1");
 			for (var i:int = 0; i < num; i++)
 			{
 				pos = getRandomShipLocation();
 				if (pos == null) continue;
-				addDecor("explosion_small", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(2, 6) } );
+				spawnFX = addDecor("spawn", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(0.25, 3) } );
+				spawnFX.mc_object.base.setTint(System.COL_ORANGE);
 			}
 		}
 		
@@ -589,6 +592,7 @@
 		public function addFireAt(loc:Point):void
 		{
 			addToGame(new InternalFire(this, new SWC_Decor(), loc, shipInsideMask), System.M_FIRE);
+			SoundManager.playSFX("sfx_fire_ignited");
 		}
 		
 		/**
