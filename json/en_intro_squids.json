@@ -4,7 +4,7 @@
 	"background": "default",
 	"difficulty_range": [2, 3],
     "jamming_min": 1,
-    "slip_range": 35.0,
+    "slip_range": 28.0,
 	"type": "Enemies",
 	"TAILS": "Large enemies inbound. Get ready for a fight!"
   },
@@ -17,7 +17,7 @@
 			]
 	},
 	{
-		"time": 15,
+		"time": 11,
 		"TAILS": "One more detected from the rear!",
 		"spawnables":
 			[

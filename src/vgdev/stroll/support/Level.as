@@ -28,11 +28,6 @@ package vgdev.stroll.support
 		[Embed(source="../../../../json/en_anomalyfieldplain.json", mimeType="application/octet-stream")]
 		private var en_anomalyfieldplain:Class;
 		
-		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
-		private var en_boss_peeps:Class;
-		[Embed(source="../../../../json/en_boss_fails.json", mimeType="application/octet-stream")]
-		private var en_boss_fails:Class;
-		
 		// -- MEDIUM REGION -------------------------------------------------------------------------------------
 		[Embed(source="../../../../json/en_swipe.json", mimeType="application/octet-stream")]
 		private var en_swipe:Class;
@@ -51,7 +46,15 @@ package vgdev.stroll.support
 		[Embed(source="../../../../json/en_spiders.json", mimeType="application/octet-stream")]
 		private var en_spiders:Class;
 		[Embed(source="../../../../json/en_rainbow.json", mimeType="application/octet-stream")]
-		private var en_rainbow:Class;
+		private var en_rainbow:Class;	
+		
+		// -- BOSS REGIONS --------------------------------------------------------------------------------------
+		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
+		private var en_boss_peeps:Class;
+		[Embed(source="../../../../json/en_boss_fails.json", mimeType="application/octet-stream")]
+		private var en_boss_fails:Class;
+		[Embed(source="../../../../json/en_boss_final.json", mimeType="application/octet-stream")]
+		private var en_boss_final:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -109,7 +112,9 @@ package vgdev.stroll.support
 												
 												JSON.parse(new en_spiders()),
 												JSON.parse(new en_fire_ice()),
-												JSON.parse(new en_rainbow())
+												JSON.parse(new en_rainbow()),
+												
+												JSON.parse(new en_boss_final())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -120,7 +125,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											rawEncountersJSON = [JSON.parse(new en_rainbow())];
+											rawEncountersJSON = [JSON.parse(new en_boss_final())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -220,7 +225,7 @@ package vgdev.stroll.support
 		 * @param	pos				Location to spawn at
 		 * @param	type			Type of enemy
 		 */
-		public function spawn(spawnItem:Object, pos:Point, type:String, col:uint = System.COL_WHITE):void
+		public function spawn(spawnItem:Object, pos:Point, type:String, col:uint = System.COL_WHITE):ABST_Object
 		{
 			var spawn:ABST_Object;
 			var manager:int;
@@ -319,12 +324,18 @@ package vgdev.stroll.support
 																	});
 					manager = System.M_ENEMY;
 				break;
-				
 				case "Peeps":
 					spawn = new EnemyPeeps(cg, new SWC_Enemy(), {});
 					manager = System.M_ENEMY;
 				break;
-				
+				case "Portal":
+					spawn = new EnemyPortal(cg, new SWC_Enemy(), {
+																	"x": pos.x,
+																	"y": pos.y,
+																	"hp": 300
+																	});
+					manager = System.M_ENEMY;
+				break;
 				case "Fire":
 					pos.x -= System.GAME_OFFSX;
 					pos.y -= System.GAME_OFFSY;
@@ -335,7 +346,7 @@ package vgdev.stroll.support
 					fireSound = false;
 				break;
 			}
-			cg.addToGame(spawn, manager);	
+			return cg.addToGame(spawn, manager);	
 		}
 
 		/**
@@ -391,6 +402,9 @@ package vgdev.stroll.support
 					break;
 					case "bossFails":
 						spLevel = new SPLevelFAILS(cg);
+					break;
+					case "bossFinal":
+						spLevel = new SPLevelFinal(cg);
 					break;
 					default:
 						trace("[LEVEL] Warning: No class found for spLevel:", encounter["spLevel"]);

@@ -57,7 +57,7 @@ package vgdev.stroll.support
 		private var MIN_SLIP_SPEED:Number = .01;
 		
 		public var slipSpeed:Number = MAX_SLIP_SPEED;	// amount to reduce slipRange per frame
-		public var jammable:int = 0;					// if non-zeo, prevents jumping if at least jammable enemies are present
+		public var jammable:int = 0;					// if non-zero, prevents jumping if at least jammable enemies are present
 		
 		private var bossOverride:Boolean = false;		// if true, override normal vars; something special is happening
 		// ------------------------------------------------------------------------------------------------

@@ -66,7 +66,8 @@ package vgdev.stroll.props.enemies
 			spawnFX.mc_object.base.setTint(attackColor);
 
 			hp = hpMax = 500;
-			rangeVary = 100;
+			//rangeVary = 100;
+			rangeVary = 30;
 			
 			
 			eyes[0] = new EnemyPeepsEye(cg, new SWC_Enemy(), this);

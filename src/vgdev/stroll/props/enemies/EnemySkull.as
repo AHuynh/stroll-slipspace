@@ -26,8 +26,16 @@ package vgdev.stroll.props.enemies
 			super(_cg, _mc_object, attributes);
 			setStyle("skull");
 			
-			mc_object.x = System.getRandNum( -System.GAME_HALF_WIDTH, System.GAME_HALF_WIDTH);
-			mc_object.y = System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT);
+			if (attributes["x"] == null)
+			{
+				mc_object.x = System.getRandNum( -System.GAME_HALF_WIDTH, System.GAME_HALF_WIDTH);
+				mc_object.y = System.getRandNum( -System.GAME_HALF_HEIGHT, System.GAME_HALF_HEIGHT);
+			}
+			else
+			{
+				mc_object.x = attributes["x"];
+				mc_object.y = attributes["y"];
+			}
 			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "rot": System.getRandNum(0, 360), "scale": mc_object.scaleX * 2 } );
 			spawnFX.mc_object.base.setTint(attackColor);
 			

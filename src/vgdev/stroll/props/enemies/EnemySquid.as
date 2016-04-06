@@ -14,6 +14,8 @@ package vgdev.stroll.props.enemies
 	 */
 	public class EnemySquid extends ABST_Enemy 
 	{
+		private var forceTP:Boolean = true;		// first time HP is reduced below 50%, free TP
+		
 		public function EnemySquid(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			attributes["customHitbox"] = true;
@@ -23,9 +25,9 @@ package vgdev.stroll.props.enemies
 			if (mc_object.x > 0)
 				mc_object.scaleX = -1;
 			
-			// [Large shot, Small trishot]
-			cdCounts = [45, 90];
-			cooldowns = [100, 140];
+			// [Large shot, Small trishot. TP]
+			cdCounts = [45, 90, System.SECOND * 20];
+			cooldowns = [100, 140, System.SECOND * 20];
 			rangeVary = 50;
 			drift = .1;
 			spd = .3;
@@ -77,6 +79,9 @@ package vgdev.stroll.props.enemies
 								cg.addToGame(proj, System.M_EPROJECTILE);
 							}
 						break;
+						case 2:		// teleport
+							teleport();
+						break;
 					}
 				}
 			}
@@ -86,24 +91,31 @@ package vgdev.stroll.props.enemies
 				mc_object.base.gotoAndPlay("shoot");
 		}
 		
+		override public function changeHP(amt:Number):Boolean 
+		{
+			var ret:Boolean = super.changeHP(amt);
+			if (forceTP && hp < hpMax * .5)
+			{
+				forceTP = false;
+				teleport();
+				cdCounts[2] = cooldowns[2];
+			}
+			return ret;
+		}
+		
+		private function teleport():void
+		{
+			cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale":2 } );
+			var p:Point = cg.level.getRandomPointInRegion("near_orbit");
+			mc_object.x = p.x;
+			mc_object.y = p.y;
+			cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale":2 } );
+			
+			mc_object.scaleX = mc_object.x > 0 ? -1 : 1;
+		}
+		
 		override protected function maintainRange():void
-		{/*
-			var dist:Number = System.getDistance(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
-			var rot:Number = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
-			mc_object.rotation = rot;
-			if (dist < ranges[0])
-			{
-				updatePosition(System.forward( -spd, rot, true), System.forward( -spd, rot, false));
-				driftDir = -1;
-			}
-			else if (dist > ranges[1])
-			{
-				updatePosition(System.forward(spd, rot, true), System.forward(spd, rot, false));
-				driftDir = 1;
-			}
-			else
-				updatePosition(System.forward(drift * driftDir, rot, true), System.forward(drift * driftDir, rot, false));*/
-				
+		{				
 			var dist:Number = System.getDistance(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
 			var theta:Number = System.getAngle(cg.shipHitMask.x, cg.shipHitMask.y, mc_object.x, mc_object.y);
 			var rot:Number = (theta + 180) % 360;

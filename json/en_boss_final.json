@@ -1,0 +1,16 @@
+{
+  "settings": {
+	"id": "boss_final",
+	"background": "default",
+	"difficulty_range": [12, 12],
+    "jamming_min": 1,
+    "slip_range": 5.0,
+	"type": "Boss",
+	"TAILS": "Arrived in Sector 12. Initiating Super Slipjump procedure.\n\nUser, activate slipdrive to exit Slipspace and deliver slipportal. Y/N?",
+	"spLevel": "bossFinal"
+  },
+  "waves": [
+	{
+	}
+  ]
+}

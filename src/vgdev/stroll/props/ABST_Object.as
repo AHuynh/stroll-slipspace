@@ -127,6 +127,11 @@ package vgdev.stroll.props
 			return hpMax;
 		}
 		
+		public function setHPmax(h:Number):void
+		{
+			hp = hpMax = h;
+		}
+		
 		/**
 		 * Update this object's depth and have ManagerDepth update the depths of all depth-managed objects
 		 */

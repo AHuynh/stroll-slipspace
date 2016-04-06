@@ -142,6 +142,7 @@ package vgdev.stroll.support.splevels
 							cg.serious = false;
 							framesElapsed = 0;
 							levelState = 10;
+							cg.gameOverAnnouncer = "FAILS";
 						break;
 					}
 					
@@ -601,6 +602,7 @@ package vgdev.stroll.support.splevels
 						consoleSlip.setArrowDifficulty(cg.level.sectorIndex);
 						framesElapsed = 0;
 						levelState = 50;
+						cg.gameOverAnnouncer = "HEADS";
 					}
 				break;	// escaped
 				case 50:
@@ -620,11 +622,7 @@ package vgdev.stroll.support.splevels
 						consoleSlip.forceOverride = true;
 						cg.addSparksAt(2, new Point(consoleSlip.mc_object.x, consoleSlip.mc_object.y));
 						SoundManager.playSFX("sfx_electricShock");
-						for (var b:int = 0; b < 5; b++)
-						{
-							var bpt:Point = cg.getRandomShipLocation();
-							cg.addToGame(new BoarderWanderer(cg, new SWC_Enemy(), cg.shipInsideMask, {"x": bpt.x, "y": bpt.y}), System.M_BOARDER);
-						}
+						addShards(5);
 						framesElapsed = 0;
 						levelState++;
 					}
@@ -645,12 +643,6 @@ package vgdev.stroll.support.splevels
 					}
 				break;
 			}
-		}
-
-		private function fakeJump():void
-		{
-			cg.background.setRandomStyle(int(cg.level.sectorIndex / 5), System.getRandCol());
-			cg.playJumpEffect();
 		}
 		
 		/**
@@ -723,62 +715,6 @@ package vgdev.stroll.support.splevels
 										});
 			}
 			
-		}
-		
-		/**
-		 * 	Pick a random uncorrupted console and perform some harmful effect
-		 */
-		private function messWithConsole():void
-		{
-			var choices:Array = [];
-			for each (var c:ABST_Console in cg.consoles)
-				if (!c.corrupted)
-				{
-					if (c is Omnitool && c.closestPlayer != null) continue;
-					choices.push(c);
-				}
-			if (choices.length == 0) return;
-			var console:ABST_Console = System.getRandFrom(choices);
-			
-			if (console is ConsoleNavigation)
-			{
-				cg.tails.show("Navigation? How about FIRE instead?!", System.TAILS_NORMAL, "FAILS_talk");
-				cg.addFireAt(new Point(console.mc_object.x, console.mc_object.y));
-			}
-			else if (console is Omnitool)
-			{
-				cg.tails.show("Your extinguisher is now ON FIRE! THE IRONY!", System.TAILS_NORMAL, "FAILS_talk");
-				cg.addFireAt(new Point(console.mc_object.x, console.mc_object.y));
-			}
-			else if (console is ConsoleSensors)
-			{
-				cg.tails.show("Hope you didn't need to see, MORONS!", System.TAILS_NORMAL, "FAILS_talk");
-				(console as ConsoleSensors).corrupt(System.SECOND * 9);
-			}
-			else if (console is ConsoleShieldRe)
-			{
-				cg.tails.show("Was that the ON/OFF for shields? NOT SORRY!", System.TAILS_NORMAL, "FAILS_talk");
-				cg.ship.setShieldsEnabled(false);
-				cg.ship.setShieldsEnabled(true);
-			}
-			else if (console is ConsoleShields)
-			{
-				cg.tails.show("Colored shields are SO overrated! OFF IT GOES!", System.TAILS_NORMAL, "FAILS_talk");
-				(console as ConsoleShields).disableConsole();
-			}
-			else if (console is ConsoleSlipdrive)
-			{
-				cg.tails.show("How about a CHANGE IN SCENERY?! JUMP JUMP JUMP!", System.TAILS_NORMAL, "FAILS_talk");
-				fakeJump();
-				spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Amoeba"]), System.getRandInt(2, 4));
-			}
-			else if (console is ConsoleTurret)
-			{
-				cg.tails.show("Only I'M allowed to be violent! NO GUN FOR YOU!", System.TAILS_NORMAL, "FAILS_talk");
-				(console as ConsoleTurret).setActiveCooldown(System.SECOND * 10);
-			}
-			cg.addSparksAt(2, new Point(console.mc_object.x, console.mc_object.y));
-			SoundManager.playSFX("sfx_electricShock", .25);
 		}
 		
 		override public function destroy():void 

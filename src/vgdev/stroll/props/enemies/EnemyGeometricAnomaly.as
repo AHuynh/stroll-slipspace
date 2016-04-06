@@ -18,6 +18,7 @@ package vgdev.stroll.props.enemies
 			setStyle("geometricAnomaly");
 			var frame:int = System.getRandInt(1, mc_object.base.totalFrames);
 			mc_object.base.gotoAndStop(frame);
+			playDeathSFX = false;
 		}
 		
 		override public function getJammingValue():int 

@@ -81,6 +81,8 @@
 		private var resetCounter:int = 0;
 		private var justPaused:Boolean = false;
 		
+		public var gameOverAnnouncer:String = "TAILS";
+		
 		/**
 		 * A MovieClip containing all of a Stroll level
 		 * @param	eng			A reference to the Engine
@@ -664,35 +666,44 @@
 			managerMap[System.M_BOARDER].killAll();
 			
 			// hide ship interior
-			game.mc_ship.mc_interior.visible = false;
-			game.mc_ship.shield.visible = false;
-			game.mc_ship.mc_player0.visible = false;
-			game.mc_ship.mc_player1.visible = false;
-			for each (var c:ABST_Console in consoles)
-				c.mc_object.visible = false;
-			game.mc_ship.turret_f.visible = false;
-			game.mc_ship.turret_l.visible = false;
-			game.mc_ship.turret_r.visible = false;
-			game.mc_ship.turret_b.visible = false;
+			setInteriorVisibility(false);
 			ship.setShieldsEnabled(false);
 			
 			game.mc_ship.mc_shipBase.gotoAndPlay("death");
 			
-			if (SoundManager.getBGMname() == "bgm_FAILS")
+			if (gameOverAnnouncer == "FAILS")
 				tails.show(System.getRandFrom([ "Hah! See ya later, suckers!",
 												"See? I TOLD you that you're gonna die!",
 												"Big explosion! BIG SUCCESS!"
 												]), System.TAILS_NORMAL * 2, "FAILS_talk", true);
-			else if (level.sectorIndex <= 8)
+			else if (gameOverAnnouncer == "TAILS")
 				tails.show(System.getRandFrom([ "Aaah! I'm sorry! I'm sorry...",
 												"Oh no! No, no, no!",
 												"Eeek! This isn't supposed to happen!"
 												]), System.TAILS_NORMAL * 2, null, true);
-			else
+			else if (gameOverAnnouncer == "HEADS")
 				tails.show(System.getRandFrom([ "Ship integrity compromised.",
 												"Mission failed.",
 												"System failure. Shutting down."
 												]), System.TAILS_NORMAL * 2, "HEADS", true);
+		}
+		
+		/**
+		 * Show or hide the interior of the ship
+		 * @param	vis		true if visible
+		 */
+		public function setInteriorVisibility(vis:Boolean):void
+		{
+			game.mc_ship.mc_interior.visible = vis;
+			game.mc_ship.shield.visible = vis;
+			game.mc_ship.mc_player0.visible = vis;
+			game.mc_ship.mc_player1.visible = vis;
+			for each (var c:ABST_Console in consoles)
+				c.mc_object.visible = vis;
+			game.mc_ship.turret_f.visible = vis;
+			game.mc_ship.turret_l.visible = vis;
+			game.mc_ship.turret_r.visible = vis;
+			game.mc_ship.turret_b.visible = vis;
 		}
 		
 		public function reactToFive():void

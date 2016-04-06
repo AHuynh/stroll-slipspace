@@ -96,12 +96,8 @@ package vgdev.stroll.props.projectiles
 				var hitEnemy:ABST_Enemy = managerEnem.collideWithOther(this, true) as ABST_Enemy;		// check for any hit
 				if (hitEnemy != null)
 				{
-					// if the enemy is using a hitbox, check on that as well (otherwise accept as a hit)
-					if (hitEnemy.hitbox == null || hitEnemy.mc_object.hitbox.hitTestPoint(mc_object.x + System.GAME_OFFSX, mc_object.y + System.GAME_OFFSY, true))
-					{
-						destroy();
-						(hitEnemy as ABST_Enemy).changeHP(-dmg);
-					}
+					destroy();
+					(hitEnemy as ABST_Enemy).changeHP(-dmg);
 				}
 			}
 		}
