@@ -21,6 +21,8 @@ package vgdev.stroll.support
 		private var dirHelper:int = 1;
 		private var locHelper:int = 0;
 		
+		private var cooldown:int = 0;
+		
 		public function VisualEffects(_cg:ContainerGame) 
 		{
 			super(_cg);
@@ -56,9 +58,9 @@ package vgdev.stroll.support
 				{
 					case "bg_squares":
 						bgDistortionID = 0;
-						bgDistortion.scaleX = 50;
-						bgDistortion.scaleY = 50;
-						cg.game.filters = [bgDistortion];
+						bgDistortion.scaleX = 40;
+						bgDistortion.scaleY = 40;
+						cg.game.mc_ship.filters = [bgDistortion];
 					break;
 					case "bg_bars":
 						bgDistortionID = 1;
@@ -71,7 +73,7 @@ package vgdev.stroll.support
 			{
 				bgDistortion = null;
 				bgDistortionID = -1;
-				cg.game.filters = [];
+				cg.game.mc_ship.filters = [];
 				cg.game.mc_bg.filters = [];
 			}
 		}
@@ -94,11 +96,13 @@ package vgdev.stroll.support
 				switch (bgDistortionID)
 				{
 					case 0:
-						if (Math.random() < .2)
-							bgDistortion.mapPoint = new Point(-cg.background.bg1.x + System.GAME_HALF_WIDTH - cg.camera.focusTgt.x, System.GAME_HALF_HEIGHT + System.getRandNum(-600, 600) - cg.camera.focusTgt.y);
-						else
-							bgDistortion.mapPoint = new Point(-cg.background.bg1.x + System.GAME_HALF_WIDTH - cg.camera.focusTgt.x, bgDistortion.mapPoint.y);
-						cg.game.filters = [bgDistortion];
+						if (--cooldown > 0)
+							return;
+						cooldown = System.getRandInt(30, 90);
+						bgDistortion.mapPoint = new Point(System.getRandNum(-100, 100), System.getRandNum(-100, 100));
+						bgDistortion.scaleX = System.getRandInt(1, 5) * 10;
+						bgDistortion.scaleY = System.getRandInt(1, 5) * 10;
+						cg.game.mc_ship.filters = [bgDistortion];
 					break;
 					case 1:
 						locHelper += dirHelper * 2;

@@ -42,7 +42,7 @@ package vgdev.stroll.props
 		private var keysDown:Object = { UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false };
 		
 		/// Direction player last moved in (RULD, 0-3)
-		public var facing:int = 0;
+		public var facing:int = 3;
 		
 		/// Player 0 or 1
 		public var playerID:int;
@@ -60,6 +60,8 @@ package vgdev.stroll.props
 		private var countPDW:int = 0;			// current PDW status
 		private var cooldownPDW:int = 5;		// cooldown time in frames between PDW shots
 		private var damagePDW:int = 7;
+		public var animationPDW:int = 0;		// if non-zero, PDW sprite is visible
+		private const PDW_ANIM:int = 60;
 		
 		private var BAR_WIDTH:Number;			// small bar above player sprite width
 		private var bigBar:MovieClip;			// long thin bar above the module screen
@@ -108,6 +110,7 @@ package vgdev.stroll.props
 			mc_object.mc_omnitool.visible = false;
 			mc_object.mc_sos.visible = false;
 			mc_object.prompt.visible = false;
+			mc_object.mc_pdw.visible = false;
 		}
 		
 		/**
@@ -128,9 +131,15 @@ package vgdev.stroll.props
 						mc_object.gotoAndStop("five");
 						highFive = 0;
 						
+						mc_object.mc_pdw.visible = false;
+						animationPDW = 0;
+						
 						var other:Player = cg.players[1 - playerID];
 						other.mc_object.gotoAndStop("five");
 						other.highFive = 0;
+						
+						other.mc_object.mc_pdw.visible = false;
+						other.animationPDW = 0;
 						
 						cg.addDecor("five", { "scale": 2, "x":(mc_object.x + other.mc_object.x) * .5, "y":(mc_object.y + other.mc_object.y) * .5 - 40 } );
 						cg.reactToFive();
@@ -140,6 +149,9 @@ package vgdev.stroll.props
 						mc_object.gotoAndStop(mc_object.idleFallback);
 					}
 				}
+				
+				if (animationPDW > 0 && --animationPDW == 0)
+					mc_object.mc_pdw.visible = false;
 				
 				handleKeyboard();
 				if (countPDW > 0)	// update PDW cooldown
@@ -210,6 +222,9 @@ package vgdev.stroll.props
 				reviveProgress = 0;
 				reviveCounter = 0;
 				reviveExpire = 0;
+				
+				mc_object.mc_pdw.visible = false;
+				animationPDW = 0;
 				
 				SoundManager.playSFX("sfx_warn2vitals", .75);
 				
@@ -285,13 +300,15 @@ package vgdev.stroll.props
 																		"dir":			facing * -90 + System.getRandNum(-2, 2),
 																		"dmg":			damagePDW,
 																		"life":			30,
-																		"pos":			new Point(mc_object.x, mc_object.y - 15),
+																		"pos":			new Point(mc_object.x + [30, 12, -30, -12][facing], mc_object.y + [-20, -30, -20, -15][facing]),
 																		"spd":			9,
-																		"style":		null,
+																		"style":		"pdw",
 																		"scale":		0.75
 																	});
 			cg.addToGame(shot, System.M_IPROJECTILE);
 			countPDW = cooldownPDW;
+			animationPDW = PDW_ANIM;
+			mc_object.mc_pdw.visible = true;
 		}
 		
 		// tell ManagerDepth to update all depth-managed object's depths when this Player moves
@@ -338,6 +355,8 @@ package vgdev.stroll.props
 			rooted = isRooted;
 			if (rooted)
 				mc_object.gotoAndStop("console");
+			mc_object.mc_pdw.visible = false;
+			animationPDW = 0;
 		}
 		
 		/**
@@ -354,6 +373,7 @@ package vgdev.stroll.props
 				rooted = false;
 				manProx.updateProximities(this);
 				updateDepth();
+				countPDW = 10;
 			}
 		}
 		
@@ -396,6 +416,9 @@ package vgdev.stroll.props
 					if (!rooted)
 					{
 						pressed = true;
+						mc_object.scaleX = 1;
+						mc_object.mc_bar.scaleX = 1;
+						mc_object.prompt.scaleX = 1;
 					}
 					else if (!keysDown[UP])
 					{
@@ -420,6 +443,9 @@ package vgdev.stroll.props
 				case KEY_DOWN:
 					if (!rooted)
 					{
+						mc_object.scaleX = 1;
+						mc_object.mc_bar.scaleX = 1;
+						mc_object.prompt.scaleX = 1;
 						pressed = true;
 					}
 					else if (!keysDown[DOWN])
@@ -515,6 +541,7 @@ package vgdev.stroll.props
 				if (bx != 0 || by != 0)
 					isMoving = true;
 			}
+			mc_object.mc_pdw.visible = animationPDW > 0;
 		}
 		
 		override public function destroy():void

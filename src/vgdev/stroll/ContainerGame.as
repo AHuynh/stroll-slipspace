@@ -222,6 +222,7 @@
 			gui.mc_fade.gotoAndPlay(2);		// fade in
 			
 			//visualEffects.applyBGDistortion(true, "bg_bars");
+			//visualEffects.applyBGDistortion(true, "bg_squares");
 			//addToGame(new BoarderSuicider(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
 		}
 		
