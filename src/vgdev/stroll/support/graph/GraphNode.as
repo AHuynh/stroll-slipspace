@@ -5,7 +5,7 @@ package vgdev.stroll.support.graph
 	import vgdev.stroll.System;
 	
 	/**
-	 * ...
+	 * Individual network node
 	 * @author Alexander Huynh
 	 */
 	public class GraphNode 
@@ -25,6 +25,10 @@ package vgdev.stroll.support.graph
 			mc_object.visible = false;
 		}
 		
+		/**
+		 * Add edges to this node and update edge costs
+		 * @param	nodes		Array of nodes to create edges to
+		 */
 		public function connectNodes(nodes:Array):void
 		{
 			var other:GraphNode;

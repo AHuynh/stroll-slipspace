@@ -46,17 +46,9 @@ package vgdev.stroll.support
 				checkForAlert(alerts.mc_shields, cg.ship.getShields() == 0);
 				checkForAlert(alerts.mc_hull, cg.ship.getHPPercent() < .3);
 				checkForAlert(alerts.mc_incap, cg.players[0].getHP() == 0 || cg.players[1].getHP() == 0);
-				checkForAlert(alerts.mc_fire, cg.managerMap[System.M_FIRE].numObjects() != 0);
-				checkForAlert(alerts.mc_intruders, false);
+				checkForAlert(alerts.mc_fire, cg.managerMap[System.M_FIRE].hasObjects());
+				checkForAlert(alerts.mc_intruders, cg.managerMap[System.M_BOARDER].hasObjects());
 				checkForAlert(alerts.mc_corruption, isCorrupt);
-			
-				/*alerts.mc_shields.visible = cg.ship.getShields() == 0;
-				alerts.mc_hull.visible = cg.ship.getHPPercent() < .3;
-				alerts.mc_incap.visible = cg.players[0].getHP() == 0 || cg.players[1].getHP() == 0;
-				alerts.mc_fire.visible = cg.managerMap[System.M_FIRE].numObjects() != 0;
-				//alerts.mc_intruders.visible = cg.managerMap[System.M_BOARDERS].numObjects() != 0;
-				alerts.mc_intruders.visible = false;
-				alerts.mc_corruption.visible = isCorrupt;*/
 			}
 			else if (counter == 15)
 			{

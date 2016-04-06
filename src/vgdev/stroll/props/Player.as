@@ -285,7 +285,7 @@ package vgdev.stroll.props
 																		"dir":			facing * -90 + System.getRandNum(-2, 2),
 																		"dmg":			damagePDW,
 																		"life":			30,
-																		"pos":			new Point(mc_object.x, mc_object.y - 20),
+																		"pos":			new Point(mc_object.x, mc_object.y - 15),
 																		"spd":			9,
 																		"style":		null,
 																		"scale":		0.75

@@ -13,6 +13,8 @@ package vgdev.stroll.props.enemies
 		private var atkDir:Number;
 		private var gib:String;
 		
+		private var cloud:Boolean = false;
+		
 		public function EnemyRammable(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			attributes["noSpawnFX"] = true;
@@ -23,6 +25,8 @@ package vgdev.stroll.props.enemies
 			
 			if (System.setAttribute("random", attributes, false))
 				mc_object.base.gotoAndStop(System.getRandInt(1, mc_object.base.totalFrames));
+				
+			cloud = System.setAttribute("cloud", attributes, false);
 			
 			// no weapons
 			cdCounts = [];
@@ -56,8 +60,9 @@ package vgdev.stroll.props.enemies
 		
 		override public function destroy():void 
 		{
+			var i:int;
 			if (gib != null)
-				for (var i:int = 3 + System.getRandInt(0, 2); i >= 0; i--)
+				for (i = 3 + System.getRandInt(0, 2); i >= 0; i--)
 					cg.addDecor(gib, {
 												"x": System.getRandNum(mc_object.x - 5, mc_object.x + 5),
 												"y": System.getRandNum(mc_object.y - 5, mc_object.y + 5),
@@ -69,6 +74,19 @@ package vgdev.stroll.props.enemies
 												"alphaDelay": 30 + System.getRandInt(0, 20),
 												"alphaDelta": 15,
 												"random": true
+											});
+			if (cloud != false)
+				for (i = System.getRandInt(2, 3); i >= 0; i--)
+					cg.addDecor("cloud", {
+												"x": System.getRandNum(mc_object.x - 45, mc_object.x + 45),
+												"y": System.getRandNum(mc_object.y - 45, mc_object.y + 45),
+												"dx": System.getRandNum( -0.1, 0.1),
+												"dy": System.getRandNum( -0.1, 0.1),
+												"rot": System.getRandNum(0, 360),
+												"scale": System.getRandNum(1, 1.5),
+												"alphaDelay": System.getRandInt(150, 300),
+												"alphaDelta": 120,
+												"alpha": System.getRandNum(0.7, 1)
 											});
 			super.destroy();
 		}

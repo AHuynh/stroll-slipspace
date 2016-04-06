@@ -8,21 +8,25 @@ package vgdev.stroll.support.graph
 	import vgdev.stroll.System;
 	
 	/**
-	 * ...
+	 * Helper class to manage the ship's pathfinding network
 	 * @author Alexander Huynh
 	 */
 	public class GraphMaster extends ABST_Support 
 	{
-		public var nodes:Array = [];
-		public var nodeMap:Object;
+		public var nodes:Array = [];				// unordered list of nodes for iteration
+		public var nodeMap:Object;					// map of MovieClip name to node object
 		
-		public var nodeDirections:Object = { };
+		public var nodeDirections:Object = { };		// Floyd-Warshall directions
 		
 		public function GraphMaster(_cg:ContainerGame) 
 		{
 			super(_cg);
 		}
 		
+		/**
+		 * Manually add ship network nodes
+		 * @param	shipName
+		 */
 		public function initShip(shipName:String):void
 		{
 			var ship:MovieClip = cg.game.mc_ship;
@@ -65,11 +69,17 @@ package vgdev.stroll.support.graph
 					nodeMap["node_b1"].connectNodes(["node_b0", "node_b2"]);
 					nodeMap["node_b2"].connectNodes(["node_b1", "node_c"]);
 				break;
+				default:
+					trace("[GraphMaster] Warning: Nothing defined for ship with name", shipName);
 			}
 			
 			initGraph();
 		}
 		
+		/**
+		 * Add a node to the network
+		 * @param	mc		MovieClip to be associated with the node
+		 */
 		public function addNode(mc:MovieClip):void
 		{
 			var node:GraphNode = new GraphNode(cg, this, mc);
@@ -78,15 +88,16 @@ package vgdev.stroll.support.graph
 			nodeMap[n] = node;
 		}
 		
+		/**
+		 * Populate the nodeDirections map using Floyd-Warshall
+		 */
 		public function initGraph():void
 		{
 			var dist:Object = {};
-			var node:GraphNode;
-			var other:GraphNode;
-			var i:int;
-			var j:int;
-			var k:int;
+			var node:GraphNode; var other:GraphNode;
+			var i:int; var j:int; var k:int;
 			
+			// initialization
 			for each (node in nodes)
 			{
 				dist[node.mc_object.name] = { };
@@ -105,7 +116,8 @@ package vgdev.stroll.support.graph
 					}
 				}
 			}
-				
+			
+			// Floyd-Warshall
 			var newDist:Number;
 			for (k = 0; k < nodes.length; k++)
 				for (i = 0; i < nodes.length; i++)
@@ -119,6 +131,12 @@ package vgdev.stroll.support.graph
 					}
 		}
 		
+		/**
+		 * Get a path of network nodes from an object to a destination
+		 * @param	origin			ABST_IMovable that is requesting a path
+		 * @param	destination		Point, place to go to
+		 * @return					Ordered array of nodes
+		 */
 		public function getPath(origin:ABST_IMovable, destination:Point):Array
 		{
 			var start:GraphNode = getNearestValidNode(origin, new Point(origin.mc_object.x, origin.mc_object.y));
@@ -134,13 +152,18 @@ package vgdev.stroll.support.graph
 			return path;
 		}
 		
+		/**
+		 * Find the nearest node within LOS of the origin to the target
+		 * @param	origin			ABST_IMovable to base LOS off of
+		 * @param	target			Point of interest
+		 * @param	ignoreWalls		true to ignore LOS check
+		 * @return					The closest node (possibly within LOS)
+		 */
 		public function getNearestValidNode(origin:ABST_IMovable, target:Point, ignoreWalls:Boolean = false ):GraphNode
 		{
 			var dist:Number = 99999;
 			var nearest:GraphNode = null;
-			
 			var newDist:Number;
-			
 			for each (var node:GraphNode in nodes)
 			{
 				newDist = System.getDistance(target.x, target.y, node.mc_object.x, node.mc_object.y);
@@ -151,7 +174,6 @@ package vgdev.stroll.support.graph
 					nearest = node;
 				}
 			}
-			
 			return nearest;
 		}
 	}

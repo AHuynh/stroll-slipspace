@@ -1,0 +1,77 @@
+{
+  "settings": {
+	"id": "fire_ice",
+	"background": "default",
+	"difficulty_range": [9, 11],
+    "jamming_min": 5,
+    "slip_range": 70.0,
+	"type": "Enemies",
+	"TAILS": "Alert. Fire-based enemies. Prepare turrets and PDWs."
+  },
+  "waves": [
+	{
+		"time": 4.5,
+		"repeat": 3,
+		"spawnables":
+			[
+				{"type": "Skull"}
+			]
+	},
+	{
+		"time": 12,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "Skull"}
+			]
+	},
+	{
+		"time": 15,
+		"TAILS": "Anomalies detected.",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 3,
+		"repeat": 4,
+		"spawnables":
+			[
+				{"type": "FloaterFire"}
+			]
+	},
+	{
+		"time": 12,
+		"TAILS": "Alert. Orbiting enemies detected.",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 5,
+		"spawnables":
+			[
+				{"type": "Manta"},
+				{"type": "Slime"},
+				{"type": "Slime"}
+			]
+	},
+	{
+		"time": 21,
+		"repeat": 3,
+		"spawnables":
+			[
+				{"type": "Slime"}
+			]
+	},
+	{
+		"time": 25,
+		"repeat": 2,
+		"recur": 33,
+		"spawnables":
+			[
+				{"type": "Slime"}
+			]
+	}
+  ]
+}

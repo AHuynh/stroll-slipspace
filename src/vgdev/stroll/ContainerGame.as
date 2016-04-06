@@ -222,10 +222,7 @@
 			gui.mc_fade.gotoAndPlay(2);		// fade in
 			
 			//visualEffects.applyBGDistortion(true, "bg_bars");
-			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
-			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
-			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
-			addToGame(new ABST_Boarder(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
+			//addToGame(new BoarderSuicider(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
 		}
 		
 		/**
@@ -659,6 +656,7 @@
 			isDefeatedPaused = true;
 			
 			managerMap[System.M_FIRE].killAll();
+			managerMap[System.M_BOARDER].killAll();
 			
 			// hide ship interior
 			game.mc_ship.mc_interior.visible = false;

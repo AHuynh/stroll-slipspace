@@ -9,7 +9,7 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.System;
 	
 	/**
-	 * ...
+	 * An enemy that exists on the ship
 	 * @author Alexander Huynh
 	 */
 	public class ABST_Boarder extends ABST_IMovable 
@@ -21,7 +21,8 @@ package vgdev.stroll.props.enemies
 		protected const STATE_MOVE_FROM_NETWORK:int = 3;
 		
 		protected var pointOfInterest:Point;
-		protected const RANGE:Number = 5;
+		protected const RANGE:Number = 5;		// node clear range
+		protected const POI_RANGE:Number = 50;	// min distance to pick a new POI
 		
 		protected var path:Array;
 		protected var nodeOfInterest:GraphNode;
@@ -39,11 +40,9 @@ package vgdev.stroll.props.enemies
 			mc_object.y = System.setAttribute("y", attributes, 0);
 			
 			setScale(System.setAttribute("scale", attributes, 1));
-			hp = hpMax = 100;
+			hp = hpMax = 50;
 			
 			state = STATE_IDLE;
-			
-			setStyle("floater");
 		}
 		
 		protected function setStyle(style:String):void
@@ -67,7 +66,7 @@ package vgdev.stroll.props.enemies
 			switch (state)
 			{
 				case STATE_IDLE:
-					pointOfInterest = cg.getRandomShipLocation();
+					findNewPOI();
 					path = cg.graph.getPath(this, pointOfInterest);
 					if (path.length == 0)
 						return completed;
@@ -94,11 +93,30 @@ package vgdev.stroll.props.enemies
 					{
 						pointOfInterest = null;
 						state = STATE_IDLE;
+						onArrive();
 					}
 				break;
 			}			
 			//var hasLOS:Boolean = System.hasLineOfSight(this, new Point(cg.players[0].mc_object.x, cg.players[0].mc_object.y));
 			return completed;
+		}
+		
+		protected function findNewPOI():void
+		{
+			// -- override this function
+			var giveUp:int = 10;
+			do {
+				pointOfInterest = cg.getRandomShipLocation();
+				giveUp--;
+			} while (System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < POI_RANGE && giveUp > 0);
+		}
+		
+		/**
+		 * Do something when arriving at a destination
+		 */
+		protected function onArrive():void
+		{
+			// -- override this function
 		}
 		
 		protected function moveToPoint(tgt:Point):void

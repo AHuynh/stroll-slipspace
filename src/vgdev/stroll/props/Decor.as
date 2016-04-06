@@ -48,6 +48,7 @@ package vgdev.stroll.props
 				dx = System.setAttribute("dx", params, 0);
 				dy = System.setAttribute("dy", params, 0);
 				dr = System.setAttribute("dr", params, 0);
+				mc_object.alpha = System.setAttribute("alpha", params, 1);
 				mc_object.rotation = System.setAttribute("rot", params, 0);
 				setScale(System.setAttribute("scale", params, 1));
 				

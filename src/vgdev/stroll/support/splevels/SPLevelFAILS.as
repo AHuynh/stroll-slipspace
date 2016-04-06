@@ -10,6 +10,7 @@ package vgdev.stroll.support.splevels
 	import vgdev.stroll.props.consoles.ConsoleSlipdrive;
 	import vgdev.stroll.props.consoles.ConsoleTurret;
 	import vgdev.stroll.props.consoles.Omnitool;
+	import vgdev.stroll.props.enemies.BoarderWanderer;
 	import vgdev.stroll.props.enemies.EnemyGeometricAnomaly;
 	import vgdev.stroll.props.enemies.EnemySkull;
 	import vgdev.stroll.props.Player;
@@ -35,8 +36,13 @@ package vgdev.stroll.support.splevels
 			cg.ship.setBossOverride(true);
 			
 			// DEBUG CODE
-			//levelState = 2;
-			//framesElapsed = 20 * 30;
+			/*levelState = 50;
+			framesElapsed = 5 * 30;
+			consoleSlip.setArrowDifficulty(12);
+			cg.ship.setBossOverride(false);
+			cg.ship.slipRange = 0.5;
+			cg.ship.jammable = 0;
+			consoleSlip.forceOverride = false;*/
 			/*var corr:int = 0;
 			for each (var c:ABST_Console in cg.consoles)
 			{
@@ -567,7 +573,7 @@ package vgdev.stroll.support.splevels
 						cg.ship.jammable = 0;
 					}
 					
-					if (framesElapsed >= System.SECOND * 4 &&  framesElapsed % (System.SECOND * 2) == 0)
+					if (framesElapsed >= System.SECOND * 4 && framesElapsed % (System.SECOND * 2) == 0)
 					{
 						fakeJump();
 						if (framesElapsed % (System.SECOND * 4) == 0)
@@ -603,6 +609,38 @@ package vgdev.stroll.support.splevels
 						SoundManager.crossFadeBGM("bgm_calm", System.VOL_BGM);
 						cg.tails.show("TAILS not found.\nBackup AI now in control.\n\nContinue mission imperative. Deliver slipportal. Y/N?", 0, "HEADS");
 						cg.serious = false;
+						levelState++;
+					}
+				break;	
+				case 51:	// use the Slipdrive
+					if (consoleSlip.getIfSpooling())
+					{
+						if (consoleSlip.closestPlayer != null)		// kick player off
+							consoleSlip.closestPlayer.onCancel();
+						consoleSlip.forceOverride = true;
+						cg.addSparksAt(2, new Point(consoleSlip.mc_object.x, consoleSlip.mc_object.y));
+						SoundManager.playSFX("sfx_electricShock");
+						for (var b:int = 0; b < 5; b++)
+						{
+							var bpt:Point = cg.getRandomShipLocation();
+							cg.addToGame(new BoarderWanderer(cg, new SWC_Enemy(), cg.shipInsideMask, {"x": bpt.x, "y": bpt.y}), System.M_BOARDER);
+						}
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 52:	// all Boarders removed
+					if (framesElapsed == System.SECOND * 4)
+						cg.tails.show("Alert. Alert. Alert.\nShards of FAILS detected. Immediate removal required.\n\nUse CANCEL to fire Personal Defense Weapon. Destroy all shards. Y/N?", 0, "HEADS");
+					else if (framesElapsed > System.SECOND * 4 && framesElapsed % (System.SECOND * 14) == 0)
+						cg.tails.show(System.getRandFrom(["Use CANCEL to fire PDW. Eliminate all shards.",
+															"Fire using CANCEL. Remove contaminates.",
+															"CANCEL fires PDW. Terminate intruders.",
+															]), System.TAILS_NORMAL, "HEADS");
+					if (!cg.managerMap[System.M_BOARDER].hasObjects())
+					{
+						cg.tails.show("Success. Please jump and resume mission.", System.TAILS_NORMAL, "HEADS");
+						consoleSlip.forceOverride = false;
 						levelState++;
 					}
 				break;

@@ -33,6 +33,7 @@ package vgdev.stroll.support
 		[Embed(source="../../../../json/en_boss_fails.json", mimeType="application/octet-stream")]
 		private var en_boss_fails:Class;
 		
+		// -- MEDIUM REGION -------------------------------------------------------------------------------------
 		[Embed(source="../../../../json/en_swipe.json", mimeType="application/octet-stream")]
 		private var en_swipe:Class;
 		[Embed(source="../../../../json/en_anomalyfieldcolored.json", mimeType="application/octet-stream")]
@@ -43,6 +44,12 @@ package vgdev.stroll.support
 		private var en_mantas:Class;
 		[Embed(source="../../../../json/en_breeders.json", mimeType="application/octet-stream")]
 		private var en_breeders:Class;
+		
+		// -- HARD REGION ---------------------------------------------------------------------------------------
+		[Embed(source="../../../../json/en_fire_ice.json", mimeType="application/octet-stream")]
+		private var en_fire_ice:Class;
+		[Embed(source="../../../../json/en_spiders.json", mimeType="application/octet-stream")]
+		private var en_spiders:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -95,7 +102,10 @@ package vgdev.stroll.support
 												JSON.parse(new en_mantas()),
 												JSON.parse(new en_breeders()),
 											
-												JSON.parse(new en_boss_fails())
+												JSON.parse(new en_boss_fails()),
+												
+												JSON.parse(new en_spiders()),
+												JSON.parse(new en_fire_ice())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -106,7 +116,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_breeders())];
+											rawEncountersJSON = [JSON.parse(new en_spiders())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -238,6 +248,10 @@ package vgdev.stroll.support
 																	});
 					manager = System.M_ENEMY;
 				break;
+				case "FloaterFire":
+					spawn = new BoarderSuicider(cg, new SWC_Enemy(), cg.shipInsideMask, {});
+					manager = System.M_BOARDER;
+				break;
 				case "GeometricAnomalyPlain":
 					waveColor = System.COL_WHITE;
 				case "GeometricAnomaly":
@@ -274,13 +288,23 @@ package vgdev.stroll.support
 																	});
 					manager = System.M_ENEMY;
 				break;
+				case "Spider":
+					spawn = new EnemySpider(cg, new SWC_Enemy(), {
+																	"x":pos.x,
+																	"y":pos.y,
+																	"attackColor": System.COL_YELLOW,
+																	"attackStrength": 20,
+																	"hp": 100
+																	});
+					manager = System.M_ENEMY;
+				break;
 				case "Squid":
 					spawn = new EnemySquid(cg, new SWC_Enemy(), {
 																	"x":pos.x,
 																	"y":pos.y,
 																	"attackColor": System.COL_YELLOW,
 																	"attackStrength": 18,
-																	"hp": 200
+																	"hp": 150
 																	});
 					manager = System.M_ENEMY;
 				break;
@@ -322,7 +346,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
+				//if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
 					choices.push(e);
 			}
 			
@@ -411,6 +435,11 @@ package vgdev.stroll.support
 					theta = System.getRandNum(0, 360);
 					return new Point((System.ORBIT_0_X + System.getRandNum( -30, 50)) * Math.cos(System.degToRad(theta)),
 									 (System.ORBIT_0_Y + System.getRandNum( -10, 40)) * Math.sin(System.degToRad(theta)));
+				break;
+				case "medium_orbit":
+					theta = System.getRandNum(0, 360);
+					return new Point((System.ORBIT_1_X + System.getRandNum( -40, 50)) * Math.cos(System.degToRad(theta)),
+									 (System.ORBIT_1_Y + System.getRandNum( -20, 30)) * Math.sin(System.degToRad(theta)));
 				break;
 				case "distant_orbit":
 					theta = System.getRandNum(0, 360);

@@ -1,0 +1,77 @@
+{
+  "settings": {
+	"id": "spiders",
+	"background": "default",
+	"difficulty_range": [9, 11],
+    "jamming_min": 2,
+    "slip_range": 65.0,
+	"type": "Enemies",
+	"TAILS": "Caution. Visual impairment inbound."
+  },
+  "waves": [
+	{
+		"time": 4,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "Spider", "region": "medium_orbit"}
+			]
+	},
+	{
+		"time": 18,
+		"TAILS": "Distant enemies detected.",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 4,
+		"spawnables":
+			[
+				{"type": "Spider", "region": "distant_orbit"},
+				{"type": "Squid", "region": "distant_orbit"},
+				{"type": "Squid", "region": "distant_orbit"}
+			]
+	},
+	{
+		"time": 19,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "Spider", "region": "medium_orbit"}
+			]
+	},
+	{
+		"time": 18,
+		"TAILS": "Additional foes detected.",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 4,
+		"repeat": 3,
+		"spawnables":
+			[
+				{"type": "Eye", "region": "near_orbit"}
+			]
+	},
+	{
+		"time": 12,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "Spider", "region": "medium_orbit"}
+			]
+	},
+	{
+		"time": 25,
+		"repeat": 3,
+		"recur": 25,
+		"spawnables":
+			[
+				{"type": "Eye", "region": "near_orbit"}
+			]
+	}
+  ]
+}
