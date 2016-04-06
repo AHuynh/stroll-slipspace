@@ -1,0 +1,14 @@
+{
+  "settings": {
+	"id": "rainbow",
+	"background": "default",
+	"difficulty_range": [9, 11],
+    "jamming_min": 3,
+    "slip_range": 70.0,
+	"type": "Enemies",
+	"TAILS": "Alert. All enemy colors detected. Prepare shields.",
+	"spLevel": "rainbow"
+  },
+  "waves": [
+  ]
+}

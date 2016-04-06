@@ -50,6 +50,8 @@ package vgdev.stroll.support
 		private var en_fire_ice:Class;
 		[Embed(source="../../../../json/en_spiders.json", mimeType="application/octet-stream")]
 		private var en_spiders:Class;
+		[Embed(source="../../../../json/en_rainbow.json", mimeType="application/octet-stream")]
+		private var en_rainbow:Class;
 		
 		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
 		private var en_test:Class;
@@ -105,7 +107,8 @@ package vgdev.stroll.support
 												JSON.parse(new en_boss_fails()),
 												
 												JSON.parse(new en_spiders()),
-												JSON.parse(new en_fire_ice())
+												JSON.parse(new en_fire_ice()),
+												JSON.parse(new en_rainbow())
 												
 												/*JSON.parse(new en_test()),
 												JSON.parse(new en_test2()),
@@ -116,7 +119,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											rawEncountersJSON = [JSON.parse(new en_spiders())];
+											rawEncountersJSON = [JSON.parse(new en_rainbow())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -374,6 +377,9 @@ package vgdev.stroll.support
 					break;
 					case "anomaliesPlain":
 						spLevel = new SPLevelAnomalies(cg, false);
+					break;
+					case "rainbow":
+						spLevel = new SPLevelRainbow(cg);
 					break;
 					case "bossPeeps":
 						spLevel = new SPLevelPeeps(cg);

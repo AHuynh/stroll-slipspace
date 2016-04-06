@@ -652,27 +652,6 @@ package vgdev.stroll.support.splevels
 			cg.background.setRandomStyle(int(cg.level.sectorIndex / 5), System.getRandCol());
 			cg.playJumpEffect();
 		}
-
-		/**
-		 * Spawn some enemy
-		 * @param	type		Name of enemy
-		 * @param	amt			Amount of enemies
-		 * @param	region		Region names to pick from
-		 * @param	params		Spawn parameters
-		 */
-		private function spawnEnemy(type:String, amt:int, region:Array = null, params:Object = null):void
-		{
-			if (region == null) region = System.SPAWN_STD;
-			if (params == null) params = { };
-			var p:Point;
-			for (var i:int = 0; i < amt; i++)
-			{
-				p = cg.level.getRandomPointInRegion(System.getRandFrom(region));
-				p.x += System.GAME_OFFSX;
-				p.y += System.GAME_OFFSY;
-				cg.level.spawn(params, p, type);
-			}
-		}
 		
 		/**
 		 * Randomize the console locations

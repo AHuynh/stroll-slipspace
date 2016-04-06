@@ -33,7 +33,7 @@ package vgdev.stroll.props.enemies
 			hp = hpMax;
 			
 			cloudCounter = System.getRandInt(1, 2);		// shots until a cloud is generated
-			cdCounts = [150];
+			cdCounts = [190];
 			cooldowns = [System.getRandInt(90, 120)];
 			
 			spd = 4;
