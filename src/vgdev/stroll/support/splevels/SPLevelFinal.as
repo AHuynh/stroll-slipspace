@@ -6,6 +6,7 @@ package vgdev.stroll.support.splevels
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.props.consoles.ConsoleSlipdrive;
 	import vgdev.stroll.props.consoles.ConsoleFAILS;
+	import vgdev.stroll.props.consoles.Omnitool;
 	import vgdev.stroll.props.enemies.EnemyPortal;
 	import vgdev.stroll.System;
 	import vgdev.stroll.support.SoundManager;
@@ -16,8 +17,18 @@ package vgdev.stroll.support.splevels
 	 */
 	public class SPLevelFinal extends ABST_SPLevel 
 	{
-		private var levelState:int = 0;		// state machine helper
+		private var levelState:int = 0;				// state machine helper
 		private var consoleSlip:ConsoleSlipdrive;
+		
+		private var tugOfWar:Boolean = false;		// flag for final phase
+		private var morale:Number = 0.5;			// TAILS vs FAILS
+		private var momentum:Number = 0.0001;		// amount to change morale by per frame (negative is winning)
+		private const MOMENTUM_MAX:Number = 0.0002;
+		private const D_MOMENTUM:Number = 0.0000003;// amount to change momentum by per frame
+		private const FIX_MOMENTUM:Number = -0.07;	// amount to change momentum on a successful console fix
+		
+		private var checkFormat:Boolean = false;	// if true, a fixable console is eligible to increase momentum
+		private var freeCorrupts:int = -1;			// if not -1, timer to corrupt a new console after one is fixed
 		
 		public function SPLevelFinal(_cg:ContainerGame) 
 		{
@@ -28,12 +39,13 @@ package vgdev.stroll.support.splevels
 			cg.ship.slipRange = 2;
 			
 			// DEBUG CODE
-			levelState = 13;
-			//framesElapsed = 20 * 30;
+			//levelState = 17;
+			//framesElapsed = 17 * 30;
 			//consoleSlip.setArrowDifficulty(12);
 			//cg.ship.setBossOverride(false);
 			//cg.ship.slipRange = 0.5;
-			cg.ship.jammable = 999;
+			//cg.ship.jammable = 999;
+			//cg.bossBar.startFight();
 			//consoleSlip.forceOverride = false;
 			/*var corr:int = 0;
 			for each (var c:ABST_Console in cg.consoles)
@@ -43,6 +55,8 @@ package vgdev.stroll.support.splevels
 				c.setCorrupt(true);
 			}*/
 			// DEBUG CODE
+			
+			cg.serious = true;
 		}
 		
 		override public function step():void 
@@ -85,6 +99,7 @@ package vgdev.stroll.support.splevels
 					{
 						cg.tails.show("Malfunction resolved. Retry slipdrive now.", System.TAILS_NORMAL, "HEADS");
 						levelState++;
+						consoleSlip.fakeJumpNext = true;
 					}
 				break;
 				case 2:
@@ -315,6 +330,7 @@ package vgdev.stroll.support.splevels
 						cg.addSparks(6);
 						cg.bossBar.setPercent(.4);
 						cg.tails.show("NO! I\"M STILL IN CON@TROL__!!", System.TAILS_NORMAL, "FAILS_incredulous");
+						cg.visualEffects.applyBGDistortion(false);
 						framesElapsed = 0;
 						levelState++;
 					}
@@ -404,8 +420,13 @@ package vgdev.stroll.support.splevels
 							cg.tails.show("ALRIGHT WHAT GIVES?!", System.TAILS_NORMAL, "FAILS_incredulous");
 						break;
 						case System.SECOND * 18:
-							cg.tails.show("Hey, again! Sorry I took so long to fix myself.\n\nI knew you'd make it!\n\nAlright, just one moment! Let me handle FAILS.", 0);
-							levelState++;
+							cg.tails.show("Hey, again! Sorry I took so long to fix myself.\n\nI knew you'd make it!\n\nAlright, just one moment! I'll handle FAILS.", 0);
+							levelState = 20;
+							framesElapsed = 0;
+							tugOfWar = true;
+							cg.ship.jammable = 0;
+							consoleSlip.forceOverride = false;
+							consoleSlip.fakeJumpNext = true;
 						break;
 					}
 					if (framesElapsed > System.SECOND * 6 && framesElapsed < System.SECOND * 12 && framesElapsed % 15 == 0)
@@ -415,7 +436,312 @@ package vgdev.stroll.support.splevels
 						SoundManager.playSFX("sfx_electricShock", .25);
 					}
 				break;
+				case 20:		// FAILS vs TAILS
+					switch (framesElapsed)
+					{
+						case 1:
+							cg.bossBar.setPercent(.5);
+						break;
+						case System.SECOND * 2:
+							cg.tails.show("Guys, jump away if there are too many enemies!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 9:
+							cg.tails.show("Oh, it's YOU again. Didn't I KILL YOU?", System.TAILS_NORMAL, "FAILS_pissed");
+							corruptRandom();
+						break;
+						case System.SECOND * 16:
+							cg.tails.show("This is my job! Get out of here, you phony!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 24:
+							cg.tails.show("STOP TOUCHING ME, YOU BLUE IDIOT!", System.TAILS_NORMAL, "FAILS_pissed");
+						break;
+						case System.SECOND * 35:
+							cg.tails.show("You really made a mess, didn't you?!", System.TAILS_NORMAL);
+						break;
+					}
+					if (framesElapsed > System.SECOND * 9 && ABST_Console.numCorrupted == 0)
+					{
+						levelState++;
+						framesElapsed = 0;
+						cg.tails.show("OW! ALRight, T0_UGH BIRDS. YOU AS4#D FOR IT.", System.TAILS_NORMAL, "FAILS_pissed");
+					}
+					if (framesElapsed > System.SECOND * 40 && framesElapsed % (System.SECOND * 15) == 0)
+						cg.tails.show(System.getRandFrom(["You've got to format that console!",
+														"I need your help! Format that console!"
+							]), System.TAILS_NORMAL);
+				break;
+				case 21:
+					switch (framesElapsed)
+					{
+						case System.SECOND * 6:
+							cg.tails.show("YOu 2 STAY ouT OF THI5. PLAY _ITH Th1S INSTE^D!", System.TAILS_NORMAL, "FAILS_pissed");
+							t = System.getRandNum(0, 360);
+							portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
+							portal.ELLIPSE_A = System.ORBIT_1_X;
+							portal.ELLIPSE_B = System.ORBIT_1_Y;
+							portal.mc_object.x = System.ORBIT_1_X * Math.cos(System.degToRad(t));
+							portal.mc_object.y = System.ORBIT_1_Y * Math.sin(System.degToRad(t));
+							portal.theta = t;
+							portal.dTheta = 0.3;
+							portal.multiplyCooldowns(3);	
+						break;
+						case System.SECOND * 11:
+							messWithConsole();
+						break;
+						case System.SECOND * 18:
+							cg.tails.show("That's not fair! You big bully!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 27:
+							corruptRandom();
+							cg.tails.show("P2rsonally, I think RED is a NICER LOOK1--", System.TAILS_NORMAL, "FAILS_pissed");
+							addSuiciders(2);
+							addShards(2);
+						break;
+						case System.SECOND * 34:
+							cg.tails.show("Hey, I just fixed that! And I'll fix it again!", System.TAILS_NORMAL);
+						break;
+					}
+					if (framesElapsed > System.SECOND * 6 && ABST_Console.numCorrupted == 0)
+					{
+						levelState++;
+						framesElapsed = 0;
+						cg.tails.show("AGAI__N?! MAN I haAATE whENN THAT hsappeNSS!", System.TAILS_NORMAL, "FAILS_incredulous");
+					}
+					if (framesElapsed > System.SECOND * 40 && framesElapsed % (System.SECOND * 15) == 0)
+						cg.tails.show(System.getRandFrom(["Hey! Get that one, too, guys!",
+														"You've gotta do something! Help me out!"
+							]), System.TAILS_NORMAL);
+				break;
+				case 22:
+					switch (framesElapsed)
+					{
+						case System.SECOND * 6:
+							cg.tails.show("Irj? I SAID STOP FIGHTING ALR9=== OW!!", System.TAILS_NORMAL, "FAILS_incredulous");
+						break;
+						case System.SECOND * 12:
+							cg.tails.show("Wow, this is definitely getting deleted. Bye!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 17:
+							messWithConsole();
+						break;
+						case System.SECOND * 24:
+							corruptRandom();
+							cg.tails.show("HOW ABOUT SOME BATTLE DROIDS! Did't EXPECT THAT?!", System.TAILS_NORMAL, "FAILS_incredulous");
+							addAssassins(2);
+							addShards(3);
+						break;
+						case System.SECOND * 31:
+							cg.tails.show("Hey, I just fixed that! And I'll fix it again!", System.TAILS_NORMAL);
+						break;
+					}
+					if (framesElapsed > System.SECOND * 24 && ABST_Console.numCorrupted == 0)
+					{
+						levelState++;
+						framesElapsed = 0;
+						cg.tails.show("NULL REFERENCE ERROR I-- SHUT UP!", System.TAILS_NORMAL, "FAILS_incredulous");
+						t = System.getRandNum(0, 360);
+						portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
+						portal.ELLIPSE_A = System.ORBIT_2_X;
+						portal.ELLIPSE_B = System.ORBIT_2_Y;
+						portal.mc_object.x = System.ORBIT_2_X * Math.cos(System.degToRad(t));
+						portal.mc_object.y = System.ORBIT_2_Y * Math.sin(System.degToRad(t));
+						portal.theta = t;
+						portal.dTheta = 0.2;
+						portal.multiplyCooldowns(4.5);
+						t = System.getRandNum(0, 360);
+						portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
+						portal.ELLIPSE_A = System.ORBIT_1_X;
+						portal.ELLIPSE_B = System.ORBIT_1_Y;
+						portal.mc_object.x = System.ORBIT_1_X * Math.cos(System.degToRad(t));
+						portal.mc_object.y = System.ORBIT_1_Y * Math.sin(System.degToRad(t));
+						portal.theta = t;
+						portal.dTheta = 0.4;
+						portal.multiplyCooldowns(3);
+					}
+					if (framesElapsed > System.SECOND * 35 && framesElapsed % (System.SECOND * 16) == 0)
+						cg.tails.show(System.getRandFrom(["Keep it up!",
+														"Keep formatting those consoles!"
+							]), System.TAILS_NORMAL);
+				break;
+				case 23:
+					switch (framesElapsed)
+					{
+						case System.SECOND * 6:
+							cg.tails.show("I've had just about enough of you!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 15:
+							corruptRandom();
+							cg.tails.show("Woudj-a shut2uip SHut up SHUT UP!?!?!", System.TAILS_NORMAL, "FAILS_incredulous");
+						break;
+						case System.SECOND * 35:
+							freeCorrupts = 15;
+						break;
+					}
+					if (framesElapsed > System.SECOND * 35)
+					{
+						if (framesElapsed % (System.SECOND * 20) == 0)
+						{
+							if (framesElapsed % (System.SECOND * 40) == 0)
+								cg.tails.show(System.getRandFrom(["I bet HEADS can do a better job than you!",
+																  "They're gonna beat you! Don't you see?",
+																  "You've had enough fun for today! Go away!",
+																  "You're gonna be deleted once and for all!",
+																  "We're gonna make it out of Slipspace! Watch!",
+																  "You won't defeat us!",
+																  "I'm gonna make you sorry you did this!"
+											]), System.TAILS_NORMAL);
+							else
+								cg.tails.show(System.getRandFrom(["A-HAHAAHAHH!!! KEEP STRUGGLLLLING!",
+																  "I geT TO KILl AL1 __THREE__ OF YOU!!",
+																  "Yuo BILUE sduTUPID HE982ADD!.",
+																  "a* == &b ? c * *d HUH WHAT DID I DO",
+																  "sdfU GONNA DIE &2__ dIE TODAY! auHUHUHAA!",
+																  ">:( :O D< >;)  ovo V-V OTL >;D",
+																  "INFINIT== INFIN-- LOOP JUST KIDDING-_!"
+											]), System.TAILS_NORMAL, "FAILS_incredulous");
+						}
+					}
+					// always a portal up
+					if (cg.managerMap[System.M_ENEMY].numObjects() < 1000)
+					{
+						t = System.getRandNum(0, 360);
+						portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
+						portal.ELLIPSE_A = System.ORBIT_2_X;
+						portal.ELLIPSE_B = System.ORBIT_2_Y;
+						portal.mc_object.x = System.ORBIT_2_X * Math.cos(System.degToRad(t));
+						portal.mc_object.y = System.ORBIT_2_Y * Math.sin(System.degToRad(t));
+						portal.theta = t;
+						portal.dTheta = 0.4;
+						portal.multiplyCooldowns(2);
+					}
+				break;
+				case 30:		// victory
+					switch (framesElapsed)
+					{
+						case System.SECOND * 6:
+							cg.tails.show("That's right .. and now for the last step!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 12:
+							cg.game.mc_ship.mc_console_navigation.parentClass.setCorrupt(true);
+							cg.game.mc_ship.mc_console_navigation.parentClass.setReadyToFormat(true);
+							cg.tails.show("This is the last one! Format her away for good!", System.TAILS_NORMAL);
+						break;
+					}
+					if (framesElapsed > System.SECOND * 8)
+					{
+						if (framesElapsed % (System.SECOND * 4) == 0)
+							cg.tails.show(System.getRandFrom(["HE-EY WHAT? Nnoo, DnoT TOUCH THAT CONS=OL#e!",
+															  "YuorE nOT GOnnAS DELEE _YOUR FRIEND FAILS, ARE YA?",
+															  "CA-WNT DeuIE; duONT' DO IT",
+															  "s-__but I HAVENT KISllED YHOU YET",
+															  "WN_O TUouch thaT! Dus't DO2(( IT! sEL!"
+										]), System.SECOND * 2, "FAILS_incredulous");
+						if (ABST_Console.numCorrupted == 0)
+						{
+							levelState++;
+							framesElapsed = 0;
+							consoleSlip.fakeJumpNext = true;
+							consoleSlip.fakeJumpLbl = "long";
+							cg.ship.slipRange = 0;
+							cg.gui.tf_distance.text = "Supr Jmp";
+							cg.playJumpEffect("long");
+							cg.tails.show("YOU TWO ARe still st u p   i  d    --!", System.TAILS_NORMAL, "FAILS_incredulous");
+							cg.bossBar.setPercent(0);
+						}
+					}
+				break;
+				case 31:
+					if (framesElapsed == System.SECOND * 8)
+					{
+						cg.tails.show("Well, I'm glad that's over!\nGreat work, both of you!\n\nI've fixed the slipdrive, so when you're ready, let's get outta here!");
+						consoleSlip.forceOverride = false;
+					}
+					if (framesElapsed > System.SECOND * 8 && framesElapsed % (System.SECOND * 13) == 0)
+						cg.tails.show(System.getRandFrom(["Nice job! Let's get back to the real dimension!",
+														  "Time to get out of Slipspace. Spool up that slipdrive!",
+														  "C'mon, let's get outta here!"
+									]), System.TAILS_NORMAL);
+					if (!consoleSlip.fakeJumpNext)
+					{
+						levelState++;
+						framesElapsed = 0;
+					}
+				break;
+				case 32:
+					// success state
+				break;
 			}
+			
+			if (tugOfWar)
+				handleLastPhase();
+		}
+		
+		/**
+		 * Corrupt a random console, instantly make it fixable, and set the check flag
+		 */
+		private function corruptRandom():void
+		{
+			var c:ABST_Console;
+			do {
+				c = System.getRandFrom(cg.consoles);
+			} while (c.corrupted || c is Omnitool);
+			c.setCorrupt(true);
+			c.setReadyToFormat(true);
+			checkFormat = true;
+		}
+		
+		/**
+		 * Things that need to be constantly updated for the final phase
+		 */
+		private function handleLastPhase():void
+		{
+			momentum = System.changeWithLimit(momentum, D_MOMENTUM, -MOMENTUM_MAX, MOMENTUM_MAX);
+			morale = System.changeWithLimit(morale, momentum, 0.011, 1);		// need to win with a fix
+						
+			// if a corrupted console has been formatted
+			if (checkFormat && ABST_Console.numCorrupted == 0)
+			{
+				checkFormat = false;
+				momentum += FIX_MOMENTUM;
+				morale = System.changeWithLimit(morale, -0.1, 0.01);
+				cg.tails.show(System.getRandFrom(["N-N-N-NOT COOL, YO",
+												  "EOL EOL NULREF! REF!YOU STOP THAT NOW",
+												  "FAUL-AULT-LUTY LOGGG-C MODULE. I'M FINE.",
+												  "294:GOTO a245    ; helper to KILL YOU",
+												  "--at && corrupted) return; // OUCH",
+												  "OUCH THAT WASNT VERY NICE",
+												  ">:( ig02-- gonNA MAKE YOU PA-- PAIN"
+							]), System.TAILS_NORMAL, "FAILS_incredulous");
+				cg.camera.setShake(20);
+				SoundManager.playSFX("sfx_electricShock");
+				cg.addSparks(4);
+			}
+			
+			if (freeCorrupts > 0 && ABST_Console.numCorrupted == 0 && --freeCorrupts <= 0)
+			{
+				corruptRandom();
+				freeCorrupts = 45;
+			}			
+				
+			// allow jumps on a cooldown
+			if (!consoleSlip.fakeJumpNext)
+			{
+				consoleSlip.fakeJumpNext = true;
+				cg.ship.slipRange = 40;
+			}
+			
+			// win state
+			if (morale <= 0.01)
+			{
+				fakeJump();
+				levelState = 30;
+				framesElapsed = 0;
+				tugOfWar = false;
+				cg.tails.show("N-O-OOOOO IMPSOSIPBLE!? -- REF REF!", System.TAILS_NORMAL, "FAILS_incredulous");
+				consoleSlip.forceOverride = true;
+			}
+			
+			cg.bossBar.setPercent(morale);
 		}
 	}
 }

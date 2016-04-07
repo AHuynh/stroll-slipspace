@@ -225,6 +225,9 @@
 			
 			//visualEffects.applyBGDistortion(true, "bg_bars");
 			//visualEffects.applyBGDistortion(true, "bg_squares");
+			//for (var t:int = 0; t < 5; t++)
+			//	addToGame(new BoarderShooter(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
+			//addToGame(new BoarderAssassin(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
 			//addToGame(new BoarderSuicider(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
 		}
 		

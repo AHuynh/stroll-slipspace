@@ -36,6 +36,7 @@ package vgdev.stroll.props.projectiles
 		protected var managerProj:ManagerProjectile;
 		protected var managerEnem:ManagerGeneric;
 		protected var managerPlay:ManagerGeneric;
+		protected var managerConsole:ManagerGeneric;
 												
 		public function ABST_IProjectile(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, attributes:Object) 
 		{
@@ -55,6 +56,7 @@ package vgdev.stroll.props.projectiles
 			managerProj = cg.managerMap[System.M_IPROJECTILE];
 			managerEnem = cg.managerMap[System.M_BOARDER];
 			managerPlay = cg.managerMap[System.M_PLAYER];
+			managerConsole = cg.managerMap[System.M_CONSOLE];
 			
 			mc_object.rotation = dir;
 			
@@ -92,12 +94,19 @@ package vgdev.stroll.props.projectiles
 		 */
 		protected function updateCollisions():void
 		{
-			if (getAffiliation() == System.AFFIL_ENEMY)								// projectile has collided with another projectile
+			if (getAffiliation() == System.AFFIL_ENEMY)			// projectile collision with player or console
 			{
-				var hitPlayer:ABST_Object = managerPlay.collideWithOther(this, true);
-				if (hitPlayer != null)
+				var hitObj:ABST_Object = managerPlay.collideWithOther(this, true);
+				if (hitObj != null)
 				{
-					hitPlayer.changeHP( -dmg);
+					hitObj.changeHP( -dmg);
+					destroy();
+					return;
+				}
+				hitObj = managerConsole.collideWithOther(this, true);
+				if (hitObj != null)
+				{
+					hitObj.changeHP( -dmg * 10);		// bonus damage VS consoles
 					destroy();
 				}
 			}

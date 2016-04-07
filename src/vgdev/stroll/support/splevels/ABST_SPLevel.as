@@ -3,6 +3,7 @@ package vgdev.stroll.support.splevels
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.consoles.*;
+	import vgdev.stroll.props.enemies.BoarderAssassin;
 	import vgdev.stroll.props.enemies.BoarderSuicider;
 	import vgdev.stroll.props.enemies.BoarderWanderer;
 	import vgdev.stroll.System;
@@ -79,6 +80,19 @@ package vgdev.stroll.support.splevels
 			{
 				var bpt:Point = cg.getRandomShipLocation();
 				cg.addToGame(new BoarderSuicider(cg, new SWC_Enemy(), cg.shipInsideMask, {"x": bpt.x, "y": bpt.y}), System.M_BOARDER);
+			}
+		}
+		
+		/**
+		 * Add addAssassins randomly around the ship
+		 * @param	num		Number of shards to add
+		 */
+		protected function addAssassins(num:int):void
+		{
+			for (var i:int = 0; i < num; i++)
+			{
+				var bpt:Point = cg.getRandomShipLocation();
+				cg.addToGame(new BoarderAssassin(cg, new SWC_Enemy(), cg.shipInsideMask, {"x": bpt.x, "y": bpt.y}), System.M_BOARDER);
 			}
 		}
 

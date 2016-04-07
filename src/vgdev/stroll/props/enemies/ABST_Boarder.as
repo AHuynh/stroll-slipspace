@@ -19,6 +19,7 @@ package vgdev.stroll.props.enemies
 		protected const STATE_MOVE_FREE:int = 1;
 		protected const STATE_MOVE_NETWORK:int = 2;
 		protected const STATE_MOVE_FROM_NETWORK:int = 3;
+		protected const STATE_ATTACK:int = 4;
 		
 		protected var pointOfInterest:Point;
 		protected const RANGE:Number = 5;		// node clear range
