@@ -1,0 +1,16 @@
+Phase 1a
+-Play 1a and 1a2 at the same time at the start.
+--1a2 begins at 0 volume.
+--Fade in 1a2 and fade out 1a at the same time, when the slipdrive fails.
+
+-Stop both 1a and 1a2, and start playing 1bc, when portals and monsters spawn.
+
+-Stop playing 1bc, and start playing both 1d and 2a at the same time, when HEADS decides to destroy the ship.
+--2a begins at 0 volume.
+--Fade in 2a and fade out 1d at the same time, when FAILS appears again.
+
+-Stop playing 2a and 1d, and start playing 2b, when the FAILS battle starts
+
+-Stop playing 2b, and start playing The Final Holdout, when TAILS reappears.
+
+If this doesn't make sense, I guess I can try to explain it over telegram or something.

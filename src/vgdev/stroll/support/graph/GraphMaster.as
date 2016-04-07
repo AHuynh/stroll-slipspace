@@ -141,7 +141,7 @@ package vgdev.stroll.support.graph
 		{
 			var start:GraphNode = getNearestValidNode(origin, new Point(origin.mc_object.x, origin.mc_object.y));
 			var end:GraphNode = getNearestValidNode(origin, destination, true);
-			if (nodeDirections[start.mc_object.name][end.mc_object.name] == null)
+			if (start == null || end == null || nodeDirections[start.mc_object.name][end.mc_object.name] == null)
 				return [];
 			var path:Array = [start];
 			while (start != end)

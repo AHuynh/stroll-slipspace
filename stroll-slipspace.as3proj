@@ -115,6 +115,15 @@
     <asset path="sfx\sfx_monsterdeath_5.mp3" />
     <asset path="sfx\sfx_monsterdeath_6.mp3" />
     <asset path="sfx\sfx_monsterdeath_7.mp3" />
+    <asset path="bgm\bgm_1a_here_we_go.mp3" />
+    <asset path="bgm\bgm_1a2_hey_somethings_wrong.mp3" />
+    <asset path="bgm\bgm_1bc_oh_snap.mp3" />
+    <asset path="bgm\bgm_2a_I_spoke_too_soon.mp3" />
+    <asset path="bgm\bgm_2b_your_new_captain_speaking.mp3" />
+    <asset path="bgm\bgm_notsocalm.mp3" />
+    <asset path="bgm\bgm_the_final_holdout.mp3" />
+    <asset path="bgm\bgm_1d_nobody_can_save_us.mp3" />
+    <asset path="bgm\bgm_victory.mp3" />
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

@@ -71,7 +71,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		public var sectorIndex:int = 0;
+		public var sectorIndex:int = 11;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"

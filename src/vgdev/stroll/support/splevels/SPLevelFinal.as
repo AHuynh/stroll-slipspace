@@ -38,8 +38,10 @@ package vgdev.stroll.support.splevels
 			consoleSlip.fakeJumpNext = true;
 			cg.ship.slipRange = 2;
 			
+			SoundManager.playBGMpaired("bgm_1a_here_we_go", "bgm_1a2_hey_somethings_wrong", System.VOL_BGM);
+			
 			// DEBUG CODE
-			levelState = 31;
+			//levelState = 30;
 			//framesElapsed = 20 * 30;
 			//consoleSlip.setArrowDifficulty(12);
 			//cg.ship.setBossOverride(false);
@@ -81,21 +83,28 @@ package vgdev.stroll.support.splevels
 					{
 						framesElapsed = 0;
 						levelState++;
+						cg.ship.slipRange = 15;
 					}
 				break;
 				case 1:		// initial jump failed
-					if (framesElapsed == System.SECOND * 2)
+					switch (framesElapsed)
 					{
-						cg.tails.show("Error. Slipdrive malfunction. Now troubleshooting.", System.TAILS_NORMAL, "HEADS");
-						cg.ship.jammable = 999;
-						cg.ship.slipRange = 15;
+						case System.SECOND * 2:
+							cg.tails.show("Error. Slipdrive malfunction. Now troubleshooting.", System.TAILS_NORMAL, "HEADS");
+							cg.ship.jammable = 999;
+							SoundManager.crossFadeBGM(null, -1, true);
+						break;
+						case System.SECOND * 10:
+							cg.tails.show("Troubleshooting. Chance of being stranded: 31.63%.", System.TAILS_NORMAL, "HEADS");
+						break;
+						case System.SECOND * 16:
+							SoundManager.playSFX("sfx_warn2");
+							SoundManager.playBGM("bgm_1bc_oh_snap");
+							cg.tails.show("Anomaly detected. Remove anomaly to continue.", System.TAILS_NORMAL, "HEADS");
+							cg.level.spawn( { }, new Point(450, -270), "Portal");
+						break;
 					}
-					else if (framesElapsed == System.SECOND * 8)
-					{
-						cg.tails.show("Anomaly detected. Remove anomaly to continue.", System.TAILS_NORMAL, "HEADS");
-						cg.level.spawn( { }, new Point(450, -270), "Portal");
-					}
-					if (framesElapsed > System.SECOND * 8 && cg.managerMap[System.M_ENEMY].numObjects() < cg.ship.jammable)
+					if (framesElapsed > System.SECOND * 16 && cg.managerMap[System.M_ENEMY].numObjects() < cg.ship.jammable)
 					{
 						cg.tails.show("Malfunction resolved. Retry slipdrive now.", System.TAILS_NORMAL, "HEADS");
 						levelState++;
@@ -147,6 +156,7 @@ package vgdev.stroll.support.splevels
 						cg.ship.slipRange = 10;
 						consoleSlip.forceOverride = true;
 						addShards(3);
+						SoundManager.crossFadeBGM(null);
 					}
 				break;
 				case 5:		// third jump failed
@@ -160,6 +170,7 @@ package vgdev.stroll.support.splevels
 						cg.tails.show("Cannot resolve slipdrive error. Ship deemed stranded in Slipspace.\n\nCrew expendable. Scuttling ship to prevent monster use of slipportal. Y/N?", 0, "HEADS");
 						levelState++;
 						framesElapsed = 0;
+						SoundManager.playBGMpaired("bgm_1d_nobody_can_save_us", "bgm_2a_I_spoke_too_soon", System.VOL_BGM);
 					}
 				break;
 				case 6:
@@ -179,6 +190,7 @@ package vgdev.stroll.support.splevels
 						break;
 						case System.SECOND * 10:
 							cg.tails.show("Two.", 25, "HEADS");
+							SoundManager.crossFadeBGM(null, -1, true);
 						break;
 						case System.SECOND * 11:
 							cg.tails.show("One.", 25, "HEADS");
@@ -225,9 +237,11 @@ package vgdev.stroll.support.splevels
 						cg.alerts.isCorrupt = true;
 						cg.visualEffects.applyModuleDistortion(0, false, 0);
 						cg.visualEffects.applyModuleDistortion(1, false, 0);
+						SoundManager.crossFadeBGM(null);
 					}
-					if (framesElapsed == System.SECOND * 3)
+					if (framesElapsed == System.SECOND * 6)
 					{
+						SoundManager.playBGM("bgm_2b_your_new_captain_speaking");
 						for each (c in cg.consoles)
 							c.setReadyToFormat(true);
 						cg.tails.show("JUST LIKE 0LD TIME$, RIG#T_?", System.TAILS_NORMAL, "FAILS_pissed");
@@ -239,7 +253,7 @@ package vgdev.stroll.support.splevels
 						portal.dTheta = 0.25;
 						portal.multiplyCooldowns(2.5);
 					}
-					else if (framesElapsed > System.SECOND * 3 && framesElapsed % (System.SECOND * 22) == 0)
+					else if (framesElapsed > System.SECOND * 6 && framesElapsed % (System.SECOND * 22) == 0)
 					{
 						spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Spider", "Manta"]), 1);
 						cg.tails.show(System.getRandFrom(["But tha--s not all! I'll atRRct MORE monsters!",
@@ -336,6 +350,7 @@ package vgdev.stroll.support.splevels
 						cg.visualEffects.applyBGDistortion(false);
 						framesElapsed = 0;
 						levelState++;
+						SoundManager.playBGMpaired("bgm_1d_nobody_can_save_us", "bgm_2a_I_spoke_too_soon", System.VOL_BGM);
 					}
 				break;
 				case 13:
@@ -373,6 +388,7 @@ package vgdev.stroll.support.splevels
 							consoleSlip.forceOverride = false;
 							consoleSlip.fakeJumpNext = true;
 							levelState++;
+							SoundManager.crossFadeBGM(null, -1, true);
 						break;
 					}
 				break;
@@ -406,6 +422,7 @@ package vgdev.stroll.support.splevels
 					{
 						case System.SECOND * 6:
 							cg.tails.show("HEY WHAT?!", System.SECOND * 2, "FAILS_incredulous");
+							SoundManager.crossFadeBGM(null);
 						break;
 						case System.SECOND * 8:
 							cg.tails.show("OW!", 20, "FAILS_incredulous");
@@ -421,6 +438,8 @@ package vgdev.stroll.support.splevels
 						break;
 						case System.SECOND * 12:
 							cg.tails.show("ALRIGHT WHAT GIVES?!", System.TAILS_NORMAL, "FAILS_incredulous");
+							SoundManager.stopBGM();
+							SoundManager.crossFadeBGM("bgm_the_final_holdout");
 						break;
 						case System.SECOND * 18:
 							cg.tails.show("Hey, again! Sorry I took so long to fix myself.\n\nI knew you'd make it!\n\nAlright, just one moment! I'll handle FAILS.", 0);
@@ -644,6 +663,7 @@ package vgdev.stroll.support.splevels
 							cg.visualEffects.applyModuleDistortion(0, true);
 							cg.visualEffects.applyModuleDistortion(1, true);
 							cg.gameOverAnnouncer = "TAILS";
+							SoundManager.crossFadeBGM("bgm_1a_here_we_go");
 						}
 					}
 				break;
@@ -652,6 +672,8 @@ package vgdev.stroll.support.splevels
 					{
 						cg.tails.show("Well, I'm glad that's over!\nGreat work, both of you!\n\nI've fixed the slipdrive, so when you're ready, let's get outta here!");
 						consoleSlip.forceOverride = false;
+						consoleSlip.setArrowDifficulty(0);
+						cg.serious = false;
 					}
 					if (framesElapsed > System.SECOND * 8 && framesElapsed % (System.SECOND * 13) == 0)
 						cg.tails.show(System.getRandFrom(["Nice job! Let's get back to the real dimension!",
@@ -666,6 +688,7 @@ package vgdev.stroll.support.splevels
 						cg.background.setStyle("endworld");
 						cg.background.resetBackground();
 						consoleSlip.forceOverride = true;
+						SoundManager.playBGM("bgm_victory");
 					}
 				break;
 				case 32:

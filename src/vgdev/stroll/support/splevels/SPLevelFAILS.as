@@ -635,6 +635,8 @@ package vgdev.stroll.support.splevels
 															"Fire using CANCEL. Remove contaminates.",
 															"CANCEL fires PDW. Terminate intruders.",
 															]), System.TAILS_NORMAL, "HEADS");
+					cg.players[0].pdwEnabled = true;
+					cg.players[1].pdwEnabled = true;
 					if (!cg.managerMap[System.M_BOARDER].hasObjects())
 					{
 						cg.tails.show("Success. Please jump and resume mission.", System.TAILS_NORMAL, "HEADS");

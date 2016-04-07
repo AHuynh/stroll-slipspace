@@ -56,7 +56,8 @@ package vgdev.stroll.props
 		/// If true, the console being used prevents player movement
 		private var rooted:Boolean = false;
 		
-		// PWD variables
+		// PDW variables
+		public var pdwEnabled:Boolean = false;	// if the PDW is unlocked
 		private var countPDW:int = 0;			// current PDW status
 		private var cooldownPDW:int = 5;		// cooldown time in frames between PDW shots
 		private var damagePDW:int = 7;
@@ -292,7 +293,7 @@ package vgdev.stroll.props
 		 */
 		private function handlePDW():void
 		{
-			if (!cg || cg.isDefeatedPaused) return;		// quit if ship is exploding
+			if (!pdwEnabled || !cg || cg.isDefeatedPaused) return;		// quit if ship is exploding or PDW is not unlocked
 			
 			var shot:ABST_IProjectile = new IProjectileGeneric(cg, new SWC_Bullet(), hitMask,
 																	{	 

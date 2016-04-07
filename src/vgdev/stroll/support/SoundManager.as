@@ -8,9 +8,11 @@ package vgdev.stroll.support
 	
 	public class SoundManager 
 	{
-		private static var channelCurr:SoundChannel;		
-		private static var channelNew:SoundChannel;
 		private static var sounds:Object = new Object();
+		/// The currently-playing song (or the one being faded out)
+		private static var channelCurr:SoundChannel;			
+		/// The song fading in	
+		private static var channelNew:SoundChannel;
 		
 		private static var currVolume:Number = 0;
 		private static var fadeVolume:Number = 0;
@@ -20,7 +22,9 @@ package vgdev.stroll.support
 		private static var fadeSTF:SoundTransform = new SoundTransform();
 		private static var keepAlive:Boolean = false;
 		
+		/// The name of the currently-playing song (or the one being faded out)
 		private static var nameCurr:String = "";
+		/// The name of the song fading in
 		private static var nameNew:String = "";
 		
 		private static var isInit:Boolean = false;
@@ -33,6 +37,23 @@ package vgdev.stroll.support
 		private static var bgm_FAILS:Class;
 		[Embed(source="../../../../bgm/bgm_title.mp3")]
 		private static var bgm_title:Class;
+		
+		[Embed(source="../../../../bgm/bgm_1a_here_we_go.mp3")]
+		private static var bgm_1a_here_we_go:Class;
+		[Embed(source = "../../../../bgm/bgm_1a2_hey_somethings_wrong.mp3")]
+		private static var bgm_1a2_hey_somethings_wrong:Class;
+		[Embed(source = "../../../../bgm/bgm_1bc_oh_snap.mp3")]
+		private static var bgm_1bc_oh_snap:Class;
+		[Embed(source = "../../../../bgm/bgm_1d_nobody_can_save_us.mp3")]
+		private static var bgm_1d_nobody_can_save_us:Class;
+		[Embed(source = "../../../../bgm/bgm_2a_I_spoke_too_soon.mp3")]
+		private static var bgm_2a_I_spoke_too_soon:Class;
+		[Embed(source = "../../../../bgm/bgm_2b_your_new_captain_speaking.mp3")]
+		private static var bgm_2b_your_new_captain_speaking:Class;
+		[Embed(source="../../../../bgm/bgm_the_final_holdout.mp3")]
+		private static var bgm_the_final_holdout:Class;
+		[Embed(source="../../../../bgm/bgm_victory.mp3")]
+		private static var bgm_victory:Class;
 		
 		[Embed(source="../../../../sfx/sfx_readybeep1B.mp3")]
 		private static var sfx_readybeep1B:Class;
@@ -176,7 +197,7 @@ package vgdev.stroll.support
 		
 		public static function playBGM(music:String, volume:Number = 1):void
 		{
-			return;	// DEBUGGING - mute BGM
+			//return;	// DEBUGGING - mute BGM
 			
 			if (nameCurr == music)
 				return;
@@ -191,16 +212,43 @@ package vgdev.stroll.support
 			currVolume = volume;
 		}
 		
+		/**
+		 * Play a pair of tracks with the same length simultaneously
+		 * @param	musicMain			
+		 * @param	musicSecondary
+		 * @param	volume
+		 */
+		public static function playBGMpaired(musicMain:String, musicSecondary:String, volume:Number = 1):void
+		{
+			trace("[Sound] Plaing paired music", musicMain, "primary and", musicSecondary, "secondary.");
+			
+			playBGM(musicMain, volume);
+			
+			var snd:Sound = getBGM(musicSecondary);
+			nameNew = musicSecondary;
+			
+			var volTransform:SoundTransform = new SoundTransform(0);
+			channelNew = snd.play(0, 9999);
+			channelNew.soundTransform = volTransform;
+		}
+		
 		private static function getBGM(music:String):Sound
 		{
 			switch (music)
 			{
-				case "bgm_calm":		return new bgm_calm();
-				case "bgm_boss":		return new bgm_boss();
-				case "bgm_FAILS":		return new bgm_FAILS();	
-				case "bgm_title":		return new bgm_title();	
+				case "bgm_calm":							return new bgm_calm();
+				case "bgm_boss":							return new bgm_boss();
+				case "bgm_FAILS":							return new bgm_FAILS();	
+				case "bgm_1a_here_we_go":					return new bgm_1a_here_we_go();
+				case "bgm_1a2_hey_somethings_wrong":		return new bgm_1a2_hey_somethings_wrong();
+				case "bgm_1bc_oh_snap":						return new bgm_1bc_oh_snap();
+				case "bgm_1d_nobody_can_save_us":			return new bgm_1d_nobody_can_save_us();
+				case "bgm_2a_I_spoke_too_soon":				return new bgm_2a_I_spoke_too_soon();
+				case "bgm_2b_your_new_captain_speaking":	return new bgm_2b_your_new_captain_speaking();
+				case "bgm_the_final_holdout":				return new bgm_the_final_holdout();
+				case "bgm_victory":							return new bgm_victory();
+				case "bgm_title":							return new bgm_title();
 				default:
-					//trace("WARNING: No music located for " + music + "!");
 					return null;
 			}
 		}
@@ -212,12 +260,17 @@ package vgdev.stroll.support
 		
 		/**
 		 * Fade out the current music and fade in the new music
-		 * @param	music		Name of the new BGM, null is OK
-		 * @param	volume		Target volume
+		 * @param	music		Name of the new BGM, null is OK (if keepAlive false, new music is nothing; else use 'saved' music)
+		 * @param	volume		Target volume (-1 to use same volume as current track)
 		 * @param	keepAlive	if true, don't stop the faded BGM (so future fades will resume from a place other than the start)
 		 */
 		public static function crossFadeBGM(music:String, volume:Number = 1, _keepAlive:Boolean = false):void
 		{
+			trace("[Sound] Crossfading", music, "in and", nameCurr, "out.");
+			
+			if (volume == -1)
+				volume = currVolume;
+			
 			fadeVolume = 0;
 			fadeVolumeTgt = volume;
 			keepAlive = _keepAlive;
@@ -251,24 +304,29 @@ package vgdev.stroll.support
 			
 			if (fadeSTF.volume == fadeVolumeTgt && currSTF.volume == 0)
 			{				
+				trace("[Sound] Done crossfading", nameNew, "in and", nameCurr, "out!");
 				currVolume = fadeVolumeTgt;
 				
+				// save a reference to the song that has been faded out
 				var nameTemp:String = nameCurr;
 				var channelTemp:SoundChannel = channelCurr;
 			
+				// make the current song the song that was fading in
 				nameCurr = nameNew;
 				channelCurr = channelNew;
 				
+				// if keep alive, make the song that will be fade in the song that was faded out
 				if (keepAlive)
 				{
 					nameNew = nameTemp;
 					channelNew = channelTemp;
 				}
+				// otherwise, stop the song that was faded out
 				else
 				{
-					if (channelCurr)
-						channelCurr.stop();
-					nameCurr = "";
+					nameNew = "";
+					if (channelTemp)
+						channelTemp.stop();
 				}
 			}
 		}

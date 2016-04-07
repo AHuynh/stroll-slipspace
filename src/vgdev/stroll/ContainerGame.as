@@ -238,7 +238,11 @@
 				if (level.sectorIndex <= 8)
 					tails.show(TAILS_RELOAD);
 				else
+				{
 					tails.show(HEADS_RELOAD, 0, "HEADS");
+					players[0].pdwEnabled = true;
+					players[1].pdwEnabled = true;
+				}
 			}
 			// new game
 			else
@@ -355,7 +359,6 @@
 				
 				if (justPaused)
 				{
-					trace("Quittin because just paused");
 					justPaused = false;
 					return;
 				}				
@@ -533,10 +536,13 @@
 				engine.saveProgress(level.sectorIndex, ship.getHP());
 			
 			var boss:Boolean = mod == 0;
-			if (boss)
-				SoundManager.playBGM("bgm_boss", System.VOL_BGM);
-			else if (level.sectorIndex % 4 == 1)
-				SoundManager.playBGM("bgm_calm", System.VOL_BGM);
+			if (level.sectorIndex != 12)
+			{
+				if (boss)
+					SoundManager.playBGM("bgm_boss", System.VOL_BGM);
+				else if (level.sectorIndex % 4 == 1)
+					SoundManager.playBGM("bgm_calm", System.VOL_BGM);
+			}
 			
 			// show starting TAILS message
 			tails.show(level.getTAILS(), boss ? 0 : 120, (level.sectorIndex > 8 ? "HEADS" : null));
