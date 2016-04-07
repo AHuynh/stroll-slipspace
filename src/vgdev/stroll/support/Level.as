@@ -71,7 +71,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		public var sectorIndex:int = 11;
+		public var sectorIndex:int = 0;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -115,19 +115,10 @@ package vgdev.stroll.support
 												JSON.parse(new en_rainbow()),
 												
 												JSON.parse(new en_boss_final())
-												
-												/*JSON.parse(new en_test()),
-												JSON.parse(new en_test2()),
-												JSON.parse(new en_fire_lite()),
-												JSON.parse(new en_fire_eyes()),
-												JSON.parse(new en_testSurvive())*/
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_boss_final())];
-											
-											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
 			
 			// parse all the encounters and save them

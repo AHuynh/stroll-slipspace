@@ -125,8 +125,7 @@ package vgdev.stroll.props.consoles
 																	{	 
 																		"affiliation":	System.AFFIL_PLAYER,
 																		"dir":			turret.nozzle.rotation + rotOff + System.getRandNum( -sway, sway),
-																		//"dmg":			6,
-																		"dmg":			60,
+																		"dmg":			6,
 																		"life":			projectileLife,
 																		"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
 																		"spd":			projectileSpeed,

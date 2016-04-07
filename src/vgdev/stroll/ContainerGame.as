@@ -171,11 +171,11 @@
 			consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, false));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, false));
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
 			
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, false));
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, false));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
 			
 			graph.initShip("Eagle");
 			// --- Eagle --------------------------------------------------------------------------------------------------------
@@ -342,7 +342,7 @@
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
 					//killShip();
 					//addFires(1);
-					ship.damageDirect(500);
+					//ship.damageDirect(500);
 					//consoles[0].changeHP( -250);
 					//addFires(1);
 				break;

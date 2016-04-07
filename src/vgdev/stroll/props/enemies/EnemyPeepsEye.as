@@ -22,8 +22,7 @@ package vgdev.stroll.props.enemies
 		private var recoverCooldownTimer:Number = recoverCooldownMax; //current number 
 		public var stopped:Boolean = false;
 		private var mainBody:EnemyPeeps;		// reference to the main body of the boss
-		private var maxHP:Number = 30;
-		// TODO invincibility when eyes are closed
+		private var maxHP:Number = 5;
 		
 		public function EnemyPeepsEye(_cg:ContainerGame, _mc_object:MovieClip, _mainBody:EnemyPeeps) 
 		{
@@ -32,41 +31,49 @@ package vgdev.stroll.props.enemies
 			mainBody = _mainBody;
 			
 			hp = maxHP;
-			
 			eyeNo = numEyes++;
 			
-			// TODO initialize things like x, y, hp, etc. (there is no attributes object)
-			
 			// [small shot]
-			cdCounts = [90 + System.getRandInt(0, 40)];		// initial cooldown value (TODO balance)
-			cooldowns = [90];		// cooldown value (TODO balance)
+			cdCounts = [90 + System.getRandInt(0, 40)];
+			cooldowns = [90];
 		}
 		
 		override public function destroy():void 
 		{
 			incapacitated = true;
+			trace("[Eye]", eyeNo, "incapped!");
 		}
 		
-		public function kill():void {
+		public function kill():void
+		{
 			super.destroy();
 		}
 		
 		override public function step():Boolean 
 		{
-			if (incapacitated) {
-				recoverCooldownTimer--;
-				if (recoverCooldownTimer <= 0) {
-					reviveEye();
+			if (!completed)
+			{
+				if (incapacitated) {
+					recoverCooldownTimer--;
+					if (recoverCooldownTimer <= 0) {
+						reviveEye();
+					}
 				}
-				
+				updatePrevPosition();
+				if (!isActive())		// quit if updating position caused this to die
+					return completed;
+				updateWeapons();		
+				updateDamageFlash();				
 			}
-			
-			return super.step();
+			return completed;
 		}
 		
-		override protected function updatePosition(dx:Number, dy:Number):void 
+		public function reviveEye():void
 		{
-			super.updatePosition(dx, dy);
+			incapacitated = false;
+			recoverCooldownTimer = recoverCooldownMax;
+			hp = maxHP;	
+			trace("[Eye]", eyeNo, "revived");		
 		}
 		
 		public function updateEyePosition(dx:Number, dy:Number):void
@@ -74,23 +81,13 @@ package vgdev.stroll.props.enemies
 			updatePosition(dx, dy);
 		}
 		
-		
-		//mc_object.base.gotoAndStop("closed");		// display this Peeps eye with its eye closed (default state)
-		//mc_object.base.gotoAndStop("open");		// display this Peeps eye with its eye closed
-		
-		public function reviveEye():void
-		{
-			incapacitated = false;
-			recoverCooldownTimer = recoverCooldownMax;
-			hp = maxHP;			
-		}
-		
 		override protected function updateWeapons():void 
 		{
-			if (incapacitated || mainBody.isIncapacitated()) {
+			if (mainBody.isIncapacitated()) {
 				return;
 			}
 			
+			if (mainBody.activeEyes[0] != eyeNo && mainBody.activeEyes[1] != eyeNo) return;
 			
 			for (var i:int = 0; i < cooldowns.length; i++)
 			{
@@ -102,24 +99,37 @@ package vgdev.stroll.props.enemies
 																	{	 
 																		"affiliation":	System.AFFIL_ENEMY,
 																		"attackColor":	attackColor,
-																		"dir":			mc_object.rotation + System.getRandNum(-5, 5),
+																		"dir":			mc_object.rotation + System.getRandNum(-15, 15),
 																		"dmg":			attackStrength,
 																		"life":			150,
 																		"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 																		"spd":			6,
-																		"style":		"pus",
-																		"scale":		0.5
+																		"style":		"eye",
+																		"scale":		1
 																	});
 					cg.addToGame(proj, System.M_EPROJECTILE);
+					mc_object.base.gotoAndStop(2);
+				}
+				else if (cdCounts[i] == cooldowns[i] - 50)
+				{
+					mc_object.base.gotoAndStop(1);
+					reviveEye();
 				}
 			}
+		}
+		
+		override public function changeHP(amt:Number):Boolean 
+		{
+			if (mc_object.base.currentFrame != 2)		// no damage if lid is closed
+				return false;
+			incapacitated = super.changeHP(amt);
+			trace("[Eye] Hit!", eyeNo, hp);
+			return incapacitated;
 		}
 		
 		public function isIncapacitated():Boolean
 		{
 			return incapacitated;
-		}
-		
-		
+		}		
 	}
 }

@@ -1,6 +1,7 @@
 package vgdev.stroll.props.enemies 
 {
 	import flash.display.MovieClip;
+	import flash.events.Event;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
@@ -16,87 +17,74 @@ package vgdev.stroll.props.enemies
 	 */
 	public class EnemyPeeps extends ABST_Enemy 
 	{		
-		private var eyes:Array = [null, null];			// reference to the 2 EnemyPeepsEyes
-		private var eyeYOffsets:Array = [100, -100];
-		private var eyeXOffsets:Array = [0, 0];
-		private var hitbox_alternate:MovieClip = null;	// hitbox for the eye itself only (not the rest of the body)
+		private var eyes:Array = [];									// reference to the 4 EnemyPeepsEyes from L to R
+		private var eyeXOffsets:Array = [71, 44, 44, 71];
+		private var eyeYOffsets:Array = [ -152.5, -105.5, 108.5, 153.5];
+		public var activeEyes:Array = [0, 0];
 		
 		private var incapacitated:Boolean = false;
-		private var recoverCooldownMax:Number = 130; //frames before recovering
-		private var recoverCooldownTimer:Number = recoverCooldownMax; //current number for cooldown
+		private var recoverCooldownMax:Number = 130; 					//frames before recovering
+		private var recoverCooldownTimer:Number = recoverCooldownMax;	//current number for cooldown
 		private var wasIncapacitated:Boolean = false;
 		
-		
-		private var teleportCooldownMax:Number = 300; //frames before teleporting
+		private var teleportCooldownMax:Number = 4200000000; 					//frames before teleporting
 		private var teleportCooldownTimer:Number = teleportCooldownMax; //current number for cooldown
 		private var currentAreaNumber:int = 0;
 		
 		private var bossPhase:int = 1;
 		private var prevBossPhase:int = 1;
 		private var phaseChangeImmune:Boolean = false;
-		private var phaseChangeCooldownMax:Number = 130; //frames before battle resumes
+		private var phaseChangeCooldownMax:Number = 130;					  //frames before battle resumes
 		private var phaseChangeCooldownTimer:Number = phaseChangeCooldownMax; //current number for cooldown
-		
-		
-		
-		
-		// TODO invincibility unless vulnerable
-		// TODO counter to determine when to open the 2 smaller eyes
-		// TODO counter to determine how long Peeps is vulnerable
-		// TODO counter to determine when Peeps can teleport
-		// TODO sub-counter to help Peeps multi-teleport in Phase 3
-		// TODO keep track of what phase (1, 2, 3) Peeps is in
-		
-		
-		// ---- GRAPHICS MANIPULATION ------------------------------------------------------------------------
-		//mc_object.base.gotoAndStop("closed");		// display Peeps with his main eye closed (default state, a large red X will appear to show the eye is closed)
-		//mc_object.base.gotoAndStop("open");		// display Peeps with his main eye open
-		
-		
+
 		public function EnemyPeeps(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			attributes["customHitbox"] = true;
 			super(_cg, _mc_object, {"noSpawnFX": true});
 			setStyle("peeps");
 			
-			// TODO initialize things like x, y, hp, etc. (passed in attributes:Object will have nothing useful)
-			mc_object.x = 400;	// (temporary values)
+			mc_object.hitbox.visible = false;
+			hitbox = mc_object.hitbox;
+			
+			mc_object.visible = false;
+			mc_object.x = 400;
 			mc_object.y = 0;
-			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "rot": System.getRandNum(0, 360), "scale": mc_object.scaleX * 2 } );
-			spawnFX.mc_object.base.setTint(attackColor);
+			
+			orbitX = System.ORBIT_0_X + 50;
+			orbitY = System.ORBIT_0_Y + 60;
 
 			hp = hpMax = 500;
-			//rangeVary = 100;
-			rangeVary = 30;
+			rangeVary = 20;
 			
-			
-			eyes[0] = new EnemyPeepsEye(cg, new SWC_Enemy(), this);
-			eyes[1] = new EnemyPeepsEye(cg, new SWC_Enemy(), this);
+			for (var i:int = 0; i < 4; i++)
+				eyes.push(new EnemyPeepsEye(cg, new SWC_Enemy(), this));
+			lockEyes();
 			// [hardened shot, triple shot]
-			cdCounts = [300];		// initial cooldown value (TODO balance)
-			cooldowns = [400];		// cooldown value (TODO balance)
+			cdCounts = [300];		// initial cooldown value
+			cooldowns = [400];		// cooldown value
+						
+			mc_object.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
-		// hide both hitboxes
-		override protected function setStyle(style:String):void 
+		private function init(e:Event):void
 		{
-			super.setStyle(style);
-			hitbox_alternate = mc_object.hitbox_alternate;
-			mc_object.hitbox.visible = hitbox_alternate.visible = false;
-		}
-		
-		//Spawn eyes when peeps is spawned
-		override public function spawnActions():void 
-		{
-			
-			for (var i:int = 0; i < eyes.length; i++) {
+			mc_object.removeEventListener(Event.ADDED_TO_STAGE, init);
+			mc_object.visible = true;
+			for (var i:int = 0; i < 4; i++)
 				cg.addToGame(eyes[i], System.M_ENEMY);
-				eyes[i].mc_object.x = mc_object.x;
-				eyes[i].mc_object.y = mc_object.y + eyeYOffsets[i];
-			}
+			setNewEyes();
+			var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "rot": System.getRandNum(0, 360), "scale": 6} );
+			spawnFX.mc_object.base.setTint(System.COL_RED);
 		}
 		
-		// TODO modify as needed
+		private function setNewEyes():void
+		{
+			for (var i:int = 0; i < 4; i++)
+				eyes[i].mc_object.base.gotoAndStop(1);		// close eyelid
+			activeEyes[0] = System.getRandInt(0, 1);
+			activeEyes[1] = System.getRandInt(2, 3);
+		}
+		
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
 			if (completed)
@@ -108,12 +96,8 @@ package vgdev.stroll.props.enemies
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
 				
-				// (code deleted here - don't kill if Peeps is out of bounds)
-			}
-			else	// ship was hit
-			{
-				if (affiliation != System.AFFIL_PLAYER)
-					onShipHit();
+				for (var i:int = 0; i < eyes.length; i++)
+					eyes[i].updateEyePosition(dx, dy);
 				// (code deleted here - don't kill if Peeps is out of bounds)
 			}
 		}
@@ -123,7 +107,6 @@ package vgdev.stroll.props.enemies
 			if (incapacitated) {
 				return;
 			}
-			
 			
 			for (var i:int = 0; i < cooldowns.length; i++)
 			{
@@ -144,8 +127,8 @@ package vgdev.stroll.props.enemies
 																			"pdmg":			3,
 																			"pos":			mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y)),
 																			"spd":			0.5,
-																			"style":		"pus",
-																			"scale":		2
+																			"style":		"eye",
+																			"scale":		3
 																		});
 							cg.addToGame(proj, System.M_EPROJECTILE);
 				}
@@ -158,10 +141,15 @@ package vgdev.stroll.props.enemies
 				return true;
 			}
 			
-			if (eyes[0].isIncapacitated() && eyes[1].isIncapacitated()) {
+			//trace(activeEyes);
+			//trace("\t", eyes[activeEyes[0]].isIncapacitated(), eyes[activeEyes[1]].isIncapacitated());
+			if (eyes[activeEyes[0]].isIncapacitated() && eyes[activeEyes[1]].isIncapacitated()) {
 				if (!incapacitated) {
 					SoundManager.playSFX("sfx_peeps_yell", 1);
 					incapacitated = true;
+					mc_object.base.mc_lid_large.visible = false;
+					for (var e:int = 0; e < 4; e++)
+						eyes[e].mc_object.base.gotoAndStop(1);		// close eyelid
 				}
 			} 
 			
@@ -177,14 +165,11 @@ package vgdev.stroll.props.enemies
 				teleportCooldownTimer--;
 				if (teleportCooldownTimer < 0) {
 					randomTeleport();
-					teleportCooldownTimer = teleportCooldownMax;
+					teleportCooldownTimer = teleportCooldownMax + System.getRandInt(0, 90);
 				}
 			}
-			
 			checkPhase();
-			
 			lockEyes();
-		
 			return super.step();
 		}
 		
@@ -222,26 +207,26 @@ package vgdev.stroll.props.enemies
 		
 		private function lockEyes():void
 		{
+			var theta:Number = System.degToRad(mc_object.rotation);
+			var s:Number = Math.sin(theta);
+			var c:Number = Math.cos(theta);
 			for (var i:int = 0; i < eyes.length; i++) {
-				eyes[i].mc_object.x = mc_object.x + eyeXOffsets[i];
-				eyes[i].mc_object.y = mc_object.y + eyeYOffsets[i];
+				eyes[i].mc_object.x = mc_object.x + eyeXOffsets[i] * c - eyeYOffsets[i] * s;
+				eyes[i].mc_object.y = mc_object.y + eyeXOffsets[i] * s + eyeYOffsets[i] * c;
+				eyes[i].mc_object.rotation = mc_object.rotation;
 			}
-		}
-		
-		private function moveEyeball(dx:Number, dy:Number, eyeNumber:int):void 
-		{
-			eyeXOffsets[eyeNumber] += dx;
-			eyeYOffsets[eyeNumber] += dy;
 		}
 		
 		private function revivePeeps():void
 		{
 			incapacitated = false;
 			recoverCooldownTimer = recoverCooldownMax;
+			mc_object.base.mc_lid_large.visible = true;
 			
 			for (var i:int = 0; i < eyes.length; i++) {
 				eyes[i].reviveEye();
 			}
+			setNewEyes();
 		}
 		
 		override public function changeHP(amt:Number):Boolean 
@@ -251,15 +236,15 @@ package vgdev.stroll.props.enemies
 			} else {
 				return false;
 			}
-			
 		}
 		
 		//teleport peeps to a new location around the ship
 		private function randomTeleport():void
 		{
 			var areaChange:int = System.getRandInt(1, 4);
-			
 			currentAreaNumber = (currentAreaNumber + areaChange) % 5;
+			
+			cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale": 4 } );
 			
 			if (bossPhase > 1) {
 				var newSpawn:ABST_Enemy = new EnemyEyeball(cg, new SWC_Enemy(), {});
@@ -268,40 +253,28 @@ package vgdev.stroll.props.enemies
 				cg.addToGame(newSpawn, System.M_ENEMY);
 			}
 			
-
 			if (currentAreaNumber == 0) {
 				mc_object.x = 350;
 				mc_object.y = 0;
-				
-				eyeXOffsets = [0, 0];
-				eyeYOffsets = [100, -100];
 			} else if (currentAreaNumber == 1) {
 				mc_object.x = 0;
-				mc_object.y = 230;
-				
-				eyeXOffsets = [100, -100];
-				eyeYOffsets = [0, 0];
+				mc_object.y = 300;
 			} else if (currentAreaNumber == 2) {
 				mc_object.x = -350;
 				mc_object.y = 230;
-				
-				eyeXOffsets = [70.7, -70.7];
-				eyeYOffsets = [70.7, -70.7];
 			} else if (currentAreaNumber == 3) {
 				mc_object.x = -350;
 				mc_object.y = -230;
-				
-				eyeXOffsets = [-70.7, 70.7];
-				eyeYOffsets = [70.7, -70.7];
 			} else {
 				mc_object.x = 0;
-				mc_object.y = -230;
-				
-				eyeXOffsets = [-100, 100];
-				eyeYOffsets = [0, 0];
+				mc_object.y = -300;
 			}
 			
+			cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale": 4 } );
 			
+			setNewEyes();
+			mc_object.rotation = 360 + System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y) % 360;
+			lockEyes();
 		}
 		
 		override public function destroy():void 
@@ -316,10 +289,6 @@ package vgdev.stroll.props.enemies
 		public function isIncapacitated():Boolean
 		{
 			return incapacitated;
-		}
-		
-		
-		
-		// TODO when vulnerable, only take damage if the alternate hitbox was hit		(maybe, might require another class like EnemyPeepsMainEye and be too much hassle)
+		}	
 	}
 }
