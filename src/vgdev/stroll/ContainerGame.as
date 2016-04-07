@@ -482,37 +482,30 @@
 			if (level.sectorIndex == 0)
 				camera.setCameraFocus(new Point(0, 20));
 	
-			// game finished state
-			if (level.nextSector())
-			{
-				destroy(null);
-				completed = true;
-			}
-			else
-			{
-				var boss:Boolean = level.sectorIndex % 4 == 0;
+			level.nextSector();
+			
+			var boss:Boolean = level.sectorIndex % 4 == 0;
+			
+			if (boss)
+				SoundManager.playBGM("bgm_boss", System.VOL_BGM);
+			else if (level.sectorIndex % 4 == 1)
+				SoundManager.playBGM("bgm_calm", System.VOL_BGM);
 				
-				if (boss)
-					SoundManager.playBGM("bgm_boss", System.VOL_BGM);
-				else if (level.sectorIndex % 4 == 1)
-					SoundManager.playBGM("bgm_calm", System.VOL_BGM);
-					
-				tails.show(level.getTAILS(), boss ? 0 : 120, (level.sectorIndex > 8 ? "HEADS" : null));
-				
-				// hide all "New!" and console tutorial messages
-				for each (var console:ABST_Console in consoles)
-					console.showNew( -1);
-				gui.mod_p1.mc_tutorial.visible = false;
-				gui.mod_p2.mc_tutorial.visible = false;
-				
-				gui.mc_left.visible = false;
-				gui.mc_right.visible = false;
+			tails.show(level.getTAILS(), boss ? 0 : 120, (level.sectorIndex > 8 ? "HEADS" : null));
+			
+			// hide all "New!" and console tutorial messages
+			for each (var console:ABST_Console in consoles)
+				console.showNew( -1);
+			gui.mod_p1.mc_tutorial.visible = false;
+			gui.mod_p2.mc_tutorial.visible = false;
+			
+			gui.mc_left.visible = false;
+			gui.mc_right.visible = false;
 
-				tails.tutorialMode = false;
-				
-				game.mc_ship.mc_console_slipdrive.parentClass.setArrowDifficulty(level.sectorIndex);
-				ship.minRestore();		// replenish HP to minimum
-			}
+			tails.tutorialMode = false;
+			
+			game.mc_ship.mc_console_slipdrive.parentClass.setArrowDifficulty(level.sectorIndex);
+			ship.minRestore();		// replenish HP to minimum
 		}
 		
 		/**

@@ -54,6 +54,12 @@ package vgdev.stroll.support
 			System.tintObject(bg.base, col, System.getRandNum(.6, .75));
 		}
 		
+		public function resetBackground():void
+		{
+			bg1.x = 0;
+			bg2.x = 1728;
+		}
+		
 		/**
 		 * Set the background to a random one from a pre-defined pool
 		 * @param	region	int, [0-2]

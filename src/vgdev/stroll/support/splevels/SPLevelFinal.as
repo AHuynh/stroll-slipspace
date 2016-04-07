@@ -39,8 +39,8 @@ package vgdev.stroll.support.splevels
 			cg.ship.slipRange = 2;
 			
 			// DEBUG CODE
-			//levelState = 17;
-			//framesElapsed = 17 * 30;
+			levelState = 6;
+			framesElapsed = 20 * 30;
 			//consoleSlip.setArrowDifficulty(12);
 			//cg.ship.setBossOverride(false);
 			//cg.ship.slipRange = 0.5;
@@ -299,17 +299,20 @@ package vgdev.stroll.support.splevels
 						for each (c in cg.consoles)
 							c.setReadyToFormat(true);
 						cg.tails.show("NO! NOT AG4IN! I'm NOT D()NE PL@YING YET!!", System.TAILS_NORMAL, "FAILS_incredulous");
-						t = System.getRandNum(0, 360);
-						portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
-						portal.ELLIPSE_A = System.ORBIT_2_X;
-						portal.ELLIPSE_B = System.ORBIT_2_Y;
-						portal.mc_object.x = System.ORBIT_2_X * Math.cos(System.degToRad(t));
-						portal.mc_object.y = System.ORBIT_2_Y * Math.sin(System.degToRad(t));
-						portal.theta = t;
-						portal.dTheta = 0.3;
-						portal.multiplyCooldowns(3);						
+						if (cg.managerMap[System.M_ENEMY].numObjects() < 1000)
+						{
+							t = System.getRandNum(0, 360);
+							portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
+							portal.ELLIPSE_A = System.ORBIT_2_X;
+							portal.ELLIPSE_B = System.ORBIT_2_Y;
+							portal.mc_object.x = System.ORBIT_2_X * Math.cos(System.degToRad(t));
+							portal.mc_object.y = System.ORBIT_2_Y * Math.sin(System.degToRad(t));
+							portal.theta = t;
+							portal.dTheta = 0.2;
+							portal.multiplyCooldowns(3);	
+						}
 					}
-					else if (framesElapsed > System.SECOND * 8 && framesElapsed % (System.SECOND * 20) == 0)
+					else if (framesElapsed > System.SECOND * 8 && framesElapsed % (System.SECOND * 28) == 0)
 					{
 						if (cg.managerMap[System.M_ENEMY].numObjects() < 1000)
 							for (s = 0; s < 3; s++)
@@ -443,7 +446,7 @@ package vgdev.stroll.support.splevels
 							cg.bossBar.setPercent(.5);
 						break;
 						case System.SECOND * 2:
-							cg.tails.show("Guys, jump away if there are too many enemies!", System.TAILS_NORMAL);
+							cg.tails.show("Check the BOSS bar down there! We need to push it all the way to 0%!\n\nOh! And use the slipdrive to jump away if there are too many enemies, OK?", 0);
 						break;
 						case System.SECOND * 9:
 							cg.tails.show("Oh, it's YOU again. Didn't I KILL YOU?", System.TAILS_NORMAL, "FAILS_pissed");
@@ -539,16 +542,7 @@ package vgdev.stroll.support.splevels
 						levelState++;
 						framesElapsed = 0;
 						cg.tails.show("NULL REFERENCE ERROR I-- SHUT UP!", System.TAILS_NORMAL, "FAILS_incredulous");
-						t = System.getRandNum(0, 360);
-						portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
-						portal.ELLIPSE_A = System.ORBIT_2_X;
-						portal.ELLIPSE_B = System.ORBIT_2_Y;
-						portal.mc_object.x = System.ORBIT_2_X * Math.cos(System.degToRad(t));
-						portal.mc_object.y = System.ORBIT_2_Y * Math.sin(System.degToRad(t));
-						portal.theta = t;
-						portal.dTheta = 0.2;
-						portal.multiplyCooldowns(4.5);
-						t = System.getRandNum(0, 360);
+						t = System.getRandNum(0, 360);	
 						portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
 						portal.ELLIPSE_A = System.ORBIT_1_X;
 						portal.ELLIPSE_B = System.ORBIT_1_Y;
@@ -627,7 +621,7 @@ package vgdev.stroll.support.splevels
 							cg.tails.show("This is the last one! Format her away for good!", System.TAILS_NORMAL);
 						break;
 					}
-					if (framesElapsed > System.SECOND * 8)
+					if (framesElapsed > System.SECOND * 12)
 					{
 						if (framesElapsed % (System.SECOND * 4) == 0)
 							cg.tails.show(System.getRandFrom(["HE-EY WHAT? Nnoo, DnoT TOUCH THAT CONS=OL#e!",
@@ -640,13 +634,15 @@ package vgdev.stroll.support.splevels
 						{
 							levelState++;
 							framesElapsed = 0;
-							consoleSlip.fakeJumpNext = true;
 							consoleSlip.fakeJumpLbl = "long";
+							consoleSlip.fakeJumpNext = true;
 							cg.ship.slipRange = 0;
 							cg.gui.tf_distance.text = "Supr Jmp";
 							cg.playJumpEffect("long");
-							cg.tails.show("YOU TWO ARe still st u p   i  d    --!", System.TAILS_NORMAL, "FAILS_incredulous");
+							cg.tails.show("YOU TWO ARe still st u p   i  d    --!", 55, "FAILS_incredulous");
 							cg.bossBar.setPercent(0);
+							cg.visualEffects.applyModuleDistortion(0, true);
+							cg.visualEffects.applyModuleDistortion(1, true);
 						}
 					}
 				break;
@@ -665,10 +661,15 @@ package vgdev.stroll.support.splevels
 					{
 						levelState++;
 						framesElapsed = 0;
+						cg.level.sectorIndex = 13;
+						cg.background.setStyle("homeworld");
+						cg.background.resetBackground();
+						consoleSlip.forceOverride = true;
 					}
 				break;
 				case 32:
-					// success state
+					if (framesElapsed == System.SECOND * 4)
+						cg.tails.show("That's it! We made it! We did it!", System.TAILS_NORMAL * 2);
 				break;
 			}
 			

@@ -32,6 +32,9 @@ package vgdev.stroll.support
 		private const SHIELD_CD:int = 15;			// frames to hold before starting shield fade
 		private const SHIELD_MA:Number = .1;		// minimum alpha of shield as long as it is non-zero
 		
+		private var shieldGrace:int = 0;			// period of time to make shields invulnerable, after recharging them
+		private var SHIELD_GRACE:int = 45;
+		
 		/// Amount to multiply damage by if attack color matches shield color
 		private var shieldMitigation:Number = .35;
 		
@@ -147,7 +150,8 @@ package vgdev.stroll.support
 			{
 				if (shieldCol == col)
 					dmg *= mitigation;
-				shield = System.changeWithLimit(shield, -dmg, 0);
+				if (shieldGrace == 0)
+					shield = System.changeWithLimit(shield, -dmg, 0);
 				SoundManager.playSFX("sfx_hitshield1");
 			}
 			else
@@ -310,6 +314,9 @@ package vgdev.stroll.support
 		{
 			if (!shieldsEnabled) return;
 			
+			if (shieldGrace > 0)
+				shieldGrace--;
+			
 			if (shieldReCurr > 0)
 			{
 				if (--shieldReCurr == 0)
@@ -357,6 +364,7 @@ package vgdev.stroll.support
 			SoundManager.playSFX("sfx_shieldrecharge");
 			
 			updateIntegrity();
+			shieldGrace = SHIELD_GRACE;
 		}
 		
 		/**

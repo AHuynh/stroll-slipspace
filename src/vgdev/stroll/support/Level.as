@@ -71,7 +71,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		public var sectorIndex:int = 0;
+		public var sectorIndex:int = 11;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -355,13 +355,16 @@ package vgdev.stroll.support
 		 */
 		public function nextSector():Boolean
 		{
+			sectorIndex++;
+			
+			if (sectorIndex == 13)
+				return true;
+			
 			if (spLevel)
 			{
 				spLevel.destroy();
 				spLevel = null;
 			}
-			
-			sectorIndex++;
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
