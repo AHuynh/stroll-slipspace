@@ -24,7 +24,10 @@ package vgdev.stroll
 		public const RET_NEXT:int = 2;
 		public var returnCode:int = RET_NORMAL;
 		
+		// session-specific code
 		public var shipColor:uint = 0xFFFFFF;
+		public var maxSector:int = 0;			// furthest sector arrived at
+		public var savedHP:Number = 0;			// ship hull points at maxSector
 		
 		public function Engine() 
 		{			
@@ -68,9 +71,10 @@ package vgdev.stroll
 				switch (gameState)			// determine which new container to go to next
 				{
 					case STATE_MENU:
+						maxSector = 0;
+						savedHP = 0;
 						switchToContainer(new ContainerGame(this), 0, 0);
 						gameState = STATE_GAME;
-						//trace("[ENGINE] Starting game!");
 					break;
 					case STATE_GAME:
 						if (returnCode == RET_NORMAL)
@@ -80,7 +84,7 @@ package vgdev.stroll
 						}
 						else if (returnCode == RET_RESTART)
 						{
-							switchToContainer(new ContainerGame(this), 0, 0);
+							switchToContainer(new ContainerGame(this, true), 0, 0);
 							gameState = STATE_GAME;
 						}
 						else if (returnCode == RET_NEXT)
@@ -116,20 +120,10 @@ package vgdev.stroll
 			returnCode = RET_NORMAL;
 		}
 		
-		/**
-		 * Global keyboard listener, used to listen for quality hotkeys.
-		 * @param	e	the captured KeyboardEvent, used to find the pressed key
-		 */
-		/*private function onKeyPress(e:KeyboardEvent):void
+		public function saveProgress(sector:int, sp:Number):void
 		{
-			if (!stage)
-				return;
-			if (e.keyCode == 76)		// -- l
-				stage.quality = StageQuality.LOW;
-			else if (e.keyCode == 77)	// -- m
-				stage.quality = StageQuality.MEDIUM;
-			else if (e.keyCode == 72)	// -- h
-				stage.quality = StageQuality.HIGH;
-		}*/
+			maxSector = sector;
+			savedHP = sp;
+		}
 	}
 }

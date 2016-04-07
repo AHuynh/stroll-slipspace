@@ -120,9 +120,10 @@ package vgdev.stroll.support
 		/**
 		 * Restore the ship's HP to the minumum amount, if below that amount
 		 */
-		public function minRestore():void
+		public function minRestore(savedHP:Number = 0):void
 		{
-			hp = Math.max(hp, MIN_HP);
+			savedHP = Math.max(savedHP, MIN_HP);
+			hp = Math.max(hp, savedHP);
 			updateIntegrity();
 		}
 		

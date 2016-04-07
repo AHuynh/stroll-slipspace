@@ -22,7 +22,7 @@ package vgdev.stroll.props.enemies
 			
 			dR = System.getRandNum( -2, 2);
 			
-			cdCounts = [60, 100, 150];
+			cdCounts = [75, 120, 190];
 			cooldowns = [System.getRandInt(90, 120), System.getRandInt(110, 130), System.getRandInt(160, 200)];
 		}
 		
@@ -52,7 +52,7 @@ package vgdev.stroll.props.enemies
 				if (cdCounts[i]-- <= 0)
 				{
 					onFire();
-					cdCounts[i] = cooldowns[i];
+					cdCounts[i] = int(cooldowns[i] * System.getRandNum(1, 1.2));
 					var spawn:Point = mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y))
 					var atkAngle:Number = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x + System.getRandNum( -40, 40), cg.shipHitMask.y + System.getRandNum( -30, 30));
 					var mult:Number = System.getRandNum(.6, 1.5);

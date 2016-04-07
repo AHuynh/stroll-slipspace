@@ -8,6 +8,7 @@
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.media.Camera;
+	import flash.text.TextField;
 	import flash.ui.Keyboard;
 	import flash.media.Sound;
 	import flash.media.SoundMixer;
@@ -76,21 +77,30 @@
 		private const TAILS_DEFAULT:String = "Hi! I'm TAILS; the ship AI.\n\n" +
 											 "I've booted up the ship's basic systems. Check them out before we jump.\n\n" +
 											 "OK, are both of you ready?";
+		private const TAILS_RELOAD:String = "Huh? What just happened?\n\n" +
+											 "Not really sure, to be honest. Almost like we...\n\n" +
+											 "Uh, anyway, how about we keep going?";
+		private const HEADS_RELOAD:String = "Error. System clock anomaly.\n" +
+											 "Previous state detected.\n\n" +
+											 "Disregard. Continue mission. Y/N?";
 											 
+		// pause menu helpers
 		private var escDown:Boolean = false;
 		private var resetCounter:int = 0;
 		private var justPaused:Boolean = false;
 		
 		public var gameOverAnnouncer:String = "TAILS";
+		private var useSave:Boolean = false;
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
 		 * @param	eng			A reference to the Engine
 		 */
-		public function ContainerGame(eng:Engine)
+		public function ContainerGame(eng:Engine, _useSave:Boolean = false )
 		{
 			super();
-			engine = eng
+			engine = eng;
+			useSave = _useSave;
 
 			game = new SWC_Game();
 			addChild(game);
@@ -109,6 +119,8 @@
 			gui.mc_pause.visible = false;
 			gui.mc_pause.tf_reset.visible = false;
 			gui.mc_lose.visible = false;
+			gui.mc_lose.tf_reset.visible = false;
+			gui.mc_win.visible = false;
 			gui.mc_tails.visible = false;
 			hudConsoles = [gui.mod_p1, gui.mod_p2];
 			gui.tf_titleL.visible = false;
@@ -216,9 +228,25 @@
 			engine.stage.addEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			engine.stage.addEventListener(KeyboardEvent.KEY_UP, upKeyboard);
 			
-			tails.show(TAILS_DEFAULT);
-			tails.showNew = true;
-			camera.setCameraFocus(new Point(0, -100));
+			// load save data
+			if (useSave)
+			{
+				ship.minRestore(engine.savedHP);
+				level.sectorIndex = engine.maxSector - 1;		// 1 sector before
+				gui.mc_progress.setAllSectorProgress(level.sectorIndex);
+				background.setRandomStyle(int(level.sectorIndex / 5), System.getRandCol());
+				if (level.sectorIndex <= 8)
+					tails.show(TAILS_RELOAD);
+				else
+					tails.show(HEADS_RELOAD, 0, "HEADS");
+			}
+			// new game
+			else
+			{
+				tails.show(TAILS_DEFAULT);
+				tails.showNew = true;
+				camera.setCameraFocus(new Point(0, -100));
+			}
 			
 			stage.focus = game;
 			gui.mc_fade.gotoAndPlay(2);		// fade in
@@ -281,21 +309,25 @@
 					escDown = true;
 					resetCounter = 0;
 					
-					if (isDefeatedPaused)
+				/*	if (isDefeatedPaused)
 					{
 						if (game.mc_ship.mc_shipBase.currentFrame == game.mc_ship.mc_shipBase.totalFrames)
 							destroy(null);
 						return;
-					}
+					}*/
 					
-					if (!isPaused)
+					if (!isPaused && !isDefeatedPaused)
 					{
 						isPaused = true;
 						justPaused = true;
 					}
-					gui.mc_pause.visible = isPaused;
+					if (!isDefeatedPaused)
+						gui.mc_pause.visible = isPaused;
 					if (!justPaused)
+					{
 						gui.mc_pause.tf_reset.visible = true;
+						gui.mc_lose.tf_reset.visible = true;
+					}
 					
 				break;
 				
@@ -319,16 +351,26 @@
 			{
 				escDown = false;
 				gui.mc_pause.tf_reset.visible = false;
+				gui.mc_lose.tf_reset.visible = false;
 				
 				if (justPaused)
 				{
+					trace("Quittin because just paused");
 					justPaused = false;
 					return;
 				}				
 				if (resetCounter <= 6)
 				{
-					gui.mc_pause.visible = false;
-					isPaused = false;
+					if (gui.mc_pause.visible)
+					{
+						gui.mc_pause.visible = false;
+						isPaused = false;
+					}
+					else if (gui.mc_lose.visible)
+					{
+						engine.returnCode = engine.RET_RESTART;
+						destroy(null);
+					}
 				}
 				resetCounter = 0;
 			}
@@ -373,17 +415,18 @@
 				return completed;
 		
 			SoundManager.step();
-			if (escDown && !justPaused && gui.mc_pause.visible)
+			if (escDown && !justPaused && (gui.mc_pause.visible || gui.mc_lose.visible))
 			{
 				resetCounter++;
+				var mc:TextField = gui.mc_pause.visible ? gui.mc_pause.tf_reset : gui.mc_lose.tf_reset;
 				if (resetCounter > 35)
-					gui.mc_pause.tf_reset.text = "Resetting... 1";
+					mc.text = "Resetting... 1";
 				else if (resetCounter > 20)
-					gui.mc_pause.tf_reset.text = "Resetting... 2";
+					mc.text = "Resetting... 2";
 				else if (resetCounter > 6)
-					gui.mc_pause.tf_reset.text = "Resetting... 3";
+					mc.text = "Resetting... 3";
 				else
-					gui.mc_pause.tf_reset.text = "";
+					mc.text = "";
 				if (resetCounter == 50)
 					destroy(null);
 			}
@@ -406,11 +449,11 @@
 				}
 				else
 				{
-					if (cf <= 55 && cf % 5 == 0)
+					if (cf <= 211 && cf % 5 == 0)
 						addExplosions(System.getRandInt(2, 5));
-					else if (cf == 72)
+					else if (cf == 228)
 						addExplosions(System.getRandInt(5, 12));
-					if (cf < 86 && cf % 3 == 0)
+					if (cf < 242 && cf % 3 == 0)
 					{
 						var pt:Point = getRandomShipLocation();
 						for (i = System.getRandInt(3, 9); i >= 0; i--)
@@ -484,13 +527,18 @@
 	
 			level.nextSector();
 			
-			var boss:Boolean = level.sectorIndex % 4 == 0;
+			// save state on entering Sector 1, 4, 5, 8, 9, 12
+			var mod:int = level.sectorIndex % 4;
+			if (mod == 0 || mod == 1)
+				engine.saveProgress(level.sectorIndex, ship.getHP());
 			
+			var boss:Boolean = mod == 0;
 			if (boss)
 				SoundManager.playBGM("bgm_boss", System.VOL_BGM);
 			else if (level.sectorIndex % 4 == 1)
 				SoundManager.playBGM("bgm_calm", System.VOL_BGM);
-				
+			
+			// show starting TAILS message
 			tails.show(level.getTAILS(), boss ? 0 : 120, (level.sectorIndex > 8 ? "HEADS" : null));
 			
 			// hide all "New!" and console tutorial messages
@@ -705,12 +753,12 @@
 		public function reactToFive():void
 		{
 			if (tails.showDuration > 0 || serious) return;
-			if (SoundManager.getBGMname() == "bgm_FAILS")
+			if (gameOverAnnouncer == "FAILS")
 				tails.show(System.getRandFrom([ "What? Don't high-five! I'M TRYING TO KILL YOU!",
 												"You two are even dumber than I thought!",
 												"The both of you look like HUGE DORKS, you know..."
 												]), System.SECOND * 3, "FAILS_pissed");
-			else if (level.sectorIndex <= 8)
+			else if (gameOverAnnouncer == "TAILS")
 				tails.show(System.getRandFrom([ "Aww, you two are so cute!",
 												"Yeah! Keep your spirits up!",
 												"I'd high-five you, too! If I had hands, that is...",

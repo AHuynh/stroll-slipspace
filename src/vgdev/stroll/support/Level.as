@@ -71,7 +71,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		public var sectorIndex:int = 11;
+		public var sectorIndex:int = 0;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -125,7 +125,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											rawEncountersJSON = [JSON.parse(new en_boss_final())];
+											//rawEncountersJSON = [JSON.parse(new en_boss_final())];
 											
 											// Peeps boss
 											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
@@ -314,7 +314,7 @@ package vgdev.stroll.support
 																	"y":pos.y,
 																	"attackColor": System.COL_YELLOW,
 																	"attackStrength": 18,
-																	"hp": 150
+																	"hp": 125
 																	});
 					manager = System.M_ENEMY;
 				break;
@@ -368,7 +368,7 @@ package vgdev.stroll.support
 			var choices:Array = [];
 			for each (var e:Object in parsedEncounters)
 			{
-				//if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
+				if (e["used"] == null && !System.outOfBounds(sectorIndex, e["difficulty_min"], e["difficulty_max"]))		// [COMMENTME]
 					choices.push(e);
 			}
 			

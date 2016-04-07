@@ -39,8 +39,8 @@ package vgdev.stroll.support.splevels
 			cg.ship.slipRange = 2;
 			
 			// DEBUG CODE
-			levelState = 6;
-			framesElapsed = 20 * 30;
+			levelState = 31;
+			//framesElapsed = 20 * 30;
 			//consoleSlip.setArrowDifficulty(12);
 			//cg.ship.setBossOverride(false);
 			//cg.ship.slipRange = 0.5;
@@ -643,6 +643,7 @@ package vgdev.stroll.support.splevels
 							cg.bossBar.setPercent(0);
 							cg.visualEffects.applyModuleDistortion(0, true);
 							cg.visualEffects.applyModuleDistortion(1, true);
+							cg.gameOverAnnouncer = "TAILS";
 						}
 					}
 				break;
@@ -662,14 +663,21 @@ package vgdev.stroll.support.splevels
 						levelState++;
 						framesElapsed = 0;
 						cg.level.sectorIndex = 13;
-						cg.background.setStyle("homeworld");
+						cg.background.setStyle("endworld");
 						cg.background.resetBackground();
 						consoleSlip.forceOverride = true;
 					}
 				break;
 				case 32:
 					if (framesElapsed == System.SECOND * 4)
+					{
 						cg.tails.show("That's it! We made it! We did it!", System.TAILS_NORMAL * 2);
+						cg.game.mc_ship.mc_shipBase.gotoAndPlay("win");
+					}
+					else if (framesElapsed == System.SECOND * 11)
+					{
+						// TODO win screen
+					}
 				break;
 			}
 			
