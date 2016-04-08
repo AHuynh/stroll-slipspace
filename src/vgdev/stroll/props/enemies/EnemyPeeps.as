@@ -13,13 +13,14 @@ package vgdev.stroll.props.enemies
 	
 	/**
 	 * Sector 4 boss. Main body.
+	 * Stands still in phase 1; teleports in phase 2; teleports with adds in phase 3
 	 * @author Jimmy Spearman, Alexander Huynh
 	 */
 	public class EnemyPeeps extends ABST_Enemy 
 	{		
 		private var eyes:Array = [];									// reference to the 4 EnemyPeepsEyes from L to R
 		private var eyeXOffsets:Array = [71, 44, 44, 71];
-		private var eyeYOffsets:Array = [ -152.5, -105.5, 108.5, 153.5];
+		private var eyeYOffsets:Array = [ -152.5, -105.5, 107.5, 152.5];
 		public var activeEyes:Array = [0, 0];
 		
 		private var incapacitated:Boolean = false;
@@ -27,7 +28,7 @@ package vgdev.stroll.props.enemies
 		private var recoverCooldownTimer:Number = recoverCooldownMax;	//current number for cooldown
 		private var wasIncapacitated:Boolean = false;
 		
-		private var teleportCooldownMax:Number = 4200000000; 					//frames before teleporting
+		private var teleportCooldownMax:Number = 300; 					//frames before teleporting
 		private var teleportCooldownTimer:Number = teleportCooldownMax; //current number for cooldown
 		private var currentAreaNumber:int = 0;
 		
@@ -36,6 +37,13 @@ package vgdev.stroll.props.enemies
 		private var phaseChangeImmune:Boolean = false;
 		private var phaseChangeCooldownMax:Number = 130;					  //frames before battle resumes
 		private var phaseChangeCooldownTimer:Number = phaseChangeCooldownMax; //current number for cooldown
+		
+		private var freeTP:Boolean = true;				// free teleport after phase 1->2
+		public var justTeleported:Boolean = false;		// true to signal that the camera needs to be adjusted
+		public var firstIncap:int = 0;					// set to 1 on first incap
+		private var markedToDie:Boolean = false;
+		private var explCount:int = 0;
+		private var trueDeath:Boolean = false;
 
 		public function EnemyPeeps(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
@@ -51,7 +59,7 @@ package vgdev.stroll.props.enemies
 			mc_object.y = 0;
 			
 			orbitX = System.ORBIT_0_X + 50;
-			orbitY = System.ORBIT_0_Y + 60;
+			orbitY = System.ORBIT_0_Y + 75;
 
 			hp = hpMax = 500;
 			rangeVary = 20;
@@ -59,10 +67,11 @@ package vgdev.stroll.props.enemies
 			for (var i:int = 0; i < 4; i++)
 				eyes.push(new EnemyPeepsEye(cg, new SWC_Enemy(), this));
 			lockEyes();
-			// [hardened shot, triple shot]
+			// [hardened shot]	eyes have smaller shots
 			cdCounts = [300];		// initial cooldown value
 			cooldowns = [400];		// cooldown value
 						
+			playDeathSFX = false;
 			mc_object.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
@@ -87,7 +96,7 @@ package vgdev.stroll.props.enemies
 		
 		override protected function updatePosition(dx:Number, dy:Number):void
 		{
-			if (completed)
+			if (completed || mc_object == null)
 				return;
 			
 			var ptNew:Point = new Point(mc_object.x + dx, mc_object.y + dy);
@@ -131,22 +140,42 @@ package vgdev.stroll.props.enemies
 																			"scale":		3
 																		});
 							cg.addToGame(proj, System.M_EPROJECTILE);
+					mc_object.base.mc_lid_large.visible = true;
 				}
+				else if (cdCounts[i] == 2)
+					mc_object.base.mc_lid_large.visible = false;
 			}
 		}
 		
 		override public function step():Boolean 
 		{
-			if (mc_object == null) {
+			if (mc_object == null || completed) {
 				return true;
 			}
 			
-			//trace(activeEyes);
-			//trace("\t", eyes[activeEyes[0]].isIncapacitated(), eyes[activeEyes[1]].isIncapacitated());
+			if (markedToDie)
+			{
+				if (++explCount % 5 == 0)
+				{
+					SoundManager.playSFX("sfx_explosionlarge1", System.getRandNum(0.4, 0.7));
+					addGibs(4);
+					var spawnFX:ABST_Object;
+					for (var s:int = 0; s < 4; s++)
+					{
+						spawnFX = cg.addDecor("spawn", { "x":mc_object.x + System.getRandNum( -120, 120),
+																		 "y":mc_object.y + System.getRandNum( -120, 120),
+																		"scale":System.getRandNum(1, 4) } );
+						spawnFX.mc_object.base.setTint(System.COL_RED);
+					}
+				}
+			}
+			
 			if (eyes[activeEyes[0]].isIncapacitated() && eyes[activeEyes[1]].isIncapacitated()) {
 				if (!incapacitated) {
 					SoundManager.playSFX("sfx_peeps_yell", 1);
 					incapacitated = true;
+					if (firstIncap == 0)
+						firstIncap = 1;
 					mc_object.base.mc_lid_large.visible = false;
 					for (var e:int = 0; e < 4; e++)
 						eyes[e].mc_object.base.gotoAndStop(1);		// close eyelid
@@ -175,12 +204,15 @@ package vgdev.stroll.props.enemies
 		
 		private function checkPhase():void
 		{
-			if (hp > (hpMax * 2.0 / 3.0)) {
-				bossPhase = 1;
-			} else if (hp > (hpMax / 3.0)) {
-				bossPhase = 2;
-			} else {
-				bossPhase = 3;
+			if (!markedToDie)
+			{
+				if (hp > (hpMax * 2.0 / 3.0)) {
+					bossPhase = 1;
+				} else if (hp > (hpMax / 3.0)) {
+					bossPhase = 2;
+				} else {
+					bossPhase = 3;
+				}
 			}
 			
 			if (bossPhase != prevBossPhase) {
@@ -188,7 +220,8 @@ package vgdev.stroll.props.enemies
 			}
 			
 			if (phaseChangeImmune) {
-				updatePosition(5 * Math.cos(4.43 * cg.level.getCounter()), 5 * Math.cos(2 * cg.level.getCounter()));
+				if (cg != null)
+					updatePosition(5 * Math.cos(4.43 * cg.level.getCounter()), 5 * Math.cos(2 * cg.level.getCounter()));
 				incapacitated = true;
 				if (phaseChangeCooldownTimer-- < 0) {
 					phaseChangeImmune = false;
@@ -203,10 +236,13 @@ package vgdev.stroll.props.enemies
 			phaseChangeImmune = true;
 			phaseChangeCooldownTimer = phaseChangeCooldownMax;
 			SoundManager.playSFX("sfx_peeps_phase_change", 1);
+			mc_object.base.mc_lid_large.visible = true;
+			addGibs(15);
 		}
 		
 		private function lockEyes():void
 		{
+			if (mc_object == null) return;
 			var theta:Number = System.degToRad(mc_object.rotation);
 			var s:Number = Math.sin(theta);
 			var c:Number = Math.cos(theta);
@@ -219,6 +255,20 @@ package vgdev.stroll.props.enemies
 		
 		private function revivePeeps():void
 		{
+			if (markedToDie)
+			{
+				trueDeath = true;
+				destroy();
+				return;
+			}
+			
+			if (freeTP && bossPhase == 2)
+			{
+				freeTP = false;
+				randomTeleport();
+				teleportCooldownTimer = teleportCooldownMax;
+			}
+			
 			incapacitated = false;
 			recoverCooldownTimer = recoverCooldownMax;
 			mc_object.base.mc_lid_large.visible = true;
@@ -232,7 +282,18 @@ package vgdev.stroll.props.enemies
 		override public function changeHP(amt:Number):Boolean 
 		{
 			if (incapacitated && !phaseChangeImmune) {
-				return super.changeHP(amt);
+				var ret:Boolean = super.changeHP(amt);
+				if (!markedToDie && ret)
+				{
+					markedToDie = true;
+					bossPhase = prevBossPhase = 4;
+					initiatePhaseChange();
+					phaseChangeCooldownTimer *= 2;
+					mc_object.base.mc_lid_large.visible = false;
+					for (var e:int = 0; e < 4; e++)
+						eyes[e].mc_object.base.gotoAndStop(2);		// open eyelid
+				}
+				return ret;
 			} else {
 				return false;
 			}
@@ -241,12 +302,14 @@ package vgdev.stroll.props.enemies
 		//teleport peeps to a new location around the ship
 		private function randomTeleport():void
 		{
+			if (bossPhase == 1 || bossPhase == 4) return;
+			
 			var areaChange:int = System.getRandInt(1, 4);
 			currentAreaNumber = (currentAreaNumber + areaChange) % 5;
 			
 			cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale": 4 } );
 			
-			if (bossPhase > 1) {
+			if (bossPhase == 3) {
 				var newSpawn:ABST_Enemy = new EnemyEyeball(cg, new SWC_Enemy(), {});
 				newSpawn.mc_object.x = mc_object.x;
 				newSpawn.mc_object.y = mc_object.y;
@@ -275,10 +338,31 @@ package vgdev.stroll.props.enemies
 			setNewEyes();
 			mc_object.rotation = 360 + System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y) % 360;
 			lockEyes();
+			
+			justTeleported = true;
+		}
+		
+		private function addGibs(num:int):void
+		{
+			for (var i:int = num; i >= 0; i--)
+				cg.addDecor("gib_eye", {
+											"x": System.getRandNum(mc_object.x - 100, mc_object.x + 100),
+											"y": System.getRandNum(mc_object.y - 100, mc_object.y + 100),
+											"dx": System.getRandNum( -1, 1),
+											"dy": System.getRandNum( -1, 1),
+											"dr": System.getRandNum( -5, 5),
+											"rot": System.getRandNum(0, 360),
+											"scale": System.getRandNum(1, 5),
+											"alphaDelay": 90 + System.getRandInt(0, 30),
+											"alphaDelta": 30,
+											"random": true
+										});
 		}
 		
 		override public function destroy():void 
 		{
+			if (!trueDeath) return;
+			addGibs(20);
 			for (var i:int = 0; i < eyes.length; i++) {
 				eyes[i].kill();
 			}

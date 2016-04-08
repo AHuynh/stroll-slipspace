@@ -77,6 +77,7 @@ package vgdev.stroll
 		public static const COL_WHITE:uint = 0xFFFFFF;
 		public static const COL_REDHIT:uint = 0xDD0000;
 		public static const COL_RED:uint = 0xFF0000;
+		public static const COL_TAILS:uint = 0x00FFFF;
 		public static const COL_YELLOW:uint = 0xFFFF00;
 		public static const COL_GREEN:uint = 0x00FF00;
 		public static const COL_BLUE:uint = 0x0077FF;

@@ -13,7 +13,7 @@ package vgdev.stroll.support.splevels
 	{
 		private var nextWave:int = 140;
 		private const D_TIME:int = -4;		// frames to decrease nextWave by
-		private const MIN_TIME:int = 30;	// minumum delay between spawning waves
+		private const MIN_TIME:int = 50;	// minumum delay between spawning waves
 		
 		private var useColors:Boolean;
 		private var waveColor:uint = System.COL_WHITE;

@@ -54,6 +54,8 @@ package vgdev.stroll.props.consoles
 					{
 						if (c == originalConsole) continue;
 						c.setReadyToFormat(false);
+						if (c.closestPlayer != null)
+							c.setAlready(true);
 					}
 					startPuzzle();
 				}
@@ -61,7 +63,8 @@ package vgdev.stroll.props.consoles
 		}
 		
 		private function startPuzzle():void
-		{			
+		{
+			beingUsed = true;
 			puzzleActive = true;
 			localPuzzleActive = true;
 			targets = [];
@@ -166,6 +169,7 @@ package vgdev.stroll.props.consoles
 			if (targets.length == 0)
 			{
 				puzzleActive = false;
+				beingUsed = false;
 				marker.visible = false;
 				ui.tf_cooldown.visible = true;
 				ui.tf_cooldown.text = "System\nformatted!";
@@ -173,6 +177,9 @@ package vgdev.stroll.props.consoles
 				ui.mc_marker.x = 94;
 				freeTimer = 60;
 				difficulty++;
+				for each (var c:ABST_Console in cg.consoles)
+					if (c.closestPlayer != null && c != originalConsole)
+						c.setAlready(false);
 			}
 			else
 				ui.mc_marker.x = 48 + 46 * ((tgtTotal - len) / tgtTotal);
@@ -223,6 +230,7 @@ package vgdev.stroll.props.consoles
 			if (localPuzzleActive)
 			{
 				puzzleActive = false;
+				beingUsed = false;
 				for each (var c:ABST_Console in cg.consoles)		// allow any corrupted console to be tried again
 					c.setReadyToFormat(true);
 			}

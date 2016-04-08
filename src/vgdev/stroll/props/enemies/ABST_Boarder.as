@@ -37,8 +37,9 @@ package vgdev.stroll.props.enemies
 		{
 			super(_cg, _mc_object, _hitMask);
 			
-			mc_object.x = System.setAttribute("x", attributes, 0);
-			mc_object.y = System.setAttribute("y", attributes, 0);
+			var p:Point = cg.getRandomShipLocation();
+			mc_object.x = p.x;
+			mc_object.y = p.y;
 			
 			setScale(System.setAttribute("scale", attributes, 1));
 			hp = hpMax = 50;

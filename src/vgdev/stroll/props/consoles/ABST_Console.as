@@ -44,6 +44,7 @@ package vgdev.stroll.props.consoles
 		public var corrupted:Boolean = false;				// if true, console is either "corrupt" or "fails"
 		public var debuggable:Boolean = false;				// if true, this console can be debugged ("fails")
 		public static var numCorrupted:int = 0;
+		public static var beingUsed:Boolean = false;		// if true, 1 player already debugging
 		protected var consoleFAILS:ConsoleFAILS = null;		// the ConsoleFAILS class to use if corrupt
 		public var unscrambledLocation:MovieClip;
 		// ----------------------------------------------------
@@ -246,7 +247,7 @@ package vgdev.stroll.props.consoles
 		{
 			if (!inUse && unlocked)
 			{
-				if (closestPlayer != null && closestPlayer == p)
+				if (closestPlayer != null && closestPlayer == p && closestPlayer.activeConsole == null)
 				{
 					inUse = true;
 					closestPlayer.sitAtConsole(this);
@@ -294,7 +295,7 @@ package vgdev.stroll.props.consoles
 		 * Update the module HUD
 		 * @param	label		Name of the module
 		 */
-		protected function setHUD(label:String):void
+		public function setHUD(label:String):void
 		{			
 			var cName:String = label;
 			if (label != "none" && corrupted)
@@ -315,7 +316,26 @@ package vgdev.stroll.props.consoles
 				cg.hudTitles[closestPlayer.playerID].text = label;
 			}
 			
+			if (label == "corrupt")
+			{
+				var ui:MovieClip = getHUD();
+				ui.msg_loading.visible = !beingUsed;
+				ui.msg_already.visible = beingUsed;
+			}
+			
 			//trace("[ABST_Console] Setting HUD for", CONSOLE_NAME, label, closestPlayer.playerID);
+		}
+		
+		/**
+		 * Specific helper for when 1 player starts formatting, to say "ALREADY FIXING" on the other player
+		 */
+		public function setAlready(isFixing:Boolean):void
+		{
+			var ui:MovieClip = getHUD();
+			if (ui == null) return;
+			if (ui.msg_loading == null) return;
+			ui.msg_loading.visible = !isFixing;
+			ui.msg_already.visible = isFixing;
 		}
 		
 		/**
@@ -395,7 +415,7 @@ package vgdev.stroll.props.consoles
 		 * Useful when updating UI graphics based on what's happening in the module
 		 * @return		MovieClip (specifically, SWC_GUI.Module.mod)
 		 */
-		protected function getHUD():MovieClip
+		public function getHUD():MovieClip
 		{
 			if (closestPlayer == null)
 			{

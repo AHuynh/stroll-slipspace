@@ -117,6 +117,9 @@ package vgdev.stroll.support.splevels
 			if (choices.length == 0) return;
 			var console:ABST_Console = System.getRandFrom(choices);
 			
+			if (console.closestPlayer != null)
+				cg.hudConsoles[console.closestPlayer.playerID].mc_taunt.taunt();
+			
 			if (console is ConsoleNavigation)
 			{
 				cg.tails.show("Navigation? How about FIRE instead?!", System.TAILS_NORMAL, "FAILS_talk");

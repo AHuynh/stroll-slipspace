@@ -197,7 +197,7 @@ package vgdev.stroll.support
 		
 		public static function playBGM(music:String, volume:Number = 1):void
 		{
-			//return;	// DEBUGGING - mute BGM
+			return;	// DEBUGGING - mute BGM
 			
 			if (nameCurr == music)
 				return;
@@ -219,9 +219,7 @@ package vgdev.stroll.support
 		 * @param	volume
 		 */
 		public static function playBGMpaired(musicMain:String, musicSecondary:String, volume:Number = 1):void
-		{
-			trace("[Sound] Plaing paired music", musicMain, "primary and", musicSecondary, "secondary.");
-			
+		{			
 			playBGM(musicMain, volume);
 			
 			var snd:Sound = getBGM(musicSecondary);
@@ -265,9 +263,7 @@ package vgdev.stroll.support
 		 * @param	keepAlive	if true, don't stop the faded BGM (so future fades will resume from a place other than the start)
 		 */
 		public static function crossFadeBGM(music:String, volume:Number = 1, _keepAlive:Boolean = false):void
-		{
-			trace("[Sound] Crossfading", music, "in and", nameCurr, "out.");
-			
+		{			
 			if (volume == -1)
 				volume = currVolume;
 			
@@ -304,7 +300,6 @@ package vgdev.stroll.support
 			
 			if (fadeSTF.volume == fadeVolumeTgt && currSTF.volume == 0)
 			{				
-				trace("[Sound] Done crossfading", nameNew, "in and", nameCurr, "out!");
 				currVolume = fadeVolumeTgt;
 				
 				// save a reference to the song that has been faded out

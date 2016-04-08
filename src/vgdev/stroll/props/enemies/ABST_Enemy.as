@@ -58,6 +58,9 @@ package vgdev.stroll.props.enemies
 		
 		protected var playDeathSFX:Boolean = true;
 		
+		/// If true, shouldn't be killed by normal means; ignore remove code in manager
+		public var stubborn:Boolean = false;
+		
 		public function ABST_Enemy(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
 			super(_cg, _mc_object, new Point(System.setAttribute("x", attributes, 0), System.setAttribute("y", attributes, 0)), System.AFFIL_ENEMY);
@@ -129,7 +132,7 @@ package vgdev.stroll.props.enemies
 				case "spd":			spd = val;			return;
 				case "drift":		drift = val;		return;
 				case "cooldowns":	cooldowns = val;	return;
-				default:		trace("[ABST_Enemy] Couldn't handle setting", attr, val);
+				default:			trace("[ABST_Enemy] Couldn't handle setting", attr, val);
 			}
 		}
 		
@@ -142,8 +145,9 @@ package vgdev.stroll.props.enemies
 			selfColor = col;			
 			ct.redMultiplier = selfColor >> 16 & 0x0000FF / 255;
 			ct.greenMultiplier = Math.min(selfColor >> 8 & 0x0000FF / 255, (0xFF / 255) * colAlpha);
-			ct.blueMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * colAlpha)
-			mc_object.base.transform.colorTransform = ct;
+			ct.blueMultiplier = Math.min(selfColor & 0x0000FF / 255, (0xFF / 255) * colAlpha);
+			if (mc_object != null)
+				mc_object.base.transform.colorTransform = ct;
 		}
 		
 		/**

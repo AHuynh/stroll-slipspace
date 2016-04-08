@@ -32,11 +32,11 @@ package vgdev.stroll.props.consoles
 			}
 			
 			if (keys[0]) {
-				cg.ship.adjustHeading(ADJUST_SENSITIVITY);
+				cg.ship.adjustHeading(ADJUST_SENSITIVITY * (Math.abs(cg.ship.shipHeading) > .5 ? 2 : 1));
 			}
 			
 			if (keys[2]) {
-				cg.ship.adjustHeading(-ADJUST_SENSITIVITY)
+				cg.ship.adjustHeading(-ADJUST_SENSITIVITY * (Math.abs(cg.ship.shipHeading) > .5 ? 2 : 1));
 			}
 		}
 		

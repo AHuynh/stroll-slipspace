@@ -175,7 +175,7 @@ package vgdev.stroll.props.consoles
 		public function setArrowDifficulty(sector:int):void
 		{
 			arrowDifficulty = 3 + int(sector / 3);
-			arrowSpeed = 3.5 + sector * .25;
+			arrowSpeed = 3.5 + sector * .2;
 			arrowVarySpacing = 20 + int(sector * 1.2);
 		}
 		
@@ -197,7 +197,7 @@ package vgdev.stroll.props.consoles
 				getHUD().mc_container.addChild(mc);
 				arrows.push(mc);
 				
-				anchor += 40 + System.getRandNum(0, arrowVarySpacing);
+				anchor += 40 + (arrowDifficulty * 2) + System.getRandNum(0, arrowVarySpacing);
 			}
 			setText(null);
 			missCounter = 0;

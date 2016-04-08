@@ -107,7 +107,7 @@ package vgdev.stroll.props.enemies
 																	});
 					if (--cloudCounter <= 0)
 					{
-						cloudCounter = System.getRandInt(2, 5);
+						cloudCounter = System.getRandInt(4, 6);
 						spawnClouds();
 						anchorCounter = 0;
 					}

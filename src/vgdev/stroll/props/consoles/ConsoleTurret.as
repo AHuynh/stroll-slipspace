@@ -51,6 +51,10 @@ package vgdev.stroll.props.consoles
 		private const MINI_SCALE:Number = .09;
 		private const MINI_LEAD:Number = .75;
 		
+		/// Turret power, [0-2]
+		private var level:int = 0;
+		private var triple:Boolean = false;
+		
 		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array, _turretID:int) 
 		{
 			super(_cg, _mc_object, _players, false);	
@@ -118,22 +122,46 @@ package vgdev.stroll.props.consoles
 			// turret firing
 			if (keys[4])
 			{
-				if (cdCount == 0)		// fire a bullet
+				if (cdCount == 0)		// fire bullet(s)
 				{
-					cdCount = cooldown;																	 
-					var proj:ABST_EProjectile = new EProjectileGeneric(cg, new SWC_Bullet(),
-																	{	 
-																		"affiliation":	System.AFFIL_PLAYER,
-																		"dir":			turret.nozzle.rotation + rotOff + System.getRandNum( -sway, sway),
-																		"dmg":			6,
-																		"life":			projectileLife,
-																		"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
-																		"spd":			projectileSpeed,
-																		"style":		"turret_small_orange"
-																	});
-					cg.addToGame(proj, System.M_EPROJECTILE);
+					cdCount = cooldown;	
+					triple = !triple;
+					var proj:ABST_EProjectile;											
+					for (var n:int = 0; n < 3; n++)
+					{
+						if (n != 1 && (!triple || level == 0)) continue;
+						proj = new EProjectileGeneric(cg, new SWC_Bullet(),
+																{	 
+																	"affiliation":	System.AFFIL_PLAYER,
+																	"dir":			turret.nozzle.rotation + rotOff + System.getRandNum(-sway, sway) + (n - 1) * 10,
+																	"dmg":			n == 1 ? 6 : 2,
+																	"life":			projectileLife,
+																	"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
+																	"spd":			projectileSpeed,
+																	"scale":		n == 1 ? 1 : .5,
+																	"style":		"turret_small_orange"
+																});
+						cg.addToGame(proj, System.M_EPROJECTILE);
+					}
 					SoundManager.playSFX("sfx_laser1", .6);
 				}
+			}
+		}
+		
+		/**
+		 * Upgrade the turret and show the "New!" icon
+		 * @param	lvl		Turret level, [0-2]
+		 */
+		public function setLevel(lvl:int):void
+		{
+			mc_object.mc_newIndicator.visible = true;
+			level = lvl;
+			cooldown = lvl == 2 ? 5 : 7;
+			switch (lvl)
+			{
+				case 0:	sway = 3.5;	break;
+				case 1:	sway = 3;	break;
+				case 2:	sway = 1.5;	break;
 			}
 		}
 		

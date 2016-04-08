@@ -20,7 +20,8 @@ package vgdev.stroll.props.consoles
 		private const RATE_REPAIR:Number = 5;
 		private const RANGE_REPAIR:Number = 30
 		
-		private const RATE_REVIVE:Number = 1;
+		private const RATE_REVIVE:Number = 1.5;
+		private const RATE_HEAL:Number = 0.5;
 		private const GOAL_REVIVE:Number = 90;
 		private const RANGE_REVIVE:Number = 40;
 		private var reviveProgress:Number = 0;
@@ -43,7 +44,7 @@ package vgdev.stroll.props.consoles
 		{
 			if (!inUse)
 			{				
-				if (closestPlayer != null && closestPlayer == p)
+				if (closestPlayer != null && closestPlayer == p && closestPlayer.activeConsole == null)
 				{
 					inUse = true;
 					closestPlayer.sitAtConsole(this, false);
@@ -106,35 +107,56 @@ package vgdev.stroll.props.consoles
 		
 		override public function holdKey(keys:Array):void
 		{
+			var ui:MovieClip = getHUD();
+			
 			if (!keys[4]) 
 			{
 				reviveProgress = 0;
+				ui.tf_status.text = "Idle";
 				return;
 			}
+			ui.tf_status.text = "Searching";
 			
 			// affect fires
 			if (affectItems(System.M_FIRE, RANGE_EXTINGUISH, RATE_EXTINGUISH, "extinguish"))
+			{
+				ui.tf_status.text = "Douse";
 				return;
+			}
 			
 			// repair consoles
 			if (affectItems(System.M_CONSOLE, RANGE_REPAIR, RATE_REPAIR, "repair"))
+			{
+				ui.tf_status.text = "Repair";
 				return;
+			}
 			
-			// revive incapacitated players
+			// heal or revive incapacitated players
 			for each (var player:Player in cg.players)
 			{				
-				if (player == closestPlayer || player.getHP() != 0)
+				if (player == closestPlayer)
 					continue;
 				if (System.getDistance(closestPlayer.mc_object.x, closestPlayer.mc_object.y, player.mc_object.x, player.mc_object.y) < RANGE_REVIVE)
-				{					
+				{
+					if (player.getHP() == player.getHPmax())
+						return;
+					
+					if (player.getHP() != 0)
+					{
+						player.changeHP(RATE_HEAL);
+						ui.tf_status.text = "Heal";
+						addRestorativeParticles(player.mc_object.x + System.getRandNum( -6, 6),
+												player.mc_object.y - 20 + System.getRandNum( -6, 6));
+						return;
+					}
+					
 					reviveProgress += RATE_REVIVE;
 					player.updateReviveUI(reviveProgress / GOAL_REVIVE);
 					
-					if (Math.random() > .7)
-						cg.addDecor("repair", {
-													"x": player.mc_object.x + System.getRandNum(-6, 6),
-													"y": player.mc_object.y - 20 + System.getRandNum(-6, 6)
-												  });	
+					ui.tf_status.text = "Rez " + int(100 * reviveProgress / GOAL_REVIVE) + "%";
+					
+					addRestorativeParticles(player.mc_object.x + System.getRandNum( -6, 6),
+											player.mc_object.y - 20 + System.getRandNum( -6, 6));
 
 					if (reviveProgress >= GOAL_REVIVE)
 					{
@@ -145,6 +167,13 @@ package vgdev.stroll.props.consoles
 				}
 			}
 			reviveProgress = 0;
+		}
+		
+		private function addRestorativeParticles(locX:Number, locY:Number):void
+		{
+			cg.addDecor("plus", { "x": locX + System.getRandNum(-12, 12), "y": locY + System.getRandNum(-12, 12), "dy": -1, "alphaDelay": 5, "alphaDelta": 20 } );
+			if (Math.random() > .7)
+				cg.addDecor("repair", {"x": locX, "y": locY});	
 		}
 		
 		/**
@@ -197,11 +226,7 @@ package vgdev.stroll.props.consoles
 													  });	
 							break;
 							case "repair":
-								if (Math.random() > .7)
-								cg.addDecor(visualEffect, {
-														"x": item.mc_object.x + System.getRandNum(-6, 6),
-														"y": item.mc_object.y + System.getRandNum(-6, 6)
-													  });	
+								addRestorativeParticles(item.mc_object.x + System.getRandNum( -6, 6), item.mc_object.y + System.getRandNum( -6, 6));
 							break;
 						}
 						

@@ -36,14 +36,14 @@ package vgdev.stroll.support.splevels
 			cg.ship.setBossOverride(true);
 			
 			// DEBUG CODE
-			/*levelState = 50;
-			framesElapsed = 5 * 30;
-			consoleSlip.setArrowDifficulty(12);
+			//levelState = 2;
+			//framesElapsed = 28 * 30;
+			/*consoleSlip.setArrowDifficulty(12);
 			cg.ship.setBossOverride(false);
 			cg.ship.slipRange = 0.5;
 			cg.ship.jammable = 0;
 			consoleSlip.forceOverride = false;*/
-			/*var corr:int = 0;
+			/*var corr:int = 6;
 			for each (var c:ABST_Console in cg.consoles)
 			{
 				if (--corr <= 0)
@@ -68,7 +68,6 @@ package vgdev.stroll.support.splevels
 																			"attackColor": System.COL_RED,
 																			"attackStrength": 30,
 																			"hp": 50,
-																			//"hp": 1,
 																			"scale": 2
 																			}),
 												  System.M_ENEMY) as EnemySkull;
@@ -637,6 +636,8 @@ package vgdev.stroll.support.splevels
 															]), System.TAILS_NORMAL, "HEADS");
 					cg.players[0].pdwEnabled = true;
 					cg.players[1].pdwEnabled = true;
+					// upgrade turrets
+					cg.upgradeTurrets(2);
 					if (!cg.managerMap[System.M_BOARDER].hasObjects())
 					{
 						cg.tails.show("Success. Please jump and resume mission.", System.TAILS_NORMAL, "HEADS");

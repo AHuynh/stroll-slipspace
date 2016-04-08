@@ -309,7 +309,6 @@ package vgdev.stroll.props.consoles
 				break;
 			}
 			
-			
 			// can't enter next cel in this direction
 			if (nextCel == null || !getOpenEnds(nextCel.currentFrame, nextCel.rotation)[int((dir + 2) % 4)])
 			{
@@ -454,6 +453,8 @@ package vgdev.stroll.props.consoles
 		// add the maze to this module
 		override public function onAction(p:Player):void 
 		{
+			if (inUse)
+				return;
 			super.onAction(p);
 			if (corrupted) return;
 			if (closestPlayer == null) return;
@@ -469,7 +470,7 @@ package vgdev.stroll.props.consoles
 		
 		// remove the maze from this module
 		override public function onCancel():void 
-		{
+		{			
 			if (corrupted)		// relinquish control if corrupted
 				consoleFAILS.onCancel();
 			

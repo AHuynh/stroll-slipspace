@@ -48,7 +48,7 @@ package vgdev.stroll.props
 		public var playerID:int;
 		
 		/// Pixels per frame this unit can move at
-		public var moveSpeed:Number = 4;
+		public var moveSpeed:Number = 5;
 		
 		/// If not null, the instance of ABST_Console this Player is currently paired with
 		public var activeConsole:ABST_Console = null;
@@ -260,22 +260,18 @@ package vgdev.stroll.props
 				if (keysDown[RIGHT])
 				{
 					updatePosition(moveSpeed, 0);
-					facing = RIGHT;
 				}
 				if (keysDown[UP])
 				{
 					updatePosition(0, -moveSpeed);
-					facing = UP;
 				}
 				if (keysDown[LEFT])
 				{
 					updatePosition( -moveSpeed, 0);
-					facing = LEFT;
 				}
 				if (keysDown[DOWN])
 				{
 					updatePosition(0, moveSpeed);
-					facing = DOWN;
 				}
 				if (keysDown[CANCEL] && countPDW == 0)
 				{
@@ -318,6 +314,9 @@ package vgdev.stroll.props
 			if (activeConsole == null)
 				manProx.updateProximities(this);
 			super.updatePosition(dx, dy);
+			
+			if (mc_object.currentFrameLabel == "five" || mc_object.currentFrameLabel == "idle_five")
+				mc_object.gotoAndStop(mc_object.idleFallback);
 		}
 		
 		private function highFiveCheck():Boolean
@@ -402,9 +401,7 @@ package vgdev.stroll.props
 				case KEY_RIGHT:
 					if (!rooted)
 					{
-						mc_object.scaleX = 1;
-						mc_object.mc_bar.scaleX = 1;
-						mc_object.prompt.scaleX = 1;
+						setFacing(RIGHT);
 						pressed = true;
 					}
 					else if (!keysDown[RIGHT])
@@ -417,9 +414,7 @@ package vgdev.stroll.props
 					if (!rooted)
 					{
 						pressed = true;
-						mc_object.scaleX = 1;
-						mc_object.mc_bar.scaleX = 1;
-						mc_object.prompt.scaleX = 1;
+						setFacing(UP);
 					}
 					else if (!keysDown[UP])
 					{
@@ -430,9 +425,7 @@ package vgdev.stroll.props
 				case KEY_LEFT:
 					if (!rooted)
 					{
-						mc_object.scaleX = -1;
-						mc_object.mc_bar.scaleX = -1;
-						mc_object.prompt.scaleX = -1;
+						setFacing(LEFT);
 						pressed = true;
 					}
 					else if (!keysDown[LEFT])
@@ -444,9 +437,7 @@ package vgdev.stroll.props
 				case KEY_DOWN:
 					if (!rooted)
 					{
-						mc_object.scaleX = 1;
-						mc_object.mc_bar.scaleX = 1;
-						mc_object.prompt.scaleX = 1;
+						setFacing(DOWN);
 						pressed = true;
 					}
 					else if (!keysDown[DOWN])
@@ -481,6 +472,12 @@ package vgdev.stroll.props
 			updateAnimation(false);
 		}
 		
+		private function setFacing(dir:int):void
+		{
+			facing = dir;
+			mc_object.scaleX = mc_object.mc_bar.scaleX = mc_object.prompt.scaleX = (dir != LEFT ? 1 : -1);
+		}
+		
 		/**
 		 * Update state of keys when a key is released
 		 * @param	e		KeyboardEvent with info
@@ -496,18 +493,22 @@ package vgdev.stroll.props
 				case KEY_RIGHT:
 					keysDown[RIGHT] = false;
 					released = true;
+					if (keysDown[LEFT]) setFacing(LEFT);
 				break;
 				case KEY_UP:
 					keysDown[UP] = false;
 					released = true;
+					if (keysDown[DOWN]) setFacing(DOWN);
 				break;
 				case KEY_LEFT:
 					keysDown[LEFT] = false;
 					released = true;
+					if (keysDown[RIGHT]) setFacing(RIGHT);
 				break;
 				case KEY_DOWN:
 					keysDown[DOWN] = false;
 					released = true;
+					if (keysDown[UP]) setFacing(UP);
 				break;
 				case KEY_ACTION:
 					keysDown[ACTION] = false;
@@ -522,6 +523,8 @@ package vgdev.stroll.props
 		
 		private function updateAnimation(released:Boolean, forceUpdate:Boolean = false):void
 		{
+			if (mc_object.currentFrameLabel == "five" || mc_object.currentFrameLabel == "idle_five") return;		
+			
 			if (((released && isMoving) || forceUpdate) && !keysDown[RIGHT] && !keysDown[UP] && !keysDown[LEFT] && !keysDown[DOWN])		// stopped moving
 			{
 				mc_object.gotoAndStop(mc_object.idleFallback);
@@ -541,6 +544,11 @@ package vgdev.stroll.props
 					
 				if (bx != 0 || by != 0)
 					isMoving = true;
+				else
+				{
+					mc_object.gotoAndStop(mc_object.idleFallback);
+					isMoving = false;
+				}
 			}
 			mc_object.mc_pdw.visible = animationPDW > 0;
 		}

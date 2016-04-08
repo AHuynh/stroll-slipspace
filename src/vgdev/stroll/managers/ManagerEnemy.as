@@ -26,6 +26,16 @@ package vgdev.stroll.managers
 			return total;
 		}
 		
+		// don't kill stubborn enemies
+		override public function killAll():void
+		{
+			if (objArray)
+				for (var i:int = objArray.length - 1; i >= 0; i--)
+					if (!objArray[i].stubborn)
+						objArray[i].destroySilently();
+			objArray = [];
+		}
+		
 		/**
 		 * Given an object, determines if it has collided with another object in this manager.
 		 * @param	o			The object to check for

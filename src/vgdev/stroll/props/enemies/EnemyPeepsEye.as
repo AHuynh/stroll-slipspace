@@ -8,7 +8,7 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.props.projectiles.EProjectileGeneric;
 	
 	/**
-	 * Sector 4 boss. 1 of 2 extra eyes.
+	 * Sector 4 boss. 1 of 4 extra eyes.
 	 * @author Jimmy Spearman, Alexander Huynh
 	 */
 	public class EnemyPeepsEye extends ABST_Enemy 
@@ -18,8 +18,6 @@ package vgdev.stroll.props.enemies
 		public var eyeNo:Number = 0;
 		
 		private var incapacitated:Boolean = false;
-		private var recoverCooldownMax:Number = 60; //frames before recovering
-		private var recoverCooldownTimer:Number = recoverCooldownMax; //current number 
 		public var stopped:Boolean = false;
 		private var mainBody:EnemyPeeps;		// reference to the main body of the boss
 		private var maxHP:Number = 5;
@@ -36,12 +34,13 @@ package vgdev.stroll.props.enemies
 			// [small shot]
 			cdCounts = [90 + System.getRandInt(0, 40)];
 			cooldowns = [90];
+			
+			playDeathSFX = false;
 		}
 		
 		override public function destroy():void 
 		{
 			incapacitated = true;
-			trace("[Eye]", eyeNo, "incapped!");
 		}
 		
 		public function kill():void
@@ -53,12 +52,6 @@ package vgdev.stroll.props.enemies
 		{
 			if (!completed)
 			{
-				if (incapacitated) {
-					recoverCooldownTimer--;
-					if (recoverCooldownTimer <= 0) {
-						reviveEye();
-					}
-				}
 				updatePrevPosition();
 				if (!isActive())		// quit if updating position caused this to die
 					return completed;
@@ -71,9 +64,7 @@ package vgdev.stroll.props.enemies
 		public function reviveEye():void
 		{
 			incapacitated = false;
-			recoverCooldownTimer = recoverCooldownMax;
 			hp = maxHP;	
-			trace("[Eye]", eyeNo, "revived");		
 		}
 		
 		public function updateEyePosition(dx:Number, dy:Number):void
@@ -94,6 +85,7 @@ package vgdev.stroll.props.enemies
 				if (cdCounts[i]-- <= 0)
 				{
 					onFire();
+					cooldowns[i] = System.getRandInt(90, 110);		// allow stagger
 					cdCounts[i] = cooldowns[i];
 					var proj:ABST_EProjectile = new EProjectileGeneric(cg, new SWC_Bullet(),
 																	{	 
@@ -123,7 +115,6 @@ package vgdev.stroll.props.enemies
 			if (mc_object.base.currentFrame != 2)		// no damage if lid is closed
 				return false;
 			incapacitated = super.changeHP(amt);
-			trace("[Eye] Hit!", eyeNo, hp);
 			return incapacitated;
 		}
 		

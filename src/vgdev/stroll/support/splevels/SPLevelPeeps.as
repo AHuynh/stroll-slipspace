@@ -17,13 +17,17 @@ package vgdev.stroll.support.splevels
 	 */
 	public class SPLevelPeeps extends ABST_SPLevel 
 	{
-		private var boss:ABST_Enemy;
+		private var boss:EnemyPeeps;
 		
 		private var elapseFlag:Boolean = true;
 		
 		private var consoleSlip:ConsoleSlipdrive;
 		private var consoleState:int = 0;		// for after boss fight
 		private var tailsState:int = 0;
+		
+		private var firstTP:Boolean = true;
+		private var camCounter:int = 0;
+		private var poi:Point;
 		
 		public function SPLevelPeeps(_cg:ContainerGame) 
 		{
@@ -38,7 +42,7 @@ package vgdev.stroll.support.splevels
 			// boss
 			if (boss != null)
 			{
-				if (boss.getHP() == 0)
+				if (boss.getHP() == 0 && boss.mc_object == null)		// wait for true death
 				{
 					boss = null;
 					elapseFlag = true;
@@ -47,6 +51,56 @@ package vgdev.stroll.support.splevels
 					consoleSlip.forceOverride = false;
 					cg.ship.setBossOverride(false);
 					cg.ship.slipRange = 1;
+					framesElapsed = System.SECOND * 3 + 1;
+				}
+				else
+				{
+					switch (framesElapsed * System.SECOND)
+					{
+						case 12:
+							cg.tails.show("Hey! Hit both of those small eyes at the same time!", System.TAILS_NORMAL);
+						break;
+						case 38:
+							cg.tails.show("Keep wailing on that thing!", System.TAILS_NORMAL);
+						break;
+						case 64:
+							cg.tails.show("Don't stop! Keep going!", System.TAILS_NORMAL);
+						break;
+					}
+					if (framesElapsed > System.SECOND * 70 && (framesElapsed % (System.SECOND * 20) == 0))
+						cg.tails.show(System.getRandFrom(["Keep hitting those small eyes!",
+															"You can do it! Keep shooting!",
+															"We gotta get rid of this thing!"
+								]), System.TAILS_NORMAL);	
+					
+					if (boss.justTeleported)
+					{
+						boss.justTeleported = false;
+						poi = new Point(boss.mc_object.x * .5, boss.mc_object.y * .3);
+						camCounter = System.getRandInt(40, 80);
+						if (firstTP)
+						{
+							firstTP = false;
+							cg.tails.show("It teleported? Hold on, I'll adjust the sensors!", System.TAILS_NORMAL);
+						}
+						else
+							cg.tails.show(System.getRandFrom(["Adjusting our sensors! Standby!",
+														  "It teleported! I'll move the sensors!",
+														  "Gimme a sec; I'll find him again!"
+									]), System.TAILS_NORMAL);	
+					}
+					if (boss.firstIncap == 1)
+					{
+						boss.firstIncap = 2;
+						cg.tails.show("Awrk! Shoot the big eye! Shoot the big eye!", System.TAILS_NORMAL);
+					}
+					
+					if (camCounter > 0 && --camCounter == 0)
+					{
+						if (poi != null)
+							cg.camera.setCameraFocus(poi);
+						poi = null;
+					}
 				}
 				return;
 			}
@@ -82,6 +136,9 @@ package vgdev.stroll.support.splevels
 						cg.game.mc_ship.mc_console_sensors.parentClass.setLocked(false);
 						cg.game.mc_ship.item_fe_0.parentClass.setLocked(false);
 						cg.game.mc_ship.item_fe_1.parentClass.setLocked(false);
+						
+						// upgrade turrets
+						cg.upgradeTurrets(1);
 					break;
 					case System.SECOND * 26:
 						cg.tails.show("Hey, help your friend up with an Omnitool!", System.TAILS_NORMAL);

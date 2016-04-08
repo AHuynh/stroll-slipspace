@@ -71,7 +71,7 @@ package vgdev.stroll.support
 		private var parsedEncounters:Object;
 		
 		/// The current sector, [0-12]
-		public var sectorIndex:int = 0;
+		public var sectorIndex:int = 11;
 		
 		private var waves:Array;			// array of wave Objects, each containing a "time" to spawn and
 											//    a list of objects to spawn, "spawnables"
@@ -119,7 +119,7 @@ package vgdev.stroll.support
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_boss_peeps())];
+											//rawEncountersJSON = [JSON.parse(new en_boss_final())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -323,7 +323,7 @@ package vgdev.stroll.support
 					spawn = new EnemyPortal(cg, new SWC_Enemy(), {
 																	"x": pos.x,
 																	"y": pos.y,
-																	"hp": 300
+																	"hp": 450
 																	});
 					manager = System.M_ENEMY;
 				break;

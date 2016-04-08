@@ -45,6 +45,7 @@ package vgdev.stroll.support
 				tails.visible = false;
 				tails.gotoAndStop(2);
 				cg.isTailsPaused = false;
+				important = false;
 				if (showNew)
 				{
 					showNew = false;

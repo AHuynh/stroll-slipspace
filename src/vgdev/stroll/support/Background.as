@@ -13,7 +13,7 @@ package vgdev.stroll.support
 	{
 		public var bg:MovieClip;
 		
-		private const LIM_LEFT:Number = -System.GAME_HALF_WIDTH / 1.8;
+		private const LIM_LEFT:Number = 0;// -120;
 		private var OFFSET:Number;
 		
 		public var bg1:MovieClip;
@@ -40,7 +40,7 @@ package vgdev.stroll.support
 				bg1 = bg2;
 				bg2 = temp;
 			}
-			bg2.x = bg1.x + System.GAME_WIDTH * 1.8;
+			bg2.x = bg1.x + OFFSET;
 			
 			bg1.x = int(bg1.x);
 			bg2.x = int(bg2.x);

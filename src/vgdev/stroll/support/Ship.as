@@ -11,9 +11,9 @@ package vgdev.stroll.support
 	 */
 	public class Ship extends ABST_Support
 	{		
-		private var hpMax:Number = 1000;			// maximum hull strength
+		private var hpMax:Number = 1500;			// maximum hull strength
 		private var hp:Number = hpMax;				// current hull strength
-		private const MIN_HP:Number = hpMax * .2;	// amount of hull to restore to on a jump, if below that amount
+		private const MIN_HP:Number = .15;			// percent of hull to restore to on a jump
 		private var hullBlink:int = -1;				// helper for flashing low HP
 		
 		// -- Shield --------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ package vgdev.stroll.support
 		
 		private const HEADING_RUNAWAY:Number = 1.003;  	//Scaling factor applied to heading every game tick
 		private const HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
-		private const DAMAGE_JUMP_FACTOR:Number = 0.01;	//max value of random jumps applied to the heading every game tick 
+		private const DAMAGE_JUMP_FACTOR:Number = 0.006;//max value of random jumps applied to the heading every game tick 
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Slipdrive -----------------------------------------------------------------------------------
@@ -118,15 +118,23 @@ package vgdev.stroll.support
 		}
 		
 		/**
-		 * Restore the ship's HP to the minumum amount, if below that amount
+		 * Restore the ship's HP on a jump
 		 */
-		public function minRestore(savedHP:Number = 0):void
+		public function minRestore():void
 		{
-			savedHP = Math.max(savedHP, MIN_HP);
-			hp = Math.max(hp, savedHP);
+			hp = System.changeWithLimit(hp, hpMax * MIN_HP, 0, hpMax);
 			updateIntegrity();
 		}
 		
+		/**
+		 * Set the ship's HP
+		 */
+		public function setHP(amt:Number):void
+		{
+			hp = amt;
+			updateIntegrity();
+		}
+
 		/**
 		 * Deal damage to the ship (with shields in effect)
 		 * @param	dmg				Amount of damage to deal (a positive value to damage)
@@ -463,7 +471,7 @@ package vgdev.stroll.support
 		 */
 		public function isHeadingGood():Boolean 
 		{
-			return (Math.abs(shipHeading) < 0.035);
+			return (Math.abs(shipHeading) < 0.05);
 		}
 		
 		/**
