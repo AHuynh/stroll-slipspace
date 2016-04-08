@@ -163,8 +163,8 @@
 					   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
 			
 			// --- Eagle --------------------------------------------------------------------------------------------------------
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, false));		// give priority to Omnitools by listing them first
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, false));
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));		// give priority to Omnitools by listing them first
+			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
 			
 			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
 											players, [-120, 120], [1, 2, 0, 3], 0));
@@ -178,8 +178,8 @@
 			consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, false));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, false));
+			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
+			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
 			
 			graph.initShip("Eagle");
 			// --- Eagle --------------------------------------------------------------------------------------------------------
@@ -335,6 +335,12 @@
 			switch (e.keyCode)
 			{
 				case Keyboard.ESCAPE:
+					if (!completed && gui.mc_win.currentFrame > 1)
+					{
+						destroy(null);
+						return;
+					}
+					
 					if (escDown) return;
 					
 					escDown = true;
@@ -356,7 +362,7 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					jump();
+					//jump();
 				break;
 				case Keyboard.K:
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
@@ -366,7 +372,7 @@
 					//ship.damageDirect(350);
 					//consoles[0].changeHP( -250);
 					//addFires(1);
-					upgradeTurrets(2);
+					//upgradeTurrets(2);
 				break;
 			}
 		}
@@ -735,7 +741,7 @@
 		 */
 		public function getRandomNearLocation():Point
 		{
-			return new Point(System.getRandNum( -450, 450), System.getRandNum( -300, 300)) );
+			return new Point(System.getRandNum( -450, 450), System.getRandNum( -300, 300));
 		}
 		
 		public function killShip():void

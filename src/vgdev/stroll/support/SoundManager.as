@@ -195,9 +195,9 @@ package vgdev.stroll.support
 			}
 		}
 		
-		public static function playBGM(music:String, volume:Number = 1):void
+		public static function playBGM(music:String, volume:Number = 1, once:Boolean = false):void
 		{
-			return;	// DEBUGGING - mute BGM
+			//return;	// DEBUGGING - mute BGM
 			
 			if (nameCurr == music)
 				return;
@@ -207,7 +207,7 @@ package vgdev.stroll.support
 			nameCurr = music;
 			
 			var volTransform:SoundTransform = new SoundTransform(volume);
-			channelCurr = snd.play(0, 9999);
+			channelCurr = snd.play(0, once ? 1 : 9999);
 			channelCurr.soundTransform = volTransform;
 			currVolume = volume;
 		}

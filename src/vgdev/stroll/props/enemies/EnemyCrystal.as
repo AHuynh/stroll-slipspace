@@ -34,8 +34,8 @@ package vgdev.stroll.props.enemies
 			setStyle("crystal");
 			mc_object.base.mc_glow.visible = false;
 			
-			ELLIPSE_A = System.ORBIT_1_X - 50;
-			ELLIPSE_B = System.ORBIT_1_Y - 20;
+			ELLIPSE_A = System.ORBIT_1_X - 70;
+			ELLIPSE_B = System.ORBIT_1_Y - 45;
 			
 			theta = System.setAttribute("theta", attributes, 0);
 			if (numCrystals++ == 0)
@@ -89,6 +89,8 @@ package vgdev.stroll.props.enemies
 		{
 			if (force && corrupted == 1)	// corrupt twice if blue
 				corrupt(false);
+				
+			playBlastEffect();
 			
 			switch (corrupted)
 			{
@@ -97,13 +99,20 @@ package vgdev.stroll.props.enemies
 					corrupted = -1;
 					totalNumCorrupted--;
 					setBaseColor(System.COL_RED);
+					hp = hpMax = 150;
 				break;
 				case 1:
 					corrupted = 0;
 					totalNumCorrupted--;
 					setBaseColor(System.COL_WHITE);
+					hp = hpMax = 150;
 				break;
 			}
+		}
+		
+		public function playBlastEffect():void
+		{
+			mc_object.base.mc_blast.gotoAndPlay("blast");
 		}
 		
 		override public function changeHP(amt:Number):Boolean 

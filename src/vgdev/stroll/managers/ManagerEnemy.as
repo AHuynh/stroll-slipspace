@@ -32,8 +32,10 @@ package vgdev.stroll.managers
 			if (objArray)
 				for (var i:int = objArray.length - 1; i >= 0; i--)
 					if (!objArray[i].stubborn)
+					{
 						objArray[i].destroySilently();
-			objArray = [];
+						objArray.splice(i, 1);
+					}
 		}
 		
 		/**
