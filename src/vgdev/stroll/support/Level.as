@@ -234,7 +234,7 @@ package vgdev.stroll.support
 					spawn = new EnemyBreeder(cg, new SWC_Enemy(), {
 																	"attackColor": System.COL_GREEN,
 																	"attackStrength": System.getRandInt(6, 13),
-																	"hp": 90,
+																	"hp": 120,
 																	"x":pos.x,
 																	"y":pos.y
 																	});

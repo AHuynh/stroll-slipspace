@@ -200,7 +200,9 @@ package vgdev.stroll.props.consoles
 			if (keys[1])
 			{
 				delta.x = Math.min(delta.x + System.forward(ACCEL, ui.mc_container.mc_marker.rotation, true), MAX_SPD);
+				delta.x = Math.max(delta.x + System.forward(ACCEL, ui.mc_container.mc_marker.rotation, true), -MAX_SPD);
 				delta.y = Math.min(delta.y + System.forward(ACCEL, ui.mc_container.mc_marker.rotation, false), MAX_SPD);
+				delta.y = Math.max(delta.y + System.forward(ACCEL, ui.mc_container.mc_marker.rotation, false), -MAX_SPD);
 			}
 			if (keys[2])
 				ui.mc_container.mc_marker.rotation -= ROT_SPEED;

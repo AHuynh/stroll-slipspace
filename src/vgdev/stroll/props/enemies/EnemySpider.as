@@ -61,7 +61,8 @@ package vgdev.stroll.props.enemies
 			var theta:Number = System.getAngle(mc_object.x, mc_object.y, tgt.x, tgt.y);
 			updatePosition(System.forward(spd, theta, true), System.forward(spd, theta, false));
 			
-			mc_object.rotation = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
+			if (mc_object != null)
+				mc_object.rotation = System.getAngle(mc_object.x, mc_object.y, cg.shipHitMask.x, cg.shipHitMask.y);
 		}
 		
 		private function spawnClouds():void

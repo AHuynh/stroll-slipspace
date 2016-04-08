@@ -287,6 +287,8 @@
 				case Keyboard.SLASH:		str = "/";			break;
 				default:
 					str = keyDict[k];
+					if (str == null)
+						str = "Other key";
 					str = str.substr(0, 1) + str.substr(1).toLowerCase();
 			}
 			

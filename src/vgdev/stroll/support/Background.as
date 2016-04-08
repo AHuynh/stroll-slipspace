@@ -20,6 +20,7 @@ package vgdev.stroll.support
 		private var bg2:MovieClip;
 		
 		private const REGION_0:Array = ["abstract_00", "abstract_01", "abstract_02"];
+		private const REGION_1:Array = ["whoa_0", "whoa_1", "whoa_2", "whoa_3", "whoa_4", "whoa_5", "whoa_6"];
 		
 		public function Background(_cg:ContainerGame, _bg:MovieClip)
 		{
@@ -70,7 +71,11 @@ package vgdev.stroll.support
 			switch (region)
 			{
 				case 0:
+				case 2:
+					setStyle(System.getRandFrom(REGION_1));
+				break;
 				default:
+					case 1:
 					setStyle(System.getRandFrom(REGION_0), col);
 					//setStyle(System.getRandFrom(["test1"]), col);
 				break;

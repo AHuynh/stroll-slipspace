@@ -105,7 +105,7 @@ package vgdev.stroll.props.enemies
 					corrupted = 0;
 					totalNumCorrupted--;
 					setBaseColor(System.COL_WHITE);
-					hp = hpMax = 150;
+					hp = hpMax = 80;
 				break;
 			}
 		}
@@ -127,7 +127,7 @@ package vgdev.stroll.props.enemies
 						setBaseColor(System.COL_WHITE);
 						spawnParticleRing(System.COL_WHITE);
 						totalNumCorrupted++;
-						hp = hpMax;
+						hp = hpMax = 80;
 					break;
 					case 0:				// TAILS
 						corrupted = 1;

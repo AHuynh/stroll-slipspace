@@ -11,7 +11,7 @@
   "waves": [
 	{
 		"time": 4,
-		"repeat": 3,
+		"repeat": 4,
 		"spawnables":
 			[
 				{"type": "Skull"}
@@ -25,7 +25,7 @@
 			]
 	},
 	{
-		"time": 12,
+		"time": 9,
 		"TAILS": "Whoa! They're bringing friends, too!",
 		"spawnables":
 			[
@@ -41,7 +41,16 @@
 			]
 	},
 	{
-		"time": 22,
+		"time": 2,
+		"spawnables":
+			[
+				{"type": "Skull"},
+				{"type": "Eye", "region": "top"},
+				{"type": "Eye", "region": "top"}
+			]
+	},
+	{
+		"time": 17,
 		"TAILS": "Things are heating up; another wave detected!",
 		"spawnables":
 			[

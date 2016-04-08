@@ -754,7 +754,7 @@ package vgdev.stroll.support.splevels
 							cg.camera.setShake(10);
 							spawnEnemy("Amoeba", 8, System.SPAWN_AMOEBA, {"am_size": 0});
 						break;
-					}					
+					}
 					if (framesElapsed > System.SECOND * 20 && framesElapsed % (System.SECOND * 20) == 0)
 					{
 						if (framesElapsed % (System.SECOND * 40) == 0)
@@ -764,13 +764,13 @@ package vgdev.stroll.support.splevels
 							]), System.TAILS_NORMAL, "FAILS_incredulous");
 							System.getRandFrom(crystals).corrupt(true);
 							System.getRandFrom(crystals).corrupt();
+							for (s = 0; s < 4; s++)
+								spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Manta", "Breeder", "Spider"]), 1);
 						}
 						else
 						{
 							portal = cg.level.spawn( {}, cg.level.getRandomPointInRegion("medium_orbit"), "Portal") as EnemyPortal;
-							portal.multiplyCooldowns(6);
-							portal.setScale(0.5);
-							portal.setHPmax(100);
+							portal.multiplyCooldowns(2);
 							portal = cg.level.spawn( {}, cg.level.getRandomPointInRegion("near_orbit"), "Portal") as EnemyPortal;
 							portal.multiplyCooldowns(6);
 							portal.setScale(0.5);

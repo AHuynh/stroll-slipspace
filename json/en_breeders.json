@@ -4,7 +4,7 @@
 	"background": "default",
 	"difficulty_range": [5, 7],
     "jamming_min": 2,
-    "slip_range": 66.0,
+    "slip_range": 61.0,
 	"type": "Enemies",
 	"TAILS": "Distant enemies detected. What are they doing?"
   },
@@ -18,14 +18,14 @@
 			]
 	},
 	{
-		"time": 14,
+		"time": 11,
 		"TAILS": "They keep making those GREEN blobs! Stop them!",
 		"spawnables":
 			[
 			]
 	},
 	{
-		"time": 14,
+		"time": 9,
 		"TAILS": "Are they healing? Don't stop attacking!",
 		"spawnables":
 			[
@@ -43,11 +43,12 @@
 		"spawnables":
 			[
 				{"type": "Amoeba", "am_size": 2, "region": "distant_orbit"},
-				{"type": "Amoeba", "am_size": 1, "region": "distant_orbit"}
+				{"type": "Amoeba", "am_size": 1, "region": "distant_orbit"},
+				{"type": "Breeder", "region": "distant_orbit"}
 			]
 	},
 	{
-		"time": 32,
+		"time": 27,
 		"TAILS": "Can you guys jump yet? Even more enemies coming!",
 		"spawnables":
 			[
@@ -62,7 +63,7 @@
 			]
 	},
 	{
-		"time": 36,
+		"time": 30,
 		"recur": 30,
 		"spawnables":
 			[

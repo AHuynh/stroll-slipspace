@@ -11,9 +11,9 @@ package vgdev.stroll.support
 	 */
 	public class Ship extends ABST_Support
 	{		
-		private var hpMax:Number = 1500;			// maximum hull strength
+		private var hpMax:Number = 1000;			// maximum hull strength
 		private var hp:Number = hpMax;				// current hull strength
-		private const MIN_HP:Number = .15;			// percent of hull to restore to on a jump
+		private const MIN_HP:Number = .05;			// percent of hull to restore to on a jump
 		private var hullBlink:int = -1;				// helper for flashing low HP
 		
 		// -- Shield --------------------------------------------------------------------------------------
