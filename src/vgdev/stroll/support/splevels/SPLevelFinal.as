@@ -1,5 +1,6 @@
 package vgdev.stroll.support.splevels 
 {
+	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
@@ -23,10 +24,7 @@ package vgdev.stroll.support.splevels
 		
 		private var tugOfWar:Boolean = false;		// flag for final phase
 		private var morale:Number = 0.5;			// TAILS vs FAILS
-		private var momentum:Number = 0.0001;		// amount to change morale by per frame (negative is winning)
-		private const MOMENTUM_MAX:Number = 0.0002;
-		private const D_MOMENTUM:Number = 0.0000003;// amount to change momentum by per frame
-		private const FIX_MOMENTUM:Number = -0.07;	// amount to change momentum on a successful console fix
+		private var crystals:Array = [];
 		
 		public function SPLevelFinal(_cg:ContainerGame) 
 		{
@@ -496,7 +494,7 @@ package vgdev.stroll.support.splevels
 							SoundManager.playSFX("sfx_electricShock");
 							cg.camera.setShake(10);
 							cg.tails.show("OW, OW, OW, WH*AT DId you jUST DO To_ ME?!", System.TAILS_NORMAL, "FAILS_pissed");
-							cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": System.getRandNum(0, 360)} ), System.M_ENEMY);
+							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": System.getRandNum(0, 360)} ), System.M_ENEMY));
 						break;
 						case System.SECOND * 17:
 							cg.tails.show("Alright... hey, listen!\n\nI'm pulling out the RED corrupted cores; if you can weaken them, I can take them over and win against FAILS! Help me out!", 0);
@@ -550,14 +548,14 @@ package vgdev.stroll.support.splevels
 						case System.SECOND * 7:
 							cg.tails.show("Awesome! OK, I'm gonna pull out some more RED cores!", System.TAILS_NORMAL);
 						break;
-						case System.SECOND * 14:
-							cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 180} ), System.M_ENEMY);
-							cg.tails.show("Woudj-a shut2uip SHut up SHUT UP!?!?!", System.TAILS_NORMAL, "FAILS_incredulous");
+						case System.SECOND * 13:
+							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 180} ), System.M_ENEMY));
+							cg.tails.show("Woudj-a shut2uip SHut up SHUT UP!?!?!", System.SECOND * 3, "FAILS_incredulous");
 							cg.addSparks(2);
 							SoundManager.playSFX("sfx_electricShock");
 							cg.camera.setShake(10);
 						break;
-						case System.SECOND * 22:
+						case System.SECOND * 17:
 							cg.tails.show("n-_OOOT SOOO FASST, THERE--!", System.TAILS_NORMAL, "FAILS_pissed");
 							t = System.getRandNum(0, 360);	
 							portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
@@ -569,9 +567,103 @@ package vgdev.stroll.support.splevels
 							portal.dTheta = 0.4;
 							portal.multiplyCooldowns(1.5);
 						break;
-					}					
+						case System.SECOND * 26:
+							spawnEnemy("Eye", 4);
+						break;
+					}
+					if (framesElapsed > System.SECOND * 13 && EnemyCrystal.totalNumCorrupted == 2)
+					{
+						levelState++;
+						framesElapsed = 0;
+						cg.tails.show("sOOO__ thS'Ats hows it GONNA BE, ehUHH??", System.TAILS_NORMAL, "FAILS_incredulous");
+						cg.addSparks(5);
+						SoundManager.playSFX("sfx_electricShock");
+						cg.camera.setShake(45);
+					}
 				break;
-				case 30:		// victory
+				case 24:
+					switch (framesElapsed)
+					{
+						case System.SECOND * 7:
+							portal = cg.level.spawn( { }, cg.level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD)), "Portal") as EnemyPortal;
+							portal.multiplyCooldowns(3);
+							portal = cg.level.spawn( { }, cg.level.getRandomPointInRegion("medium_orbit"), "Portal") as EnemyPortal;
+							portal.multiplyCooldowns(3);
+						break;
+						case System.SECOND * 13:
+							cg.tails.show("You don't stand a chance!", System.TAILS_NORMAL);
+							EnemyCrystal.dTheta = 0.25;
+							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 60} ), System.M_ENEMY));
+							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 240} ), System.M_ENEMY));
+							cg.addSparks(2);
+							SoundManager.playSFX("sfx_electricShock");
+							cg.camera.setShake(10);
+						break;
+						case System.SECOND * 23:
+							cg.tails.show("Woudj-a shut2uip SHut up SHUT UP!?!?!", System.SECOND * 3, "FAILS_incredulous");
+						break;
+					}
+					if (framesElapsed > System.SECOND * 13 && EnemyCrystal.totalNumCorrupted == 4)
+					{
+						levelState++;
+						framesElapsed = 0;
+						cg.tails.show("fn-- NOOO! alRRIGHT, nOO m@$RE MS.NICEBIRD!!_!", System.TAILS_NORMAL, "FAILS_incredulous");
+						cg.addSparks(5);
+						SoundManager.playSFX("sfx_electricShock");
+						cg.camera.setShake(45);
+					}
+				break;
+				case 25:		// corrupt crystals
+					switch (framesElapsed)
+					{
+						case System.SECOND * 7:
+							cg.tails.show("I'LL TAKE THOSE BACK, THA____NKSS", System.TAILS_NORMAL, "FAILS_pissed");
+							crystals[0].corrupt();
+							crystals[1].corrupt(true);
+							crystals[2].corrupt();
+							cg.addSparks(2);
+							SoundManager.playSFX("sfx_electricShock");
+							cg.camera.setShake(10);
+						break;
+						case System.SECOND * 15:
+							t = System.getRandNum(0, 360);	
+							portal = cg.level.spawn( { }, new Point(), "Portal") as EnemyPortal;
+							portal.ELLIPSE_A = System.ORBIT_1_X;
+							portal.ELLIPSE_B = System.ORBIT_1_Y;
+							portal.mc_object.x = System.ORBIT_1_X * Math.cos(System.degToRad(t));
+							portal.mc_object.y = System.ORBIT_1_Y * Math.sin(System.degToRad(t));
+							portal.theta = t;
+							portal.dTheta = 0.4;
+							portal.multiplyCooldowns(1.5);
+						break;
+					}					
+					if (framesElapsed > System.SECOND * 7 && EnemyCrystal.totalNumCorrupted == 4)
+					{
+						levelState++;
+						framesElapsed = 0;
+						cg.tails.show("Keep it up! The last 2 cores are coming out now!", System.TAILS_NORMAL);
+						cg.addSparks(5);
+						SoundManager.playSFX("sfx_electricShock");
+						cg.camera.setShake(45);
+					}
+				break;
+				case 26:		// all 6 crystals up
+					switch (framesElapsed)
+					{
+						case System.SECOND * 6:
+							cg.tails.show("hoW-- ABOTUUT uu   JUST DIEEE ?? .. !", System.TAILS_NORMAL, "FAILS_pissed");
+							crystals[3].corrupt(true);
+							crystals[1].corrupt();
+							EnemyCrystal.dTheta = 0.4;
+							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 120} ), System.M_ENEMY));
+							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 300} ), System.M_ENEMY));
+							cg.addSparks(2);
+							SoundManager.playSFX("sfx_electricShock");
+							cg.camera.setShake(10);
+						break;
+					}
+				break;
+				case 50:		// victory
 					switch (framesElapsed)
 					{
 						case System.SECOND * 6:
@@ -601,7 +693,7 @@ package vgdev.stroll.support.splevels
 							cg.ship.slipRange = 0;
 							cg.gui.tf_distance.text = "Supr Jmp";
 							cg.playJumpEffect("long");
-							cg.tails.show("YOU TWO ARe still st u p   i  d    --!", 40, "FAILS_incredulous");
+							cg.tails.show("YOU TWO ARe still st u p   i  d    --!", 33, "FAILS_incredulous");
 							cg.bossBar.setPercent(0);
 							cg.visualEffects.applyModuleDistortion(0, true);
 							cg.visualEffects.applyModuleDistortion(1, true);
@@ -612,7 +704,7 @@ package vgdev.stroll.support.splevels
 						}
 					}
 				break;
-				case 31:
+				case 51:
 					if (framesElapsed == System.SECOND * 8)
 					{
 						cg.tails.show("Well, I'm glad that's over!\nGreat work, both of you!\n\nI've fixed the slipdrive, so when you're ready, let's get outta here!");
@@ -636,7 +728,7 @@ package vgdev.stroll.support.splevels
 						SoundManager.playBGM("bgm_victory");
 					}
 				break;
-				case 32:
+				case 52:
 					if (framesElapsed == System.SECOND * 4)
 					{
 						cg.tails.show("That's it! We made it! We did it!", System.TAILS_NORMAL * 2);
@@ -652,9 +744,9 @@ package vgdev.stroll.support.splevels
 			if (tugOfWar)
 				handleLastPhase();
 		}
-		
+
 		/**
-		 * Corrupt a random console, instantly make it fixable, and set the check flag
+		 * Corrupt a random console and instantly make it fixable
 		 */
 		private function corruptRandom():void
 		{
@@ -671,14 +763,37 @@ package vgdev.stroll.support.splevels
 		 */
 		private function handleLastPhase():void
 		{
-			momentum = System.changeWithLimit(momentum, D_MOMENTUM, -MOMENTUM_MAX, MOMENTUM_MAX);
-			morale = System.changeWithLimit(morale, momentum, 0.011, 1);		// need to win with a fix
+			var limMin:Number = Math.max(0.01, 0.5 - EnemyCrystal.numCrystals * (.0833333);
+			var limMax:Number = Math.min(   1, 0.5 + EnemyCrystal.numCrystals * (.0833333));
+			
+			// cap it until 6 crystals have spawned
+			morale = System.changeWithLimit(morale,
+							EnemyCrystal.totalNumCorrupted,
+							limMin,
+							limMax);
+							
+			// add combat explosions
+			if (Math.random() > .7)
+			{
+				var r:Number = Math.random();
+				var spawnFX:MovieClip;
+				var pos:Point = cg.getRandomNearLocation();
+				if (r < .5 && r > limMin)
+				{
+					spawnFX = addDecor("spawn", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(0.25, 3) } );
+					spawnFX.mc_object.base.setTint(System.COL_TAILS);
+				}
+				else if (r > .5 && r < limMax)
+				{
+					spawnFX = addDecor("spawn", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(0.25, 3) } );
+					spawnFX.mc_object.base.setTint(System.COL_RED);
+				}
+			}
+				
 						
 			// if a corrupted console has been formatted
 		/*	if (ABST_Console.numCorrupted == 0)
 			{
-				momentum += FIX_MOMENTUM;
-				morale = System.changeWithLimit(morale, -0.1, 0.01);
 				cg.tails.show(System.getRandFrom(["N-N-N-NOT COOL, YO",
 												  "EOL EOL NULREF! REF!YOU STOP THAT NOW",
 												  "FAUL-AULT-LUTY LOGGG-C MODULE. I'M FINE.",
@@ -687,16 +802,13 @@ package vgdev.stroll.support.splevels
 												  "OUCH THAT WASNT VERY NICE",
 												  ">:( ig02-- gonNA MAKE YOU PA-- PAIN"
 							]), System.TAILS_NORMAL, "FAILS_incredulous");
-				cg.camera.setShake(20);
-				SoundManager.playSFX("sfx_electricShock");
-				cg.addSparks(4);
 			}*/
 			
 			// win state
 			if (morale <= 0.01)
 			{
 				fakeJump();
-				levelState = 30;
+				levelState = 50;
 				framesElapsed = 0;
 				tugOfWar = false;
 				cg.tails.show("N-O-OOOOO IMPSOSIPBLE!? -- REF REF!", System.TAILS_NORMAL, "FAILS_incredulous");

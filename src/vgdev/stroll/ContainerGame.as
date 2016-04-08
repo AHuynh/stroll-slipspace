@@ -729,6 +729,15 @@
 			return tries == 0 ? null : pos;
 		}
 		
+		/**
+		 * Get a random point around/within the ship
+		 * @return		random point
+		 */
+		public function getRandomNearLocation():Point
+		{
+			return new Point(System.getRandNum( -450, 450), System.getRandNum( -300, 300)) );
+		}
+		
 		public function killShip():void
 		{
 			if (isDefeatedPaused) return;
