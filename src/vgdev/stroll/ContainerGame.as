@@ -368,7 +368,7 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					jump();
+					//jump();
 				break;
 				case Keyboard.K:
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
