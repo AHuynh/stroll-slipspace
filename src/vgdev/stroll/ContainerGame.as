@@ -251,15 +251,21 @@
 				// unlock consoles
 				if (level.sectorIndex >= 4)
 				{
-					game.mc_ship.mc_console_shield.parentClass.setLocked(false);
-					game.mc_ship.mc_console_sensors.parentClass.setLocked(false);
-					game.mc_ship.game.mc_ship.item_fe_0.parentClass.setLocked(false);
-					game.mc_ship.game.mc_ship.item_fe_1.parentClass.setLocked(false);
+				//	game.mc_ship.mc_console_shield.parentClass.setLocked(false);
+				//	game.mc_ship.mc_console_sensors.parentClass.setLocked(false);
+				//	game.mc_ship.game.mc_ship.item_fe_0.parentClass.setLocked(false);
+				//	game.mc_ship.game.mc_ship.item_fe_1.parentClass.setLocked(false);
+					consoles[0].setLocked(false);
+					consoles[1].setLocked(false);
+					consoles[9].setLocked(false);
+					consoles[10].setLocked(false);
 				}
 				if (level.sectorIndex >= 8)
 					upgradeTurrets(2);
 				else if (level.sectorIndex >= 4)
 					upgradeTurrets(1);
+					
+				trace("Loading save! Sector is", level.sectorIndex);
 			}
 			// new game
 			else
@@ -362,7 +368,7 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					//jump();
+					jump();
 				break;
 				case Keyboard.K:
 					//players[System.getRandInt(0, 1)].changeHP( -9999);

@@ -141,6 +141,8 @@ package vgdev.stroll.props.enemies
 																		});
 							cg.addToGame(proj, System.M_EPROJECTILE);
 					mc_object.base.mc_lid_large.visible = true;
+					for (var e:int = 0; e < eyes.length; e++)
+						eyes[e].forceShoot();
 				}
 				else if (cdCounts[i] == 2)
 					mc_object.base.mc_lid_large.visible = false;

@@ -72,6 +72,14 @@ package vgdev.stroll.props.enemies
 			updatePosition(dx, dy);
 		}
 		
+		/**
+		 * Workaround for the 'eyes not shooting' glitch
+		 */
+		public function forceShoot():void
+		{
+			cdCounts[0] = 1;
+		}
+		
 		override protected function updateWeapons():void 
 		{
 			if (mainBody.isIncapacitated()) {
