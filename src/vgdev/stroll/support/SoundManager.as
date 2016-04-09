@@ -31,6 +31,8 @@ package vgdev.stroll.support
 		
 		[Embed(source="../../../../bgm/bgm_calm.mp3")]
 		private static var bgm_calm:Class;
+		[Embed(source="../../../../bgm/bgm_notsocalm.mp3")]
+		private static var bgm_notsocalm:Class;
 		[Embed(source="../../../../bgm/bgm_boss.mp3")]
 		private static var bgm_boss:Class;
 		[Embed(source="../../../../bgm/bgm_FAILS.mp3")]
@@ -235,6 +237,7 @@ package vgdev.stroll.support
 			switch (music)
 			{
 				case "bgm_calm":							return new bgm_calm();
+				case "bgm_notsocalm":						return new bgm_notsocalm();				
 				case "bgm_boss":							return new bgm_boss();
 				case "bgm_FAILS":							return new bgm_FAILS();	
 				case "bgm_1a_here_we_go":					return new bgm_1a_here_we_go();

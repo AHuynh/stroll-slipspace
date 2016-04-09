@@ -21,27 +21,28 @@ package vgdev.stroll.props.enemies
 		private var eyes:Array = [];									// reference to the 4 EnemyPeepsEyes from L to R
 		private var eyeXOffsets:Array = [71, 44, 44, 71];
 		private var eyeYOffsets:Array = [ -152.5, -105.5, 107.5, 152.5];
-		public var activeEyes:Array = [0, 0];
+		public var activeEyes:Array = [0, 0];							// eyeNo of the eyes that are shooting
 		
 		private var incapacitated:Boolean = false;
-		private var recoverCooldownMax:Number = 130; 					//frames before recovering
-		private var recoverCooldownTimer:Number = recoverCooldownMax;	//current number for cooldown
 		private var wasIncapacitated:Boolean = false;
+		private const recoverCooldownMax:Number = 130; 					//frames before recovering
+		private var recoverCooldownTimer:Number = recoverCooldownMax;	//current number for cooldown
 		
-		private var teleportCooldownMax:Number = 300; 					//frames before teleporting
+		private const teleportCooldownMax:Number = 420; 				//frames before teleporting
 		private var teleportCooldownTimer:Number = teleportCooldownMax; //current number for cooldown
 		private var currentAreaNumber:int = 0;
 		
 		private var bossPhase:int = 1;
 		private var prevBossPhase:int = 1;
 		private var phaseChangeImmune:Boolean = false;
-		private var phaseChangeCooldownMax:Number = 130;					  //frames before battle resumes
+		private const phaseChangeCooldownMax:Number = 130;					  //frames before battle resumes
 		private var phaseChangeCooldownTimer:Number = phaseChangeCooldownMax; //current number for cooldown
 		
-		private var freeTP:Boolean = true;				// free teleport after phase 1->2
-		public var justTeleported:Boolean = false;		// true to signal that the camera needs to be adjusted
-		public var firstIncap:int = 0;					// set to 1 on first incap
-		private var markedToDie:Boolean = false;
+		private var freeTP:Boolean = true;				// perform 1 instant teleport after phase shifts from 1 to 2
+		public var justTeleported:Boolean = false;		// helper for SPLevel; true to signal to SPLevel that the camera needs to be adjusted
+		public var firstIncap:int = 0;					// helper for SPLevel; set to 1 on first incap
+		
+		private var markedToDie:Boolean = false;		// helpers for death animation
 		private var explCount:int = 0;
 		private var trueDeath:Boolean = false;
 
@@ -61,7 +62,7 @@ package vgdev.stroll.props.enemies
 			orbitX = System.ORBIT_0_X + 50;
 			orbitY = System.ORBIT_0_Y + 75;
 
-			hp = hpMax = 500;
+			hp = hpMax = 420;
 			rangeVary = 20;
 			
 			for (var i:int = 0; i < 4; i++)

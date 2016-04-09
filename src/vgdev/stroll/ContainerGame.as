@@ -103,7 +103,16 @@
 			super();
 			engine = eng;
 			useSave = _useSave;
-
+			
+			// reset all static classes
+			EnemyPeepsEye.numEyes = 0;
+			ABST_Console.numCorrupted = 0;
+			ABST_Console.beingUsed = false;
+			ConsoleFAILS.difficulty = 0;
+			ConsoleFAILS.puzzleActive = false;
+			EnemyCrystal.numCrystals = 0;
+			EnemyCrystal.totalNumCorrupted = 0;
+			
 			game = new SWC_Game();
 			addChild(game);
 			game.addEventListener(Event.ADDED_TO_STAGE, init);
@@ -368,11 +377,11 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					//jump();
+					jump();
 				break;
 				case Keyboard.K:
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
-					//killShip();
+					killShip();
 					//addFires(1);
 					//addSparks(4);
 					//ship.damageDirect(350);
@@ -574,7 +583,9 @@
 			{
 				if (boss)
 					SoundManager.playBGM("bgm_boss", System.VOL_BGM);
-				else if (level.sectorIndex % 4 == 1)
+				else if (level.sectorIndex > 4 && level.sectorIndex < 8)
+					SoundManager.playBGM("bgm_notsocalm", System.VOL_BGM);
+				else
 					SoundManager.playBGM("bgm_calm", System.VOL_BGM);
 			}
 			

@@ -17,6 +17,7 @@ package vgdev.stroll.support.splevels
 	 */
 	public class SPLevelPeeps extends ABST_SPLevel 
 	{
+		private var levelState:int = 0;				// state machine helper
 		private var boss:EnemyPeeps;
 		
 		private var elapseFlag:Boolean = true;
@@ -38,41 +39,24 @@ package vgdev.stroll.support.splevels
 		}
 		
 		override public function step():void 
-		{			
-			// boss
-			if (boss != null)
+		{
+			super.step();
+			
+			switch (levelState)
 			{
-				if (boss.getHP() == 0 && boss.mc_object == null)		// wait for true death
-				{
-					boss = null;
-					elapseFlag = true;
-					cg.managerMap[System.M_ENEMY].killAll();			// kill all adds
-					cg.managerMap[System.M_EPROJECTILE].killAll();		// kill all enemy projectiles
-					consoleSlip.forceOverride = false;
-					cg.ship.setBossOverride(false);
-					cg.ship.slipRange = 1;
-					framesElapsed = System.SECOND * 3 + 1;
-				}
-				else
-				{
-					switch (framesElapsed * System.SECOND)
+				case 0:
+					if (framesElapsed == (System.SECOND * 3))		// spawn boss
 					{
-						case 12:
-							cg.tails.show("Hey! Hit both of those small eyes at the same time!", System.TAILS_NORMAL);
-						break;
-						case 38:
-							cg.tails.show("Keep wailing on that thing!", System.TAILS_NORMAL);
-						break;
-						case 64:
-							cg.tails.show("Don't stop! Keep going!", System.TAILS_NORMAL);
-						break;
+						boss = new EnemyPeeps(cg, new SWC_Enemy(), {} );
+						cg.addToGame(boss, System.M_ENEMY);
+						cg.bossBar.startFight(boss);
+						framesElapsed = 0;
+						levelState++;
 					}
-					if (framesElapsed > System.SECOND * 70 && (framesElapsed % (System.SECOND * 20) == 0))
-						cg.tails.show(System.getRandFrom(["Keep hitting those small eyes!",
-															"You can do it! Keep shooting!",
-															"We gotta get rid of this thing!"
-								]), System.TAILS_NORMAL);	
-					
+				break;
+				case 1:
+					if (framesElapsed == (System.SECOND * 9))
+							cg.tails.show("Hey! Hit both of those small eyes at the same time!", System.TAILS_NORMAL);
 					if (boss.justTeleported)
 					{
 						boss.justTeleported = false;
@@ -94,37 +78,40 @@ package vgdev.stroll.support.splevels
 						boss.firstIncap = 2;
 						cg.tails.show("Awrk! Shoot the big eye! Shoot the big eye!", System.TAILS_NORMAL);
 					}
-					
 					if (camCounter > 0 && --camCounter == 0)
 					{
 						if (poi != null)
 							cg.camera.setCameraFocus(poi);
 						poi = null;
 					}
-				}
-				return;
-			}
-	
-			if (elapseFlag)
-			{
-				framesElapsed++;
-			
-				switch (framesElapsed)
-				{
-					case System.SECOND * 3:		// spawn boss
-						boss = new EnemyPeeps(cg, new SWC_Enemy(), {} );
-						cg.addToGame(boss, System.M_ENEMY);
-						cg.bossBar.startFight(boss);
-						elapseFlag = false;
-					break;
-					case System.SECOND * 6:		// boss defeated
-						cg.tails.show("No more threats detected. Great work!", System.TAILS_NORMAL);
-					break;
-					case System.SECOND * 12:	// boss defeated
-						cg.tails.show("Alright, we're 33% of the way there. Let's keep going!", System.TAILS_NORMAL);
-						elapseFlag = false;
-					break;
-					case System.SECOND * 18:	// activate Omnitool and other consoles
+					if (boss.getHP() == 0 && boss.mc_object == null)		// wait for true death
+					{
+						boss = null;
+						elapseFlag = true;
+						cg.managerMap[System.M_ENEMY].killAll();			// kill all adds
+						cg.managerMap[System.M_EPROJECTILE].killAll();		// kill all enemy projectiles
+						consoleSlip.forceOverride = false;
+						cg.ship.setBossOverride(false);
+						cg.ship.slipRange = 1;
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 2:
+					switch (framesElapsed)
+					{
+						case System.SECOND * 6:		// boss defeated
+							cg.tails.show("No more threats detected. Great work!", System.TAILS_NORMAL);
+						break;
+						case System.SECOND * 12:	// boss defeated
+							cg.tails.show("Alright, we're 33% of the way there. Let's keep going!", System.TAILS_NORMAL);
+							levelState = 99;
+						break;
+					}
+				break;
+				case 3:		// activate Omnitool and other consoles
+					if (framesElapsed == System.SECOND * 6)
+					{
 						cg.tails.show("Uhh, alright, don't panic!\nI'll deploy the ship's Omnitools and activate a few more consoles.\n\n" +
 									  "Use the Omnitool to help your friend up, quickly!");		  
 						cg.tails.showNew = true;
@@ -139,12 +126,22 @@ package vgdev.stroll.support.splevels
 						
 						// upgrade turrets
 						cg.upgradeTurrets(1);
-					break;
-					case System.SECOND * 26:
+						framesElapsed = 0;
+						levelState++;
+					}
+				break;
+				case 4:
+					// revival check
+					if (cg.players[0].getHP() > 0 && cg.players[1].getHP() > 0)
+					{
+						consoleSlip.forceOverride = false;
+						cg.tails.show("That was close. OK, Let's jump to the next sector!", System.TAILS_NORMAL);
+						levelState = 99;
+					}
+					if (framesElapsed == System.SECOND * 7)
 						cg.tails.show("Hey, help your friend up with an Omnitool!", System.TAILS_NORMAL);
-					break;
-					case System.SECOND * 38:
-						framesElapsed = System.SECOND * 26 + 1;
+					else if (framesElapsed == System.SECOND * 7 && framesElapsed % (System.SECOND * 15) == 0)
+					{
 						switch (tailsState)
 						{
 							case 0:
@@ -161,8 +158,17 @@ package vgdev.stroll.support.splevels
 							break;
 						}
 						tailsState = (tailsState + 1) % 4;
-					break;
-				}
+					}
+				break;
+				case 10:
+					// fires put out check
+					if (cg.managerMap[System.M_FIRE].numObjects() == 0)
+					{
+						consoleSlip.forceOverride = false;
+						cg.tails.show("Crisis averted! Use the Omnitool to heal stuff, too.", System.TAILS_NORMAL);
+						levelState = 99;
+					}
+				break;
 			}
 			
 			// player tries to use the Slipdrive
@@ -178,8 +184,8 @@ package vgdev.stroll.support.splevels
 						addSparks(consoleSlip.mc_object);
 						SoundManager.playSFX("sfx_electricShock");
 						cg.tails.show("Whoa! An electric overflow; watch out!", System.TAILS_NORMAL);
-						framesElapsed = Math.max(framesElapsed, System.SECOND * 12 + 1);
-						elapseFlag = true;
+						framesElapsed = 0;
+						levelState = 3;
 					break;
 					case 1:		// ignite a fire
 						consoleSlip.forceOverride = true;
@@ -194,29 +200,10 @@ package vgdev.stroll.support.splevels
 										System.M_FIRE);
 						}
 						cg.tails.show("Eek! Fire! Quick, use the Omnitool before it spreads!", int(System.TAILS_NORMAL * 1.5));
-						framesElapsed = System.SECOND * 44;
+						framesElapsed = 0;
+						levelState = 10;
 					break;
 				}
-			}
-			
-			// revival check
-			if (framesElapsed >= System.SECOND * 18 && framesElapsed <= System.SECOND * 38)
-			{
-				if (cg.players[0].getHP() > 0 && cg.players[1].getHP() > 0)
-				{
-					consoleSlip.forceOverride = false;
-					cg.tails.show("That was close. OK, Let's jump to the next sector!", System.TAILS_NORMAL);
-					framesElapsed = Math.max(framesElapsed, System.SECOND * 43);
-					elapseFlag = false;
-				}
-			}
-			// fires put out check
-			else if (framesElapsed >= System.SECOND * 44 && framesElapsed <= System.SECOND * 45 && cg.managerMap[System.M_FIRE].numObjects() == 0)
-			{
-				consoleSlip.forceOverride = false;
-				cg.tails.show("Crisis averted! Use the Omnitool to repair stuff, too.", System.TAILS_NORMAL);
-				framesElapsed = System.SECOND * 99;
-				elapseFlag = false;
 			}
 		}
 		

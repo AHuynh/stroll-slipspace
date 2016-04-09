@@ -14,13 +14,10 @@ package vgdev.stroll.props.enemies
 	public class EnemyPeepsEye extends ABST_Enemy 
 	{
 		public static var numEyes:Number = 0;
-		
 		public var eyeNo:Number = 0;
 		
 		private var incapacitated:Boolean = false;
-		public var stopped:Boolean = false;
-		private var mainBody:EnemyPeeps;		// reference to the main body of the boss
-		private var maxHP:Number = 5;
+		private var mainBody:EnemyPeeps;			// reference to the main body of the boss
 		
 		public function EnemyPeepsEye(_cg:ContainerGame, _mc_object:MovieClip, _mainBody:EnemyPeeps) 
 		{
@@ -28,7 +25,7 @@ package vgdev.stroll.props.enemies
 			setStyle("peeps_eye");
 			mainBody = _mainBody;
 			
-			hp = maxHP;
+			setHPmax(2);
 			eyeNo = numEyes++;
 			
 			// [small shot]
@@ -64,16 +61,21 @@ package vgdev.stroll.props.enemies
 		public function reviveEye():void
 		{
 			incapacitated = false;
-			hp = maxHP;	
+			hp = hpMax;	
 		}
 		
+		/**
+		 * Pulic accessor for updatePosition
+		 * @param	dx
+		 * @param	dy
+		 */
 		public function updateEyePosition(dx:Number, dy:Number):void
 		{
 			updatePosition(dx, dy);
 		}
 		
 		/**
-		 * Workaround for the 'eyes not shooting' glitch
+		 * Force the eyes to shoot next frame; synchs eyes to make it easier to shoot both simultaneously
 		 */
 		public function forceShoot():void
 		{
@@ -86,7 +88,10 @@ package vgdev.stroll.props.enemies
 				return;
 			}
 			
-			if (mainBody.activeEyes[0] != eyeNo && mainBody.activeEyes[1] != eyeNo) return;
+			if (mainBody.activeEyes[0] != eyeNo && mainBody.activeEyes[1] != eyeNo)
+			{
+				return;
+			}
 			
 			for (var i:int = 0; i < cooldowns.length; i++)
 			{
