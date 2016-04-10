@@ -18,6 +18,8 @@ package vgdev.stroll.props
 		protected var LIM_Y_MAX:int;
 		protected const BUFFER:int = 100;
 		
+		protected var ghost:Boolean = false;
+		
 		public function ABST_EMovable(_cg:ContainerGame, _mc_object:MovieClip, _pos:Point, _affiliation:int) 
 		{
 			super(_cg, _mc_object);
@@ -38,7 +40,7 @@ package vgdev.stroll.props
 				return;
 			
 			var ptNew:Point = new Point(mc_object.x + dx, mc_object.y + dy);
-			if (isPointValid(ptNew))
+			if (ghost || isPointValid(ptNew))
 			{
 				mc_object.x = ptNew.x;
 				mc_object.y = ptNew.y;
@@ -49,7 +51,7 @@ package vgdev.stroll.props
 					destroySilently();
 				}
 			}
-			else	// ship was hit
+			else if (!ghost)	// ship was hit
 			{
 				if (affiliation != System.AFFIL_PLAYER)
 					onShipHit();

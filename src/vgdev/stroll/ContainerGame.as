@@ -92,7 +92,8 @@
 		public var gameOverAnnouncer:String = "TAILS";
 		private var useSave:Boolean = false;
 		
-		public var shipName:String = "Eagle";
+		//public var shipName:String = "Eagle";
+		public var shipName:String = "Kingfisher";
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -142,9 +143,7 @@
 			hudBars = [gui.bar_crew1, gui.bar_crew2];
 			painIndicators = [gui.mc_painL, gui.mc_painR];
 			gui.tf_distance.text = "Supr Jmp";
-			
-			game.mc_ship.mc_shipBase.tintShip(engine.shipColor);
-			
+
 			// init support classes
 			level = new Level(this);
 			tails = new TAILS(this, gui.mc_tails);
@@ -160,38 +159,68 @@
 			
 			supportClasses = [level, ship, camera, alerts, bossBar, visualEffects, graph];
 			
+			game.mc_ship.gotoAndStop(shipName.toLowerCase());
+			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
 			shipHullMask.visible = false;
 			shipInsideMask = game.mc_ship.mc_ship_hithard;
 			shipInsideMask.visible = false;
 			setHitMask(false);
-
+			
 			// link the game's assets
 			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
 					   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
 			
 			// --- Eagle --------------------------------------------------------------------------------------------------------
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));		// give priority to Omnitools by listing them first
-			consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
-			
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
-											players, [-120, 120], [1, 2, 0, 3], 0));
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
-											players, [-165, 10], [1, 2, 0, 3], 1));
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
-											players, [-10, 165], [1, 2, 0, 3], 2));
-			consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
-											players, [-65, 65], [1, 2, 0, 3], 3));
-			consoles[5].rotOff = 180;
-			consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
-			consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
-			consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-			consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
-			consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
-			
-			graph.initShip("Eagle");
+			if (shipName == "Eagle")
+			{
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));		// give priority to Omnitools by listing them first
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
+				
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
+												players, [-120, 120], [1, 2, 0, 3], 0));
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_l,		// left
+												players, [-165, 10], [1, 2, 0, 3], 1));
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
+												players, [-10, 165], [1, 2, 0, 3], 2));
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretb, game.mc_ship.turret_b,		// rear
+												players, [-65, 65], [1, 2, 0, 3], 3));
+				consoles[5].rotOff = 180;
+				consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
+				consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
+				consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
+				consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
+				consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
+			}
 			// --- Eagle --------------------------------------------------------------------------------------------------------
+			// --- Kingfisher ---------------------------------------------------------------------------------------------------
+			else if (shipName == "Kingfisher")
+			{
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));		// give priority to Omnitools by listing them first
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
+				
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_lf,		// left front
+												players, [-120, 15], [1, 2, 0, 3], 0));
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretbl, game.mc_ship.turret_lr,		// left rear
+												players, [-5, 130], [1, 2, 0, 3], 1));
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_rf,		// right front
+												players, [-25, 130], [1, 2, 0, 3], 2));
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
+												players, [0, 160], [1, 2, 0, 3], 3, true));
+				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretbr, game.mc_ship.turret_rr,		// right rear
+												players, [-60, 90], [1, 2, 0, 3], 3, true));
+				consoles[3].rotOff = 180;
+				consoles[6].rotOff = 180;
+				consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
+				consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
+				consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
+				consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
+				consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
+			}
+			// --- Kingfisher ---------------------------------------------------------------------------------------------------
+			graph.initShip(shipName);
+			game.mc_ship.mc_shipBase.tintShip(engine.shipColor);
 			
 			var i:int;
 			
@@ -260,49 +289,40 @@
 				// unlock consoles
 				if (level.sectorIndex >= 4)
 				{
-				//	game.mc_ship.mc_console_shield.parentClass.setLocked(false);
-				//	game.mc_ship.mc_console_sensors.parentClass.setLocked(false);
-				//	game.mc_ship.game.mc_ship.item_fe_0.parentClass.setLocked(false);
-				//	game.mc_ship.game.mc_ship.item_fe_1.parentClass.setLocked(false);
 					consoles[0].setLocked(false);
 					consoles[1].setLocked(false);
-					consoles[9].setLocked(false);
+					if (shipName == "Kingfisher")
+						consoles[11].setLocked(false);
+					else
+						consoles[9].setLocked(false);
 					consoles[10].setLocked(false);
 				}
 				if (level.sectorIndex >= 8)
 					upgradeTurrets(2);
 				else if (level.sectorIndex >= 4)
 					upgradeTurrets(1);
-					
-				trace("Loading save! Sector is", level.sectorIndex);
 			}
 			// new game
 			else
 			{
 				tails.show(TAILS_DEFAULT);
 				tails.showNew = true;
-				camera.setCameraFocus(new Point(0, -100));
+				if (shipName == "Kingfisher")
+					camera.setCameraFocus(new Point(0, -50));
+				else
+					camera.setCameraFocus(new Point(0, -100));
 			}
 			
 			stage.focus = game;
 			gui.mc_fade.gotoAndPlay(2);		// fade in
 			
 			//visualEffects.applyBGDistortion(true, "bg_bars");
-			//visualEffects.applyBGDistortion(true, "bg_squares");
-			//addToGame(new EnemyCrystal(this, new SWC_Enemy(), {"theta": 0, "dTheta": 0.05 } ), System.M_ENEMY);
-			//for (var t:int = 0; t < 5; t++)
-			//	addToGame(new BoarderShooter(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
-			//addToGame(new BoarderAssassin(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
-			//addToGame(new BoarderSuicider(this, new SWC_Enemy(), shipInsideMask, {"x": -100}), System.M_BOARDER);
 		}
 		
 		public function upgradeTurrets(lvl:int):void
 		{
-			if (shipName == "Eagle")
-			{
-				for (var i:int = 2; i < 6; i++)
-					consoles[i].setLevel(lvl);
-			}
+			for (var i:int = (shipName == "Eagle" ? 5 : 6); i >= 2; i--)
+				consoles[i].setLevel(lvl);
 		}
 		
 		/**
@@ -804,10 +824,21 @@
 			game.mc_ship.mc_player1.visible = vis;
 			for each (var c:ABST_Console in consoles)
 				c.mc_object.visible = vis;
-			game.mc_ship.turret_f.visible = vis;
-			game.mc_ship.turret_l.visible = vis;
-			game.mc_ship.turret_r.visible = vis;
-			game.mc_ship.turret_b.visible = vis;
+			if (shipName == "Eagle")
+			{
+				game.mc_ship.turret_f.visible = vis;
+				game.mc_ship.turret_l.visible = vis;
+				game.mc_ship.turret_r.visible = vis;
+				game.mc_ship.turret_b.visible = vis;
+			}
+			else
+			{
+				game.mc_ship.turret_lf.visible = vis;
+				game.mc_ship.turret_lr.visible = vis;
+				game.mc_ship.turret_rf.visible = vis;
+				game.mc_ship.turret_r.visible = vis;
+				game.mc_ship.turret_rr.visible = vis;
+			}
 		}
 		
 		public function reactToFive():void

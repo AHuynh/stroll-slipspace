@@ -69,6 +69,29 @@ package vgdev.stroll.support.graph
 					nodeMap["node_b1"].connectNodes(["node_b0", "node_b2"]);
 					nodeMap["node_b2"].connectNodes(["node_b1", "node_c"]);
 				break;
+				case "Kingfisher":
+					addNode(ship.node_f);
+					addNode(ship.node_c0);
+					addNode(ship.node_c1);
+					addNode(ship.node_c2);
+					addNode(ship.node_l);
+					addNode(ship.node_lr);
+					addNode(ship.node_r0);
+					addNode(ship.node_r1);
+					addNode(ship.node_r2);
+					addNode(ship.node_rr);
+					
+					nodeMap["node_f"].connectNodes(["node_c0"]);
+					nodeMap["node_c0"].connectNodes(["node_f", "node_c1", "node_r0"]);
+					nodeMap["node_c1"].connectNodes(["node_c0", "node_c2", "node_l"]);
+					nodeMap["node_c2"].connectNodes(["node_lr", "node_c1"]);
+					nodeMap["node_l"].connectNodes(["node_c1"]);
+					nodeMap["node_lr"].connectNodes(["node_c2", "node_r2"]);
+					nodeMap["node_r0"].connectNodes(["node_r0", "node_r1", "node_rr"]);
+					nodeMap["node_r1"].connectNodes(["node_r0", "node_r2"]);
+					nodeMap["node_r2"].connectNodes(["node_r1", "node_lr", "node_rr"]);
+					nodeMap["node_rr"].connectNodes(["node_r0", "node_r2"]);
+				break;
 				default:
 					trace("[GraphMaster] Warning: Nothing defined for ship with name", shipName);
 			}

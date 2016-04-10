@@ -56,6 +56,13 @@
 				{"type": "Eye", "region": "bottom_right"},
 				{"type": "Eye", "region": "left"}
 			]
+	},
+	{
+		"time": 16,
+		"TAILS": "We should jump away when we can, now!",
+		"spawnables":
+			[
+			]
 	}
   ]
 }

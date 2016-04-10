@@ -120,6 +120,8 @@ package vgdev.stroll.support.splevels
 							cg.tails.show("USER LOCKOUT - ALL SYSTEMS CORRUPTED", System.SECOND * .6);				// corrupt all modules					
 							for each (c in cg.consoles)
 								c.setCorrupt(true);
+							if (cg.shipName == "Kingfisher")
+								cg.consoles[3].setCorrupt(false);
 							cg.camera.setCameraFocus(new Point(0, 20));
 						break;
 						case System.SECOND * 22:

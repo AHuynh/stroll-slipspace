@@ -735,35 +735,36 @@ package vgdev.stroll.support.splevels
 							cg.tails.show("hoW-- ABOTUUT uu   JUST DIEEE ?? .. !", System.TAILS_NORMAL, "FAILS_pissed");
 							crystals[3].corrupt(true);
 							crystals[1].corrupt();
-							EnemyCrystal.dTheta = 0.7;
+							EnemyCrystal.dTheta = 0.65;
 							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 120} ), System.M_ENEMY));
 							crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), {"theta": EnemyCrystal.globalTheta + 300} ), System.M_ENEMY));
 							cg.addSparks(2);
 							SoundManager.playSFX("sfx_electricShock");
 							cg.camera.setShake(10);
-							spawnEnemy("Amoeba", 5, System.SPAWN_AMOEBA, {"am_size": 0});
+							spawnEnemy("Amoeba", 4, System.SPAWN_AMOEBA, {"am_size": 0});
 						break;
 					}
-					if (framesElapsed > System.SECOND * 20 && framesElapsed % (System.SECOND * 30) == 0)
+					if (framesElapsed > System.SECOND * 20 && framesElapsed % (System.SECOND * 35) == 0)
 					{
-						if (framesElapsed % (System.SECOND * 60) == 0)
+						if (framesElapsed % (System.SECOND * 70) == 0)
 						{
 							cg.tails.show(System.getRandFrom(["i\"LL TAKE THOSE BACK THANKS",
 															"red is SUC+__H A NICE rCOLOR!!"
 							]), System.TAILS_NORMAL, "FAILS_incredulous");
 							System.getRandFrom(crystals).corrupt(true);
 							System.getRandFrom(crystals).corrupt();
-							for (s = 0; s < 4; s++)
+							for (s = 0; s < 3; s++)
 								spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Manta", "Breeder", "Spider"]), 1);
 						}
 						else
 						{
 							portal = cg.level.spawn( {}, cg.level.getRandomPointInRegion("medium_orbit"), "Portal") as EnemyPortal;
-							portal.multiplyCooldowns(3);
+							portal.multiplyCooldowns(4);
+							portal.setHPmax(220);
 							portal = cg.level.spawn( {}, cg.level.getRandomPointInRegion("near_orbit"), "Portal") as EnemyPortal;
-							portal.multiplyCooldowns(6);
+							portal.multiplyCooldowns(7);
 							portal.setScale(0.5);
-							portal.setHPmax(100);
+							portal.setHPmax(120);
 							if (Math.random() > .5)
 								cg.tails.show(System.getRandFrom(["We've almost got it!",
 																"We gotta get all 6 cores back!"
@@ -823,7 +824,6 @@ package vgdev.stroll.support.splevels
 						if (EnemyCrystal.totalNumCorrupted == 6)
 						{
 							cg.tails.show("Goodbye, FAILS!", System.TAILS_NORMAL);
-							EnemyCrystal.dTheta = 0;
 							framesElapsed = 0;
 							levelState++;
 						}
@@ -870,7 +870,9 @@ package vgdev.stroll.support.splevels
 							cg.alerts.isCorrupt = false;
 							SoundManager.crossFadeBGM("bgm_1a_here_we_go");
 						break;
-					}	
+					}
+					if (EnemyCrystal.dTheta < 3.5)
+						EnemyCrystal.dTheta += 0.025;
 				break;
 				case 52:
 					if (framesElapsed == System.SECOND * 8)

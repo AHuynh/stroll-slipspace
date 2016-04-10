@@ -23,7 +23,7 @@ package vgdev.stroll.props.consoles
 		
 		private const arrowMap:Array = [0, -90, 180, 90];		// map key [0-3] to rotation
 		
-		private const ARROW_DIST:int = 12;						// max distance between arrow and target to count as a hit
+		private const ARROW_DIST:int = 16;						// max distance between arrow and target to count as a hit
 		private const ARROW_TARGET:int = -45;
 		
 		private var missCounter:int = 0;

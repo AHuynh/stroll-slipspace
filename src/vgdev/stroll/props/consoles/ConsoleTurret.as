@@ -47,6 +47,9 @@ package vgdev.stroll.props.consoles
 		/// Rotation offset, if the mc_object's initial rotation is not 0
 		public var rotOff:int = 0;
 		
+		/// If true, shots fired won't collide with ship
+		protected var ghost:Boolean = false;
+		
 		private var turretID:int;
 		private const MINI_SCALE:Number = .09;
 		private const MINI_LEAD:Number = .75;
@@ -55,9 +58,10 @@ package vgdev.stroll.props.consoles
 		private var level:int = 0;
 		private var triple:Boolean = false;
 		
-		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array, _turretID:int) 
+		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array, _turretID:int, _ghost:Boolean = false)
 		{
-			super(_cg, _mc_object, _players, false);	
+			super(_cg, _mc_object, _players, false);
+			ghost = _ghost;
 			CONSOLE_NAME = "Turret";
 			TUT_SECTOR = 0;
 			TUT_TITLE = "Turret Module";
@@ -70,6 +74,8 @@ package vgdev.stroll.props.consoles
 			markerHelper = gimbalLimits[1] - gimbalLimits[0];
 			
 			turret.nozzle.spawn.visible = false;
+			if (ghost)
+				turret.alpha = 0.6;
 		}
 		
 		// update cooldown
@@ -139,7 +145,8 @@ package vgdev.stroll.props.consoles
 																	"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
 																	"spd":			projectileSpeed,
 																	"scale":		n == 1 ? 1 : .5,
-																	"style":		"turret_small_orange"
+																	"style":		"turret_small_orange",
+																	"ghost":		ghost
 																});
 						cg.addToGame(proj, System.M_EPROJECTILE);
 					}
