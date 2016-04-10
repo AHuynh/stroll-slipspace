@@ -174,9 +174,19 @@ package vgdev.stroll.props.consoles
 		 */
 		public function setArrowDifficulty(sector:int):void
 		{
-			arrowDifficulty = 3 + int(sector / 3);
-			arrowSpeed = 3.5 + sector * .2;
-			arrowVarySpacing = 20 + int(sector * 1.2);
+			// custom stats
+			if (cg.shipName == "Kingfisher")
+			{
+				arrowDifficulty = 4 + int(sector / 3);
+				arrowSpeed = 4 + sector * .2;
+				arrowVarySpacing = 16 + int(sector * 1.2);
+			}
+			else
+			{
+				arrowDifficulty = 3 + int(sector / 3);
+				arrowSpeed = 3.5 + sector * .2;
+				arrowVarySpacing = 20 + int(sector * 1.2);
+			}
 		}
 		
 		/**

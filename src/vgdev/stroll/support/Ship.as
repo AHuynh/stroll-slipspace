@@ -49,9 +49,9 @@ package vgdev.stroll.support
 		public const SHIP_HEADING_MAX:Number = 1; 		//Max value shipHeading can have
 		public const SHIP_HEADING_MIN:Number = -1; 		//Min value shipHeading can have
 		
-		private const HEADING_RUNAWAY:Number = 1.003;  	//Scaling factor applied to heading every game tick
-		private const HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
-		private const DAMAGE_JUMP_FACTOR:Number = 0.006;//max value of random jumps applied to the heading every game tick 
+		private var HEADING_RUNAWAY:Number = 1.003;  	//Scaling factor applied to heading every game tick
+		private var HEADING_JUMP:Number = 0.001;		//max value of random jumps applied to the heading every game tick 
+		private var DAMAGE_JUMP_FACTOR:Number = 0.006;	//max value of random jumps applied to the heading every game tick 
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Slipdrive -----------------------------------------------------------------------------------
@@ -72,6 +72,21 @@ package vgdev.stroll.support
 		{
 			super(_cg);
 			mc_shield = cg.game.mc_ship.shield;
+			
+			// custom stats
+			if (cg.shipName == "Kingfisher")
+			{
+				shield = shieldMax = 250;
+				shieldReAmt = 1;
+				hp = hpMax = 600;
+				shieldRecharge = 180;
+				shieldMitigation = .25;
+				SHIELD_GRACE = 30;
+				
+				HEADING_RUNAWAY = 1.002;
+				HEADING_JUMP = 0.0006;
+				DAMAGE_JUMP_FACTOR = 0.003;
+			}
 			
 			shieldCTF = new ColorTransform();
 			setShieldColor(shieldCol);

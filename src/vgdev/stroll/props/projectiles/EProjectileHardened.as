@@ -14,8 +14,7 @@ package vgdev.stroll.props.projectiles
 	{	
 		/// How much HP to remove from other Hardened projectiles (non-Hardened are assumed to be dmg = 1)
 		protected var pdmg:int;
-		
-		private var markedToKill:Boolean = false;
+		protected var markedToKill:Boolean = false;
 		
 		public function EProjectileHardened(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{
@@ -82,7 +81,7 @@ package vgdev.stroll.props.projectiles
 		
 		override public function destroy():void
 		{
-			if (!markedToKill && hp == 0)
+			if (life <= 0 || (!markedToKill && hp == 0))
 			{
 				markedToKill = true;
 				super.destroy();

@@ -39,6 +39,10 @@ package vgdev.stroll.support
 			super(_cg);
 			ui = _ui;
 			
+			// custom stats
+			if (cg.shipName == "Kingfisher")
+				camMoveRate = 5;
+			
 			UI_ANCHOR_X = ui.x;
 			UI_ANCHOR_Y = ui.y;
 			

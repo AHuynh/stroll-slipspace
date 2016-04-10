@@ -206,10 +206,10 @@
 												players, [-5, 130], [1, 2, 0, 3], 1));
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_rf,		// right front
 												players, [-25, 130], [1, 2, 0, 3], 2));
-				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,		// right
-												players, [0, 160], [1, 2, 0, 3], 3, true));
+				consoles.push(new ConsoleTurretAoE(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,	// right
+												players, [-180, 180], [1, 2, 0, 3], 3, true));
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretbr, game.mc_ship.turret_rr,		// right rear
-												players, [-60, 90], [1, 2, 0, 3], 3, true));
+												players, [-135, 45], [1, 2, 0, 3], 3, true));
 				consoles[3].rotOff = 180;
 				consoles[6].rotOff = 180;
 				consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));

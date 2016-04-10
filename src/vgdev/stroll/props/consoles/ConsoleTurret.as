@@ -5,6 +5,7 @@ package vgdev.stroll.props.consoles
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.enemies.ABST_Enemy;
+	import vgdev.stroll.props.Player;
 	import vgdev.stroll.props.projectiles.ABST_EProjectile;
 	import vgdev.stroll.props.projectiles.EProjectileGeneric;
 	import vgdev.stroll.System;
@@ -27,6 +28,7 @@ package vgdev.stroll.props.consoles
 		
 		/// The min and max values of rotation that can be applied to the turret nozzle's rotation
 		protected var gimbalLimits:Array = [0, 0];
+		protected var gimbalFree:Boolean = false;
 		private var markerHelper:Number;
 		
 		/// The IDs of the keys that are used to move the turret in pairs (0 and 1, 2 and 3)
@@ -58,6 +60,9 @@ package vgdev.stroll.props.consoles
 		private var level:int = 0;
 		private var triple:Boolean = false;
 		
+		/// Don't immediately fire upon console activation
+		private var entryDelay:int = 0;
+		
 		public function ConsoleTurret(_cg:ContainerGame, _mc_object:MovieClip, _turret:MovieClip, _players:Array, _gimbalLimits:Array, _controlIDs:Array, _turretID:int, _ghost:Boolean = false)
 		{
 			super(_cg, _mc_object, _players, false);
@@ -71,6 +76,8 @@ package vgdev.stroll.props.consoles
 			controlIDs = _controlIDs;
 			turretID = _turretID;
 			
+			if (gimbalLimits[0] == -180 && gimbalLimits[1] == 180)
+				gimbalFree = true;
 			markerHelper = gimbalLimits[1] - gimbalLimits[0];
 			
 			turret.nozzle.spawn.visible = false;
@@ -86,9 +93,18 @@ package vgdev.stroll.props.consoles
 			
 			if (cdCount > 0)
 				cdCount--;
+			if (entryDelay > 0)
+				entryDelay--;
+				
 			if (inUse)
 				updateHUD(true);
 			return super.step();
+		}
+		
+		override public function onAction(p:Player):void 
+		{
+			entryDelay = 5;
+			super.onAction(p);
 		}
 		
 		/**
@@ -126,33 +142,36 @@ package vgdev.stroll.props.consoles
 			}
 			
 			// turret firing
-			if (keys[4])
+			if (entryDelay == 0 && keys[4] && cdCount == 0)
+				fire();
+		}
+		
+		/**
+		 * Override to define functionality for turret variants
+		 */
+		protected function fire():void
+		{
+			cdCount = cooldown;
+			triple = !triple;
+			var proj:ABST_EProjectile;											
+			for (var n:int = 0; n < 3; n++)
 			{
-				if (cdCount == 0)		// fire bullet(s)
-				{
-					cdCount = cooldown;	
-					triple = !triple;
-					var proj:ABST_EProjectile;											
-					for (var n:int = 0; n < 3; n++)
-					{
-						if (n != 1 && (!triple || level == 0)) continue;
-						proj = new EProjectileGeneric(cg, new SWC_Bullet(),
-																{	 
-																	"affiliation":	System.AFFIL_PLAYER,
-																	"dir":			turret.nozzle.rotation + rotOff + System.getRandNum(-sway, sway) + (n - 1) * 10,
-																	"dmg":			n == 1 ? 5 : 1.5,
-																	"life":			projectileLife,
-																	"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
-																	"spd":			projectileSpeed,
-																	"scale":		n == 1 ? 1 : .5,
-																	"style":		"turret_small_orange",
-																	"ghost":		ghost
-																});
-						cg.addToGame(proj, System.M_EPROJECTILE);
-					}
-					SoundManager.playSFX("sfx_laser1", .6);
-				}
+				if (n != 1 && (!triple || level == 0)) continue;
+				proj = new EProjectileGeneric(cg, new SWC_Bullet(),
+														{	 
+															"affiliation":	System.AFFIL_PLAYER,
+															"dir":			turret.nozzle.rotation + rotOff + System.getRandNum(-sway, sway) + (n - 1) * 10,
+															"dmg":			n == 1 ? 5 : 1.5,
+															"life":			projectileLife,
+															"pos":			turret.nozzle.spawn.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y)),
+															"spd":			projectileSpeed,
+															"scale":		n == 1 ? 1 : .5,
+															"style":		"turret_small_orange",
+															"ghost":		ghost
+														});
+				cg.addToGame(proj, System.M_EPROJECTILE);
 			}
+			SoundManager.playSFX("sfx_laser1", .6);
 		}
 		
 		/**
@@ -194,12 +213,13 @@ package vgdev.stroll.props.consoles
 				hud.mc_container.graphics.lineStyle(1, System.COL_WHITE, 1);
 				
 				var theta:Number
-				for (var i:int = 1; i >= 0; i--)
-				{
-					theta = System.degToRad(270 - trot + gimbalLimits[i]);
-					hud.mc_container.graphics.moveTo(0, 23);
-					hud.mc_container.graphics.lineTo(50 * Math.cos(theta), 23 + 50 * Math.sin(theta));
-				}
+				if (!gimbalFree)
+					for (var i:int = 1; i >= 0; i--)
+					{
+						theta = System.degToRad(270 - trot + gimbalLimits[i]);
+						hud.mc_container.graphics.moveTo(0, 23);
+						hud.mc_container.graphics.lineTo(50 * Math.cos(theta), 23 + 50 * Math.sin(theta));
+					}
 				
 				// draw projectiles on minimap
 				var dist:Number;
@@ -257,7 +277,10 @@ package vgdev.stroll.props.consoles
 		 */
 		protected function traverse(dir:Number):void
 		{
-			turret.nozzle.rotation = System.changeWithLimit(turret.nozzle.rotation, gimbalSpeed * dir, gimbalLimits[0], gimbalLimits[1]);
+			if (gimbalFree)
+				turret.nozzle.rotation += gimbalSpeed * dir;
+			else
+				turret.nozzle.rotation = System.changeWithLimit(turret.nozzle.rotation, gimbalSpeed * dir, gimbalLimits[0], gimbalLimits[1]);
 		}
 	}
 }

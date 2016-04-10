@@ -11,7 +11,7 @@ package vgdev.stroll.props.enemies
 	 */
 	public class EnemyBreeder extends ABST_Enemy 
 	{
-		private const HEAL:Number = 0.2;		// amount to heal per frame
+		private const HEAL:Number = 0.1;		// amount to heal per frame
 		
 		public function EnemyBreeder(_cg:ContainerGame, _mc_object:MovieClip, attributes:Object) 
 		{

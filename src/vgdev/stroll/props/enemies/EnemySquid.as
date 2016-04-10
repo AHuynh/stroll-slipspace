@@ -105,6 +105,7 @@ package vgdev.stroll.props.enemies
 		
 		private function teleport():void
 		{
+			if (mc_object == null) return;
 			cg.addDecor("spawn", { "x":mc_object.x, "y":mc_object.y, "scale":2 } );
 			var p:Point = cg.level.getRandomPointInRegion("near_orbit");
 			mc_object.x = p.x;

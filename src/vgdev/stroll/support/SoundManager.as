@@ -108,8 +108,6 @@ package vgdev.stroll.support
 		[Embed(source="../../../../sfx/sfx_shieldrecharge.mp3")]
 		private static var sfx_shieldrecharge:Class;
 		
-		[Embed(source="../../../../sfx/sfx_sliphit.mp3")]
-		private static var sfx_sliphit:Class;	
 		[Embed(source="../../../../sfx/sfx_slipjump.mp3")]
 		private static var sfx_slipjump:Class;
 			
@@ -159,7 +157,6 @@ package vgdev.stroll.support
 			sounds["sfx_fire_ignited"] = new sfx_fire_ignited();
 			sounds["sfx_laser1"] = new sfx_laser1();
 			sounds["sfx_shieldrecharge"] = new sfx_shieldrecharge();
-			sounds["sfx_sliphit"] = new sfx_sliphit();
 			sounds["sfx_slipjump"] = new sfx_slipjump();
 			sounds["sfx_monsterdeath_1"] = new sfx_monsterdeath_1();
 			sounds["sfx_monsterdeath_2"] = new sfx_monsterdeath_2();

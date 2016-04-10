@@ -28,12 +28,12 @@ package vgdev.stroll.props.consoles
 		private var endLoc:int;				// [0-2] corresponding to row location of end
 		
 		private var puzzleCooldown:int = 0;					// if non-zero, puzzle is on cooldown
-		private const COOLDOWN:int = System.SECOND * 8;		// amount to set the cooldown at
+		private var COOLDOWN:int = System.SECOND * 8;		// amount to set the cooldown at
 		
 		private var puzzleActive:Boolean = false;
 		private var shieldCharge:Number = 1;
-		private const SHIELD_DELTA:Number = -.0035;	// amount to reduce shield charge per frame
-		private const SHIELD_MIN:Number = 0.2;		// minimum amount of shieldCharge
+		private var SHIELD_DELTA:Number = -.0035;	// amount to reduce shield charge per frame
+		private var SHIELD_MIN:Number = 0.2;		// minimum amount of shieldCharge
 		
 		private var textCooldown:int = 0;
 		private var complain:int = 0;
@@ -47,6 +47,14 @@ package vgdev.stroll.props.consoles
 			TUT_TITLE = "Shield Reboot Module";
 			TUT_MSG = "Complete the maze to reboot the ship's shields. The faster you are, the more SP will be restored!\n\n" +
 					  "Find a path from left to right.";
+					  
+			// custom stats
+			if (cg.shipName == "Kingfisher")
+			{
+				COOLDOWN = System.SECOND * 5;
+				SHIELD_DELTA = -.0045;
+				SHIELD_MIN = 0.1;
+			}
 			
 			// create shield cel grid
 			shields = [];
