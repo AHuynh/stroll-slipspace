@@ -176,7 +176,7 @@ package vgdev.stroll.props.consoles
 				ui.tf_data.text = "OK";
 				ui.mc_marker.x = 94;
 				freeTimer = 60;
-				difficulty++;
+				difficulty = System.changeWithLimit(difficulty, 1, 0, MAX_DIFFICULTY);
 				for each (var c:ABST_Console in cg.consoles)
 					if (c.closestPlayer != null && c != originalConsole)
 						c.setAlready(false);

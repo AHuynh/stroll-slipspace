@@ -2,6 +2,7 @@ package vgdev.stroll.support.splevels
 {
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.props.consoles.ConsoleNavigation;
 	import vgdev.stroll.props.consoles.ConsoleSensors;
@@ -10,6 +11,7 @@ package vgdev.stroll.support.splevels
 	import vgdev.stroll.props.consoles.ConsoleSlipdrive;
 	import vgdev.stroll.props.consoles.ConsoleTurret;
 	import vgdev.stroll.props.consoles.Omnitool;
+	import vgdev.stroll.props.Decor;
 	import vgdev.stroll.props.enemies.BoarderWanderer;
 	import vgdev.stroll.props.enemies.EnemyGeometricAnomaly;
 	import vgdev.stroll.props.enemies.EnemySkull;
@@ -120,7 +122,7 @@ package vgdev.stroll.support.splevels
 							cg.tails.show("USER LOCKOUT - ALL SYSTEMS CORRUPTED", System.SECOND * .6);				// corrupt all modules					
 							for each (c in cg.consoles)
 								c.setCorrupt(true);
-							if (cg.shipName == "Kingfisher")
+							if (cg.shipName == "Kingfisher")				// give a free module so # corrupted is 9
 								cg.consoles[3].setCorrupt(false);
 							cg.camera.setCameraFocus(new Point(0, 20));
 						break;
@@ -151,6 +153,9 @@ package vgdev.stroll.support.splevels
 					{
 						cg.addSparks(2);
 						cg.camera.setShake(5);
+						var pos:Point = cg.getRandomNearLocation();
+						var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(0.25, 3) } );
+						spawnFX.mc_object.base.setTint(System.COL_RED);
 						SoundManager.playSFX("sfx_electricShock", .25);
 					}
 				break;

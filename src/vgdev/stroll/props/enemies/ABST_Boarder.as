@@ -110,7 +110,9 @@ package vgdev.stroll.props.enemies
 			do {
 				pointOfInterest = cg.getRandomShipLocation();
 				giveUp--;
-			} while (System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < POI_RANGE && giveUp > 0);
+			} while (giveUp > 0 && 
+					System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < POI_RANGE &&
+					!System.hasLineOfSight(this, pointOfInterest));
 		}
 		
 		/**

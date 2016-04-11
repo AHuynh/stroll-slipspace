@@ -178,8 +178,6 @@ package vgdev.stroll.props
 		{
 			if (mc_object && MovieClip(mc_object.parent).contains(mc_object))
 				MovieClip(mc_object.parent).removeChild(mc_object);
-			else
-				trace(this, "wasn't removed!");
 			mc_object = null;
 			cg = null;
 			completed = true;

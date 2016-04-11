@@ -4,6 +4,7 @@ package vgdev.stroll.props.enemies
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
+	import vgdev.stroll.props.consoles.Omnitool;
 	import vgdev.stroll.props.projectiles.ABST_IProjectile;
 	import vgdev.stroll.props.projectiles.IProjectileGeneric;
 	import vgdev.stroll.System;
@@ -39,7 +40,10 @@ package vgdev.stroll.props.enemies
 				tgt = System.getRandFrom(cg.consoles);
 				pointOfInterest = new Point(tgt.mc_object.x, tgt.mc_object.y);
 				giveUp--;
-			} while (System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < POI_RANGE && giveUp > 0 && tgt.getHP() != 0);
+			} while (giveUp > 0 &&
+					(tgt is Omnitool ||
+					System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < POI_RANGE ||
+					!System.hasLineOfSight(this, pointOfInterest)));
 		}
 		
 		override public function step():Boolean 
@@ -50,8 +54,9 @@ package vgdev.stroll.props.enemies
 			{
 				var los:Boolean = System.hasLineOfSight(this, pointOfInterest);
 				if (state != STATE_ATTACK && los &&
-					System.hasLineOfSight(this, pointOfInterest, new Point(-5, 0)) && System.hasLineOfSight(this, pointOfInterest, new Point( 5, 0)) &&
-					System.hasLineOfSight(this, pointOfInterest, new Point(0, -5)) && System.hasLineOfSight(this, pointOfInterest, new Point(0, 5)))
+					System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < RANGE * 5 && 
+					System.hasLineOfSight(this, pointOfInterest, new Point(-2, 0)) && System.hasLineOfSight(this, pointOfInterest, new Point( 2, 0)) &&
+					System.hasLineOfSight(this, pointOfInterest, new Point(0, -2)) && System.hasLineOfSight(this, pointOfInterest, new Point(0, 2)))
 				{
 					state = STATE_ATTACK;
 					path = [];
@@ -88,7 +93,6 @@ package vgdev.stroll.props.enemies
 					// arrived at destination
 					if (System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < RANGE)
 					{
-						pointOfInterest = null;
 						state = STATE_IDLE;
 						onArrive();
 					}
@@ -124,7 +128,8 @@ package vgdev.stroll.props.enemies
 		
 		override public function destroy():void 
 		{
-			cg.addSparksAt(1, new Point(mc_object.x, mc_object.y));
+			if (cg != null)
+				cg.addSparksAt(1, new Point(mc_object.x, mc_object.y));
 			super.destroy();
 		}
 	}

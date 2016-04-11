@@ -25,9 +25,12 @@ package vgdev.stroll.props.projectiles
 		
 		override public function destroy():void
 		{
-			if (life <= 0 || (!markedToKill && hp == 0))
+			if (completed) return;
+			if (life == 0 || (!markedToKill && hp == 0))
 			{
 				markedToKill = true;
+				hp = 0;
+				life = -1;
 				var proj:EProjectileGeneric;
 				for (var n:int = 0; n < 16; n++)
 				{
@@ -35,7 +38,7 @@ package vgdev.stroll.props.projectiles
 														{	 
 															"affiliation":	System.AFFIL_PLAYER,
 															"dir":			n * 22.5,
-															"dmg":			15,
+															"dmg":			5,
 															"life":			30,
 															"pos":			mc_object.localToGlobal(new Point()),
 															"spd":			10,

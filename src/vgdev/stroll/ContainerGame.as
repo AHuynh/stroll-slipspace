@@ -99,10 +99,11 @@
 		 * A MovieClip containing all of a Stroll level
 		 * @param	eng			A reference to the Engine
 		 */
-		public function ContainerGame(eng:Engine, _useSave:Boolean = false )
+		public function ContainerGame(eng:Engine, _shipName:String, _useSave:Boolean = false )
 		{
 			super();
 			engine = eng;
+			shipName = _shipName;
 			useSave = _useSave;
 			
 			// reset all static classes
@@ -123,8 +124,6 @@
 		{
 			game.removeEventListener(Event.ADDED_TO_STAGE, init);
 			
-			//game.mc_bg.gotoAndStop("space");
-			
 			// init the GUI
 			gui = new SWC_GUI();	
 			engine.superContainer.mc_container.addChild(gui);
@@ -144,6 +143,8 @@
 			painIndicators = [gui.mc_painL, gui.mc_painR];
 			gui.tf_distance.text = "Supr Jmp";
 
+			game.mc_ship.gotoAndStop(shipName.toLowerCase());
+			
 			// init support classes
 			level = new Level(this);
 			tails = new TAILS(this, gui.mc_tails);
@@ -158,8 +159,6 @@
 			graph = new GraphMaster(this);
 			
 			supportClasses = [level, ship, camera, alerts, bossBar, visualEffects, graph];
-			
-			game.mc_ship.gotoAndStop(shipName.toLowerCase());
 			
 			// set up the hitmasks
 			shipHullMask = game.mc_ship.mc_ship_hit;
@@ -317,6 +316,11 @@
 			gui.mc_fade.gotoAndPlay(2);		// fade in
 			
 			//visualEffects.applyBGDistortion(true, "bg_bars");
+			/*for (var b:int = 0; b < 10; b++)
+			{
+				var bpt:Point = getRandomShipLocation();
+				addToGame(new BoarderShooter(this, new SWC_Enemy(), shipInsideMask, { "x": bpt.x, "y": bpt.y } ), System.M_BOARDER);
+			}*/
 		}
 		
 		public function upgradeTurrets(lvl:int):void
@@ -397,11 +401,11 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					jump();
+					//jump();
 				break;
 				case Keyboard.K:
 					//players[System.getRandInt(0, 1)].changeHP( -9999);
-					killShip();
+					//killShip();
 					//addFires(1);
 					//addSparks(4);
 					//ship.damageDirect(350);
@@ -880,10 +884,6 @@
 				managers[i] = null;
 			}
 			managers = null;
-				
-			if (game != null && contains(game))
-				removeChild(game);
-			game = null;
 			
 			for (i = 0; i < supportClasses.length; i++)
 			{
@@ -891,6 +891,10 @@
 				supportClasses[i] = null;
 			}
 			supportClasses = null;
+				
+			if (game != null && contains(game))
+				removeChild(game);
+			game = null;
 			
 			SoundManager.shutUp();
 			completed = true;

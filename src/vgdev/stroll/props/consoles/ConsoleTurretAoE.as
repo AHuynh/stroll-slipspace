@@ -20,10 +20,7 @@ package vgdev.stroll.props.consoles
 			super(_cg, _mc_object, _turret, _players, _gimbalLimits, _controlIDs, _turretID, _ghost);
 			TUT_TITLE = "AoE Turret Module";
 			TUT_MSG = "A special, more powerful turret.\n\nExplodes into smaller bullets if it hits something or after a short delay."
-			cooldown = System.SECOND * 4;
-			projectileLife = int(System.SECOND * 1.5);
-			projectileSpeed = 9;
-			sway = 2;
+			setLevel(0);
 		}
 
 		override public function setLevel(lvl:int):void
@@ -32,10 +29,11 @@ package vgdev.stroll.props.consoles
 			switch (lvl)
 			{
 				case 0:
-					sway = 2;	break;
+					sway = 2;
 					cooldown = System.SECOND * 4;
 					projectileSpeed = 9;
 					projectileLife = int(System.SECOND * 1.5);
+				break;
 				case 1:
 					sway = 1;
 					cooldown = int(System.SECOND * 3);
@@ -58,7 +56,7 @@ package vgdev.stroll.props.consoles
 													{	 
 														"affiliation":	System.AFFIL_PLAYER,
 														"dir":			turret.nozzle.rotation + rotOff + System.getRandNum(-sway, sway),
-														"dmg":			100,
+														"dmg":			75,
 														"life":			projectileLife,
 														"hp":			8,
 														"pdmg":			6,

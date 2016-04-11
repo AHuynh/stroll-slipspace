@@ -21,10 +21,10 @@ package vgdev.stroll
 		
 		public const RET_NORMAL:int = 0;
 		public const RET_RESTART:int = 1;
-		public const RET_NEXT:int = 2;
 		public var returnCode:int = RET_NORMAL;
 		
 		// session-specific code
+		public var shipName:String = "Eagle";
 		public var shipColor:uint = 0xFFFFFF;
 		public var maxSector:int = 0;			// furthest sector arrived at
 		public var savedHP:Number = 0;			// ship hull points at maxSector
@@ -73,7 +73,7 @@ package vgdev.stroll
 					case STATE_MENU:
 						maxSector = 0;
 						savedHP = 0;
-						switchToContainer(new ContainerGame(this), 0, 0);
+						switchToContainer(new ContainerGame(this, shipName), 0, 0);
 						gameState = STATE_GAME;
 					break;
 					case STATE_GAME:
@@ -84,12 +84,7 @@ package vgdev.stroll
 						}
 						else if (returnCode == RET_RESTART)
 						{
-							switchToContainer(new ContainerGame(this, true), 0, 0);
-							gameState = STATE_GAME;
-						}
-						else if (returnCode == RET_NEXT)
-						{
-							switchToContainer(new ContainerGame(this), 0, 0);
+							switchToContainer(new ContainerGame(this, shipName, true), 0, 0);
 							gameState = STATE_GAME;
 						}
 					break;

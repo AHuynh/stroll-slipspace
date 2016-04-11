@@ -76,7 +76,7 @@ package vgdev.stroll.support
 			// custom stats
 			if (cg.shipName == "Kingfisher")
 			{
-				shield = shieldMax = 250;
+				shield = shieldMax = 175;
 				shieldReAmt = 1;
 				hp = hpMax = 600;
 				shieldRecharge = 180;

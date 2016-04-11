@@ -28,11 +28,14 @@ package vgdev.stroll.props.enemies
 				c = System.getRandFrom(cg.consoles);
 				pointOfInterest = new Point(c.mc_object.x, c.mc_object.y);
 				giveUp--;
-			} while (System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < POI_RANGE && giveUp > 0);
+			} while (giveUp > 0 && 
+					System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < POI_RANGE &&
+					!System.hasLineOfSight(this, pointOfInterest));
 		}
 		
 		override protected function onArrive():void 
 		{
+			if (cg == null) return;
 			for (var i:int = 0; i < 2; i++)
 				cg.addFireAt(new Point(mc_object.x + System.getRandNum( -10, 10), mc_object.y + System.getRandNum( -10, 10)));
 			changeHP( -hpMax);
@@ -40,8 +43,11 @@ package vgdev.stroll.props.enemies
 		
 		override public function destroy():void 
 		{
-			cg.addFireAt(new Point(mc_object.x + System.getRandNum( -10, 10), mc_object.y + System.getRandNum( -10, 10)));
-			cg.addSparksAt(1, new Point(mc_object.x, mc_object.y));
+			if (cg != null)
+			{
+				cg.addFireAt(new Point(mc_object.x + System.getRandNum( -10, 10), mc_object.y + System.getRandNum( -10, 10)));
+				cg.addSparksAt(1, new Point(mc_object.x, mc_object.y));
+			}
 			super.destroy();
 		}
 	}

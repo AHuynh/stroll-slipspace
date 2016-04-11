@@ -43,6 +43,7 @@ package vgdev.stroll.support.graph
 					addNode(ship.node_t);
 					addNode(ship.node_c);
 					addNode(ship.node_r);
+					addNode(ship.node_cu);
 					addNode(ship.node_ur);
 					addNode(ship.node_u0);
 					addNode(ship.node_u1);
@@ -58,22 +59,25 @@ package vgdev.stroll.support.graph
 					nodeMap["node_m0"].connectNodes(["node_m1", "node_fh0"]);
 					nodeMap["node_m1"].connectNodes(["node_m0", "node_t"]);
 					nodeMap["node_t"].connectNodes(["node_c", "node_m1"]);
-					nodeMap["node_c"].connectNodes(["node_r", "node_b2", "node_u2", "node_t"]);
+					nodeMap["node_c"].connectNodes(["node_r", "node_b2", "node_cu", "node_t"]);
 					nodeMap["node_r"].connectNodes(["node_c", "node_ur", "node_br"]);
+					nodeMap["node_cu"].connectNodes(["node_c", "node_u2"]);
 					nodeMap["node_ur"].connectNodes(["node_r", "node_u0"]);
 					nodeMap["node_u0"].connectNodes(["node_ur", "node_u1"]);
 					nodeMap["node_u1"].connectNodes(["node_u0", "node_u2"]);
-					nodeMap["node_u2"].connectNodes(["node_u1", "node_c"]);
+					nodeMap["node_u2"].connectNodes(["node_u1", "node_cu"]);
 					nodeMap["node_br"].connectNodes(["node_r", "node_b0"]);
 					nodeMap["node_b0"].connectNodes(["node_br", "node_b1"]);
 					nodeMap["node_b1"].connectNodes(["node_b0", "node_b2"]);
 					nodeMap["node_b2"].connectNodes(["node_b1", "node_c"]);
 				break;
 				case "Kingfisher":
+					addNode(ship.node_ff);
 					addNode(ship.node_f);
 					addNode(ship.node_c0);
 					addNode(ship.node_c1);
 					addNode(ship.node_c2);
+					addNode(ship.node_c3);
 					addNode(ship.node_l);
 					addNode(ship.node_lr);
 					addNode(ship.node_r0);
@@ -81,12 +85,14 @@ package vgdev.stroll.support.graph
 					addNode(ship.node_r2);
 					addNode(ship.node_rr);
 					
-					nodeMap["node_f"].connectNodes(["node_c0"]);
+					nodeMap["node_ff"].connectNodes(["node_f"]);
+					nodeMap["node_f"].connectNodes(["node_c0", "node_ff"]);
 					nodeMap["node_c0"].connectNodes(["node_f", "node_c1", "node_r0"]);
 					nodeMap["node_c1"].connectNodes(["node_c0", "node_c2", "node_l"]);
-					nodeMap["node_c2"].connectNodes(["node_lr", "node_c1"]);
+					nodeMap["node_c2"].connectNodes(["node_c3", "node_c1"]);
+					nodeMap["node_c3"].connectNodes(["node_lr", "node_c2"]);
 					nodeMap["node_l"].connectNodes(["node_c1"]);
-					nodeMap["node_lr"].connectNodes(["node_c2", "node_r2"]);
+					nodeMap["node_lr"].connectNodes(["node_c3", "node_r2"]);
 					nodeMap["node_r0"].connectNodes(["node_r0", "node_r1", "node_rr"]);
 					nodeMap["node_r1"].connectNodes(["node_r0", "node_r2"]);
 					nodeMap["node_r2"].connectNodes(["node_r1", "node_lr", "node_rr"]);

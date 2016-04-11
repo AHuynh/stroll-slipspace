@@ -23,8 +23,6 @@ package vgdev.stroll.support.splevels
 		private var consoleSlip:ConsoleSlipdrive;
 		
 		private var tugOfWar:Boolean = false;		// flag for final phase
-		private var morale:Number = 0.5;			// TAILS vs FAILS
-		private const D_MORALE:Number = 0.00005;
 		private var crystals:Array = [];
 		
 		public function SPLevelFinal(_cg:ContainerGame) 
@@ -38,7 +36,7 @@ package vgdev.stroll.support.splevels
 			SoundManager.playBGMpaired("bgm_1a_here_we_go", "bgm_1a2_hey_somethings_wrong", System.VOL_BGM);
 			
 			// DEBUG CODE
-			//levelState = 51;
+			levelState = 17;
 			//for (var i:int = 0; i < 6; i++)
 			//	crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), { "theta": i * 60 } ), System.M_ENEMY));
 			//framesElapsed = 11 * 30;
@@ -83,6 +81,7 @@ package vgdev.stroll.support.splevels
 						framesElapsed = 0;
 						levelState++;
 						cg.ship.slipRange = 15;
+						cg.ship.setBossOverride(true);
 					}
 				break;
 				case 1:		// initial jump failed
@@ -108,6 +107,7 @@ package vgdev.stroll.support.splevels
 						cg.tails.show("Malfunction resolved. Retry slipdrive now.", System.TAILS_NORMAL, "HEADS");
 						levelState++;
 						consoleSlip.fakeJumpNext = true;
+						cg.ship.setBossOverride(false);
 					}
 				break;
 				case 2:
@@ -121,6 +121,7 @@ package vgdev.stroll.support.splevels
 						levelState++;
 						framesElapsed = 0;
 						cg.ship.slipRange = 25;
+						cg.ship.setBossOverride(true);
 					}
 				break;
 				case 3:		// second jump failed
@@ -147,6 +148,7 @@ package vgdev.stroll.support.splevels
 						{
 							cg.tails.show("Anomalies removed. Retry slipdrive now.", System.TAILS_NORMAL, "HEADS");
 							levelState++;
+							cg.ship.setBossOverride(false);
 						}
 						else if (framesElapsed % (System.SECOND * 40) == 0)
 							spawnEnemy(System.getRandFrom(["Eye", "Skull", "Slime", "Spider", "Manta"]), 1);
@@ -166,6 +168,7 @@ package vgdev.stroll.support.splevels
 						consoleSlip.forceOverride = true;
 						addShards(3);
 						SoundManager.crossFadeBGM(null);
+						cg.ship.setBossOverride(true);
 					}
 				break;
 				case 5:		// third jump failed
@@ -237,6 +240,12 @@ package vgdev.stroll.support.splevels
 						cg.camera.setShake(5);
 						SoundManager.playSFX("sfx_electricShock", .25);
 						SoundManager.playSFX("sfx_explosionlarge1", .25);
+						if (framesElapsed >= System.SECOND * 11)
+						{
+							var pos:Point = cg.getRandomNearLocation();
+							var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(0.25, 3) } );
+							spawnFX.mc_object.base.setTint(System.COL_RED);
+						}
 					}
 				break;
 				case 10:
@@ -388,6 +397,7 @@ package vgdev.stroll.support.splevels
 							consoleSlip.fakeJumpNext = true;
 							levelState++;
 							SoundManager.crossFadeBGM(null, -1, true);
+							cg.ship.setBossOverride(false);
 						break;
 					}
 				break;
@@ -412,6 +422,7 @@ package vgdev.stroll.support.splevels
 					{
 						cg.tails.show("AHAHAAH! YOU'RE TRAPPED HERE! WITH ME! FOREVER!", System.TAILS_NORMAL, "FAILS_incredulous");
 						consoleSlip.forceOverride = true;
+						cg.ship.setBossOverride(true);
 						levelState++;
 						framesElapsed = 0;
 					}
@@ -452,6 +463,9 @@ package vgdev.stroll.support.splevels
 						cg.addSparks(2);
 						cg.camera.setShake(5);
 						SoundManager.playSFX("sfx_electricShock", .25);
+						var pos2:Point = cg.getRandomNearLocation();
+						var spawnFX2:ABST_Object = cg.addDecor("spawn", { "x":pos2.x, "y":pos2.y, "scale":System.getRandNum(0.25, 3) } );
+						spawnFX2.mc_object.base.setTint(System.COL_TAILS);
 					}
 				break;
 				case 20:		// FAILS vs TAILS
@@ -852,8 +866,6 @@ package vgdev.stroll.support.splevels
 							cg.tails.show("YOU TWO ARe still st u p   i  d    --!", 60, "FAILS_incredulous");
 						break;
 						case System.SECOND * 6:
-							for (s = 0; s < crystals.length; s++)
-								crystals[s].stubborn = false;
 							levelState++;
 							framesElapsed = 0;
 							consoleSlip.fakeJumpLbl = "long";
@@ -867,14 +879,24 @@ package vgdev.stroll.support.splevels
 							cg.gameOverAnnouncer = "TAILS";
 							cg.managerMap[System.M_BOARDER].killAll();
 							cg.managerMap[System.M_ENEMY].killAll();
+							cg.managerMap[System.M_FIRE].killAll();
 							cg.alerts.isCorrupt = false;
-							SoundManager.crossFadeBGM("bgm_1a_here_we_go");
+							cg.ship.setBossOverride(false);
+							SoundManager.stopBGM();
+							EnemyCrystal.dTheta = 0.1;
 						break;
 					}
 					if (EnemyCrystal.dTheta < 3.5)
 						EnemyCrystal.dTheta += 0.025;
 				break;
 				case 52:
+					if (framesElapsed == 1)
+					{
+						SoundManager.crossFadeBGM("bgm_1a_here_we_go");
+						for (s = 0; s < crystals.length; s++)
+							crystals[s].stubborn = false;
+						cg.managerMap[System.M_ENEMY].killAll();
+					}
 					if (framesElapsed == System.SECOND * 8)
 					{
 						cg.tails.show("Well, I'm glad that's over!\nGreat work, both of you!\n\nI've fixed the slipdrive, so when you're ready, let's get outta here!");
@@ -892,6 +914,7 @@ package vgdev.stroll.support.splevels
 					{
 						levelState++;
 						framesElapsed = 0;
+						cg.gui.mc_progress.setSectorProgress(13);
 						cg.level.sectorIndex = 13;
 						cg.background.setStyle("endworld");
 						cg.background.resetBackground();
@@ -938,12 +961,6 @@ package vgdev.stroll.support.splevels
 		{
 			var limMin:Number = Math.max(0.01, 0.5 - EnemyCrystal.numCrystals * (.0833333));
 			var limMax:Number = Math.min(   1, 0.5 + EnemyCrystal.numCrystals * (.0833333));
-			
-			// cap it until 6 crystals have spawned
-			morale = System.changeWithLimit(morale,
-							-EnemyCrystal.totalNumCorrupted * D_MORALE,
-							limMin,
-							limMax);
 							
 			// add combat explosions
 			if (Math.random() > .85)
@@ -963,7 +980,7 @@ package vgdev.stroll.support.splevels
 				}
 			}
 			
-			cg.bossBar.setPercent(morale);
+			cg.bossBar.setPercent(1 - (EnemyCrystal.totalNumCorrupted + 6) / 12);
 		}
 	}
 }

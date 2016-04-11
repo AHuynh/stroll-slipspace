@@ -97,7 +97,7 @@
 				checkStory = true;
 				SoundManager.playSFX("sfx_readybeep2G");
 				
-				completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
+				//completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
 			}
 			else
 			{
@@ -323,6 +323,7 @@
 			{
 				checkStory = false;
 				engine.shipColor = menu.mc_story.cp_colorpicker.selectedColor;
+				engine.shipName = menu.mc_story.shipName;
 				destroy();
 				completed = true;
 			}
