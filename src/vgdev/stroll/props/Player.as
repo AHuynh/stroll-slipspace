@@ -168,8 +168,11 @@ package vgdev.stroll.props
 				if (reviveExpire > 0 && --reviveExpire == 0)
 					reviveProgress = 0;
 				reviveCounter = System.changeWithLimit(reviveCounter, 1, 0, System.SECOND * 999);
-				cg.hudConsoles[playerID].mod.tf_downtime.text = int(reviveCounter / System.SECOND).toString() + "s";
-				cg.hudConsoles[playerID].mod.tf_revive.text = int(reviveProgress * 100).toString() + "%";
+				try {
+					cg.hudConsoles[playerID].mod.tf_downtime.text = int(reviveCounter / System.SECOND).toString() + "s";
+					cg.hudConsoles[playerID].mod.tf_revive.text = int(reviveProgress * 100).toString() + "%";
+				} catch (e:Error)
+				{}
 				if (reviveCounter % 30 == 0)
 					SoundManager.playSFX("sfx_ekg", .7);
 			}

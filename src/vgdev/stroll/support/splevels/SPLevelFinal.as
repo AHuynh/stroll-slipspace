@@ -36,7 +36,7 @@ package vgdev.stroll.support.splevels
 			SoundManager.playBGMpaired("bgm_1a_here_we_go", "bgm_1a2_hey_somethings_wrong", System.VOL_BGM);
 			
 			// DEBUG CODE
-			levelState = 17;
+			//levelState = 17;
 			//for (var i:int = 0; i < 6; i++)
 			//	crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), { "theta": i * 60 } ), System.M_ENEMY));
 			//framesElapsed = 11 * 30;
@@ -80,7 +80,7 @@ package vgdev.stroll.support.splevels
 					{
 						framesElapsed = 0;
 						levelState++;
-						cg.ship.slipRange = 15;
+						cg.ship.slipRange = 2;
 						cg.ship.setBossOverride(true);
 					}
 				break;
@@ -120,7 +120,7 @@ package vgdev.stroll.support.splevels
 					{
 						levelState++;
 						framesElapsed = 0;
-						cg.ship.slipRange = 25;
+						cg.ship.slipRange = 2;
 						cg.ship.setBossOverride(true);
 					}
 				break;
@@ -164,7 +164,7 @@ package vgdev.stroll.support.splevels
 					{
 						levelState++;
 						framesElapsed = 0;
-						cg.ship.slipRange = 10;
+						cg.ship.slipRange = 2;
 						consoleSlip.forceOverride = true;
 						addShards(3);
 						SoundManager.crossFadeBGM(null);
@@ -801,6 +801,7 @@ package vgdev.stroll.support.splevels
 							cg.addSparks(5);
 							SoundManager.playSFX("sfx_electricShock");
 							cg.camera.setShake(65);
+							cg.bossBar.setPercent(.01);
 						}
 					}
 				break;
@@ -891,12 +892,7 @@ package vgdev.stroll.support.splevels
 				break;
 				case 52:
 					if (framesElapsed == 1)
-					{
 						SoundManager.crossFadeBGM("bgm_1a_here_we_go");
-						for (s = 0; s < crystals.length; s++)
-							crystals[s].stubborn = false;
-						cg.managerMap[System.M_ENEMY].killAll();
-					}
 					if (framesElapsed == System.SECOND * 8)
 					{
 						cg.tails.show("Well, I'm glad that's over!\nGreat work, both of you!\n\nI've fixed the slipdrive, so when you're ready, let's get outta here!");
@@ -920,6 +916,9 @@ package vgdev.stroll.support.splevels
 						cg.background.resetBackground();
 						consoleSlip.forceOverride = true;
 						SoundManager.playBGM("bgm_victory", System.VOL_BGM, true);
+						for (s = 0; s < crystals.length; s++)
+							crystals[s].stubborn = false;
+						cg.managerMap[System.M_ENEMY].killAll();
 					}
 				break;
 				case 53:

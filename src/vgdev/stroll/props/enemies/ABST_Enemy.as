@@ -159,11 +159,6 @@ package vgdev.stroll.props.enemies
 			return 1;
 		}
 		
-		public function getSpawnPoint():Point
-		{
-			return mc_object.localToGlobal(new Point(mc_object.spawn.x, mc_object.spawn.y));
-		}
-		
 		override public function step():Boolean
 		{
 			if (!completed)

@@ -82,16 +82,24 @@ package vgdev.stroll.props.enemies
 			cdCounts[0] = 1;
 		}
 		
+		public function getIsActive():Boolean
+		{
+			return mainBody.activeEyes[0] == eyeNo || mainBody.activeEyes[1] == eyeNo;
+		}
+		
+		public function getIfMainIsIncapacitated():Boolean
+		{
+			return mainBody.isIncapacitated();
+		}
+		
 		override protected function updateWeapons():void 
 		{
 			if (mainBody.isIncapacitated()) {
 				return;
 			}
 			
-			if (mainBody.activeEyes[0] != eyeNo && mainBody.activeEyes[1] != eyeNo)
-			{
+			if (!getIsActive())
 				return;
-			}
 			
 			for (var i:int = 0; i < cooldowns.length; i++)
 			{
@@ -135,5 +143,10 @@ package vgdev.stroll.props.enemies
 		{
 			return incapacitated;
 		}		
+		
+		public function getEyeNo():int
+		{
+			return eyeNo;
+		}
 	}
 }

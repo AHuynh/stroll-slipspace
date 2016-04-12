@@ -181,7 +181,6 @@ package vgdev.stroll.props.consoles
 				cg.addToGame(proj, System.M_EPROJECTILE);
 			}
 			SoundManager.playSFX("sfx_laser1", .6);
-			trace("[TURRET] Firing with angle", turret.nozzle.rotation + rotOff);
 		}
 		
 		/**

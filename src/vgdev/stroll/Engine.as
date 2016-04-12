@@ -28,6 +28,7 @@ package vgdev.stroll
 		public var shipColor:uint = 0xFFFFFF;
 		public var maxSector:int = 0;			// furthest sector arrived at
 		public var savedHP:Number = 0;			// ship hull points at maxSector
+		public var wingman:Array = [false, false];
 		
 		public function Engine() 
 		{			

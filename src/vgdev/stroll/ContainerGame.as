@@ -171,11 +171,39 @@
 			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
 			//		   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
 					   
-			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
-					   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
+			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
+			//		   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
 					   
 			//players = [new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL),
 			//		   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
+					   
+			
+			var i:int;
+			players = [null, null];
+			for (i = 0; i < 2; i++)
+			{
+				if (engine.wingman[i])
+				{
+					if (i == 0)
+						players[i] = new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL)
+					else
+						players[i] = new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)
+				}
+				else
+				{
+					if (i == 0)
+					{
+						players[i] = new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0);
+						gui.mc_wingmanL.visible = false;
+					}
+					else
+					{
+						players[i] = new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1);
+						gui.mc_wingmanR.visible = false;
+					}
+				}
+			}
+			
 			
 			// DEBUGGING TOOL -- set to true for release
 			var useLocks:Boolean = false;
@@ -229,8 +257,6 @@
 			// --- Kingfisher ---------------------------------------------------------------------------------------------------
 			graph.initShip(shipName);
 			game.mc_ship.mc_shipBase.tintShip(engine.shipColor);
-			
-			var i:int;
 			
 			// init the managers			
 			managerMap[System.M_EPROJECTILE] = new ManagerProjectile(this);
@@ -410,17 +436,17 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					jump();
+					//jump();
 				break;
 				case Keyboard.K:
 					//players[0].changeHP( -9999);
 					//ship.damage(1000);
 					//killShip();
 					//addFires(1);
-					var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
+					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
 					p.x += System.GAME_OFFSX;
 					p.y += System.GAME_OFFSY;
-					level.spawn({}, p, "Spider");
+					level.spawn({}, p, "Spider");*/
 					//ship.shipHeading = System.getRandNum( -1, 1);
 				//	addToGame(new EnemyEyeball(this, new SWC_Enemy(), { "x": -150 + System.GAME_HALF_WIDTH, "y":System.getRandNum(0, 100) + System.GAME_HALF_HEIGHT } ), System.M_ENEMY);
 					//addSparks(4);
@@ -430,8 +456,8 @@
 					//upgradeTurrets(2);
 				break;
 				case Keyboard.L:
-					managerMap[System.M_ENEMY].killAll();
-					managerMap[System.M_DECOR].killAll();
+					//managerMap[System.M_ENEMY].killAll();
+					//managerMap[System.M_DECOR].killAll();
 				break;
 			}
 		}

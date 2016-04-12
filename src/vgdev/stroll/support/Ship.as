@@ -20,7 +20,7 @@ package vgdev.stroll.support
 		private var shieldsEnabled:Boolean = true;	// if false, shields don't recharge
 		
 		public var mc_shield:MovieClip;				// reference to the shield MovieClip
-		private var shieldMax:Number = 10000;			// actual value of shields
+		private var shieldMax:Number = 100;			// actual value of shields
 		private var shield:Number = shieldMax;		// max value of shields
 		
 		public var shieldReCurr:int = 0;			// current reboot timer

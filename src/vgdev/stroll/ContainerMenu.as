@@ -30,6 +30,8 @@
 		private var keyDict:Dictionary = getKeyboardDict();
 		private var readyToGo:Boolean = false;
 		
+		private var autoClick:Boolean = false;
+		
 		/**
 		 * A MovieClip handling the main menu
 		 * @param	_eng			A reference to the Engine
@@ -97,7 +99,7 @@
 				checkStory = true;
 				SoundManager.playSFX("sfx_readybeep2G");
 				
-				completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
+				//completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
 			}
 			else
 			{
@@ -139,12 +141,19 @@
 				tfArr[11].text = keycodeToString(System.keyMap1["CANCEL"]);
 				
 				menu.mc_options.base.mc_helper.gotoAndStop("idle");
+				
+				menu.mc_options.base.btn_useAIL.addEventListener(MouseEvent.CLICK, onAIL);
+				menu.mc_options.base.btn_useAIR.addEventListener(MouseEvent.CLICK, onAIR);
+				
+				setAIvis();
 			}
 			else
 			{
 				stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPressed);
 				menu.mc_options.base.background.removeEventListener(MouseEvent.CLICK, onBGClick);
 				menu.mc_options.base.btn_defaults.removeEventListener(MouseEvent.CLICK, onDefaults);
+				menu.mc_options.base.btn_useAIL.removeEventListener(MouseEvent.CLICK, onAIL);
+				menu.mc_options.base.btn_useAIR.removeEventListener(MouseEvent.CLICK, onAIR);
 			}
 			
 			var i:int = 0;
@@ -157,6 +166,26 @@
 				else
 					tf.removeEventListener(MouseEvent.CLICK, onTFClick);
 			}
+		}
+		
+		private function onAIL(e:MouseEvent):void
+		{
+			engine.wingman[0] = !engine.wingman[0];
+			onBGClick(null);
+			setAIvis();
+		}
+		
+		private function onAIR(e:MouseEvent):void
+		{
+			engine.wingman[1] = !engine.wingman[1];
+			onBGClick(null);
+			setAIvis();
+		}
+		
+		private function setAIvis():void
+		{
+			menu.mc_options.base.mc_aiL.visible = engine.wingman[0];
+			menu.mc_options.base.mc_aiR.visible = engine.wingman[1];
 		}
 		
 		private function onDefaults(e:MouseEvent):void
@@ -326,6 +355,14 @@
 				engine.shipName = menu.mc_story.shipName;
 				destroy();
 				completed = true;
+			}
+			else
+			{
+				if (engine.wingman[0])
+					menu.stage.dispatchEvent(new KeyboardEvent((autoClick ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP), true, false, 0, System.keyMap0["ACTION"]));
+				if (engine.wingman[1])
+					menu.stage.dispatchEvent(new KeyboardEvent((autoClick ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP), true, false, 0, System.keyMap1["ACTION"]));
+				autoClick = !autoClick;
 			}
 			return completed;
 		}
