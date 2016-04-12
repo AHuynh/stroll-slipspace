@@ -3,6 +3,7 @@ package vgdev.stroll.props
 	import flash.display.MovieClip;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
+	import vgdev.stroll.ABST_Container;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.props.consoles.ConsoleNavigation;
@@ -11,6 +12,7 @@ package vgdev.stroll.props
 	import vgdev.stroll.props.consoles.ConsoleSlipdrive;
 	import vgdev.stroll.props.consoles.ConsoleTurret;
 	import vgdev.stroll.props.consoles.Omnitool;
+	import vgdev.stroll.props.enemies.ABST_Boarder;
 	import vgdev.stroll.support.graph.GraphNode;
 	import vgdev.stroll.System;
 	
@@ -29,10 +31,14 @@ package vgdev.stroll.props
 		private const STATE_MOVE_NETWORK:int = enum++;
 		private const STATE_MOVE_FROM_NETWORK:int = enum++;
 		private const STATE_REVIVE:int = enum++;
+		private const STATE_HEAL:int = enum++;
+		private const STATE_REBOOT:int = enum++;
 		
 		private var goal:int;
 		private const GOAL_IDLE:int = enum++;
 		private const GOAL_REVIVE:int = enum++;
+		private const GOAL_HEAL:int = enum++;
+		private const GOAL_REBOOT:int = enum++;
 		
 		private var otherPlayer:Player;
 		
@@ -49,6 +55,9 @@ package vgdev.stroll.props
 		private const NORMAL_SPEED:Number = 5;
 		private const PRECISE_SPEED:Number = 2;
 		
+		private const HEAL_THRESHOLD:Number = .7;		// if other player's HP is below this threshold, heal
+		private const SP_THRESHOLD:Number = .4;			// if SP is below this threshold, reboot shields
+		
 		private var consoleMap:Object = { };
 		private var keyMap:Object;
 		private var acknowledgeTails:Boolean = false;
@@ -59,10 +68,18 @@ package vgdev.stroll.props
 		
 		private var prevPoint:Point;
 		private var ignoreStuck:Boolean = true;
+		
+		private var genericCounter:int = 0;
 		private var stuckCounter:int = 0;
-		private const STUCK_MAX:int = 15;
+		private var movingPOIcounter:int = 0;			// if 0, update POI location, since object could be moving
+		private const COUNTER_MAX:int = 15;
 		
 		private var display:MovieClip;
+		
+		// -- ShieldRe --------------------------------------------------------
+		private var mazeSolution:Array;
+		private var mazeIndex:int;
+		// -- ShieldRe --------------------------------------------------------
 		
 		public function WINGMAN(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object, _display:MovieClip) 
 		{
@@ -108,6 +125,7 @@ package vgdev.stroll.props
 				return false;
 			}
 			
+			// acknowledge TAILS
 			if (cg.tails.isActive())
 			{
 				if (!acknowledgeTails)			// do ready check one time
@@ -122,11 +140,12 @@ package vgdev.stroll.props
 				
 			updateDisplay();
 				
-			if (!ignoreStuck && state != STATE_IDLE)
+			// check if stuck
+			/*if (!ignoreStuck && state != STATE_IDLE)
 			{
 				if (mc_object.x == prevPoint.x && mc_object.y == prevPoint.y)
 				{
-					if (++stuckCounter == STUCK_MAX)
+					if (++stuckCounter == COUNTER_MAX)
 					{
 						state = STATE_STUCK;
 						goal = GOAL_IDLE;
@@ -140,21 +159,45 @@ package vgdev.stroll.props
 					prevPoint = new Point(mc_object.x, mc_object.y);
 					stuckCounter = 0;
 				}
+			}*/
+			
+			// update dynamic POI locations
+			if (objectOfInterest is Player || objectOfInterest is ABST_Boarder || objectOfInterest is Omnitool)
+			{
+				if (--movingPOIcounter <= 0)
+				{
+					movingPOIcounter = COUNTER_MAX;
+					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				}
+			}
+			
+			// make a beeline
+			if (pointOfInterest != null && state == STATE_MOVE_NETWORK)
+			{
+				if (extendedLOScheck(pointOfInterest))
+				{
+					state = STATE_MOVE_FROM_NETWORK;
+					path = [];
+				}
 			}
 			
 			switch (state)
 			{
 				case STATE_IDLE:
-					if (chooseStateCooldown > 0)
-					{
-						chooseStateCooldown--;
-						break;
-					}
 					chooseState();
 				break;
 				case STATE_REVIVE:
 					if (otherPlayer.getHP() > 0)
-						chooseState();
+						chooseState(true);
+				break;
+				case STATE_HEAL:
+					if (otherPlayer.getHP() / otherPlayer.getHPmax() > HEAL_THRESHOLD)
+						chooseState(true);
+					else if (!extendedLOScheck(pointOfInterest))
+						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				break;
+				case STATE_REBOOT:
+					handleStateReboot();
 				break;
 				case STATE_MOVE_NETWORK:
 					ignoreStuck = false;
@@ -186,7 +229,7 @@ package vgdev.stroll.props
 		}
 		
 		/**
-		 * Set the POI and start using the network
+		 * Set the POI and calculate a new path
 		 * @param	p		new POI
 		 */
 		private function setPOI(p:Point):void
@@ -200,10 +243,77 @@ package vgdev.stroll.props
 		}
 		
 		/**
+		 * Check LOS normally and from 4 different points around the player
+		 * @param	tgt		Target of LOS check
+		 * @return			true if LOS between player and tgt
+		 */
+		private function extendedLOScheck(tgt:Point):Boolean
+		{
+			return System.hasLineOfSight(this, pointOfInterest) &&
+				   System.hasLineOfSight(this, pointOfInterest, new Point(-2, 0)) && System.hasLineOfSight(this, pointOfInterest, new Point( 2, 0)) &&
+				   System.hasLineOfSight(this, pointOfInterest, new Point(0, -2)) && System.hasLineOfSight(this, pointOfInterest, new Point(0, 2));
+		}
+		
+		/**
+		 * Perform the ShieldReboot maze
+		 */
+		private function handleStateReboot():void
+		{
+			var c:ConsoleShieldRe = objectOfInterest as ConsoleShieldRe;
+			if (c.closestPlayer != this)
+			{
+				trace("[WINGMAN] Couldn't use the reboot module!");
+				onCancel();
+				state = STATE_IDLE;
+				chooseState(true);
+			}
+			if (c.onCooldown())
+			{
+				chooseState();
+				return;
+			}
+			if (!c.isPuzzleActive())
+			{
+				mazeSolution = null;
+				pressKey("ACTION");
+				trace("[WINGMAN] Starting maze.");
+				return;
+			}
+			if (!mazeSolution)
+			{
+				mazeSolution = c.puzzleSolution;
+				mazeIndex = 0;
+				releaseKey("ACTION");
+				genericCounter = System.getRandInt(20, 36);
+				return;
+			}
+			if (--genericCounter > 0)
+			{
+				releaseMovementKeys();
+				return;
+			}
+			genericCounter = System.getRandInt(3, 8);
+			switch (mazeSolution[mazeIndex++])
+			{
+				case -1:	pressKey("UP");			break;
+				case  0:	pressKey("RIGHT");		break;
+				case  1:	pressKey("DOWN");		break;
+			}
+			if (mazeIndex == mazeSolution.length)
+			{
+				trace("[WINGMAN] Finished with maze.");
+				onCancel();
+				chooseState(true);
+			}
+		}
+		
+		/**
 		 * Determine the next thing to do
 		 */
-		private function chooseState():void
+		private function chooseState(force:Boolean = false):void
 		{
+			if (!force && --chooseStateCooldown > 0)
+				return;
 			chooseStateCooldown = CHOOSE_CD;
 			if (state == STATE_STUCK)
 			{
@@ -224,24 +334,59 @@ package vgdev.stroll.props
 				}
 				else								// head to closest Omnitool
 				{
+					onCancel();
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-					trace("[WINGMAN] Heading to pick up Omnitool.");
+					trace("[WINGMAN] Heading to pick up Omnitool to revive teammate.");
 				}
+			}
+			else if (otherPlayer.getHP() / otherPlayer.getHPmax() < HEAL_THRESHOLD)
+			{
+				if (goal == GOAL_HEAL) return;
+				goal = GOAL_HEAL;
+				if (activeConsole is Omnitool)		// head to player
+				{
+					objectOfInterest = otherPlayer;
+					setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
+					range = Omnitool.RANGE_REVIVE * .9;
+					trace("[WINGMAN] Heading to heal teammate.");
+				}
+				else								// head to closest Omnitool
+				{
+					onCancel();
+					objectOfInterest = getClosestOmnitool();
+					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+					trace("[WINGMAN] Heading to pick up Omnitool to heal teammate.");
+				}				
+			}
+			else if (cg.ship.getShieldPercent() < SP_THRESHOLD && isValidConsole(consoleMap["shieldRe"]))
+			{
+				if (goal == GOAL_REBOOT) return;
+				goal = GOAL_REBOOT;
+				if (activeConsole != null && !(activeConsole is ConsoleShieldRe)) onCancel();
+				objectOfInterest = consoleMap["shieldRe"];
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to shield reboot module.");
 			}
 			else
 			{
 				if (state != STATE_IDLE)
 				{
 					releaseAllKeys();
+					objectOfInterest = null;
+					pointOfInterest = null;
 					trace("[WINGMAN] Doing nothing.");
 				}
-				if (activeConsole)
-					onCancel();
+				if (activeConsole) onCancel();
 				goal = GOAL_IDLE;
 				state = STATE_IDLE;
 				moveSpeedX = moveSpeedY = NORMAL_SPEED;
 			}			
+		}
+		
+		private function isValidConsole(c:ABST_Console):Boolean
+		{
+			return !c.isBroken() && (!c.inUse || c.closestPlayer == this);
 		}
 		
 		/**
@@ -249,6 +394,7 @@ package vgdev.stroll.props
 		 */
 		private function onArrive():void
 		{
+			trace("[WINGMAN] Arrived at destination.");
 			switch (goal)
 			{
 				case GOAL_REVIVE:
@@ -267,11 +413,51 @@ package vgdev.stroll.props
 						trace("[WINGMAN] Reviving teammate.");
 					}
 				break;
+				case GOAL_HEAL:
+					if (objectOfInterest is Omnitool)		// pick up omnitool
+					{
+						if (!getOnConsole(objectOfInterest as Omnitool)) return;
+						objectOfInterest = otherPlayer;
+						setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
+						trace("[WINGMAN] Heading to heal teammate.");
+					}
+					else									// revive the player
+					{
+						state = STATE_HEAL;
+						releaseMovementKeys();
+						pressKey("ACTION");
+						trace("[WINGMAN] Healing teammate.");
+					}
+				break;
+				case GOAL_REBOOT:
+					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
+					state = STATE_REBOOT;
+				break;
 				default:
+					trace("[WINGMAN] Arrived at destination but couldn't figure out what to do.");
 					state = STATE_IDLE;
 					goal = GOAL_IDLE;
-					trace("[WINGMAN] Arrived at destination but couldn't figure out what to do.");
 			}
+		}
+		
+		private function getOnConsole(c:ABST_Console):Boolean
+		{
+			if (c == null)
+			{
+				trace("[WINGMAN] Couldn't get on a null console!");
+				return false;
+			}
+			if (c.inUse && c.closestPlayer != this)
+			{
+				trace("[WINGMAN] Arrived at", c, "but it's in use!");
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				return false;
+			}
+			c.closestPlayer = this;
+			c.onAction(this);
+			trace("[WINGMAN] Getting on console:", c);
+			return true;
 		}
 		
 		private function pressKey(key:String):void

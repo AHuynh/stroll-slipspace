@@ -37,6 +37,8 @@ package vgdev.stroll.props.consoles
 		
 		private var textCooldown:int = 0;
 		private var complain:int = 0;
+		
+		public var puzzleSolution:Array;			// solution for WINGMAN
 			
 		public function ConsoleShieldRe(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean=false) 
 		{
@@ -104,6 +106,16 @@ package vgdev.stroll.props.consoles
 		{
 			for each (var mc:MovieClip in shieldsList)
 				mc.visible = isVis;
+		}
+		
+		public function onCooldown():Boolean
+		{
+			return puzzleCooldown != 0;
+		}
+		
+		public function isPuzzleActive():Boolean
+		{
+			return puzzleActive;
 		}
 		
 		override public function step():Boolean 
@@ -339,6 +351,8 @@ package vgdev.stroll.props.consoles
 			textCooldown = 0;
 			complain = 0;
 			
+			puzzleSolution = [];
+			
 			// shuffle non-end tiles
 			var rand:Number;
 			for (var i:int = 0; i < shieldsList.length - 3; i++)
@@ -371,6 +385,8 @@ package vgdev.stroll.props.consoles
 			// generate a path by going up, right, or down and never going the same way you came from
 			while (currPos.x < 6)
 			{
+				puzzleSolution.push(dir);
+				
 				var enterDir:int;
 				switch (dir)
 				{
@@ -478,7 +494,9 @@ package vgdev.stroll.props.consoles
 		
 		// remove the maze from this module
 		override public function onCancel():void 
-		{			
+		{
+			puzzleSolution = null;
+			
 			if (corrupted)		// relinquish control if corrupted
 				consoleFAILS.onCancel();
 			

@@ -109,6 +109,11 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		public function isBroken():Boolean
+		{
+			return broken;
+		}
+		
 		override public function changeHP(amt:Number):Boolean
 		{
 			hp = System.changeWithLimit(hp, amt, 0, hpMax);		

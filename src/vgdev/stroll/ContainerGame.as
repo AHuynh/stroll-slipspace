@@ -410,7 +410,8 @@
 					jump();
 				break;
 				case Keyboard.K:
-					players[0].changeHP( -9999);
+					//players[0].changeHP( -9999);
+					ship.damage(1000);
 					//killShip();
 					//addFires(1);
 					//addSparks(4);
