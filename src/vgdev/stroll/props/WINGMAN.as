@@ -32,12 +32,14 @@ package vgdev.stroll.props
 		private const STATE_MOVE_FROM_NETWORK:int = enum++;
 		private const STATE_REVIVE:int = enum++;
 		private const STATE_HEAL:int = enum++;
+		private const STATE_DOUSE:int = enum++;
 		private const STATE_REBOOT:int = enum++;
 		
 		private var goal:int;
 		private const GOAL_IDLE:int = enum++;
 		private const GOAL_REVIVE:int = enum++;
 		private const GOAL_HEAL:int = enum++;
+		private const GOAL_DOUSE:int = enum++;
 		private const GOAL_REBOOT:int = enum++;
 		
 		private var otherPlayer:Player;
@@ -141,7 +143,7 @@ package vgdev.stroll.props
 			updateDisplay();
 				
 			// check if stuck
-			/*if (!ignoreStuck && state != STATE_IDLE)
+			if (!ignoreStuck && state != STATE_IDLE)
 			{
 				if (mc_object.x == prevPoint.x && mc_object.y == prevPoint.y)
 				{
@@ -150,8 +152,11 @@ package vgdev.stroll.props
 						state = STATE_STUCK;
 						goal = GOAL_IDLE;
 						trace("[WINGMAN] Stuck! Trying to get unstuck!");
+						trace("\tCurrent node:", nodeOfInterest.mc_object.name);
+						trace("\tCurrent path:", path);
+						trace("\tCurrent OOI:", objectOfInterest);
 						releaseAllKeys();
-						chooseState();
+						chooseState(true);
 					}
 				}
 				else
@@ -159,7 +164,7 @@ package vgdev.stroll.props
 					prevPoint = new Point(mc_object.x, mc_object.y);
 					stuckCounter = 0;
 				}
-			}*/
+			}
 			
 			// update dynamic POI locations
 			if (objectOfInterest is Player || objectOfInterest is ABST_Boarder || objectOfInterest is Omnitool)
@@ -169,6 +174,11 @@ package vgdev.stroll.props
 					movingPOIcounter = COUNTER_MAX;
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				}
+			}
+			if (goal == GOAL_DOUSE && --genericCounter <= 0)		// recalculate nearest fire
+			{
+				genericCounter = COUNTER_MAX * 2;
+				handleStateDouse();
 			}
 			
 			// make a beeline
@@ -196,6 +206,16 @@ package vgdev.stroll.props
 					else if (!extendedLOScheck(pointOfInterest))
 						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				break;
+				case STATE_DOUSE:				
+					if (objectOfInterest == null || !objectOfInterest.isActive() ||
+						System.getDistance(mc_object.x, mc_object.y, objectOfInterest.mc_object.x, objectOfInterest.mc_object.y) > range)
+					{
+						trace("[WINGMAN] Fire doused.");
+						handleStateDouse();
+					}
+					else if (!extendedLOScheck(pointOfInterest))
+						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				break;
 				case STATE_REBOOT:
 					handleStateReboot();
 				break;
@@ -208,6 +228,7 @@ package vgdev.stroll.props
 						nodeOfInterest = path.shift();
 						if (nodeOfInterest == null)
 						{
+							trace("[WINGMAN] Leaving path network.");
 							state = STATE_MOVE_FROM_NETWORK;
 							return completed;
 						}
@@ -305,6 +326,21 @@ package vgdev.stroll.props
 				onCancel();
 				chooseState(true);
 			}
+		} 
+		
+		private function handleStateDouse():void
+		{
+			if (!(activeConsole is Omnitool)) return;
+			var near:Array = cg.managerMap[System.M_FIRE].getNearby(this, 9999);
+			if (near.length == 0)
+			{
+				chooseState(true);
+				return;
+			}
+			objectOfInterest = near[0];
+			setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+			range = Omnitool.RANGE_EXTINGUISH * .9;
+			trace("[WINGMAN] Heading to douse fire.");
 		}
 		
 		/**
@@ -315,6 +351,7 @@ package vgdev.stroll.props
 			if (!force && --chooseStateCooldown > 0)
 				return;
 			chooseStateCooldown = CHOOSE_CD;
+			ignoreStuck = true;
 			if (state == STATE_STUCK)
 			{
 				var node:GraphNode = cg.graph.getNearestValidNode(this, new Point(mc_object.x, mc_object.y));
@@ -367,6 +404,22 @@ package vgdev.stroll.props
 				objectOfInterest = consoleMap["shieldRe"];
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				trace("[WINGMAN] Heading to shield reboot module.");
+			}
+			else if (cg.managerMap[System.M_FIRE].hasObjects())
+			{
+				if (goal == GOAL_DOUSE) return;
+				goal = GOAL_DOUSE;
+				if (activeConsole is Omnitool)		// head to fire
+				{
+					handleStateDouse();
+				}
+				else								// head to closest Omnitool
+				{
+					onCancel();
+					objectOfInterest = getClosestOmnitool();
+					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+					trace("[WINGMAN] Heading to pick up Omnitool to douse fires.");
+				}				
 			}
 			else
 			{
@@ -429,6 +482,20 @@ package vgdev.stroll.props
 						trace("[WINGMAN] Healing teammate.");
 					}
 				break;
+				case GOAL_DOUSE:
+					if (objectOfInterest is Omnitool)		// pick up omnitool
+					{
+						if (!getOnConsole(objectOfInterest as Omnitool)) return;
+						handleStateDouse();
+					}
+					else									// douse the fire
+					{
+						state = STATE_DOUSE;
+						releaseMovementKeys();
+						pressKey("ACTION");
+						trace("[WINGMAN] Dousing fire.");
+					}
+				break;
 				case GOAL_REBOOT:
 					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
 					state = STATE_REBOOT;
@@ -454,6 +521,7 @@ package vgdev.stroll.props
 				goal = GOAL_IDLE;
 				return false;
 			}
+			if (activeConsole != null) onCancel();
 			c.closestPlayer = this;
 			c.onAction(this);
 			trace("[WINGMAN] Getting on console:", c);
@@ -551,6 +619,28 @@ package vgdev.stroll.props
 			display.mc_arrowL.alpha = (keysDown[LEFT] ? 1 : .2);
 			display.mc_arrowR.alpha = (keysDown[RIGHT] ? 1 : .2);
 			display.mc_arrowD.alpha = (keysDown[DOWN] ? 1 : .2);
+			
+			switch (state)
+			{
+				case STATE_DOUSE:				display.tf_status.text = "Extinguishing fire";		break;
+				case STATE_HEAL:				display.tf_status.text = "Healing ally";			break;
+				case STATE_IDLE:				display.tf_status.text = "Waiting";					break;
+				case STATE_MOVE_FREE:
+				case STATE_MOVE_FROM_NETWORK:
+				case STATE_MOVE_NETWORK:
+					switch (goal)
+					{
+						case GOAL_DOUSE:		display.tf_status.text = "Extinguishing fire";		break;
+						case GOAL_HEAL:			display.tf_status.text = "Healing ally";			break;
+						case GOAL_IDLE:			display.tf_status.text = "Getting unstuck";			break;
+						case GOAL_REBOOT:		display.tf_status.text = "Rebooting shields";		break;
+						case GOAL_REVIVE:		display.tf_status.text = "Reviving ally";			break;
+					}
+				break;
+				case STATE_REBOOT:				display.tf_status.text = "Rebooting shields";		break;
+				case STATE_REVIVE:				display.tf_status.text = "Reviving ally";			break;
+				case STATE_STUCK:				display.tf_status.text = "Confused";				break;
+			}
 		}
 	}
 }
