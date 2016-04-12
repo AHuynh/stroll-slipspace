@@ -130,6 +130,8 @@ package vgdev.stroll.props
 		{
 			super.step();
 			
+			if (!cg || cg.isPaused) return false;
+			
 			// acknowledge TAILS
 			if (cg.tails.isActive())
 			{
@@ -375,7 +377,7 @@ package vgdev.stroll.props
 				trace("[WINGMAN] There's something else more important to do!");
 				return;
 			}
-			if (++genericCounter >= TURRET_MAX)
+			/*if (++genericCounter >= TURRET_MAX)
 			{
 				enemyOfInterest = null;
 				releaseAllKeys();
@@ -385,7 +387,7 @@ package vgdev.stroll.props
 				goal = GOAL_IDLE;
 				trace("[WINGMAN] Enemies out of range!");
 				return;
-			}
+			}*/
 			if (enemyOfInterest == null || !enemyOfInterest.isActive() || enemyOfInterest.getHP() == 0)
 			{
 				releaseAllKeys();
@@ -396,8 +398,14 @@ package vgdev.stroll.props
 				return;
 			}
 			var turret:ConsoleTurret = objectOfInterest as ConsoleTurret;
-			var angle:Number = correctAngle(System.getAngle(turret.mc_object.x, turret.mc_object.y, enemyOfInterest.mc_object.x, enemyOfInterest.mc_object.y) + turret.rotOff);
-			if (!(angle >= turret.gimbalLimits[0] && angle <= turret.gimbalLimits[1]))
+			var tgt:Point = enemyOfInterest.getSpawnPoint();
+			var angle:Number = correctAngle(System.getAngle(turret.mc_object.x, turret.mc_object.y, enemyOfInterest.mc_object.x, enemyOfInterest.mc_object.y));
+			//trace("\tAngle:", angle, "\tGimbal:", turret.gimbalLimits[0] + (turret.rotOff == 0 ? 360 : 0) + turret.rotOff, turret.gimbalLimits[1] + (turret.rotOff == 0 ? 360 : 0) + turret.rotOff);
+			//trace("\t\t(true angle):", (angle % 360));
+			//trace("\t\t(raw angle):", System.getAngle(turret.mc_object.x, turret.mc_object.y, enemyOfInterest.mc_object.x, enemyOfInterest.mc_object.y));
+			//trace("\t\t(raw gimbal):", turret.gimbalLimits);
+			if (!(angle >= turret.gimbalLimits[0] + (turret.rotOff == 0 ? 360 : 0) + turret.rotOff &&
+				  angle <= turret.gimbalLimits[1] + (turret.rotOff == 0 ? 360 : 0) + turret.rotOff))
 			{
 				enemyOfInterest = getValidEnemy();
 				releaseKey("ACTION");
@@ -406,15 +414,18 @@ package vgdev.stroll.props
 			var dist:Number = System.getDistance(turret.mc_object.x, turret.mc_object.y, enemyOfInterest.mc_object.x, enemyOfInterest.mc_object.y) * turret.distAmt;
 			var delta:Point = enemyOfInterest.getDelta();
 			var lead:Point = new Point(enemyOfInterest.mc_object.x + delta.x * dist * turret.leadAmt, enemyOfInterest.mc_object.y + delta.y * dist * turret.leadAmt);
-			angle = correctAngle(System.getAngle(turret.mc_object.x, turret.mc_object.y, lead.x, lead.y));
+			angle = correctAngle(System.getAngle(turret.mc_object.x, turret.mc_object.y, lead.x, lead.y)) % 360;
+			//angle = correctAngle(System.getAngle(noz.x, noz.y, lead.x, lead.y) + turret.rotOff);
+			trace("\tAngle lead:", angle, "\ttrot:", correctAngle(turret.trot), "delta:", delta);
+			
 			pressKey("ACTION");
 			genericCounter = 0;
-			if (angle > turret.trot + 1 + turret.rotOff)
+			if (angle > turret.trot + 360 + 0)
 			{
 				releaseKey("LEFT");
 				pressKey("RIGHT");
 			}
-			else if (angle < turret.trot - 1 + turret.rotOff)
+			else if (angle < turret.trot + 360 - 0)
 			{
 				releaseKey("RIGHT");
 				pressKey("LEFT");
@@ -428,11 +439,7 @@ package vgdev.stroll.props
 		
 		private function correctAngle(angle:Number):Number
 		{
-			if (angle < -180)
-				angle += 180;
-			if (angle > 180)
-				angle -= 180;
-			return angle;
+			return (angle + 360) % 360;
 		}
 		
 		private function handleStateNavigation():void
@@ -475,7 +482,13 @@ package vgdev.stroll.props
 			if (state == STATE_STUCK)
 			{
 				var node:GraphNode = cg.graph.getNearestValidNode(this, new Point(mc_object.x, mc_object.y));
-				setPOI(new Point(node.mc_object.x, node.mc_object.y));
+				if (node != null)
+					setPOI(new Point(node.mc_object.x, node.mc_object.y));
+				else
+				{
+					state = STATE_IDLE;
+					goal = GOAL_IDLE; 
+				}
 				trace("[WINGMAN] Heading to a valid node.");
 			}
 			else if (otherPlayer.getHP() == 0)

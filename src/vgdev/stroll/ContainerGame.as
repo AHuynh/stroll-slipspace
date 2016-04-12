@@ -171,11 +171,11 @@
 			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
 			//		   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
 					   
-			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
-			//		   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
-					   
-			players = [new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL),
+			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
 					   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
+					   
+			//players = [new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL),
+			//		   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
 			
 			// DEBUGGING TOOL -- set to true for release
 			var useLocks:Boolean = false;
@@ -417,11 +417,12 @@
 					//ship.damage(1000);
 					//killShip();
 					//addFires(1);
-					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
+					var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
 					p.x += System.GAME_OFFSX;
 					p.y += System.GAME_OFFSY;
-					level.spawn({}, p, "Eye");*/
-					ship.shipHeading = System.getRandNum( -1, 1);
+					level.spawn({}, p, "Spider");
+					//ship.shipHeading = System.getRandNum( -1, 1);
+				//	addToGame(new EnemyEyeball(this, new SWC_Enemy(), { "x": -150 + System.GAME_HALF_WIDTH, "y":System.getRandNum(0, 100) + System.GAME_HALF_HEIGHT } ), System.M_ENEMY);
 					//addSparks(4);
 					//ship.damageDirect(350);
 					//consoles[0].changeHP( -250);
@@ -430,6 +431,7 @@
 				break;
 				case Keyboard.L:
 					managerMap[System.M_ENEMY].killAll();
+					managerMap[System.M_DECOR].killAll();
 				break;
 			}
 		}

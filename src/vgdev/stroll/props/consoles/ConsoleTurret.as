@@ -1,6 +1,7 @@
 package vgdev.stroll.props.consoles 
 {
 	import flash.display.MovieClip;
+	import flash.display.NativeMenuItem;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
@@ -86,6 +87,11 @@ package vgdev.stroll.props.consoles
 			turret.nozzle.spawn.visible = false;
 			if (ghost)
 				turret.alpha = 0.6;
+		}
+		
+		public function getSpawnPoint():Point
+		{
+			return turret.nozzle.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y));
 		}
 		
 		// update cooldown
@@ -175,6 +181,7 @@ package vgdev.stroll.props.consoles
 				cg.addToGame(proj, System.M_EPROJECTILE);
 			}
 			SoundManager.playSFX("sfx_laser1", .6);
+			trace("[TURRET] Firing with angle", turret.nozzle.rotation + rotOff);
 		}
 		
 		/**
