@@ -15,15 +15,15 @@ package vgdev.stroll.props.consoles
 	public class Omnitool extends ABST_Console
 	{		
 		private const RATE_EXTINGUISH:Number = -5;
-		private const RANGE_EXTINGUISH:Number = 65
+		public static const RANGE_EXTINGUISH:Number = 65
 		
 		private const RATE_REPAIR:Number = 5;
-		private const RANGE_REPAIR:Number = 30
+		public static const RANGE_REPAIR:Number = 30
 		
 		private const RATE_REVIVE:Number = 1.5;
 		private const RATE_HEAL:Number = 0.5;
 		private const GOAL_REVIVE:Number = 90;
-		private const RANGE_REVIVE:Number = 40;
+		public static const RANGE_REVIVE:Number = 40;
 		private var reviveProgress:Number = 0;
 		
 		public function Omnitool(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean)

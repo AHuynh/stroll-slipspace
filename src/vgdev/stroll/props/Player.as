@@ -23,23 +23,23 @@ package vgdev.stroll.props
 		public var manProx:ManagerProximity;
 		
 		// keys for use in keysDown
-		private const RIGHT:int = 0;
-		private const UP:int = 1;
-		private const LEFT:int = 2;
-		private const DOWN:int = 3;
-		private const ACTION:int = 10;
-		private const CANCEL:int = 11;
+		protected const RIGHT:int = 0;
+		protected const UP:int = 1;
+		protected const LEFT:int = 2;
+		protected const DOWN:int = 3;
+		protected const ACTION:int = 10;
+		protected const CANCEL:int = 11;
 		
 		// stored Keyboard keycodes
-		private var KEY_RIGHT:uint;
-		private var KEY_UP:uint;
-		private var KEY_LEFT:uint;
-		private var KEY_DOWN:uint;
-		private var KEY_ACTION:uint;
-		private var KEY_CANCEL:uint;
+		protected var KEY_RIGHT:uint;
+		protected var KEY_UP:uint;
+		protected var KEY_LEFT:uint;
+		protected var KEY_DOWN:uint;
+		protected var KEY_ACTION:uint;
+		protected var KEY_CANCEL:uint;
 		
 		/// Map of key states
-		private var keysDown:Object = { UP:false, LEFT:false, RIGHT:false, DOWN:false, TIME:false };
+		protected var keysDown:Object = { UP:false, LEFT:false, RIGHT:false, DOWN:false, ACTION:false, CANCEL:false };
 		
 		/// Direction player last moved in (RULD, 0-3)
 		public var facing:int = 3;
@@ -48,7 +48,8 @@ package vgdev.stroll.props
 		public var playerID:int;
 		
 		/// Pixels per frame this unit can move at
-		public var moveSpeed:Number = 5;
+		public var moveSpeedX:Number = 5;
+		public var moveSpeedY:Number = 5;
 		
 		/// If not null, the instance of ABST_Console this Player is currently paired with
 		public var activeConsole:ABST_Console = null;
@@ -73,7 +74,7 @@ package vgdev.stroll.props
 		public var reviveCounter:int = 0;
 		
 		// animation helpers
-		private var isMoving:Boolean = false;
+		protected var isMoving:Boolean = false;
 		public var highFive:int = 0;
 		
 		public function Player(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object)
@@ -259,19 +260,19 @@ package vgdev.stroll.props
 			{
 				if (keysDown[RIGHT])
 				{
-					updatePosition(moveSpeed, 0);
+					updatePosition(moveSpeedX, 0);
 				}
 				if (keysDown[UP])
 				{
-					updatePosition(0, -moveSpeed);
+					updatePosition(0, -moveSpeedY);
 				}
 				if (keysDown[LEFT])
 				{
-					updatePosition( -moveSpeed, 0);
+					updatePosition( -moveSpeedX, 0);
 				}
 				if (keysDown[DOWN])
 				{
-					updatePosition(0, moveSpeed);
+					updatePosition(0, moveSpeedY);
 				}
 				if (keysDown[CANCEL] && countPDW == 0)
 				{

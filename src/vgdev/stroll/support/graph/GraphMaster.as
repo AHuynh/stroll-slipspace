@@ -169,7 +169,7 @@ package vgdev.stroll.support.graph
 		public function getPath(origin:ABST_IMovable, destination:Point):Array
 		{
 			var start:GraphNode = getNearestValidNode(origin, new Point(origin.mc_object.x, origin.mc_object.y));
-			var end:GraphNode = getNearestValidNode(origin, destination, true);
+			var end:GraphNode = getNearestValidNode(origin, destination);
 			if (start == null || end == null || nodeDirections[start.mc_object.name][end.mc_object.name] == null)
 				return [];
 			var path:Array = [start];
@@ -190,6 +190,9 @@ package vgdev.stroll.support.graph
 		 */
 		public function getNearestValidNode(origin:ABST_IMovable, target:Point, ignoreWalls:Boolean = false ):GraphNode
 		{
+			var originalPos:Point = new Point(origin.mc_object.x, origin.mc_object.y);
+			origin.mc_object.x = target.x;
+			origin.mc_object.y = target.y;
 			var dist:Number = 99999;
 			var nearest:GraphNode = null;
 			var newDist:Number;
@@ -203,6 +206,8 @@ package vgdev.stroll.support.graph
 					nearest = node;
 				}
 			}
+			origin.mc_object.x = originalPos.x;
+			origin.mc_object.y = originalPos.y;
 			return nearest;
 		}
 	}

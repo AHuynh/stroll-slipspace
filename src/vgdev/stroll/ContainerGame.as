@@ -168,14 +168,20 @@
 			setHitMask(false);
 			
 			// link the game's assets
+			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
+			//		   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
+					   
 			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
-					   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
+					   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanL)];
 			
+			// DEBUGGING TOOL -- set to true for release
+			var useLocks:Boolean = false;
+					   
 			// --- Eagle --------------------------------------------------------------------------------------------------------
 			if (shipName == "Eagle")
 			{
-				consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));		// give priority to Omnitools by listing them first
-				consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, useLocks));		// give priority to Omnitools by listing them first
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, useLocks));
 				
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_f,		// front
 												players, [-120, 120], [1, 2, 0, 3], 0));
@@ -189,15 +195,15 @@
 				consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 				consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 				consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-				consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
-				consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
+				consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, useLocks));
+				consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, useLocks));
 			}
 			// --- Eagle --------------------------------------------------------------------------------------------------------
 			// --- Kingfisher ---------------------------------------------------------------------------------------------------
 			else if (shipName == "Kingfisher")
 			{
-				consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, true));		// give priority to Omnitools by listing them first
-				consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, true));
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_0, players, useLocks));		// give priority to Omnitools by listing them first
+				consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, useLocks));
 				
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_lf,		// left front
 												players, [-120, 15], [1, 2, 0, 3], 0));
@@ -214,8 +220,8 @@
 				consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
 				consoles.push(new ConsoleNavigation(this, game.mc_ship.mc_console_navigation, players));
 				consoles.push(new ConsoleSlipdrive(this, game.mc_ship.mc_console_slipdrive, players));
-				consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, true));
-				consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, true));
+				consoles.push(new ConsoleShields(this, game.mc_ship.mc_console_shield, players, useLocks));
+				consoles.push(new ConsoleSensors(this, game.mc_ship.mc_console_sensors, players, useLocks));
 			}
 			// --- Kingfisher ---------------------------------------------------------------------------------------------------
 			graph.initShip(shipName);
@@ -401,10 +407,10 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					//jump();
+					jump();
 				break;
 				case Keyboard.K:
-					//players[System.getRandInt(0, 1)].changeHP( -9999);
+					players[0].changeHP( -9999);
 					//killShip();
 					//addFires(1);
 					//addSparks(4);
