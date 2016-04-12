@@ -55,7 +55,7 @@ package vgdev.stroll.props
 		public var activeConsole:ABST_Console = null;
 		
 		/// If true, the console being used prevents player movement
-		private var rooted:Boolean = false;
+		protected var rooted:Boolean = false;
 		
 		// PDW variables
 		public var pdwEnabled:Boolean = false;	// if the PDW is unlocked

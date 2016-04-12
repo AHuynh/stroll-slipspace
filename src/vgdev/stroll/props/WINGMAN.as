@@ -13,6 +13,8 @@ package vgdev.stroll.props
 	import vgdev.stroll.props.consoles.ConsoleTurret;
 	import vgdev.stroll.props.consoles.Omnitool;
 	import vgdev.stroll.props.enemies.ABST_Boarder;
+	import vgdev.stroll.props.enemies.ABST_Enemy;
+	import vgdev.stroll.props.enemies.EnemyPortal;
 	import vgdev.stroll.support.graph.GraphNode;
 	import vgdev.stroll.System;
 	
@@ -34,21 +36,26 @@ package vgdev.stroll.props
 		private const STATE_HEAL:int = enum++;
 		private const STATE_DOUSE:int = enum++;
 		private const STATE_REBOOT:int = enum++;
+		private const STATE_TURRET:int = enum++;
+		private const STATE_NAVIGATION:int = enum++;
 		
-		private var goal:int;
+		public var goal:int;
 		private const GOAL_IDLE:int = enum++;
 		private const GOAL_REVIVE:int = enum++;
 		private const GOAL_HEAL:int = enum++;
 		private const GOAL_DOUSE:int = enum++;
 		private const GOAL_REBOOT:int = enum++;
+		private const GOAL_TURRET:int = enum++;
+		private const GOAL_NAVIGATION:int = enum++;
 		
 		private var otherPlayer:Player;
 		
 		private var pointOfInterest:Point;
 		private var objectOfInterest:ABST_Object;
+		private var enemyOfInterest:ABST_Enemy;
+		private var nodeOfInterest:GraphNode;
 		
 		private var path:Array;
-		private var nodeOfInterest:GraphNode;
 		
 		protected var range:Number = 5;			// current range
 		protected const RANGE:Number = 5;		// node clear range
@@ -58,6 +65,7 @@ package vgdev.stroll.props
 		private const PRECISE_SPEED:Number = 2;
 		
 		private const HEAL_THRESHOLD:Number = .7;		// if other player's HP is below this threshold, heal
+		private const HEADING_THRESHOLD:Number = 0.02;
 		private const SP_THRESHOLD:Number = .4;			// if SP is below this threshold, reboot shields
 		
 		private var consoleMap:Object = { };
@@ -75,6 +83,7 @@ package vgdev.stroll.props
 		private var stuckCounter:int = 0;
 		private var movingPOIcounter:int = 0;			// if 0, update POI location, since object could be moving
 		private const COUNTER_MAX:int = 15;
+		private const TURRET_MAX:int = 75;
 		
 		private var display:MovieClip;
 		
@@ -121,12 +130,6 @@ package vgdev.stroll.props
 		{
 			super.step();
 			
-			if (setup)
-			{
-				init();
-				return false;
-			}
-			
 			// acknowledge TAILS
 			if (cg.tails.isActive())
 			{
@@ -134,16 +137,25 @@ package vgdev.stroll.props
 				{
 					acknowledgeTails = true;
 					cg.onAction(this);
+					trace("[WINGMAN] I hear you, " + cg.gameOverAnnouncer + "!");
 				}
-				return completed;
+				if (!setup)
+					return completed;
 			}
 			else
 				acknowledgeTails = false;
+			
+			if (setup)
+			{
+				init();
+				return false;
+			}
 				
 			updateDisplay();
 				
 			// check if stuck
-			if (!ignoreStuck && state != STATE_IDLE)
+			if (!rooted && state != STATE_IDLE && state != STATE_REVIVE && state != STATE_DOUSE && state != STATE_HEAL)
+			//if (!ignoreStuck && state != STATE_IDLE)
 			{
 				if (mc_object.x == prevPoint.x && mc_object.y == prevPoint.y)
 				{
@@ -152,7 +164,7 @@ package vgdev.stroll.props
 						state = STATE_STUCK;
 						goal = GOAL_IDLE;
 						trace("[WINGMAN] Stuck! Trying to get unstuck!");
-						trace("\tCurrent node:", nodeOfInterest.mc_object.name);
+						trace("\tCurrent node:", (nodeOfInterest ? nodeOfInterest.mc_object.name : null));
 						trace("\tCurrent path:", path);
 						trace("\tCurrent OOI:", objectOfInterest);
 						releaseAllKeys();
@@ -175,10 +187,13 @@ package vgdev.stroll.props
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				}
 			}
-			if (goal == GOAL_DOUSE && --genericCounter <= 0)		// recalculate nearest fire
+			if (goal == GOAL_DOUSE && --genericCounter <= 0)		// recalculate nearest fire, account for incap
 			{
 				genericCounter = COUNTER_MAX * 2;
-				handleStateDouse();
+				if (otherPlayer.getHP() == 0)
+					chooseState(true);
+				else
+					handleStateDouse();
 			}
 			
 			// make a beeline
@@ -216,8 +231,14 @@ package vgdev.stroll.props
 					else if (!extendedLOScheck(pointOfInterest))
 						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				break;
+				case STATE_TURRET:
+					handleStateTurret();
+				break;
 				case STATE_REBOOT:
 					handleStateReboot();
+				break;
+				case STATE_NAVIGATION:
+					handleStateNavigation();
 				break;
 				case STATE_MOVE_NETWORK:
 					ignoreStuck = false;
@@ -281,7 +302,7 @@ package vgdev.stroll.props
 		private function handleStateReboot():void
 		{
 			var c:ConsoleShieldRe = objectOfInterest as ConsoleShieldRe;
-			if (c.closestPlayer != this)
+			if (c.closestPlayer == null || c.closestPlayer != this)
 			{
 				trace("[WINGMAN] Couldn't use the reboot module!");
 				onCancel();
@@ -323,6 +344,7 @@ package vgdev.stroll.props
 			if (mazeIndex == mazeSolution.length)
 			{
 				trace("[WINGMAN] Finished with maze.");
+				releaseMovementKeys();
 				onCancel();
 				chooseState(true);
 			}
@@ -343,13 +365,111 @@ package vgdev.stroll.props
 			trace("[WINGMAN] Heading to douse fire.");
 		}
 		
+		private function handleStateTurret():void
+		{
+			if (chooseState())
+			{
+				enemyOfInterest = null;
+				releaseAllKeys();
+				onCancel();
+				trace("[WINGMAN] There's something else more important to do!");
+				return;
+			}
+			if (++genericCounter >= TURRET_MAX)
+			{
+				enemyOfInterest = null;
+				releaseAllKeys();
+				onCancel();
+				chooseState(true);
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				trace("[WINGMAN] Enemies out of range!");
+				return;
+			}
+			if (enemyOfInterest == null || !enemyOfInterest.isActive() || enemyOfInterest.getHP() == 0)
+			{
+				releaseAllKeys();
+				trace("[WINGMAN] Enemy eliminated.");
+				enemyOfInterest = getValidEnemy();
+				if (enemyOfInterest == null)
+					chooseState(true);
+				return;
+			}
+			var turret:ConsoleTurret = objectOfInterest as ConsoleTurret;
+			var angle:Number = correctAngle(System.getAngle(turret.mc_object.x, turret.mc_object.y, enemyOfInterest.mc_object.x, enemyOfInterest.mc_object.y) + turret.rotOff);
+			if (!(angle >= turret.gimbalLimits[0] && angle <= turret.gimbalLimits[1]))
+			{
+				enemyOfInterest = getValidEnemy();
+				releaseKey("ACTION");
+				return;
+			}
+			var dist:Number = System.getDistance(turret.mc_object.x, turret.mc_object.y, enemyOfInterest.mc_object.x, enemyOfInterest.mc_object.y) * turret.distAmt;
+			var delta:Point = enemyOfInterest.getDelta();
+			var lead:Point = new Point(enemyOfInterest.mc_object.x + delta.x * dist * turret.leadAmt, enemyOfInterest.mc_object.y + delta.y * dist * turret.leadAmt);
+			angle = correctAngle(System.getAngle(turret.mc_object.x, turret.mc_object.y, lead.x, lead.y));
+			pressKey("ACTION");
+			genericCounter = 0;
+			if (angle > turret.trot + 1 + turret.rotOff)
+			{
+				releaseKey("LEFT");
+				pressKey("RIGHT");
+			}
+			else if (angle < turret.trot - 1 + turret.rotOff)
+			{
+				releaseKey("RIGHT");
+				pressKey("LEFT");
+			}
+			else
+			{
+				releaseKey("LEFT");
+				releaseKey("RIGHT");
+			}
+		}
+		
+		private function correctAngle(angle:Number):Number
+		{
+			if (angle < -180)
+				angle += 180;
+			if (angle > 180)
+				angle -= 180;
+			return angle;
+		}
+		
+		private function handleStateNavigation():void
+		{
+			if (chooseState() || (Math.abs(cg.ship.shipHeading) < HEADING_THRESHOLD))
+			{
+				releaseAllKeys();
+				onCancel();
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				if (cg.ship.isHeadingGood())
+					trace("[WINGMAN] Navigation fixed!");
+				else
+					trace("[WINGMAN] There's something else more important to do!");
+				return;
+			}
+			if (cg.ship.shipHeading < 0)
+			{
+				releaseKey("LEFT");
+				pressKey("RIGHT");
+			}
+			else
+			{
+				releaseKey("RIGHT");
+				pressKey("LEFT");
+			}
+		}
+		
 		/**
 		 * Determine the next thing to do
+		 * @param	force		ignore the cooldown
+		 * @return				true if the check went through (false if on cooldown)
 		 */
-		private function chooseState(force:Boolean = false):void
+		private function chooseState(force:Boolean = false):Boolean
 		{
 			if (!force && --chooseStateCooldown > 0)
-				return;
+				return false;
 			chooseStateCooldown = CHOOSE_CD;
 			ignoreStuck = true;
 			if (state == STATE_STUCK)
@@ -360,7 +480,7 @@ package vgdev.stroll.props
 			}
 			else if (otherPlayer.getHP() == 0)
 			{
-				if (goal == GOAL_REVIVE) return;
+				if (goal == GOAL_REVIVE) return false;
 				goal = GOAL_REVIVE;
 				if (activeConsole is Omnitool)		// head to player
 				{
@@ -379,7 +499,7 @@ package vgdev.stroll.props
 			}
 			else if (otherPlayer.getHP() / otherPlayer.getHPmax() < HEAL_THRESHOLD)
 			{
-				if (goal == GOAL_HEAL) return;
+				if (goal == GOAL_HEAL) return false;
 				goal = GOAL_HEAL;
 				if (activeConsole is Omnitool)		// head to player
 				{
@@ -396,9 +516,10 @@ package vgdev.stroll.props
 					trace("[WINGMAN] Heading to pick up Omnitool to heal teammate.");
 				}				
 			}
-			else if (cg.ship.getShieldPercent() < SP_THRESHOLD && isValidConsole(consoleMap["shieldRe"]))
+			else if (cg.ship.getShieldPercent() < SP_THRESHOLD && isValidConsole(consoleMap["shieldRe"]) && !consoleMap["shieldRe"].onCooldown() &&
+					!(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_REBOOT))
 			{
-				if (goal == GOAL_REBOOT) return;
+				if (goal == GOAL_REBOOT) return false;
 				goal = GOAL_REBOOT;
 				if (activeConsole != null && !(activeConsole is ConsoleShieldRe)) onCancel();
 				objectOfInterest = consoleMap["shieldRe"];
@@ -407,18 +528,68 @@ package vgdev.stroll.props
 			}
 			else if (cg.managerMap[System.M_FIRE].hasObjects())
 			{
-				if (goal == GOAL_DOUSE) return;
+				if (goal == GOAL_DOUSE) return false;
 				goal = GOAL_DOUSE;
 				if (activeConsole is Omnitool)		// head to fire
-				{
 					handleStateDouse();
-				}
 				else								// head to closest Omnitool
 				{
 					onCancel();
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 					trace("[WINGMAN] Heading to pick up Omnitool to douse fires.");
+				}				
+			}
+			else if (cg.managerMap[System.M_ENEMY].hasObjects())
+			{
+				if (goal == GOAL_TURRET) return false;
+				goal = GOAL_TURRET;
+				if (activeConsole != null && !(activeConsole is ConsoleTurret)) onCancel();
+				enemyOfInterest = getValidEnemy();
+				if (enemyOfInterest == null)
+				{
+					trace("[WINGMAN] Enemies detected but no valid one found.");
+					goal = GOAL_IDLE;
+					state = STATE_IDLE;
+					return false;
+				}
+				objectOfInterest = getValidTurret(enemyOfInterest);
+				if (objectOfInterest == null)
+				{
+					trace("[WINGMAN] Enemies detected but no valid turret found.");
+					goal = GOAL_IDLE;
+					state = STATE_IDLE;
+					return false;
+				}
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to turret.");
+			}
+			else if (!cg.ship.isHeadingGood() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
+			{
+				if (goal == GOAL_NAVIGATION) return false;
+				goal = GOAL_NAVIGATION;
+				if (activeConsole != null && !(activeConsole is ConsoleNavigation)) onCancel();
+				objectOfInterest = consoleMap["navigation"];
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to navigation.");
+			}
+			else if (otherPlayer.getHP() != otherPlayer.getHPmax())		// top off HP
+			{
+				if (goal == GOAL_HEAL) return false;
+				goal = GOAL_HEAL;
+				if (activeConsole is Omnitool)		// head to player
+				{
+					objectOfInterest = otherPlayer;
+					setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
+					range = Omnitool.RANGE_REVIVE * .9;
+					trace("[WINGMAN] Heading to heal teammate.");
+				}
+				else								// head to closest Omnitool
+				{
+					onCancel();
+					objectOfInterest = getClosestOmnitool();
+					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+					trace("[WINGMAN] Heading to pick up Omnitool to heal teammate.");
 				}				
 			}
 			else
@@ -434,7 +605,10 @@ package vgdev.stroll.props
 				goal = GOAL_IDLE;
 				state = STATE_IDLE;
 				moveSpeedX = moveSpeedY = NORMAL_SPEED;
-			}			
+				if (Math.random() > .7)
+					setPOI(cg.getRandomShipLocation());
+			}
+			return true;
 		}
 		
 		private function isValidConsole(c:ABST_Console):Boolean
@@ -496,6 +670,15 @@ package vgdev.stroll.props
 						trace("[WINGMAN] Dousing fire.");
 					}
 				break;
+				case GOAL_TURRET:
+					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
+					state = STATE_TURRET;
+					genericCounter = 0;
+				break;
+				case GOAL_NAVIGATION:
+					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
+					state = STATE_NAVIGATION;
+				break;
 				case GOAL_REBOOT:
 					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
 					state = STATE_REBOOT;
@@ -512,6 +695,11 @@ package vgdev.stroll.props
 			if (c == null)
 			{
 				trace("[WINGMAN] Couldn't get on a null console!");
+				return false;
+			}
+			if (c.corrupted)
+			{
+				trace("[WINGMAN] Couldn't get on a corrupted console!");
 				return false;
 			}
 			if (c.inUse && c.closestPlayer != this)
@@ -560,6 +748,7 @@ package vgdev.stroll.props
 			var tool:ABST_Object = null;
 			for each (var c:ABST_Console in consoleMap["omnitool"])
 			{
+				if (c.inUse && c.closestPlayer != this) continue;
 				dist = System.getDistance(mc_object.x, mc_object.y, c.mc_object.x, c.mc_object.y);
 				if (dist < closest)
 				{
@@ -568,6 +757,61 @@ package vgdev.stroll.props
 				}
 			}
 			return tool;
+		}
+		
+		/**
+		 * Get the first valid turret that can shoot at enemy
+		 * @param	enemy		The target enemy
+		 * @return				Turret that can shoot at the enemy
+		 */
+		private function getValidTurret(enemy:ABST_Enemy):ConsoleTurret
+		{
+			if (enemy == null) return null;
+			var ai:WINGMAN;
+			if (otherPlayer is WINGMAN)
+				ai = otherPlayer as WINGMAN;
+			for each (var t:ConsoleTurret in consoleMap["turret"])
+			{
+				if (t.inUse || t.isBroken()) continue;
+				if (ai && ai.objectOfInterest == t) continue;
+				var angle:Number = System.getAngle(t.mc_object.x, t.mc_object.y, enemy.mc_object.x, enemy.mc_object.y);
+				if (angle >= t.gimbalLimits[0] - t.rotOff && angle <= t.gimbalLimits[1] + t.rotOff)
+				//if (angle >= t.gimbalLimits[0] && angle <= t.gimbalLimits[1])
+					return t;
+			}
+			return null;
+		}
+		
+		private function getValidEnemy():ABST_Enemy
+		{
+			var enemies:Array = cg.managerMap[System.M_ENEMY].getAll();
+			if (enemies.length == 0) return null;
+			var mostThreateningEnemy:ABST_Enemy;
+			var maxThreat:int = -1;
+			enemies.sort(randomize);
+			for each (var enemy:ABST_Enemy in enemies)
+			{
+				if (enemy is EnemyPortal)
+				{
+					if (Math.random() > .7)
+						return enemy;
+					else
+						continue;
+				}
+				var threat:int = enemy.getJammingValue();
+				if (threat >= maxThreat)
+				{
+					if (threat > maxThreat)
+						maxThreat = threat;
+					mostThreateningEnemy = enemy;
+				}
+			}
+			return mostThreateningEnemy;
+		}
+		
+		private function randomize(a:*, b:*):int
+		{
+			return Math.random() > .5 ? 1 : -1;
 		}
 		
 		private function moveToPoint(tgt:Point):void
@@ -632,14 +876,18 @@ package vgdev.stroll.props
 					{
 						case GOAL_DOUSE:		display.tf_status.text = "Extinguishing fire";		break;
 						case GOAL_HEAL:			display.tf_status.text = "Healing ally";			break;
-						case GOAL_IDLE:			display.tf_status.text = "Getting unstuck";			break;
+						case GOAL_IDLE:			display.tf_status.text = "Moving";					break;
 						case GOAL_REBOOT:		display.tf_status.text = "Rebooting shields";		break;
 						case GOAL_REVIVE:		display.tf_status.text = "Reviving ally";			break;
+						case GOAL_TURRET:		display.tf_status.text = "Engaging enemies";		break;
+						case GOAL_NAVIGATION:	display.tf_status.text = "Correcting course";		break;
 					}
 				break;
 				case STATE_REBOOT:				display.tf_status.text = "Rebooting shields";		break;
 				case STATE_REVIVE:				display.tf_status.text = "Reviving ally";			break;
 				case STATE_STUCK:				display.tf_status.text = "Confused";				break;
+				case STATE_TURRET:				display.tf_status.text = "Engaging enemies";		break;
+				case STATE_NAVIGATION:			display.tf_status.text = "Correcting course";		break;
 			}
 		}
 	}

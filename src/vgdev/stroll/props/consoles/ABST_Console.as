@@ -23,7 +23,7 @@ package vgdev.stroll.props.consoles
 		/// The two HUD objects for the consoles, an Array of MovieClips
 		protected var hud_consoles:Array;
 		
-		/// The if a player is currently using this console
+		/// If a player is currently using this console
 		public var inUse:Boolean = false;	
 		
 		/// The active player if this console is inUse; otherwise the nearest player

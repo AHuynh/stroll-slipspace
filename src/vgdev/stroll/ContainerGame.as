@@ -171,8 +171,11 @@
 			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
 			//		   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
 					   
-			players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
-					   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanL)];
+			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
+			//		   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
+					   
+			players = [new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL),
+					   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
 			
 			// DEBUGGING TOOL -- set to true for release
 			var useLocks:Boolean = false;
@@ -413,12 +416,20 @@
 					//players[0].changeHP( -9999);
 					//ship.damage(1000);
 					//killShip();
-					addFires(1);
+					//addFires(1);
+					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
+					p.x += System.GAME_OFFSX;
+					p.y += System.GAME_OFFSY;
+					level.spawn({}, p, "Eye");*/
+					ship.shipHeading = System.getRandNum( -1, 1);
 					//addSparks(4);
 					//ship.damageDirect(350);
 					//consoles[0].changeHP( -250);
 					//addFires(1);
 					//upgradeTurrets(2);
+				break;
+				case Keyboard.L:
+					managerMap[System.M_ENEMY].killAll();
 				break;
 			}
 		}
@@ -512,7 +523,13 @@
 				tails.step();
 				
 			if (isTruePaused())
+			{
+				if (players[0] is WINGMAN)
+					players[0].step();
+				if (players[1] is WINGMAN)
+					players[1].step();
 				return completed;
+			}
 
 			var i:int;
 			if (isDefeatedPaused)

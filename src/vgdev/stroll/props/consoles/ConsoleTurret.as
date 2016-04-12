@@ -27,8 +27,9 @@ package vgdev.stroll.props.consoles
 		protected var cdCount:int = 0;
 		
 		/// The min and max values of rotation that can be applied to the turret nozzle's rotation
-		protected var gimbalLimits:Array = [0, 0];
+		public var gimbalLimits:Array = [0, 0];
 		protected var gimbalFree:Boolean = false;
+		public var trot:Number = 0;
 		private var markerHelper:Number;
 		
 		/// The IDs of the keys that are used to move the turret in pairs (0 and 1, 2 and 3)
@@ -54,7 +55,9 @@ package vgdev.stroll.props.consoles
 		
 		private var turretID:int;
 		private const MINI_SCALE:Number = .09;
-		private const MINI_LEAD:Number = .75;
+		private const MINI_LEAD:Number = .68;
+		public var leadAmt:Number = MINI_LEAD;
+		public var distAmt:Number = MINI_SCALE;
 		
 		/// Turret power, [0-2]
 		private var level:int = 0;
@@ -201,7 +204,7 @@ package vgdev.stroll.props.consoles
 			
 			if (isActive)
 			{
-				var trot:Number = turret.nozzle.rotation;
+				trot = turret.nozzle.rotation;
 				var hud:MovieClip = getHUD();
 				hud.tf_cooldown.text = Math.round(10 * cdCount / System.SECOND).toString();
 				hud.tf_rotation.text = Math.abs(Math.round(trot)) + "°";
@@ -228,7 +231,7 @@ package vgdev.stroll.props.consoles
 				{
 					if (!obj.isActive()) continue;
 					theta = System.degToRad(270 - trot + rotOff + System.getAngle(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y));
-					dist = System.getDistance(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y) * MINI_SCALE;
+					dist = System.getDistance(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y) * distAmt;
 					hud.mc_container.graphics.drawCircle(dist * Math.cos(theta), 23 + dist * Math.sin(theta), .5);
 				}
 				
@@ -240,7 +243,7 @@ package vgdev.stroll.props.consoles
 					if (!obj.isActive()) continue;
 					
 					// enemy
-					dist = System.getDistance(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y) * MINI_SCALE;
+					dist = System.getDistance(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y) * distAmt;
 					theta = System.degToRad(270 - trot + rotOff + System.getAngle(turret.x, turret.y, obj.mc_object.x, obj.mc_object.y));
 					px = dist * Math.cos(theta) - 2;
 					py = 23 + dist * Math.sin(theta) - 2;
@@ -250,8 +253,8 @@ package vgdev.stroll.props.consoles
 					// lead target
 					hud.mc_container.graphics.lineStyle(.25, System.COL_WHITE, 1);
 					delta = (obj as ABST_Enemy).getDelta();
-					lead = new Point(obj.mc_object.x + delta.x * dist * MINI_LEAD, obj.mc_object.y + delta.y * dist * MINI_LEAD);
-					dist = System.getDistance(turret.x, turret.y, lead.x, lead.y) * MINI_SCALE;
+					lead = new Point(obj.mc_object.x + delta.x * dist * leadAmt, obj.mc_object.y + delta.y * dist * leadAmt);
+					dist = System.getDistance(turret.x, turret.y, lead.x, lead.y) * distAmt;
 					theta = System.degToRad(270 - trot + rotOff + System.getAngle(turret.x, turret.y, lead.x, lead.y));
 					px = dist * Math.cos(theta) - 1;
 					py = 23 + dist * Math.sin(theta) - 1;
@@ -281,6 +284,7 @@ package vgdev.stroll.props.consoles
 				turret.nozzle.rotation += gimbalSpeed * dir;
 			else
 				turret.nozzle.rotation = System.changeWithLimit(turret.nozzle.rotation, gimbalSpeed * dir, gimbalLimits[0], gimbalLimits[1]);
+			trot = turret.nozzle.rotation;
 		}
 	}
 }
