@@ -88,6 +88,11 @@ package vgdev.stroll.props.consoles
 			currShield = -1;
 		}
 		
+		public function onCooldown():Boolean
+		{
+			return cdCount > 0;
+		}
+		
 		// update the active color displayed on the module HUD
 		override public function updateHUD(isActive:Boolean):void
 		{

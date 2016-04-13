@@ -121,5 +121,10 @@ package vgdev.stroll
 			maxSector = sector;
 			savedHP = sp;
 		}
+		
+		public function isAllAI():Boolean
+		{
+			return wingman[0] && wingman[1];
+		}
 	}
 }

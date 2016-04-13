@@ -133,6 +133,23 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		public function shouldPress():int
+		{
+			if (!isSpooling || arrows == null || currentArrow >= arrows.length) return -1;
+			if (Math.abs(arrows[currentArrow].x - ARROW_TARGET) > ARROW_DIST) return -1;
+			return int(arrows[currentArrow].rotation);
+		}
+		
+		public function getArrows():Array
+		{
+			return arrows;
+		}
+		
+		public function puzzleActive():Boolean
+		{
+			return isSpooling;
+		}
+		
 		override public function updateHUD(isActive:Boolean):void 
 		{
 			if (corrupted)		// relinquish control if corrupted

@@ -188,9 +188,11 @@ package vgdev.stroll.support
 				trace("WARNING: No sound located for " + sfx + "!");
 			else
 			{
-				var volTransform:SoundTransform = new SoundTransform(volume);
-				var sc:SoundChannel = sounds[sfx].play();
-				sc.soundTransform = volTransform;
+				try {
+					var volTransform:SoundTransform = new SoundTransform(volume);
+					var sc:SoundChannel = sounds[sfx].play();
+					sc.soundTransform = volTransform;
+				} catch (e:Error) {}
 			}
 		}
 		

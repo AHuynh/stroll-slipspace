@@ -40,6 +40,8 @@ package vgdev.stroll.support
 		
 		private var shieldCol:uint = System.COL_WHITE;	// current shield color
 		private var shieldCTF:ColorTransform;
+		
+		public var recentDamage:Array = [0, 0, 0, 0];	// damage taken recently; is reduced every frame
 		// ------------------------------------------------------------------------------------------------
 		
 		// -- Navigation ----------------------------------------------------------------------------------
@@ -150,6 +152,27 @@ package vgdev.stroll.support
 			updateIntegrity();
 		}
 
+		public function getMostDamagingColor():uint
+		{
+			var mostDmg:Number = 1;
+			var col:uint = System.COL_WHITE;
+			for (var c:int = 0; c < 4; c++)
+			{
+				if (recentDamage[c] > mostDmg)
+				{
+					mostDmg = recentDamage[c];
+					col = [System.COL_GREEN, System.COL_RED, System.COL_YELLOW, System.COL_BLUE][c];
+				}
+			}
+			return col;
+		}
+		
+		public function isShieldOptimal():Boolean
+		{
+			var col:uint = getMostDamagingColor();
+			return col == System.COL_WHITE || getMostDamagingColor() == shieldCol;
+		}
+		
 		/**
 		 * Deal damage to the ship (with shields in effect)
 		 * @param	dmg				Amount of damage to deal (a positive value to damage)
@@ -165,6 +188,18 @@ package vgdev.stroll.support
 			// pretend colored attacks don't exist if shield freq hasn't been unlocked yet
 			if (cg.level.sectorIndex <= 4)
 				col = 0;
+			
+			// update recent damage taken
+			if (col != 0)
+			{
+				switch (col)
+				{
+					case System.COL_GREEN:	recentDamage[0] += dmg;		break;
+					case System.COL_RED:	recentDamage[1] += dmg;		break;
+					case System.COL_YELLOW:	recentDamage[2] += dmg;		break;
+					case System.COL_BLUE:	recentDamage[3] += dmg;		break;
+				}
+			}
 			
 			// shields absorb all damage until it breaks
 			// a 10 damage attack against 100 hull and 20 shield results in 100 hull and 10 shield
@@ -337,6 +372,13 @@ package vgdev.stroll.support
 		private function updateShields():void
 		{
 			if (!shieldsEnabled) return;
+			
+			for (var c:int = 0; c < 4; c++)
+			{
+				recentDamage[c] *= .95;
+				if (recentDamage[c] < 1)
+					recentDamage[c] = 0;
+			}
 			
 			if (shieldGrace > 0)
 				shieldGrace--;

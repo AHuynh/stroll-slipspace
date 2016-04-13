@@ -190,6 +190,7 @@ package vgdev.stroll.support.graph
 		 */
 		public function getNearestValidNode(origin:ABST_IMovable, target:Point, ignoreWalls:Boolean = false ):GraphNode
 		{
+			if (!origin || !target) return null;
 			var originalPos:Point = new Point(origin.mc_object.x, origin.mc_object.y);
 			origin.mc_object.x = target.x;
 			origin.mc_object.y = target.y;

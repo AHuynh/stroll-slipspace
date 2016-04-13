@@ -43,6 +43,9 @@ package vgdev.stroll.props
 		private const STATE_DOUSE:int = enum++;
 		private const STATE_REBOOT:int = enum++;
 		private const STATE_TURRET:int = enum++;
+		private const STATE_SLIP:int = enum++;
+		private const STATE_REPAIR:int = enum++;
+		private const STATE_COLOR:int = enum++;
 		private const STATE_NAVIGATION:int = enum++;
 		
 		public var goal:int;
@@ -53,6 +56,9 @@ package vgdev.stroll.props
 		private const GOAL_DOUSE:int = enum++;
 		private const GOAL_REBOOT:int = enum++;
 		private const GOAL_TURRET:int = enum++;
+		private const GOAL_SLIP:int = enum++;
+		private const GOAL_REPAIR:int = enum++;
+		private const GOAL_COLOR:int = enum++;
 		private const GOAL_NAVIGATION:int = enum++;
 		
 		private var otherPlayer:Player;
@@ -84,14 +90,16 @@ package vgdev.stroll.props
 		private const CHOOSE_CD:int = 30;
 		
 		private var prevPoint:Point;
-		private var ignoreStuck:Boolean = true;
 		
 		private var genericCounter:int = 0;
 		private var turrRandCounter:int = 0;
 		private var stuckCounter:int = 0;
+		private var slipCounter:int = 0;
+		private var repairCounter:int = 0;
 		private var movingPOIcounter:int = 0;			// if 0, update POI location, since object could be moving
 		private const COUNTER_MAX:int = 15;
 		private const TURRET_MAX:int = 75;
+		private const SLIP_MAX:int = System.SECOND * 4;
 		
 		private var turretRandom:Number;
 		
@@ -101,6 +109,10 @@ package vgdev.stroll.props
 		private var mazeSolution:Array;
 		private var mazeIndex:int;
 		// -- ShieldRe --------------------------------------------------------
+		// -- Slipdrive--------------------------------------------------------
+		private var slipSolution:Array;
+		private var slipIndex:int;
+		// -- Slipdrive--------------------------------------------------------
 		
 		public function WINGMAN(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object, _display:MovieClip) 
 		{
@@ -129,6 +141,8 @@ package vgdev.stroll.props
 					consoleMap["navigation"] = c;
 				else if (c is ConsoleShields)
 					consoleMap["shieldCol"] = c;
+				else if (c is ConsoleSlipdrive)
+					consoleMap["slipdrive"] = c;
 			}
 			keyMap = playerID == 0 ? System.keyMap0 : System.keyMap1;
 			prevPoint = new Point(mc_object.x, mc_object.y);
@@ -172,10 +186,23 @@ package vgdev.stroll.props
 				goal = GOAL_DEAD;
 				return false;
 			}
+			
+			// check if console was killed
+			if (objectOfInterest && (objectOfInterest is ABST_Console) && objectOfInterest.getHP() == 0)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+			}
+			
+			// update slipcounter
+			if (cg.ship.isJumpReady() == "ready")
+				slipCounter++;
+			else
+				slipCounter = 0;
 				
 			// check if stuck
-			if (!rooted && state != STATE_IDLE && state != STATE_REVIVE && state != STATE_DOUSE && state != STATE_HEAL)
-			//if (!ignoreStuck && state != STATE_IDLE)
+			if (!rooted && state != STATE_IDLE && state != STATE_REVIVE && state != STATE_DOUSE && state != STATE_HEAL && state != STATE_REPAIR)
 			{
 				if (mc_object.x == prevPoint.x && mc_object.y == prevPoint.y)
 				{
@@ -254,17 +281,32 @@ package vgdev.stroll.props
 					else if (!extendedLOScheck(pointOfInterest))
 						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				break;
+				case STATE_REPAIR:
+					if (!omnitoolCheck()) break;
+					if (objectOfInterest.getHP() == objectOfInterest.getHPmax())
+					{
+						trace("[WINGMAN] Console repaired.");
+						handleStateRepair();
+					}
+					else if (!extendedLOScheck(pointOfInterest))
+						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				break;
 				case STATE_TURRET:
 					handleStateTurret();
 				break;
 				case STATE_REBOOT:
 					handleStateReboot();
 				break;
+				case STATE_COLOR:
+					handleStateColor();
+				break;
 				case STATE_NAVIGATION:
 					handleStateNavigation();
 				break;
+				case STATE_SLIP:
+					handleStateSlipdrive();
+				break;
 				case STATE_MOVE_NETWORK:
-					ignoreStuck = false;
 					moveToPoint(new Point(nodeOfInterest.mc_object.x, nodeOfInterest.mc_object.y));
 					// arrived at next node	
 					if (System.getDistance(mc_object.x, mc_object.y, nodeOfInterest.mc_object.x, nodeOfInterest.mc_object.y) < RANGE)
@@ -284,7 +326,6 @@ package vgdev.stroll.props
 					if (System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < range)
 					{
 						releaseAllKeys();
-						ignoreStuck = true;
 						onArrive();
 					}
 				break;
@@ -388,6 +429,27 @@ package vgdev.stroll.props
 			}
 		} 
 		
+		private function handleStateColor():void
+		{
+			var console:ConsoleShields = objectOfInterest as ConsoleShields;
+			if (console.onCooldown())
+				return;
+			if (!cg.ship.isShieldOptimal())
+			{
+				switch (cg.ship.getMostDamagingColor())
+				{
+					case System.COL_GREEN:	pressKey("RIGHT");		return;
+					case System.COL_RED:	pressKey("UP");			return;
+					case System.COL_YELLOW:	pressKey("LEFT");		return;
+					case System.COL_BLUE:	pressKey("DOWN");		return;
+				}
+			}
+			trace("[WINGMAN] Finished with shield color.");
+			releaseAllKeys();
+			onCancel();
+			chooseState(true);		
+		}
+		
 		private function handleStateDouse():void
 		{
 			if (!(activeConsole is Omnitool)) return;
@@ -401,6 +463,20 @@ package vgdev.stroll.props
 			setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 			range = Omnitool.RANGE_EXTINGUISH * .9;
 			trace("[WINGMAN] Heading to douse fire.");
+		}
+				
+		private function handleStateRepair():void
+		{
+			if (!(activeConsole is Omnitool)) return;
+			objectOfInterest = getNearestDamagedConsole();
+			if (objectOfInterest == null)
+			{
+				chooseState(true);
+				return;
+			}
+			setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+			range = Omnitool.RANGE_REPAIR * .9;
+			trace("[WINGMAN] Heading to repair console.");
 		}
 		
 		private function handleStateTurret():void
@@ -540,6 +616,44 @@ package vgdev.stroll.props
 			}
 		}
 		
+		private function handleStateSlipdrive():void
+		{
+			if (cg.ship.isJumpReady() != "ready")
+			{
+				releaseAllKeys();
+				onCancel();
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				trace("[WINGMAN] Done with Slipdrive!");
+				return;
+			}
+			var slip:ConsoleSlipdrive = (objectOfInterest as ConsoleSlipdrive);
+			if (!slip.puzzleActive())
+			{
+				pressKey("ACTION");
+				return;
+			}
+			if (slipSolution == null)
+			{
+				slipSolution = slip.getArrows();
+				slipIndex = 0;
+				return;
+			}
+			releaseAllKeys();
+			var dir:int = slip.shouldPress();
+			if (dir != -1)
+			{
+				switch (dir)
+				{
+					case 0:		pressKey("RIGHT");		break;
+					case -90:	pressKey("UP");			break;
+					case 180:	pressKey("LEFT");		break;
+					case 90:	pressKey("DOWN");		break;
+				}
+				
+			}
+		}
+		
 		/**
 		 * Determine the next thing to do
 		 * @param	force		ignore the cooldown
@@ -547,10 +661,16 @@ package vgdev.stroll.props
 		 */
 		private function chooseState(force:Boolean = false):Boolean
 		{
+			++repairCounter;
 			if (!force && --chooseStateCooldown > 0)
 				return false;
 			chooseStateCooldown = CHOOSE_CD;
-			ignoreStuck = true;
+			var toRepair:ABST_Console;
+			if (repairCounter >= COUNTER_MAX * 2)
+			{
+				toRepair = getNearestDamagedConsole();
+				repairCounter = 0;
+			}
 			if (state == STATE_STUCK)
 			{
 				var node:GraphNode = cg.graph.getNearestValidNode(this, new Point(mc_object.x, mc_object.y));
@@ -562,6 +682,20 @@ package vgdev.stroll.props
 					goal = GOAL_IDLE; 
 				}
 				trace("[WINGMAN] Heading to a valid node.");
+			}
+			else if (cg.managerMap[System.M_FIRE].hasObjects() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_DOUSE))
+			{
+				if (goal == GOAL_DOUSE) return false;
+				goal = GOAL_DOUSE;
+				if (activeConsole is Omnitool)		// head to fire
+					handleStateDouse();
+				else								// head to closest Omnitool
+				{
+					onCancel();
+					objectOfInterest = getClosestOmnitool();
+					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+					trace("[WINGMAN] Heading to pick up Omnitool to douse fires.");
+				}				
 			}
 			else if (otherPlayer.getHP() == 0)
 			{
@@ -611,19 +745,34 @@ package vgdev.stroll.props
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				trace("[WINGMAN] Heading to shield reboot module.");
 			}
-			else if (cg.managerMap[System.M_FIRE].hasObjects() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_DOUSE))
+			else if (cg.ship.isJumpReady() == "ready" && slipCounter >= SLIP_MAX && isValidConsole(consoleMap["slipdrive"]) && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_SLIP))
 			{
-				if (goal == GOAL_DOUSE) return false;
-				goal = GOAL_DOUSE;
-				if (activeConsole is Omnitool)		// head to fire
-					handleStateDouse();
-				else								// head to closest Omnitool
-				{
-					onCancel();
-					objectOfInterest = getClosestOmnitool();
-					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-					trace("[WINGMAN] Heading to pick up Omnitool to douse fires.");
-				}				
+				if (cg.level.sectorIndex == 0 && !cg.engine.isAllAI()) return false;		// don't jump away on tutorial automatically
+				if (goal == GOAL_SLIP) return false;
+				goal = GOAL_SLIP;
+				if (activeConsole != null && !(activeConsole is ConsoleSlipdrive)) onCancel();
+				objectOfInterest = consoleMap["slipdrive"];
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to Slipdrive.");
+			}
+			else if (consoleMap["shieldCol"].isUnlocked() && !cg.ship.isShieldOptimal() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_COLOR))
+			{
+				if (goal == GOAL_COLOR) return false;
+				goal = GOAL_COLOR;
+				if (activeConsole != null && !(activeConsole is ConsoleShields)) onCancel();
+				objectOfInterest = consoleMap["shieldCol"];
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to shield color.");
+			}
+			// higher priority to Nav if not in range
+			else if (!cg.ship.isHeadingGood() && Math.random() > .5 && cg.ship.isJumpReady() == "range" && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
+			{
+				if (goal == GOAL_NAVIGATION) return false;
+				goal = GOAL_NAVIGATION;
+				if (activeConsole != null && !(activeConsole is ConsoleNavigation)) onCancel();
+				objectOfInterest = consoleMap["navigation"];
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to navigation.");
 			}
 			else if (cg.managerMap[System.M_ENEMY].hasObjects())
 			{
@@ -649,6 +798,7 @@ package vgdev.stroll.props
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				trace("[WINGMAN] Heading to turret.");
 			}
+			// normal Nav priority
 			else if (!cg.ship.isHeadingGood() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
 			{
 				if (goal == GOAL_NAVIGATION) return false;
@@ -675,7 +825,26 @@ package vgdev.stroll.props
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 					trace("[WINGMAN] Heading to pick up Omnitool to heal teammate.");
-				}				
+				}	
+			}
+			else if (toRepair != null && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_REPAIR))
+			{
+				if (goal == GOAL_REPAIR) return false;
+				goal = GOAL_REPAIR;
+				if (activeConsole is Omnitool)		// head to console
+				{
+					objectOfInterest = toRepair;
+					setPOI(new Point(toRepair.mc_object.x, toRepair.mc_object.y));
+					range = Omnitool.RANGE_REPAIR * .9;
+					trace("[WINGMAN] Heading to repair console.");
+				}
+				else								// head to closest Omnitool
+				{
+					onCancel();
+					objectOfInterest = getClosestOmnitool();
+					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+					trace("[WINGMAN] Heading to pick up Omnitool to repair console.");
+				}	
 			}
 			else
 			{
@@ -755,6 +924,20 @@ package vgdev.stroll.props
 						trace("[WINGMAN] Dousing fire.");
 					}
 				break;
+				case GOAL_REPAIR:
+					if (objectOfInterest is Omnitool)		// pick up omnitool
+					{
+						if (!getOnConsole(objectOfInterest as Omnitool)) return;
+						handleStateRepair();
+					}
+					else									// repair
+					{
+						state = STATE_REPAIR;
+						releaseMovementKeys();
+						pressKey("ACTION");
+						trace("[WINGMAN] Repairing console.");
+					}
+				break;
 				case GOAL_TURRET:
 					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
 					state = STATE_TURRET;
@@ -767,6 +950,15 @@ package vgdev.stroll.props
 				case GOAL_REBOOT:
 					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
 					state = STATE_REBOOT;
+				break;
+				case GOAL_COLOR:
+					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
+					state = STATE_COLOR;
+				break;
+				case GOAL_SLIP:
+					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
+					slipSolution = null;
+					state = STATE_SLIP;
 				break;
 				default:
 					trace("[WINGMAN] Arrived at destination but couldn't figure out what to do.");
@@ -911,6 +1103,27 @@ package vgdev.stroll.props
 			return mostThreateningEnemy;
 		}
 		
+		private function getNearestDamagedConsole():ABST_Console
+		{
+			var nearest:ABST_Console = null;
+			var nearestDist:Number = 9999;
+			var dist:Number;
+			for each (var c:ABST_Console in cg.consoles)
+			{
+				if (c is Omnitool) continue;
+				if (c.getHP() != c.getHPmax())
+				{
+					dist = System.getDistance(mc_object.x, mc_object.y, c.mc_object.x, c.mc_object.y);
+					if (dist < nearestDist)
+					{
+						nearestDist = dist;
+						nearest = c;
+					}
+				}
+			}
+			return nearest;
+		}
+		
 		private function randomize(a:*, b:*):int
 		{
 			return Math.random() > .5 ? 1 : -1;
@@ -972,6 +1185,7 @@ package vgdev.stroll.props
 				case STATE_DEAD:				display.tf_status.text = "Needs help!";				break;
 				case STATE_HEAL:				display.tf_status.text = "Healing ally";			break;
 				case STATE_IDLE:				display.tf_status.text = "Waiting";					break;
+				case STATE_SLIP:				display.tf_status.text = "Spooling Slipdrive";		break;
 				case STATE_MOVE_FREE:
 				case STATE_MOVE_FROM_NETWORK:
 				case STATE_MOVE_NETWORK:
@@ -985,12 +1199,17 @@ package vgdev.stroll.props
 						case GOAL_REVIVE:		display.tf_status.text = "Reviving ally";			break;
 						case GOAL_TURRET:		display.tf_status.text = "Engaging enemies";		break;
 						case GOAL_NAVIGATION:	display.tf_status.text = "Correcting course";		break;
+						case GOAL_SLIP:			display.tf_status.text = "Spooling Slipdrive";		break;
+						case GOAL_COLOR:		display.tf_status.text = "Switching Shield Color";	break;
+						case GOAL_REPAIR:		display.tf_status.text = "Repairing systems";		break;
 					}
 				break;
 				case STATE_REBOOT:				display.tf_status.text = "Rebooting shields";		break;
 				case STATE_REVIVE:				display.tf_status.text = "Reviving ally";			break;
 				case STATE_STUCK:				display.tf_status.text = "Confused";				break;
 				case STATE_TURRET:				display.tf_status.text = "Engaging enemies";		break;
+				case STATE_REPAIR:				display.tf_status.text = "Repairing systems";		break;
+				case STATE_COLOR:				display.tf_status.text = "Switching Shield Color";	break;
 				case STATE_NAVIGATION:			display.tf_status.text = "Correcting course";		break;
 			}
 		}

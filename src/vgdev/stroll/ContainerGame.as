@@ -206,7 +206,7 @@
 			
 			
 			// DEBUGGING TOOL -- set to true for release
-			var useLocks:Boolean = false;
+			var useLocks:Boolean = true;
 					   
 			// --- Eagle --------------------------------------------------------------------------------------------------------
 			if (shipName == "Eagle")
@@ -446,12 +446,12 @@
 					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
 					p.x += System.GAME_OFFSX;
 					p.y += System.GAME_OFFSY;
-					level.spawn({}, p, "Spider");*/
-					//ship.shipHeading = System.getRandNum( -1, 1);
+					level.spawn({}, p, System.getRandFrom(["Eye", "Breeder", "Slime", "Spider"]));
+					//ship.shipHeading = System.getRandNum( -1, 1);*/
 				//	addToGame(new EnemyEyeball(this, new SWC_Enemy(), { "x": -150 + System.GAME_HALF_WIDTH, "y":System.getRandNum(0, 100) + System.GAME_HALF_HEIGHT } ), System.M_ENEMY);
 					//addSparks(4);
 					//ship.damageDirect(350);
-					//consoles[0].changeHP( -250);
+					//System.getRandFrom(consoles).changeHP( -250);
 					//addFires(1);
 					//upgradeTurrets(2);
 				break;

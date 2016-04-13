@@ -109,6 +109,11 @@ package vgdev.stroll.props.consoles
 			}
 		}
 		
+		public function isUnlocked():Boolean
+		{
+			return unlocked;
+		}
+		
 		public function isBroken():Boolean
 		{
 			return broken;

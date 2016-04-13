@@ -17,11 +17,9 @@ package vgdev.stroll.support
 		private var scale:Number = 1;
 		
 		public var focusTgt:Point;
-		private var scaleTgt:Number = 1;
 		
 		private const ADD_SCALE:Array = [-.05, .05];
 		private const THRESH_TRANSLATE:Number = 5;
-		private const THRESH_SCALE:Number = .05;
 		
 		private var camMoveRate:Number = 10;
 		
@@ -54,11 +52,9 @@ package vgdev.stroll.support
 		{
 			focus.x = updateNumber(focus.x, focusTgt.x, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
 			focus.y = updateNumber(focus.y, focusTgt.y, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
-			//scale = updateNumber(scale, scaleTgt, ADD_SCALE, THRESH_SCALE);
 
 			cg.game.x = focus.x;
 			cg.game.y = focus.y;
-			//cg.game.scaleX = cg.game.scaleY = scale;
 			
 			cg.background.setLocation(new Point(cg.game.x / 4, cg.game.y / 4));
 
@@ -128,23 +124,16 @@ package vgdev.stroll.support
 		}
 		
 		/**
-		 * Set the camera's ranslation and scale
-		 * @param	newFocus	Point, where (0, 0) is the center of the screen
-		 * @param	newScale
-		 */
-		public function setCamera(newFocus:Point, newScale:Number):void
-		{
-			setCameraFocus(newFocus);
-			//setCameraScale(newScale);
-		}
-		
-		/**
 		 * Set the camera's translation
 		 * @param	newFocus	Point, where (0, 0) is the center of the screen
 		 */
 		public function setCameraFocus(newFocus:Point):void
 		{
-			focusTgt = new Point(-newFocus.x, -newFocus.y);
+			focusTgt = new Point( -newFocus.x, -newFocus.y);
+			
+			// cam always in center for AI
+			if (cg && cg.engine && cg.engine.isAllAI())
+				focusTgt = new Point();
 		}
 		
 		/**
@@ -155,15 +144,6 @@ package vgdev.stroll.support
 		{
 			focusTgt.x = System.changeWithLimit(focusTgt.x, offFocus.x * camMoveRate, lim_x_min, lim_x_max);
 			focusTgt.y = System.changeWithLimit(focusTgt.y, offFocus.y * camMoveRate, lim_y_min, lim_y_max);
-		}
-		
-		/**
-		 * Set the camera's scale
-		 * @param	newScale	Number, the scale to use
-		 */
-		public function setCameraScale(newScale:Number):void
-		{
-			//scaleTgt = newScale;
 		}
 		
 		override public function destroy():void 
