@@ -147,9 +147,11 @@ package vgdev.stroll.props.consoles
 					setRechargeText(true, "Ready");
 				if (ui != null)
 				{
-					ui.tf_charge.text = int((puzzleCooldown / System.SECOND)).toString() + "." + int(((puzzleCooldown % 30) / 30) * 10).toString();
-					ui.mc_marker.x = 48 + (puzzleCooldown / COOLDOWN) * 46;
-					ui.mc_recharge.visible = puzzleCooldown != 0;
+					try {
+						ui.tf_charge.text = int((puzzleCooldown / System.SECOND)).toString() + "." + int(((puzzleCooldown % 30) / 30) * 10).toString();
+						ui.mc_marker.x = 48 + (puzzleCooldown / COOLDOWN) * 46;
+						ui.mc_recharge.visible = puzzleCooldown != 0;
+					} catch (e:Error) { };
 				}
 				return false;
 			}
