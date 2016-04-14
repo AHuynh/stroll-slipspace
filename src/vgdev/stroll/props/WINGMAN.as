@@ -6,20 +6,8 @@ package vgdev.stroll.props
 	import flash.geom.Point;
 	import vgdev.stroll.ABST_Container;
 	import vgdev.stroll.ContainerGame;
-	import vgdev.stroll.props.consoles.ABST_Console;
-	import vgdev.stroll.props.consoles.ConsoleNavigation;
-	import vgdev.stroll.props.consoles.ConsoleShieldRe;
-	import vgdev.stroll.props.consoles.ConsoleShields;
-	import vgdev.stroll.props.consoles.ConsoleSlipdrive;
-	import vgdev.stroll.props.consoles.ConsoleTurret;
-	import vgdev.stroll.props.consoles.Omnitool;
-	import vgdev.stroll.props.enemies.ABST_Boarder;
-	import vgdev.stroll.props.enemies.ABST_Enemy;
-	import vgdev.stroll.props.enemies.EnemyEyeball;
-	import vgdev.stroll.props.enemies.EnemyPeeps;
-	import vgdev.stroll.props.enemies.EnemyPeepsEye;
-	import vgdev.stroll.props.enemies.EnemyPortal;
-	import vgdev.stroll.props.enemies.EnemySwipe;
+	import vgdev.stroll.props.consoles.*;
+	import vgdev.stroll.props.enemies.*;
 	import vgdev.stroll.support.graph.GraphNode;
 	import vgdev.stroll.System;
 	
@@ -47,6 +35,7 @@ package vgdev.stroll.props
 		private const STATE_REPAIR:int = enum++;
 		private const STATE_COLOR:int = enum++;
 		private const STATE_NAVIGATION:int = enum++;
+		private const STATE_FAILS:int = enum++;
 		
 		public var goal:int;
 		private const GOAL_IDLE:int = enum++;
@@ -60,6 +49,7 @@ package vgdev.stroll.props
 		private const GOAL_REPAIR:int = enum++;
 		private const GOAL_COLOR:int = enum++;
 		private const GOAL_NAVIGATION:int = enum++;
+		private const GOAL_FAILS:int = enum++;
 		
 		private var otherPlayer:Player;
 		
@@ -70,9 +60,10 @@ package vgdev.stroll.props
 		
 		private var path:Array;
 		
-		protected var range:Number = 5;			// current range
-		protected const RANGE:Number = 5;		// node clear range
-		protected const MOVE_RANGE:Number = 2;	// diff on movement
+		protected var range:Number = 5;				// current range
+		protected const RANGE:Number = 5;			// node clear range
+		protected const MOVE_RANGE:Number = 2;		// diff on movement
+		protected const BEELINE_RANGE:Number = 40;
 		
 		private const NORMAL_SPEED:Number = 5;
 		private const PRECISE_SPEED:Number = 2;
@@ -95,11 +86,13 @@ package vgdev.stroll.props
 		private var turrRandCounter:int = 0;
 		private var stuckCounter:int = 0;
 		private var slipCounter:int = 0;
+		private var failsCounter:int = 0;
 		private var repairCounter:int = 0;
 		private var movingPOIcounter:int = 0;			// if 0, update POI location, since object could be moving
 		private const COUNTER_MAX:int = 15;
 		private const TURRET_MAX:int = 75;
 		private const SLIP_MAX:int = System.SECOND * 4;
+		private const FAILS_MAX:int = System.SECOND * 5;
 		
 		private var turretRandom:Number;
 		
@@ -143,6 +136,8 @@ package vgdev.stroll.props
 					consoleMap["shieldCol"] = c;
 				else if (c is ConsoleSlipdrive)
 					consoleMap["slipdrive"] = c;
+				else if (c is ConsoleSensors)
+					consoleMap["sensors"] = c;
 			}
 			keyMap = playerID == 0 ? System.keyMap0 : System.keyMap1;
 			prevPoint = new Point(mc_object.x, mc_object.y);
@@ -184,7 +179,18 @@ package vgdev.stroll.props
 			{
 				state = STATE_DEAD;
 				goal = GOAL_DEAD;
+				releaseAllKeys();
 				return false;
+			}
+			
+			// check if forced off a console
+			if (cancelled)
+			{
+				cancelled = false;
+				state = STATE_STUCK;
+				goal = GOAL_IDLE;
+				releaseAllKeys();
+				chooseState(true);
 			}
 			
 			// check if console was killed
@@ -192,6 +198,7 @@ package vgdev.stroll.props
 			{
 				state = STATE_IDLE;
 				goal = GOAL_IDLE;
+				releaseAllKeys();
 				chooseState(true);
 			}
 			
@@ -201,8 +208,15 @@ package vgdev.stroll.props
 			else
 				slipCounter = 0;
 				
+			// update FAILS counter
+			if (ABST_Console.numCorrupted != 0)
+				failsCounter++;
+			else
+				failsCounter = 0;
+				
 			// check if stuck
-			if (!rooted && state != STATE_IDLE && state != STATE_REVIVE && state != STATE_DOUSE && state != STATE_HEAL && state != STATE_REPAIR)
+			if (!rooted && state != STATE_IDLE && state != STATE_REVIVE && state != STATE_DOUSE
+					&& state != STATE_HEAL && state != STATE_REPAIR)
 			{
 				if (mc_object.x == prevPoint.x && mc_object.y == prevPoint.y)
 				{
@@ -246,7 +260,8 @@ package vgdev.stroll.props
 			// make a beeline
 			if (pointOfInterest != null && state == STATE_MOVE_NETWORK)
 			{
-				if (extendedLOScheck(pointOfInterest))
+				if (System.getDistance(mc_object.x, mc_object.y, pointOfInterest.x, pointOfInterest.y) < BEELINE_RANGE &&
+						extendedLOScheck(pointOfInterest))
 				{
 					state = STATE_MOVE_FROM_NETWORK;
 					path = [];
@@ -305,6 +320,9 @@ package vgdev.stroll.props
 				break;
 				case STATE_SLIP:
 					handleStateSlipdrive();
+				break;
+				case STATE_FAILS:
+					handleStateFails();
 				break;
 				case STATE_MOVE_NETWORK:
 					moveToPoint(new Point(nodeOfInterest.mc_object.x, nodeOfInterest.mc_object.y));
@@ -380,13 +398,22 @@ package vgdev.stroll.props
 		 */
 		private function handleStateReboot():void
 		{
+			if (objectOfInterest == null)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+				return;
+			}
 			var c:ConsoleShieldRe = objectOfInterest as ConsoleShieldRe;
 			if (c.closestPlayer == null || c.closestPlayer != this)
 			{
 				trace("[WINGMAN] Couldn't use the reboot module!");
 				onCancel();
 				state = STATE_IDLE;
+				goal = GOAL_IDLE;
 				chooseState(true);
+				return;
 			}
 			if (c.onCooldown())
 			{
@@ -425,12 +452,21 @@ package vgdev.stroll.props
 				trace("[WINGMAN] Finished with maze.");
 				releaseMovementKeys();
 				onCancel();
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
 				chooseState(true);
 			}
 		} 
 		
 		private function handleStateColor():void
 		{
+			if (objectOfInterest == null)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+				return;
+			}
 			var console:ConsoleShields = objectOfInterest as ConsoleShields;
 			if (console.onCooldown())
 				return;
@@ -481,6 +517,13 @@ package vgdev.stroll.props
 		
 		private function handleStateTurret():void
 		{
+			if (objectOfInterest == null)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+				return;
+			}
 			if (chooseState())
 			{
 				enemyOfInterest = null;
@@ -592,6 +635,13 @@ package vgdev.stroll.props
 		
 		private function handleStateNavigation():void
 		{
+			if (objectOfInterest == null)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+				return;
+			}
 			if (chooseState() || (Math.abs(cg.ship.shipHeading) < HEADING_THRESHOLD))
 			{
 				releaseAllKeys();
@@ -618,6 +668,13 @@ package vgdev.stroll.props
 		
 		private function handleStateSlipdrive():void
 		{
+			if (objectOfInterest == null)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+				return;
+			}
 			if (cg.ship.isJumpReady() != "ready")
 			{
 				releaseAllKeys();
@@ -650,8 +707,36 @@ package vgdev.stroll.props
 					case 180:	pressKey("LEFT");		break;
 					case 90:	pressKey("DOWN");		break;
 				}
-				
 			}
+		}
+		
+		private function handleStateFails():void
+		{
+			if (objectOfInterest == null)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+				return;
+			}
+			var c:ABST_Console = (objectOfInterest as ABST_Console);
+			if (!c.corrupted)
+			{
+				state = STATE_IDLE;
+				goal = GOAL_IDLE;
+				chooseState(true);
+				return;
+			}
+			if (!ConsoleFAILS.puzzleActive)
+			{
+				releaseAllKeys();
+				pressKey("ACTION");
+				return;
+			}
+			releaseKey("ACTION");
+			Math.random() > .85 ? pressKey("RIGHT") : releaseKey("RIGHT");
+			Math.random() > .6 ? pressKey("LEFT") : releaseKey("LEFT");
+			Math.random() > .2 ? pressKey("UP") : releaseKey("UP");
 		}
 		
 		/**
@@ -671,6 +756,9 @@ package vgdev.stroll.props
 				toRepair = getNearestDamagedConsole();
 				repairCounter = 0;
 			}
+			var toFormat:ABST_Console;
+			if (failsCounter >= FAILS_MAX)
+				toFormat = getNextCorruptedConsole();
 			if (state == STATE_STUCK)
 			{
 				var node:GraphNode = cg.graph.getNearestValidNode(this, new Point(mc_object.x, mc_object.y));
@@ -734,6 +822,18 @@ package vgdev.stroll.props
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 					trace("[WINGMAN] Heading to pick up Omnitool to heal teammate.");
 				}				
+			}
+			else if (failsCounter >= FAILS_MAX && ABST_Console.numCorrupted != 0 && !ABST_Console.beingUsed &&
+					toFormat != null && toFormat.debuggable && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_FAILS))
+			{
+				if (goal == GOAL_FAILS) return false;
+				objectOfInterest = getNextCorruptedConsole();
+				if (!objectOfInterest) return false;
+				failsCounter = 0;
+				goal = GOAL_FAILS;
+				onCancel();
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to format system.");
 			}
 			else if (cg.ship.getShieldPercent() < System.getRandNum(SP_THRESHOLD * .9, SP_THRESHOLD * 1.1) && isValidConsole(consoleMap["shieldRe"]) && !consoleMap["shieldRe"].onCooldown() &&
 					!(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_REBOOT))
@@ -960,6 +1060,11 @@ package vgdev.stroll.props
 					slipSolution = null;
 					state = STATE_SLIP;
 				break;
+				case GOAL_FAILS:
+					if (!getOnConsole(objectOfInterest as ABST_Console)) return;
+					state = STATE_FAILS;
+					releaseAllKeys();
+				break;
 				default:
 					trace("[WINGMAN] Arrived at destination but couldn't figure out what to do.");
 					state = STATE_IDLE;
@@ -974,7 +1079,7 @@ package vgdev.stroll.props
 				trace("[WINGMAN] Couldn't get on a null console!");
 				return false;
 			}
-			if (c.corrupted)
+			if (c.corrupted && goal != GOAL_FAILS)
 			{
 				trace("[WINGMAN] Couldn't get on a corrupted console!");
 				return false;
@@ -1124,6 +1229,20 @@ package vgdev.stroll.props
 			return nearest;
 		}
 		
+		private function getNextCorruptedConsole():ABST_Console
+		{
+			if (ABST_Console.numCorrupted == 0) return null;
+			var c:ABST_Console;
+			if (consoleMap["shieldRe"].corrupted) return consoleMap["shieldRe"];
+			for each (c in consoleMap["turret"])
+				if (c.corrupted) return c;
+			if (consoleMap["shieldCol"].corrupted) return consoleMap["shieldCol"];
+			if (consoleMap["sensors"].corrupted) return consoleMap["sensors"];
+			if (consoleMap["slipdrive"].corrupted) return consoleMap["slipdrive"];
+			if (consoleMap["navigation"].corrupted) return consoleMap["navigation"];
+			return null;
+		}
+		
 		private function randomize(a:*, b:*):int
 		{
 			return Math.random() > .5 ? 1 : -1;
@@ -1202,6 +1321,7 @@ package vgdev.stroll.props
 						case GOAL_SLIP:			display.tf_status.text = "Spooling Slipdrive";		break;
 						case GOAL_COLOR:		display.tf_status.text = "Switching Shield Color";	break;
 						case GOAL_REPAIR:		display.tf_status.text = "Repairing systems";		break;
+						case GOAL_FAILS:		display.tf_status.text = "Formatting system";		break;
 					}
 				break;
 				case STATE_REBOOT:				display.tf_status.text = "Rebooting shields";		break;
@@ -1211,6 +1331,7 @@ package vgdev.stroll.props
 				case STATE_REPAIR:				display.tf_status.text = "Repairing systems";		break;
 				case STATE_COLOR:				display.tf_status.text = "Switching Shield Color";	break;
 				case STATE_NAVIGATION:			display.tf_status.text = "Correcting course";		break;
+				case STATE_FAILS:				display.tf_status.text = "Formatting system";		break;
 			}
 		}
 	}

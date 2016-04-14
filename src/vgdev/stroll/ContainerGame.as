@@ -436,12 +436,12 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					//jump();
+					jump();
 				break;
 				case Keyboard.K:
 					//players[0].changeHP( -9999);
 					//ship.damage(1000);
-					//killShip();
+					killShip();
 					//addFires(1);
 					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
 					p.x += System.GAME_OFFSX;
@@ -451,6 +451,9 @@
 				//	addToGame(new EnemyEyeball(this, new SWC_Enemy(), { "x": -150 + System.GAME_HALF_WIDTH, "y":System.getRandNum(0, 100) + System.GAME_HALF_HEIGHT } ), System.M_ENEMY);
 					//addSparks(4);
 					//ship.damageDirect(350);
+					//var c:ABST_Console = System.getRandFrom(consoles);
+					//c.setCorrupt(true);
+					//c.debuggable = true;
 					//System.getRandFrom(consoles).changeHP( -250);
 					//addFires(1);
 					//upgradeTurrets(2);

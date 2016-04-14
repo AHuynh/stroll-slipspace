@@ -8,6 +8,7 @@ package vgdev.stroll.props
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.managers.ManagerProximity;
 	import vgdev.stroll.props.consoles.ABST_Console;
+	import vgdev.stroll.props.consoles.Omnitool;
 	import vgdev.stroll.props.projectiles.ABST_IProjectile;
 	import vgdev.stroll.props.projectiles.IProjectileGeneric;
 	import vgdev.stroll.System;
@@ -46,6 +47,7 @@ package vgdev.stroll.props
 		
 		/// Player 0 or 1
 		public var playerID:int;
+		public var otherPlayerID:int;
 		
 		/// Pixels per frame this unit can move at
 		public var moveSpeedX:Number = 5;
@@ -77,10 +79,13 @@ package vgdev.stroll.props
 		protected var isMoving:Boolean = false;
 		public var highFive:int = 0;
 		
+		protected var cancelled:Boolean = false;
+		
 		public function Player(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object)
 		{
 			super(_cg, _mc_object, _hitMask);
 			playerID = _playerID;
+			otherPlayerID = 1 - otherPlayerID;
 			hp = hpMax = 100;
 			
 			KEY_RIGHT = keyMap["RIGHT"];
@@ -460,6 +465,7 @@ package vgdev.stroll.props
 					else if (!rooted)
 					{
 						cg.onAction(this);
+						cancelOther();
 					}
 					else if (!keysDown[ACTION])
 					{
@@ -480,6 +486,28 @@ package vgdev.stroll.props
 		{
 			facing = dir;
 			mc_object.scaleX = mc_object.mc_bar.scaleX = mc_object.prompt.scaleX = (dir != LEFT ? 1 : -1);
+		}
+		
+		/**
+		 * Make the other player get off their console
+		 */
+		private function cancelOther():void
+		{
+			if (cg.engine.wingman[playerID]) return;
+			if (getDistance(cg.players[otherPlayerID]) < ABST_Console.RANGE)
+				cg.players[otherPlayerID].forceCancel();
+		}
+		
+		/**
+		 * Used to force a WINGMAN to stop using a console
+		 */
+		public function forceCancel():void
+		{
+			if (activeConsole && !(activeConsole is Omnitool))
+			{
+				onCancel();
+				cancelled = true;
+			}
 		}
 		
 		/**

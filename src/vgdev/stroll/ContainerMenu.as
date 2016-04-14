@@ -99,7 +99,7 @@
 				checkStory = true;
 				SoundManager.playSFX("sfx_readybeep2G");
 				
-				//completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
+				completed = true;		// DEBUGGING SHORTCUT -- REMOVE LATER
 			}
 			else
 			{

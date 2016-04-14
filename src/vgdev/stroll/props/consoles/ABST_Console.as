@@ -15,7 +15,7 @@ package vgdev.stroll.props.consoles
 	public class ABST_Console extends ABST_Object 
 	{
 		protected var players:Array;
-		public const RANGE:int = 12;		// maximum range in px from which a player can activate this console
+		public static const RANGE:int = 12;		// maximum range in px from which a player can activate this console
 		
 		/// Used as a label in the HUD object
 		public var CONSOLE_NAME:String = "None";
@@ -322,7 +322,8 @@ package vgdev.stroll.props.consoles
 			if (cg.tails.tutorialMode && label != "none" && label != "broken")
 			{
 				hud_consoles[closestPlayer.playerID].mc_tutorial.visible = label != "none";
-				hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(label.toLowerCase());
+				if (label != "fails")
+					hud_consoles[closestPlayer.playerID].mc_tutorial.gotoAndStop(label.toLowerCase());
 				cg.hudTitles[closestPlayer.playerID].text = label;
 			}
 			
