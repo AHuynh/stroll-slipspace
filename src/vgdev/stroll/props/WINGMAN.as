@@ -36,6 +36,7 @@ package vgdev.stroll.props
 		private const STATE_COLOR:int = enum++;
 		private const STATE_NAVIGATION:int = enum++;
 		private const STATE_FAILS:int = enum++;
+		private const STATE_BOARDER:int = enum++;
 		
 		public var goal:int;
 		private const GOAL_IDLE:int = enum++;
@@ -50,6 +51,7 @@ package vgdev.stroll.props
 		private const GOAL_COLOR:int = enum++;
 		private const GOAL_NAVIGATION:int = enum++;
 		private const GOAL_FAILS:int = enum++;
+		private const GOAL_BOARDER:int = enum++;
 		
 		private var otherPlayer:Player;
 		
@@ -64,6 +66,7 @@ package vgdev.stroll.props
 		protected const RANGE:Number = 5;			// node clear range
 		protected const MOVE_RANGE:Number = 2;		// diff on movement
 		protected const BEELINE_RANGE:Number = 40;
+		protected const BOARDER_RANGE:Number = 10;
 		
 		private const NORMAL_SPEED:Number = 5;
 		private const PRECISE_SPEED:Number = 2;
@@ -78,7 +81,7 @@ package vgdev.stroll.props
 		private var setup:Boolean = true;
 		
 		private var chooseStateCooldown:int = 0;
-		private const CHOOSE_CD:int = 30;
+		private const CHOOSE_CD:int = 20;
 		
 		private var prevPoint:Point;
 		
@@ -216,7 +219,7 @@ package vgdev.stroll.props
 				
 			// check if stuck
 			if (!rooted && state != STATE_IDLE && state != STATE_REVIVE && state != STATE_DOUSE
-					&& state != STATE_HEAL && state != STATE_REPAIR)
+					&& state != STATE_HEAL && state != STATE_REPAIR && state != STATE_BOARDER)
 			{
 				if (mc_object.x == prevPoint.x && mc_object.y == prevPoint.y)
 				{
@@ -242,13 +245,15 @@ package vgdev.stroll.props
 			// update dynamic POI locations
 			if (objectOfInterest is Player || objectOfInterest is ABST_Boarder || objectOfInterest is Omnitool)
 			{
-				if (--movingPOIcounter <= 0)
+				if (objectOfInterest.mc_object && --movingPOIcounter <= 0)
 				{
 					movingPOIcounter = COUNTER_MAX;
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				}
 			}
-			if (goal == GOAL_DOUSE && --genericCounter <= 0)		// recalculate nearest fire, account for incap
+			
+			// recalculate nearest fire, account for incap
+			if (goal == GOAL_DOUSE && --genericCounter <= 0)
 			{
 				genericCounter = COUNTER_MAX * 2;
 				if (otherPlayer.getHP() == 0)
@@ -282,6 +287,23 @@ package vgdev.stroll.props
 					if (!omnitoolCheck()) break;
 					if (otherPlayer.getHP() / otherPlayer.getHPmax() > HEAL_THRESHOLD)
 						chooseState(true);
+					else if (!extendedLOScheck(pointOfInterest))
+						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				break;
+				case STATE_BOARDER:
+					if (!objectOfInterest.isActive())
+					{
+						state = STATE_IDLE;
+						goal = GOAL_IDLE;
+						chooseState();
+					}
+					else if (System.getDistance(mc_object.x, mc_object.y, objectOfInterest.mc_object.x, objectOfInterest.mc_object.y) < BOARDER_RANGE)
+					{
+						(objectOfInterest as ABST_Boarder).changeHP( -9999);
+						state = STATE_IDLE;
+						goal = GOAL_IDLE;
+						chooseState();
+					}
 					else if (!extendedLOScheck(pointOfInterest))
 						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				break;
@@ -845,6 +867,16 @@ package vgdev.stroll.props
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				trace("[WINGMAN] Heading to shield reboot module.");
 			}
+			else if (cg.managerMap[System.M_BOARDER].hasObjects() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_BOARDER))
+			{
+				if (goal == GOAL_BOARDER) return false;
+				objectOfInterest = getClosestBoarder();
+				if (!objectOfInterest) return false;
+				goal = GOAL_BOARDER;	
+				onCancel();
+				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
+				trace("[WINGMAN] Heading to fight boarder.");
+			}
 			else if (cg.ship.isJumpReady() == "ready" && slipCounter >= SLIP_MAX && isValidConsole(consoleMap["slipdrive"]) && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_SLIP))
 			{
 				if (cg.level.sectorIndex == 0 && !cg.engine.isAllAI()) return false;		// don't jump away on tutorial automatically
@@ -1065,6 +1097,9 @@ package vgdev.stroll.props
 					state = STATE_FAILS;
 					releaseAllKeys();
 				break;
+				case GOAL_BOARDER:
+					state = STATE_BOARDER;
+				break;
 				default:
 					trace("[WINGMAN] Arrived at destination but couldn't figure out what to do.");
 					state = STATE_IDLE;
@@ -1123,6 +1158,25 @@ package vgdev.stroll.props
 			releaseKey("RIGHT");
 		}
 		
+		private function getClosestBoarder():ABST_Object
+		{
+			if (!cg.managerMap[System.M_BOARDER].hasObjects()) return null;
+			var closest:Number = 9999;
+			var dist:Number;
+			var enemy:ABST_Object = null;
+			for each (var b:ABST_Boarder in cg.managerMap[System.M_BOARDER].getAll())
+			{
+				if (!b.isActive()) continue;
+				dist = System.getDistance(mc_object.x, mc_object.y, b.mc_object.x, b.mc_object.y);
+				if (dist < closest)
+				{
+					closest = dist;
+					enemy = b;
+				}
+			}
+			return enemy;
+		}
+		
 		private function getClosestOmnitool():ABST_Object
 		{
 			var closest:Number = 9999;
@@ -1158,7 +1212,6 @@ package vgdev.stroll.props
 				if (ai && ai.objectOfInterest == t) continue;
 				var angle:Number = System.getAngle(t.mc_object.x, t.mc_object.y, enemy.mc_object.x, enemy.mc_object.y);
 				if (angle >= t.gimbalLimits[0] - t.rotOff && angle <= t.gimbalLimits[1] + t.rotOff)
-				//if (angle >= t.gimbalLimits[0] && angle <= t.gimbalLimits[1])
 					return t;
 			}
 			return null;
@@ -1322,6 +1375,7 @@ package vgdev.stroll.props
 						case GOAL_COLOR:		display.tf_status.text = "Switching Shield Color";	break;
 						case GOAL_REPAIR:		display.tf_status.text = "Repairing systems";		break;
 						case GOAL_FAILS:		display.tf_status.text = "Formatting system";		break;
+						case GOAL_BOARDER:		display.tf_status.text = "Engaging boarder";		break;
 					}
 				break;
 				case STATE_REBOOT:				display.tf_status.text = "Rebooting shields";		break;
@@ -1332,6 +1386,7 @@ package vgdev.stroll.props
 				case STATE_COLOR:				display.tf_status.text = "Switching Shield Color";	break;
 				case STATE_NAVIGATION:			display.tf_status.text = "Correcting course";		break;
 				case STATE_FAILS:				display.tf_status.text = "Formatting system";		break;
+				case STATE_BOARDER:				display.tf_status.text = "Engaging boarder";		break;
 			}
 		}
 	}

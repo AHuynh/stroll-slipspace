@@ -457,6 +457,11 @@
 					//System.getRandFrom(consoles).changeHP( -250);
 					//addFires(1);
 					//upgradeTurrets(2);
+					/*for (var b:int = 0; b < 2; b++)
+					{
+						var bpt:Point = getRandomShipLocation();
+						addToGame(new BoarderShooter(this, new SWC_Enemy(), shipInsideMask, { "x": bpt.x, "y": bpt.y } ), System.M_BOARDER);
+					}*/
 				break;
 				case Keyboard.L:
 					//managerMap[System.M_ENEMY].killAll();
