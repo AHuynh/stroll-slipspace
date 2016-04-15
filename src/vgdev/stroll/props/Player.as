@@ -461,6 +461,8 @@ package vgdev.stroll.props
 						mc_object.prompt.visible = false;
 						highFive = 90;
 						mc_object.gotoAndStop("idle_five");
+						if (cg.players[otherPlayerID] is WINGMAN)
+							cg.players[otherPlayerID].highFive = 90;
 					}
 					else if (!rooted)
 					{

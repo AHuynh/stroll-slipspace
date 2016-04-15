@@ -97,8 +97,8 @@ package vgdev.stroll.props
 		private const COUNTER_MAX:int = 15;
 		private const TURRET_MAX:int = 75;
 		private const SLIP_MAX:int = System.SECOND * 4;
-		private const FAILS_MAX:int = System.SECOND * 5;
-		private const SHIELD_MAX:int = System.SECOND * 10;
+		private const FAILS_MAX:int = System.SECOND * 9;
+		private const SHIELD_MAX:int = System.SECOND * 6;
 		
 		private var turretRandom:Number;
 		
@@ -353,6 +353,12 @@ package vgdev.stroll.props
 					handleStateFails();
 				break;
 				case STATE_MOVE_NETWORK:
+					if (nodeOfInterest == null)
+					{
+						trace("[WINGMAN] Node of interest was null! Cancelling!");
+						state = STATE_MOVE_FROM_NETWORK;
+						return completed;
+					}
 					moveToPoint(new Point(nodeOfInterest.mc_object.x, nodeOfInterest.mc_object.y));
 					// arrived at next node	
 					if (System.getDistance(mc_object.x, mc_object.y, nodeOfInterest.mc_object.x, nodeOfInterest.mc_object.y) < RANGE)
@@ -703,7 +709,7 @@ package vgdev.stroll.props
 				chooseState(true);
 				return;
 			}
-			if (cg.ship.isJumpReady() != "ready")
+			if (cg.ship.isJumpReady() != "ready" || consoleMap["slipdrive"].forceOverride)
 			{
 				releaseAllKeys();
 				onCancel();
@@ -748,7 +754,7 @@ package vgdev.stroll.props
 				return;
 			}
 			var c:ABST_Console = (objectOfInterest as ABST_Console);
-			if (!c.corrupted)
+			if (!c.corrupted || !c.debuggable)
 			{
 				state = STATE_IDLE;
 				goal = GOAL_IDLE;
@@ -885,7 +891,7 @@ package vgdev.stroll.props
 			}
 			else if (cg.ship.isJumpReady() == "ready" && slipCounter >= SLIP_MAX && isValidConsole(consoleMap["slipdrive"]) && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_SLIP))
 			{
-				if (cg.level.sectorIndex == 0 && !cg.engine.isAllAI()) return false;		// don't jump away on tutorial automatically
+				if ((cg.level.sectorIndex == 0 || cg.level.sectorIndex == 4) && !cg.engine.isAllAI()) return false;		// don't jump away on tutorial automatically
 				if (goal == GOAL_SLIP) return false;
 				goal = GOAL_SLIP;
 				if (activeConsole != null && !(activeConsole is ConsoleSlipdrive)) onCancel();
