@@ -56,17 +56,6 @@ package vgdev.stroll.support
 		[Embed(source="../../../../json/en_boss_final.json", mimeType="application/octet-stream")]
 		private var en_boss_final:Class;
 		
-		[Embed(source = "../../../../json/en_test.json", mimeType = "application/octet-stream")]
-		private var en_test:Class;
-		[Embed(source="../../../../json/en_test2.json", mimeType="application/octet-stream")]
-		private var en_test2:Class;
-		[Embed(source = "../../../../json/en_fire_lite.json", mimeType = "application/octet-stream")]
-		private var en_fire_lite:Class;
-		[Embed(source="../../../../json/en_fire_eyes.json", mimeType="application/octet-stream")]
-		private var en_fire_eyes:Class;
-		[Embed(source="../../../../json/en_testSurvive.json", mimeType="application/octet-stream")]
-		private var en_testSurvive:Class;
-		
 		/// A map of level names (ex: "test") to level objects
 		private var parsedEncounters:Object;
 		
@@ -417,10 +406,12 @@ package vgdev.stroll.support
 			// update progress meter
 			cg.gui.mc_progress.setSectorProgress(sectorIndex);
 	
-			// TODO dynamic background
-			cg.background.setRandomStyle(int(sectorIndex / 5), System.getRandCol());
+			if (sectorIndex == 4)
+				cg.background.setStyle("peeps");
+			else
+				cg.background.setRandomStyle(int(sectorIndex / 5), System.getRandCol());
 			
-			return sectorIndex == 13;		// TODO end state
+			return sectorIndex == 13;
 		}
 		
 		public function getTAILS():String

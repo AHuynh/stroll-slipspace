@@ -74,6 +74,8 @@ package vgdev.stroll
 					case STATE_MENU:
 						maxSector = 0;
 						savedHP = 0;
+						if (isAllAI())
+							shipName = Math.random() > .5 ? "Eagle" : "Kingfisher";
 						switchToContainer(new ContainerGame(this, shipName), 0, 0);
 						gameState = STATE_GAME;
 					break;

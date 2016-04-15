@@ -4,7 +4,7 @@
 	"background": "default",
 	"difficulty_range": [5, 7],
     "jamming_min": 3,
-    "slip_range": 57.0,
+    "slip_range": 54.0,
 	"type": "Enemies",
 	"TAILS": "Long-range enemies detected. Man the sensors!"
   },

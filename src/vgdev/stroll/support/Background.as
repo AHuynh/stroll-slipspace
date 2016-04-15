@@ -13,14 +13,15 @@ package vgdev.stroll.support
 	{
 		public var bg:MovieClip;
 		
-		private const LIM_LEFT:Number = 0;// -120;
+		private const LIM_LEFT:Number = 0;
 		private var OFFSET:Number;
 		
 		public var bg1:MovieClip;
 		private var bg2:MovieClip;
 		
-		private const REGION_0:Array = ["abstract_00", "abstract_01", "abstract_02"];
-		private const REGION_1:Array = ["whoa_0", "whoa_1", "whoa_2", "whoa_3", "whoa_4", "whoa_5", "whoa_6"];
+		//private const REGION_0:Array = ["abstract_00", "abstract_01", "abstract_02"];
+		private const REGION_0:Array = ["whoa_0", "whoa_1", "whoa_2", "whoa_3", "whoa_4", "whoa_5", "whoa_6"];
+		private const REGION_1:Array = ["radical0", "radical1", "radical2", "radical3", "radical4"];
 		
 		public function Background(_cg:ContainerGame, _bg:MovieClip)
 		{
@@ -71,12 +72,14 @@ package vgdev.stroll.support
 			switch (region)
 			{
 				case 0:
-				case 2:
+					setStyle(System.getRandFrom(REGION_0));
+				break;
+				case 1:
 					setStyle(System.getRandFrom(REGION_1));
 				break;
+				case 2:
 				default:
-					case 1:
-					setStyle(System.getRandFrom(REGION_0), col);
+					setStyle(System.getRandFrom(REGION_0.concat(REGION_1)), col);
 					//setStyle(System.getRandFrom(["test1"]), col);
 				break;
 			}

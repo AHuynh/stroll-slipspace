@@ -56,7 +56,7 @@ package vgdev.stroll.support.splevels
 				colors.splice(c, 1);
 				if (colors.length == 0)
 				{
-					nextWave = System.SECOND * 40;
+					nextWave = System.SECOND * 90;
 					colors = [System.COL_BLUE, System.COL_GREEN, System.COL_RED, System.COL_YELLOW];
 				}
 				else if (!swipe && colors.length == 1)

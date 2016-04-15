@@ -4,7 +4,7 @@
 	"background": "default",
 	"difficulty_range": [5, 7],
     "jamming_min": 2,
-    "slip_range": 61.0,
+    "slip_range": 58.0,
 	"type": "Enemies",
 	"TAILS": "Distant enemies detected. What are they doing?"
   },
@@ -55,7 +55,7 @@
 			]
 	},
 	{
-		"time": 6,
+		"time": 9,
 		"spawnables":
 			[
 				{"type": "Breeder", "region": "near_orbit"},

@@ -29,6 +29,10 @@ package vgdev.stroll.support
 		
 		private static var isInit:Boolean = false;
 		
+		private static var isPaused:Boolean = false;
+		private static var posCurr:int = 0;
+		private static var posNew:int = 0;
+		
 		[Embed(source="../../../../bgm/bgm_calm.mp3")]
 		private static var bgm_calm:Class;
 		[Embed(source="../../../../bgm/bgm_notsocalm.mp3")]
@@ -196,7 +200,7 @@ package vgdev.stroll.support
 			}
 		}
 		
-		public static function playBGM(music:String, volume:Number = 1, once:Boolean = false):void
+		public static function playBGM(music:String, volume:Number = 1, loops:int = 9999, pos:int = 0):void
 		{
 			//return;	// DEBUGGING - mute BGM
 			
@@ -208,7 +212,7 @@ package vgdev.stroll.support
 			nameCurr = music;
 			
 			var volTransform:SoundTransform = new SoundTransform(volume);
-			channelCurr = snd.play(0, once ? 1 : 9999);
+			channelCurr = snd.play(pos, loops);
 			channelCurr.soundTransform = volTransform;
 			currVolume = volume;
 		}
@@ -285,9 +289,38 @@ package vgdev.stroll.support
 			currSTF.volume = currVolume;
 		}
 		
+		/**
+		 * Pause or unpause the BGM
+		 * @param	isPaused
+		 */
+		public static function pause(_isPaused:Boolean):void
+		{
+			isPaused = _isPaused;
+			if (isPaused)
+			{
+				if (channelCurr)
+				{
+					posCurr = channelCurr.position;
+					channelCurr.stop();
+				}
+				if (channelNew)
+				{
+					posNew = channelNew.position;
+					channelNew.stop();
+				}
+			}
+			else
+			{
+				if (channelCurr)
+					channelCurr = getBGM(nameCurr).play(posCurr, 9999);
+				if (channelNew)
+					channelNew = getBGM(nameNew).play(posNew, 9999);
+			}
+		}
+		
 		public static function step():void
 		{
-			if (fadeVolume == fadeVolumeTgt) return;
+			if (isPaused || fadeVolume == fadeVolumeTgt) return;
 			
 			fadeVolume = System.changeWithLimit(fadeVolume, DELTA_VOL, 0, fadeVolumeTgt);
 			currVolume = System.changeWithLimit(currVolume, -DELTA_VOL, 0, 1);

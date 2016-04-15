@@ -4,7 +4,7 @@
 	"background": "default",
 	"difficulty_range": [5, 7],
     "jamming_min": 0,
-    "slip_range": 52.0,
+    "slip_range": 48.0,
 	"type": "Enemy",
 	"TAILS": "Whoa! Something's about to take a swipe at the ship!"
   },
@@ -18,7 +18,7 @@
 	},
 	{
 		"time": 6.5,
-		"TAILS": "Quick, match the shield color to those things!",
+		"TAILS": "Quick, match the shield color to those orbs!",
 		"spawnables":
 			[
 			]

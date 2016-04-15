@@ -376,7 +376,7 @@ package vgdev.stroll.support
 			for (var c:int = 0; c < 4; c++)
 			{
 				recentDamage[c] *= .95;
-				if (recentDamage[c] < 1)
+				if (recentDamage[c] < .01)
 					recentDamage[c] = 0;
 			}
 			

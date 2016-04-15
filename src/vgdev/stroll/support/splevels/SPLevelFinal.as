@@ -36,7 +36,7 @@ package vgdev.stroll.support.splevels
 			SoundManager.playBGMpaired("bgm_1a_here_we_go", "bgm_1a2_hey_somethings_wrong", System.VOL_BGM);
 			
 			// DEBUG CODE
-			//levelState = 17;
+			//levelState = 50;
 			//for (var i:int = 0; i < 6; i++)
 			//	crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), { "theta": i * 60 } ), System.M_ENEMY));
 			//framesElapsed = 11 * 30;
@@ -915,7 +915,7 @@ package vgdev.stroll.support.splevels
 						cg.background.setStyle("endworld");
 						cg.background.resetBackground();
 						consoleSlip.forceOverride = true;
-						SoundManager.playBGM("bgm_victory", System.VOL_BGM, true);
+						SoundManager.playBGM("bgm_victory", System.VOL_BGM, 1);
 						for (s = 0; s < crystals.length; s++)
 							crystals[s].stubborn = false;
 						cg.managerMap[System.M_ENEMY].killAll();

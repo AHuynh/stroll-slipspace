@@ -92,8 +92,8 @@
 		public var gameOverAnnouncer:String = "TAILS";
 		private var useSave:Boolean = false;
 		
-		//public var shipName:String = "Eagle";
-		public var shipName:String = "Kingfisher";
+		public var shipName:String = "Eagle";
+		//public var shipName:String = "Kingfisher";
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -167,16 +167,8 @@
 			shipInsideMask.visible = false;
 			setHitMask(false);
 			
-			// link the game's assets
-			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
-			//		   new Player(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1)];
-					   
-			//players = [new Player(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0),
-			//		   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
-					   
-			//players = [new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL),
-			//		   new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)];
-					   
+			game.mc_wingman0.visible = false;
+			game.mc_wingman1.visible = false;
 			
 			var i:int;
 			players = [null, null];
@@ -185,9 +177,9 @@
 				if (engine.wingman[i])
 				{
 					if (i == 0)
-						players[i] = new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL)
+						players[i] = new WINGMAN(this, game.mc_ship.mc_player0, shipInsideMask, 0, System.keyMap0, gui.mc_wingmanL, game.mc_wingman0)
 					else
-						players[i] = new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR)
+						players[i] = new WINGMAN(this, game.mc_ship.mc_player1, shipInsideMask, 1, System.keyMap1, gui.mc_wingmanR, game.mc_wingman1)
 				}
 				else
 				{
@@ -424,6 +416,7 @@
 					{
 						isPaused = true;
 						justPaused = true;
+						SoundManager.pause(true);
 					}
 					if (!isDefeatedPaused)
 						gui.mc_pause.visible = isPaused;
@@ -436,12 +429,12 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					jump();
+					//jump();
 				break;
 				case Keyboard.K:
 					//players[0].changeHP( -9999);
 					//ship.damage(1000);
-					killShip();
+					//killShip();
 					//addFires(1);
 					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
 					p.x += System.GAME_OFFSX;
@@ -489,6 +482,7 @@
 					{
 						gui.mc_pause.visible = false;
 						isPaused = false;
+						SoundManager.pause(false);
 					}
 					else if (gui.mc_lose.visible)
 					{

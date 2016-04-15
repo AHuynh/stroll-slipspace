@@ -3,8 +3,8 @@
 	"id": "fire_ice",
 	"background": "default",
 	"difficulty_range": [9, 11],
-    "jamming_min": 5,
-    "slip_range": 70.0,
+    "jamming_min": 3,
+    "slip_range": 60.0,
 	"type": "Enemies",
 	"TAILS": "Alert. Fire-based enemies. Prepare turrets and PDWs."
   },
@@ -65,7 +65,7 @@
 			]
 	},
 	{
-		"time": 25,
+		"time": 29,
 		"repeat": 2,
 		"recur": 33,
 		"spawnables":

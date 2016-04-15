@@ -17,6 +17,7 @@ package vgdev.stroll.props
 	 */
 	public class WINGMAN extends Player 
 	{
+		private var tgtIndicator:MovieClip;
 		private var enum:int = 0;
 		
 		private var state:int;
@@ -89,6 +90,7 @@ package vgdev.stroll.props
 		private var turrRandCounter:int = 0;
 		private var stuckCounter:int = 0;
 		private var slipCounter:int = 0;
+		private var shieldCounter:int = 0;
 		private var failsCounter:int = 0;
 		private var repairCounter:int = 0;
 		private var movingPOIcounter:int = 0;			// if 0, update POI location, since object could be moving
@@ -96,6 +98,7 @@ package vgdev.stroll.props
 		private const TURRET_MAX:int = 75;
 		private const SLIP_MAX:int = System.SECOND * 4;
 		private const FAILS_MAX:int = System.SECOND * 5;
+		private const SHIELD_MAX:int = System.SECOND * 10;
 		
 		private var turretRandom:Number;
 		
@@ -110,10 +113,13 @@ package vgdev.stroll.props
 		private var slipIndex:int;
 		// -- Slipdrive--------------------------------------------------------
 		
-		public function WINGMAN(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object, _display:MovieClip) 
+		public function WINGMAN(_cg:ContainerGame, _mc_object:MovieClip, _hitMask:MovieClip, _playerID:int, keyMap:Object, _display:MovieClip, _tgtIndicator:MovieClip) 
 		{
 			super(_cg, _mc_object, _hitMask, _playerID, keyMap);
 			display = _display;
+			tgtIndicator = _tgtIndicator;
+			tgtIndicator.visible = true;
+			tgtIndicator.gotoAndStop(playerID + 1);
 			trace("[WINGMAN] Waiting to setup...");
 		}
 		
@@ -302,7 +308,7 @@ package vgdev.stroll.props
 						(objectOfInterest as ABST_Boarder).changeHP( -9999);
 						state = STATE_IDLE;
 						goal = GOAL_IDLE;
-						chooseState();
+						chooseState(true);
 					}
 					else if (!extendedLOScheck(pointOfInterest))
 						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
@@ -887,17 +893,18 @@ package vgdev.stroll.props
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				trace("[WINGMAN] Heading to Slipdrive.");
 			}
-			else if (consoleMap["shieldCol"].isUnlocked() && !cg.ship.isShieldOptimal() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_COLOR))
+			else if (++shieldCounter >= SHIELD_MAX && consoleMap["shieldCol"].isUnlocked() && !cg.ship.isShieldOptimal() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_COLOR))
 			{
 				if (goal == GOAL_COLOR) return false;
 				goal = GOAL_COLOR;
+				shieldCounter = 0;
 				if (activeConsole != null && !(activeConsole is ConsoleShields)) onCancel();
 				objectOfInterest = consoleMap["shieldCol"];
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 				trace("[WINGMAN] Heading to shield color.");
 			}
-			// higher priority to Nav if not in range
-			else if (!cg.ship.isHeadingGood() && Math.random() > .5 && cg.ship.isJumpReady() == "range" && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
+			// chance to fix Nav even if enemies are present
+			else if (!cg.ship.isHeadingGood() && Math.random() > .35 && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
 			{
 				if (goal == GOAL_NAVIGATION) return false;
 				goal = GOAL_NAVIGATION;
@@ -1350,6 +1357,22 @@ package vgdev.stroll.props
 			display.mc_arrowL.alpha = (keysDown[LEFT] ? 1 : .2);
 			display.mc_arrowR.alpha = (keysDown[RIGHT] ? 1 : .2);
 			display.mc_arrowD.alpha = (keysDown[DOWN] ? 1 : .2);
+			
+			if (enemyOfInterest && enemyOfInterest.isActive())
+			{
+				tgtIndicator.visible = true;
+				tgtIndicator.x = enemyOfInterest.mc_object.x;
+				tgtIndicator.y = enemyOfInterest.mc_object.y;
+			}
+			else if (objectOfInterest && objectOfInterest.isActive())
+			{
+				tgtIndicator.visible = true;
+				tgtIndicator.x = objectOfInterest.mc_object.x;
+				tgtIndicator.y = objectOfInterest.mc_object.y;
+			}
+			else
+				tgtIndicator.visible = false;
+			
 			
 			switch (state)
 			{

@@ -146,8 +146,6 @@ package vgdev.stroll.props.enemies
 								proj = new EProjectileGeneric(cg, new SWC_Bullet(),
 																		{	 
 																			"affiliation":	System.AFFIL_PLAYER,
-																			"attackColor":	System.COL_TAILS,
-																			"useTint":		true,
 																			"dir":			n * 22.5,
 																			"dmg":			20,
 																			"life":			150,
@@ -155,7 +153,7 @@ package vgdev.stroll.props.enemies
 																									mc_object.spawn.x + 20 * Math.cos(System.degToRad(n * 22.5)),
 																									mc_object.spawn.y + 20 * Math.sin(System.degToRad(n * 22.5)))),
 																			"spd":			4,
-																			"style":		"generic"
+																			"style":		"crystal"
 																		});
 								cg.addToGame(proj, System.M_EPROJECTILE);
 							}
