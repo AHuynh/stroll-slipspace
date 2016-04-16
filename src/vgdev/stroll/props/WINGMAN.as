@@ -447,6 +447,7 @@ package vgdev.stroll.props
 		 */
 		private function handleStateReboot():void
 		{
+			releaseKey("ACTION");
 			if (objectOfInterest == null)
 			{
 				state = STATE_IDLE;
