@@ -54,7 +54,7 @@ package vgdev.stroll.props.consoles
 		/// If true, shots fired won't collide with ship
 		protected var ghost:Boolean = false;
 		
-		private var turretID:int;
+		public var turretID:int;
 		private const MINI_SCALE:Number = .09;
 		private const MINI_LEAD:Number = .68;
 		public var leadAmt:Number = MINI_LEAD;
@@ -89,9 +89,14 @@ package vgdev.stroll.props.consoles
 				turret.alpha = 0.6;
 		}
 		
-		public function getSpawnPoint():Point
+		/*public function getSpawnPoint():Point
 		{
 			return turret.nozzle.localToGlobal(new Point(turret.nozzle.spawn.x, turret.nozzle.spawn.y));
+		}*/
+		
+		public function getSpawnPoint():Point
+		{
+			return new Point(turret.x, turret.y);
 		}
 		
 		// update cooldown

@@ -31,12 +31,13 @@ package vgdev.stroll.support.splevels
 			
 			consoleSlip = cg.game.mc_ship.mc_console_slipdrive.parentClass;
 			consoleSlip.fakeJumpNext = true;
+			consoleSlip.fakeJumpLbl = "long";
 			cg.ship.slipRange = 2;
 			
 			SoundManager.playBGMpaired("bgm_1a_here_we_go", "bgm_1a2_hey_somethings_wrong", System.VOL_BGM);
 			
 			// DEBUG CODE
-			levelState = 24;
+		/*	levelState = 24;
 			for (var i:int = 0; i < 2; i++)
 				crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), { "theta": i * 180 } ), System.M_ENEMY));
 			framesElapsed = 6 * 30;
@@ -44,7 +45,7 @@ package vgdev.stroll.support.splevels
 			cg.ship.slipRange = 0.5;
 			cg.ship.jammable = 999;
 			cg.bossBar.startFight();
-			consoleSlip.forceOverride = true;
+			consoleSlip.forceOverride = true;*/
 			
 			
 			//consoleSlip.setArrowDifficulty(12);
@@ -78,6 +79,8 @@ package vgdev.stroll.support.splevels
 														"User must utilize slipdrive to escape Slipspace.",
 														]), System.TAILS_NORMAL, "HEADS");
 					}
+					if (cg.ship.slipRange == 0)
+						cg.gui.tf_distance.text = "Supr Jmp";
 					if (!consoleSlip.fakeJumpNext)
 					{
 						framesElapsed = 0;

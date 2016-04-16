@@ -110,7 +110,7 @@ package vgdev.stroll.props.consoles
 		
 		public function onCooldown():Boolean
 		{
-			return puzzleCooldown != 0;
+			return puzzleCooldown >= 60;
 		}
 		
 		public function isPuzzleActive():Boolean

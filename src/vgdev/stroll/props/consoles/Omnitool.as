@@ -124,13 +124,6 @@ package vgdev.stroll.props.consoles
 				return;
 			}
 			
-			// repair consoles
-			if (affectItems(System.M_CONSOLE, RANGE_REPAIR, RATE_REPAIR, "repair"))
-			{
-				ui.tf_status.text = "Repair";
-				return;
-			}
-			
 			// heal or revive incapacitated players
 			for each (var player:Player in cg.players)
 			{				
@@ -166,6 +159,14 @@ package vgdev.stroll.props.consoles
 					return;
 				}
 			}
+			
+			// repair consoles
+			if (affectItems(System.M_CONSOLE, RANGE_REPAIR, RATE_REPAIR, "repair"))
+			{
+				ui.tf_status.text = "Repair";
+				return;
+			}
+			
 			reviveProgress = 0;
 		}
 		

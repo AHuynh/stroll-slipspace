@@ -92,8 +92,7 @@
 		public var gameOverAnnouncer:String = "TAILS";
 		private var useSave:Boolean = false;
 		
-		//public var shipName:String = "Eagle";
-		public var shipName:String = "Kingfisher";
+		public var shipName:String = "Eagle";
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -103,6 +102,7 @@
 		{
 			super();
 			engine = eng;
+			//shipName = "Kingfisher";
 			shipName = _shipName;
 			useSave = _useSave;
 			
@@ -197,7 +197,7 @@
 			}
 			
 			
-			// DEBUGGING TOOL -- set to true for release
+			// DEBUGGING TOOL -- set to true for release, false to debug
 			var useLocks:Boolean = true;
 					   
 			// --- Eagle --------------------------------------------------------------------------------------------------------
@@ -324,7 +324,10 @@
 					consoles[10].setLocked(false);
 				}
 				if (level.sectorIndex >= 8)
+				{
 					upgradeTurrets(2);
+					gameOverAnnouncer = "HEADS";
+				}
 				else if (level.sectorIndex >= 4)
 					upgradeTurrets(1);
 			}
@@ -429,17 +432,17 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					jump();
+					//jump();
 				break;
 				case Keyboard.K:
 					//players[0].changeHP( -9999);
 					//ship.damage(1000);
-					killShip();
+					//killShip();
 					//addFires(1);
-					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
-					p.x += System.GAME_OFFSX;
-					p.y += System.GAME_OFFSY;
-					level.spawn({}, p, System.getRandFrom(["Eye", "Breeder", "Slime", "Spider"]));
+					//var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
+					//p.x += System.GAME_OFFSX;
+					//p.y += System.GAME_OFFSY;
+					//level.spawn({}, p, System.getRandFrom(["Eye", "Breeder", "Slime", "Spider"]));
 					//ship.shipHeading = System.getRandNum( -1, 1);*/
 				//	addToGame(new EnemyEyeball(this, new SWC_Enemy(), { "x": -150 + System.GAME_HALF_WIDTH, "y":System.getRandNum(0, 100) + System.GAME_HALF_HEIGHT } ), System.M_ENEMY);
 					//addSparks(4);

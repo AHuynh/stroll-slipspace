@@ -312,9 +312,9 @@ package vgdev.stroll.support
 			else
 			{
 				if (channelCurr)
-					channelCurr = getBGM(nameCurr).play(posCurr, 9999);
+					channelCurr = getBGM(nameCurr).play(posCurr, 9999, new SoundTransform(currVolume));
 				if (channelNew)
-					channelNew = getBGM(nameNew).play(posNew, 9999);
+					channelNew = getBGM(nameNew).play(posNew, 9999, new SoundTransform(fadeVolume));
 			}
 		}
 		

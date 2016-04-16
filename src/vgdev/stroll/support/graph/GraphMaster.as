@@ -93,7 +93,7 @@ package vgdev.stroll.support.graph
 					nodeMap["node_c3"].connectNodes(["node_lr", "node_c2"]);
 					nodeMap["node_l"].connectNodes(["node_c1"]);
 					nodeMap["node_lr"].connectNodes(["node_c3", "node_r2"]);
-					nodeMap["node_r0"].connectNodes(["node_r0", "node_r1", "node_rr"]);
+					nodeMap["node_r0"].connectNodes(["node_c0", "node_r1", "node_rr"]);
 					nodeMap["node_r1"].connectNodes(["node_r0", "node_r2"]);
 					nodeMap["node_r2"].connectNodes(["node_r1", "node_lr", "node_rr"]);
 					nodeMap["node_rr"].connectNodes(["node_r0", "node_r2"]);
