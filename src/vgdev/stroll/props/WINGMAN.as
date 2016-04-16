@@ -1221,7 +1221,7 @@ package vgdev.stroll.props
 				ai = otherPlayer as WINGMAN;
 			for each (var t:ConsoleTurret in consoleMap["turret"])
 			{
-				if (t.inUse || t.isBroken()) continue;
+				if (t.inUse || t.isBroken() || t.corrupted) continue;
 				if (ai && ai.objectOfInterest == t) continue;
 				var angle:Number = System.getAngle(t.mc_object.x, t.mc_object.y, enemy.mc_object.x, enemy.mc_object.y);
 				if (angle >= t.gimbalLimits[0] - t.rotOff && angle <= t.gimbalLimits[1] + t.rotOff)

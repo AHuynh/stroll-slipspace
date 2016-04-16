@@ -36,16 +36,18 @@ package vgdev.stroll.support.splevels
 			SoundManager.playBGMpaired("bgm_1a_here_we_go", "bgm_1a2_hey_somethings_wrong", System.VOL_BGM);
 			
 			// DEBUG CODE
-			//levelState = 50;
-			//for (var i:int = 0; i < 6; i++)
-			//	crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), { "theta": i * 60 } ), System.M_ENEMY));
-			//framesElapsed = 11 * 30;
+			levelState = 24;
+			for (var i:int = 0; i < 2; i++)
+				crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), { "theta": i * 180 } ), System.M_ENEMY));
+			framesElapsed = 6 * 30;
+			cg.ship.setBossOverride(false);
+			cg.ship.slipRange = 0.5;
+			cg.ship.jammable = 999;
+			cg.bossBar.startFight();
+			consoleSlip.forceOverride = true;
+			
+			
 			//consoleSlip.setArrowDifficulty(12);
-			//cg.ship.setBossOverride(false);
-			//cg.ship.slipRange = 0.5;
-			//cg.ship.jammable = 999;
-			//cg.bossBar.startFight();
-			//consoleSlip.forceOverride = false;
 			/*var corr:int = 0;
 			for each (var c:ABST_Console in cg.consoles)
 			{

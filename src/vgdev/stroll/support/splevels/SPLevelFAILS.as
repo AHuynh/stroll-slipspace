@@ -37,7 +37,7 @@ package vgdev.stroll.support.splevels
 			consoleSlip.forceOverride = true;
 			cg.ship.setBossOverride(true);
 			
-			// DEBUG CODE
+			// DEBUG CODE			
 			//levelState = 2;
 			//framesElapsed = 28 * 30;
 			/*consoleSlip.setArrowDifficulty(12);

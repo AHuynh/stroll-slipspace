@@ -92,8 +92,8 @@
 		public var gameOverAnnouncer:String = "TAILS";
 		private var useSave:Boolean = false;
 		
-		public var shipName:String = "Eagle";
-		//public var shipName:String = "Kingfisher";
+		//public var shipName:String = "Eagle";
+		public var shipName:String = "Kingfisher";
 		
 		/**
 		 * A MovieClip containing all of a Stroll level
@@ -429,12 +429,12 @@
 				break;
 				
 				case Keyboard.J:		// TODO remove temporary testing
-					//jump();
+					jump();
 				break;
 				case Keyboard.K:
 					//players[0].changeHP( -9999);
 					//ship.damage(1000);
-					//killShip();
+					killShip();
 					//addFires(1);
 					/*var p:Point = level.getRandomPointInRegion(System.getRandFrom(System.SPAWN_STD));
 					p.x += System.GAME_OFFSX;
