@@ -102,8 +102,8 @@
 		{
 			super();
 			engine = eng;
-			//shipName = "Kingfisher";
 			shipName = _shipName;
+			//shipName = "Kingfisher";
 			useSave = _useSave;
 			
 			// reset all static classes
@@ -229,15 +229,15 @@
 				consoles.push(new Omnitool(this, game.mc_ship.item_fe_1, players, useLocks));
 				
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretl, game.mc_ship.turret_lf,		// left front
-												players, [-120, 15], [1, 2, 0, 3], 0));
+												players, [-120, 15], [1, 2, 0, 3], 1));
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretbl, game.mc_ship.turret_lr,		// left rear
-												players, [-5, 130], [1, 2, 0, 3], 1));
+												players, [-5, 130], [1, 2, 0, 3], 3));
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretf, game.mc_ship.turret_rf,		// right front
-												players, [-25, 130], [1, 2, 0, 3], 2));
+												players, [-25, 130], [1, 2, 0, 3], 0));
 				consoles.push(new ConsoleTurretAoE(this, game.mc_ship.mc_console_turretr, game.mc_ship.turret_r,	// right
-												players, [-180, 180], [1, 2, 0, 3], 3, true));
+												players, [-180, 180], [1, 2, 0, 3], 4, true));
 				consoles.push(new ConsoleTurret(this, game.mc_ship.mc_console_turretbr, game.mc_ship.turret_rr,		// right rear
-												players, [-135, 45], [1, 2, 0, 3], 3, true));
+												players, [-135, 45], [1, 2, 0, 3], 2, true));
 				consoles[3].rotOff = 180;
 				consoles[6].rotOff = 180;
 				consoles.push(new ConsoleShieldRe(this, game.mc_ship.mc_console_shieldre, players));
@@ -443,8 +443,10 @@
 					//p.x += System.GAME_OFFSX;
 					//p.y += System.GAME_OFFSY;
 					//level.spawn({}, p, System.getRandFrom(["Eye", "Breeder", "Slime", "Spider"]));
+					//level.spawn( { }, p, "Slime");
+					//upgradeTurrets(2);
 					//ship.shipHeading = System.getRandNum( -1, 1);*/
-				//	addToGame(new EnemyEyeball(this, new SWC_Enemy(), { "x": -150 + System.GAME_HALF_WIDTH, "y":System.getRandNum(0, 100) + System.GAME_HALF_HEIGHT } ), System.M_ENEMY);
+					//addToGame(new EnemyEyeball(this, new SWC_Enemy(), { "x": -150 + System.GAME_HALF_WIDTH, "y":System.getRandNum(0, 100) + System.GAME_HALF_HEIGHT } ), System.M_ENEMY);
 					//addSparks(4);
 					//ship.damageDirect(350);
 					//var c:ABST_Console = System.getRandFrom(consoles);

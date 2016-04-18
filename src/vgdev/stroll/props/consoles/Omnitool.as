@@ -132,7 +132,7 @@ package vgdev.stroll.props.consoles
 				if (System.getDistance(closestPlayer.mc_object.x, closestPlayer.mc_object.y, player.mc_object.x, player.mc_object.y) < RANGE_REVIVE)
 				{
 					if (player.getHP() == player.getHPmax())
-						return;
+						continue;
 					
 					if (player.getHP() != 0)
 					{

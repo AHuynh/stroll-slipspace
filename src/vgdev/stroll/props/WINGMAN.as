@@ -17,7 +17,7 @@ package vgdev.stroll.props
 	 */
 	public class WINGMAN extends Player 
 	{
-		private var tgtIndicator:MovieClip;
+		public var tgtIndicator:MovieClip;
 		private var enum:int = 0;
 		
 		private var state:int;
@@ -99,7 +99,7 @@ package vgdev.stroll.props
 		private const TURRET_MAX:int = 75;
 		private const SLIP_MAX:int = System.SECOND * 4;
 		private const FAILS_MAX:int = System.SECOND * 9;
-		private const SHIELD_MAX:int = System.SECOND * 6;
+		private const SHIELD_MAX:int = System.SECOND * 5;
 		
 		private var turretRandom:Number;
 		
@@ -928,7 +928,7 @@ package vgdev.stroll.props
 				trace("[WINGMAN " + playerID + "] Heading to shield color.");
 			}
 			// chance to fix Nav even if enemies are present
-			else if (!cg.ship.isHeadingGood() && Math.random() > .35 && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
+			else if (!cg.ship.isHeadingGood() && Math.random() > .7 && cg.ship.getShieldPercent() > 0 && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
 			{
 				if (goal == GOAL_NAVIGATION) return false;
 				goal = GOAL_NAVIGATION;

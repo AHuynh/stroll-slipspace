@@ -4,6 +4,7 @@ package vgdev.stroll
 	import flash.display.BitmapData;
 	import flash.display.BitmapDataChannel;
 	import flash.display.MovieClip;
+	import flash.display.NativeMenuItem;
 	import flash.display.Stage;
 	import flash.filters.DisplacementMapFilter;
 	import flash.filters.DisplacementMapFilterMode;
@@ -289,6 +290,11 @@ package vgdev.stroll
 			return val;
 		}
 		
+		public static function setWithinLimits(newValue:Number, limLow:Number = int.MIN_VALUE, limHigh:Number = int.MAX_VALUE):Number
+		{
+			return Math.max(Math.min(newValue, limHigh), limLow);
+		}
+		
 		/**
 		 * Convert the name of a color to the corresponding uint code
 		 * @param	colStr		color name, such as "red"
@@ -382,22 +388,14 @@ package vgdev.stroll
 			return true;
 		}
 		
-		// ray and line segment
-	/*	public static function calculateLineIntersect(p1:Point, p2:Point, p3:Point, p4:Point):Point
+		public static function calculateAverage(values:Array):Number
 		{
-			//trace("Calculate intersection between ray", p1, p2, "and line seg", p3, p4);
-			
-			var s1:Point = p2.subtract(p1);
-			var s2:Point = p4.subtract(p3);
-			
-			var s:Number = (-s1.y * (p1.x - p3.x) + s1.x * (p1.y - p3.y)) / (-s2.x * s1.y + s1.x * s2.y);
-			var t:Number = (s2.x * (p1.y - p3.y) - s2.y * (p1.x - p3.x)) / (-s2.x * s1.y + s1.x * s2.y);
-			
-			//trace("s, t", s, t);
-			
-			//if (s >= 0 && s <= 1 && t <= 0 && t >= 1)
-				return new Point(p1.x + (t * s1.x), p1.y + (t * s1.y));
-			return null;
-		}	*/
+			if (!values || values.length == 0)
+				return 0;
+			var total:Number = 0;
+			for each (var n:Number in values)
+				total += n;
+			return total / values.length;
+		}
 	}
 }

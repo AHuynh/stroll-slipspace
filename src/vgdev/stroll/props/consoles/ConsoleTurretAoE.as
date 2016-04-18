@@ -33,18 +33,24 @@ package vgdev.stroll.props.consoles
 					cooldown = System.SECOND * 4;
 					projectileSpeed = 9;
 					projectileLife = int(System.SECOND * 1.5);
+					leadAmt = 1.05;
+					distAmt = .07;
 				break;
 				case 1:
 					sway = 1;
 					cooldown = int(System.SECOND * 3);
 					projectileSpeed = 11;
 					projectileLife = int(System.SECOND * 1.35);
+					leadAmt = .9;
+					distAmt = .07;
 				break;
 				case 2:
 					sway = 0;
 					cooldown = int(System.SECOND * 2);
 					projectileSpeed = 15;
 					projectileLife = int(System.SECOND * 1.2);
+					leadAmt = .8;
+					distAmt = .07;
 				break;
 			}
 		}

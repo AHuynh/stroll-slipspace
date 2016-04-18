@@ -55,8 +55,8 @@ package vgdev.stroll.props.consoles
 		protected var ghost:Boolean = false;
 		
 		public var turretID:int;
-		private const MINI_SCALE:Number = .09;
 		private const MINI_LEAD:Number = .68;
+		private const MINI_SCALE:Number = .09;
 		public var leadAmt:Number = MINI_LEAD;
 		public var distAmt:Number = MINI_SCALE;
 		
@@ -119,6 +119,12 @@ package vgdev.stroll.props.consoles
 		{
 			entryDelay = 5;
 			super.onAction(p);
+			if (inUse)
+			{
+				var hud:MovieClip = getHUD();
+				hud.mc_light.y = 18.5 - 9 * turretID;
+				hud.msg_cannon.visible = cg.shipName == "Kingfisher";
+			}
 		}
 		
 		/**
@@ -220,7 +226,7 @@ package vgdev.stroll.props.consoles
 				hud.tf_cooldown.text = Math.round(10 * cdCount / System.SECOND).toString();
 				hud.tf_rotation.text = Math.abs(Math.round(trot)) + "°";
 				hud.mc_marker.x = 37 + 47 * ((trot - gimbalLimits[0]) / markerHelper);
-				hud.mc_light.y = 18.5 - 9 * turretID;
+				hud.msg_reload.visible = cdCount > 6;
 				
 				// small window graphics
 				hud.mc_container.graphics.clear();

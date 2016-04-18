@@ -3,6 +3,7 @@ package vgdev.stroll.support
 	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import vgdev.stroll.ContainerGame;
+	import vgdev.stroll.props.WINGMAN;
 	import vgdev.stroll.System;
 	
 	/**
@@ -18,6 +19,9 @@ package vgdev.stroll.support
 		
 		public var focusTgt:Point;
 		
+		private var aiTgt:Point;
+		private const THRESH_AI:Number = 100;
+		
 		private const ADD_SCALE:Array = [-.05, .05];
 		private const THRESH_TRANSLATE:Number = 5;
 		
@@ -32,6 +36,9 @@ package vgdev.stroll.support
 		private var UI_ANCHOR_X:Number;
 		private var UI_ANCHOR_Y:Number;
 		
+		private var aiCooldown:int = 0;
+		private const AI_COOLDOWN:int = 20;
+		
 		public function Cam(_cg:ContainerGame, _ui:MovieClip)
 		{
 			super(_cg);
@@ -40,6 +47,8 @@ package vgdev.stroll.support
 			// custom stats
 			if (cg.shipName == "Kingfisher")
 				camMoveRate = 5;
+			if (cg.engine.isAllAI())
+				camMoveRate = 7;
 			
 			UI_ANCHOR_X = ui.x;
 			UI_ANCHOR_Y = ui.y;
@@ -49,7 +58,21 @@ package vgdev.stroll.support
 		}
 		
 		override public function step():void
-		{
+		{			
+			// if 2 AI's, put cam between the 2 AI's targets and the ship center
+			if (cg && cg.engine && cg.engine.isAllAI() && cg.players[0] && cg.players[1])
+			{
+				if (aiCooldown++ >= AI_COOLDOWN)
+				{
+					aiCooldown = 0;
+					aiTgt = new Point(System.calculateAverage([0, 0, (cg.players[0] as WINGMAN).tgtIndicator.x, (cg.players[1] as WINGMAN).tgtIndicator.x]),
+									  System.calculateAverage([0, 0, (cg.players[0] as WINGMAN).tgtIndicator.y, (cg.players[1] as WINGMAN).tgtIndicator.y]));
+					if (System.getDistance(-aiTgt.x, -aiTgt.y, focusTgt.x, focusTgt.y) > THRESH_AI)
+						focusTgt = new Point( System.setWithinLimits(-aiTgt.x, lim_x_min, lim_x_max), 
+											  System.setWithinLimits(-aiTgt.y, lim_y_min, lim_y_max));
+				}
+			}
+			
 			focus.x = updateNumber(focus.x, focusTgt.x, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
 			focus.y = updateNumber(focus.y, focusTgt.y, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);
 
@@ -130,10 +153,6 @@ package vgdev.stroll.support
 		public function setCameraFocus(newFocus:Point):void
 		{
 			focusTgt = new Point( -newFocus.x, -newFocus.y);
-			
-			// cam always in center for AI
-			if (cg && cg.engine && cg.engine.isAllAI())
-				focusTgt = new Point();
 		}
 		
 		/**

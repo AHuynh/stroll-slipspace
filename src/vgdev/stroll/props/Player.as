@@ -495,7 +495,7 @@ package vgdev.stroll.props
 		 */
 		private function cancelOther():void
 		{
-			if (cg.engine.wingman[playerID]) return;
+			if (cg.engine.wingman[playerID] || !cg.engine.wingman[otherPlayerID]) return;
 			if (getDistance(cg.players[otherPlayerID]) < ABST_Console.RANGE)
 				cg.players[otherPlayerID].forceCancel();
 		}

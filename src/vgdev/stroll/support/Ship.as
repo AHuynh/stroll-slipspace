@@ -219,7 +219,7 @@ package vgdev.stroll.support
 				adjustHeading((Math.random() - 0.5) * dmg * DAMAGE_JUMP_FACTOR);
 				if (!noShake)
 				{
-					cg.camera.setShake(10);	// TODO set shake duration based on damage taken
+					cg.camera.setShake(10);
 					SoundManager.playSFX("sfx_hithull1");
 				}
 			}
@@ -260,7 +260,7 @@ package vgdev.stroll.support
 			updateIntegrity();
 			if (!noShake)
 			{
-				cg.camera.setShake(10);	// TODO set shake duration based on damage taken
+				cg.camera.setShake(10);
 				SoundManager.playSFX("sfx_hithull1");
 			}
 			
@@ -375,8 +375,8 @@ package vgdev.stroll.support
 			
 			for (var c:int = 0; c < 4; c++)
 			{
-				recentDamage[c] *= .95;
-				if (recentDamage[c] < .01)
+				recentDamage[c] *= .99;
+				if (recentDamage[c] < .005)
 					recentDamage[c] = 0;
 			}
 			
