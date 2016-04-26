@@ -1,12 +1,14 @@
 package vgdev.stroll.props.consoles 
 {
 	import flash.display.MovieClip;
+	import flash.media.SoundChannel;
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.props.ABST_Object;
 	import vgdev.stroll.props.consoles.ABST_Console;
 	import vgdev.stroll.props.enemies.InternalFire;
 	import vgdev.stroll.props.Player;
 	import vgdev.stroll.System;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * An omnitool that can be picked up by players
@@ -25,6 +27,8 @@ package vgdev.stroll.props.consoles
 		private const GOAL_REVIVE:Number = 90;
 		public static const RANGE_REVIVE:Number = 40;
 		private var reviveProgress:Number = 0;
+		
+		private var sfx:SoundChannel;
 		
 		public function Omnitool(_cg:ContainerGame, _mc_object:MovieClip, _players:Array, locked:Boolean)
 		{
@@ -83,6 +87,15 @@ package vgdev.stroll.props.consoles
 			return System.getDistance(mc_object.x, mc_object.y, other.mc_object.x, other.mc_object.y);
 		}
 		
+		public function stopSFX():void
+		{
+			if (sfx)
+			{
+				sfx.stop();
+				sfx = null;
+			}
+		}
+		
 		/**
 		 * Called when a player drops this item
 		 */
@@ -102,8 +115,9 @@ package vgdev.stroll.props.consoles
 				updateDepth();
 				closestPlayer = null;
 				updateHUD(false);
+				stopSFX();
 			}
-		}		
+		}
 		
 		override public function holdKey(keys:Array):void
 		{
@@ -113,6 +127,7 @@ package vgdev.stroll.props.consoles
 			{
 				reviveProgress = 0;
 				ui.tf_status.text = "Idle";
+				stopSFX();
 				return;
 			}
 			ui.tf_status.text = "Searching";
@@ -136,6 +151,8 @@ package vgdev.stroll.props.consoles
 					
 					if (player.getHP() != 0)
 					{
+						if (!sfx)
+							sfx = SoundManager.getSFX("sfx_healingloop");
 						player.changeHP(RATE_HEAL);
 						ui.tf_status.text = "Heal";
 						addRestorativeParticles(player.mc_object.x + System.getRandNum( -6, 6),
@@ -156,6 +173,8 @@ package vgdev.stroll.props.consoles
 						player.revive();
 						reviveProgress = 0;
 					}
+					if (!sfx)
+						sfx = SoundManager.getSFX("sfx_healingloop");
 					return;
 				}
 			}
@@ -167,6 +186,7 @@ package vgdev.stroll.props.consoles
 				return;
 			}
 			
+			stopSFX();
 			reviveProgress = 0;
 		}
 		
@@ -233,6 +253,9 @@ package vgdev.stroll.props.consoles
 						
 					}
 					item.changeHP(rate);
+					
+					if (!sfx)
+						sfx = SoundManager.getSFX("sfx_healingloop");
 					
 					// can only deal with 1 item at a time; it will be the closest since items will be sorted
 					return true;

@@ -315,6 +315,7 @@ package vgdev.stroll.props
 			countPDW = cooldownPDW;
 			animationPDW = PDW_ANIM;
 			mc_object.mc_pdw.visible = true;
+			SoundManager.playSFX("sfx_pdw");
 		}
 		
 		// tell ManagerDepth to update all depth-managed object's depths when this Player moves
@@ -546,6 +547,8 @@ package vgdev.stroll.props
 				break;
 				case KEY_ACTION:
 					keysDown[ACTION] = false;
+					if (activeConsole && activeConsole is Omnitool)
+						(activeConsole as Omnitool).stopSFX();
 				break;
 				case KEY_CANCEL:
 					keysDown[CANCEL] = false;

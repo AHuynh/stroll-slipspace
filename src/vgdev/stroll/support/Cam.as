@@ -18,6 +18,7 @@ package vgdev.stroll.support
 		private var scale:Number = 1;
 		
 		public var focusTgt:Point;
+		private const DEFAULT_TGT:Point = new Point();
 		
 		private var aiTgt:Point;
 		private const THRESH_AI:Number = 100;
@@ -62,15 +63,20 @@ package vgdev.stroll.support
 			// if 2 AI's, put cam between the 2 AI's targets and the ship center
 			if (cg && cg.engine && cg.engine.isAllAI() && cg.players[0] && cg.players[1])
 			{
-				if (aiCooldown++ >= AI_COOLDOWN)
+				if (cg.useAutoCam)
 				{
-					aiCooldown = 0;
-					aiTgt = new Point(System.calculateAverage([0, 0, (cg.players[0] as WINGMAN).tgtIndicator.x, (cg.players[1] as WINGMAN).tgtIndicator.x]),
-									  System.calculateAverage([0, 0, (cg.players[0] as WINGMAN).tgtIndicator.y, (cg.players[1] as WINGMAN).tgtIndicator.y]));
-					if (System.getDistance(-aiTgt.x, -aiTgt.y, focusTgt.x, focusTgt.y) > THRESH_AI)
-						focusTgt = new Point( System.setWithinLimits(-aiTgt.x, lim_x_min, lim_x_max), 
-											  System.setWithinLimits(-aiTgt.y, lim_y_min, lim_y_max));
+					if (aiCooldown++ >= AI_COOLDOWN)
+					{
+						aiCooldown = 0;
+						aiTgt = new Point(System.calculateAverage([0, 0, (cg.players[0] as WINGMAN).tgtIndicator.x, (cg.players[1] as WINGMAN).tgtIndicator.x]),
+										  System.calculateAverage([0, 0, (cg.players[0] as WINGMAN).tgtIndicator.y, (cg.players[1] as WINGMAN).tgtIndicator.y]));
+						if (System.getDistance(-aiTgt.x, -aiTgt.y, focusTgt.x, focusTgt.y) > THRESH_AI)
+							focusTgt = new Point( System.setWithinLimits(-aiTgt.x, lim_x_min, lim_x_max), 
+												  System.setWithinLimits(-aiTgt.y, lim_y_min, lim_y_max));
+					}
 				}
+				else
+					focusTgt = DEFAULT_TGT;
 			}
 			
 			focus.x = updateNumber(focus.x, focusTgt.x, [-camMoveRate, camMoveRate], THRESH_TRANSLATE);

@@ -488,9 +488,11 @@ package vgdev.stroll.props.consoles
 			if (ui == null) return;
 			for each (var mc:MovieClip in shieldsList)
 				ui.addChild(mc);
-			ui.mc_limit.visible = false;
-			ui.mc_recharge.visible = puzzleCooldown != 0;
+			try {
+				ui.mc_limit.visible = false;
+				ui.mc_recharge.visible = puzzleCooldown != 0;
 			setAllVisible(false);
+			} catch (e:Error) {}
 			setRechargeText(true, puzzleCooldown == 0 ? "Ready" : "Recharging");
 		}
 		

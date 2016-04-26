@@ -33,6 +33,12 @@ package vgdev.stroll.props
 		public function Decor(_cg:ContainerGame, _mc_object:MovieClip = null, style:String = null, params:Object = null)
 		{
 			super(_cg, _mc_object);
+			if (style == null)
+			{
+				completed = true;
+				mc_object.visible = false;
+				return;
+			}
 			mc_object.gotoAndStop(style);
 			
 			if (params != null)

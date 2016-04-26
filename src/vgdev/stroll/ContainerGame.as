@@ -88,6 +88,7 @@
 		private var escDown:Boolean = false;
 		private var resetCounter:int = 0;
 		private var justPaused:Boolean = false;
+		public var useAutoCam:Boolean = true;
 		
 		public var gameOverAnnouncer:String = "TAILS";
 		private var useSave:Boolean = false;
@@ -129,6 +130,7 @@
 			engine.superContainer.mc_container.addChild(gui);
 			gui.mc_pause.visible = false;
 			gui.mc_pause.tf_reset.visible = false;
+			gui.mc_pause.btn_camera.addEventListener(MouseEvent.CLICK, onAutoCam);
 			gui.mc_lose.visible = false;
 			gui.mc_lose.tf_reset.visible = false;
 			gui.mc_win.visible = false;
@@ -420,6 +422,9 @@
 						isPaused = true;
 						justPaused = true;
 						SoundManager.pause(true);
+						gui.mc_pause.btn_camera.visible = engine.isAllAI();
+						gui.mc_pause.mc_autocam.visible = engine.isAllAI();
+						gui.mc_pause.mc_autocam.gotoAndStop(useAutoCam ? 2 : 1);
 					}
 					if (!isDefeatedPaused)
 						gui.mc_pause.visible = isPaused;
@@ -460,10 +465,6 @@
 						var bpt:Point = getRandomShipLocation();
 						addToGame(new BoarderShooter(this, new SWC_Enemy(), shipInsideMask, { "x": bpt.x, "y": bpt.y } ), System.M_BOARDER);
 					}*/
-				break;
-				case Keyboard.L:
-					//managerMap[System.M_ENEMY].killAll();
-					//managerMap[System.M_DECOR].killAll();
 				break;
 			}
 		}
@@ -925,6 +926,12 @@
 												]), System.SECOND * 3, "HEADS");
 		}
 		
+		private function onAutoCam(e:MouseEvent):void
+		{
+			useAutoCam = !useAutoCam;
+			gui.mc_pause.mc_autocam.gotoAndStop(useAutoCam ? 2 : 1);
+		}
+		
 		/**
 		 * Clean-up code
 		 * @param	e	the captured Event, unused
@@ -935,6 +942,8 @@
 				engine.stage.removeEventListener(KeyboardEvent.KEY_DOWN, downKeyboard);
 			if (engine.stage.hasEventListener(KeyboardEvent.KEY_UP))
 				engine.stage.removeEventListener(KeyboardEvent.KEY_UP, upKeyboard);
+			if (gui && gui.mc_pause.btn_camera.hasEventListener(MouseEvent.CLICK))
+				gui.mc_pause.btn_camera.removeEventListener(MouseEvent.CLICK, onAutoCam);
 			
 			var i:int;
 			for (i = 0; i < managers.length; i++)

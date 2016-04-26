@@ -7,6 +7,7 @@ package vgdev.stroll.props.enemies
 	import vgdev.stroll.props.ABST_IMovable;
 	import vgdev.stroll.support.graph.GraphNode;
 	import vgdev.stroll.System;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * An enemy that exists on the ship
@@ -128,6 +129,12 @@ package vgdev.stroll.props.enemies
 			var angle:Number = System.getAngle(mc_object.x, mc_object.y, tgt.x, tgt.y)
 			updatePosition(System.forward(speed, angle, true), System.forward(speed, angle, false));
 			updateDepth();
+		}
+		
+		override public function destroy():void 
+		{
+			SoundManager.playSFX("sfx_explosion1");
+			super.destroy();
 		}
 	}
 }

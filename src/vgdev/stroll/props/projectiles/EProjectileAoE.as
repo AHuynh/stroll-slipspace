@@ -4,6 +4,7 @@ package vgdev.stroll.props.projectiles
 	import vgdev.stroll.ContainerGame;
 	import vgdev.stroll.System;
 	import flash.geom.Point;
+	import vgdev.stroll.support.SoundManager;
 	
 	/**
 	 * Explodes into AoE on death
@@ -47,6 +48,7 @@ package vgdev.stroll.props.projectiles
 														});
 					cg.addToGame(proj, System.M_EPROJECTILE);
 				}
+				SoundManager.playSFX("sfx_laser3");
 				super.destroy();
 			}
 			else

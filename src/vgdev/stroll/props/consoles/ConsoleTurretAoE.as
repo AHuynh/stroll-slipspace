@@ -71,7 +71,7 @@ package vgdev.stroll.props.consoles
 														"style":		"turret_standard",
 														"ghost":		true
 													}), System.M_EPROJECTILE);
-			SoundManager.playSFX("sfx_laser1", .6);
+			SoundManager.playSFX("sfx_laser2", .6);
 		}
 	}
 }

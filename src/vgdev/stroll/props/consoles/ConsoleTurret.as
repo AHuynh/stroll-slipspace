@@ -119,7 +119,7 @@ package vgdev.stroll.props.consoles
 		{
 			entryDelay = 5;
 			super.onAction(p);
-			if (inUse)
+			if (inUse && !corrupted)
 			{
 				var hud:MovieClip = getHUD();
 				hud.mc_light.y = 18.5 - 9 * turretID;

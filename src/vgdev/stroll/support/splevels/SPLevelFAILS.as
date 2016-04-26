@@ -39,7 +39,7 @@ package vgdev.stroll.support.splevels
 			
 			// DEBUG CODE			
 			//levelState = 2;
-			//framesElapsed = 28 * 30;
+			//framesElapsed = 20 * 30;
 			/*consoleSlip.setArrowDifficulty(12);
 			cg.ship.setBossOverride(false);
 			cg.ship.slipRange = 0.5;

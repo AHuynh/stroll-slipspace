@@ -211,7 +211,9 @@ package vgdev.stroll.support
 					dmg *= mitigation;
 				if (shieldGrace == 0)
 					shield = System.changeWithLimit(shield, -dmg, 0);
-				SoundManager.playSFX("sfx_hitshield1");
+				if (shield == 0)
+					SoundManager.playSFX("sfx_shielddown");
+				SoundManager.playSFX("sfx_hitshield" + System.getRandFrom(["1", "2", "3"]));
 			}
 			else
 			{
