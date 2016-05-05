@@ -37,8 +37,8 @@ package vgdev.stroll.support.splevels
 			SoundManager.playBGMpaired("bgm_1a_here_we_go", "bgm_1a2_hey_somethings_wrong", System.VOL_BGM);
 			
 			// DEBUG CODE
-		/*	levelState = 24;
-			for (var i:int = 0; i < 2; i++)
+			//levelState = 6;
+			/*for (var i:int = 0; i < 2; i++)
 				crystals.push(cg.addToGame(new EnemyCrystal(cg, new SWC_Enemy(), { "theta": i * 180 } ), System.M_ENEMY));
 			framesElapsed = 6 * 30;
 			cg.ship.setBossOverride(false);
@@ -47,8 +47,6 @@ package vgdev.stroll.support.splevels
 			cg.bossBar.startFight();
 			consoleSlip.forceOverride = true;*/
 			
-			
-			//consoleSlip.setArrowDifficulty(12);
 			/*var corr:int = 0;
 			for each (var c:ABST_Console in cg.consoles)
 			{
@@ -121,6 +119,8 @@ package vgdev.stroll.support.splevels
 														"Malfunction resolved. Use slipdrive now.",
 														"Slipdrive reconfigured. Use slipdrive.",
 														]), System.TAILS_NORMAL, "HEADS");
+					if (cg.ship.slipRange == 0)
+						cg.gui.tf_distance.text = "Supr Jmp";
 					if (!consoleSlip.fakeJumpNext)
 					{
 						levelState++;
@@ -165,6 +165,8 @@ package vgdev.stroll.support.splevels
 														"Malfunction removed. Slipdrive must be activated.",
 														"Slipdrive rebooted. Retry slipdrive.",
 														]), System.TAILS_NORMAL, "HEADS");
+					if (cg.ship.slipRange == 0)
+						cg.gui.tf_distance.text = "Supr Jmp";
 					if (!consoleSlip.fakeJumpNext)
 					{
 						levelState++;
@@ -217,18 +219,26 @@ package vgdev.stroll.support.splevels
 							cg.managerMap[System.M_BOARDER].killAll();
 							cg.setInteriorVisibility(false);
 						break;
+						case System.SECOND * 13:
+							cg.visualEffects.applyModuleDistortion(0, false, 0);
+							cg.visualEffects.applyModuleDistortion(1, false, 0);
+							cg.visualEffects.applyBGDistortion(true, "bg_squares");
+						break;
 						case System.SECOND * 16:
 							cg.tails.show("CRITICAL ERRrro... .. .", System.TAILS_NORMAL, "HEADS");
 						break;
 						case System.SECOND * 18:
 							cg.setInteriorVisibility(true);
 							addShards(5);
+							cg.visualEffects.applyModuleDistortion(0, true);
+							cg.visualEffects.applyModuleDistortion(1, true);
 						break;
 						case System.SECOND * 23:
 							cg.tails.show("Blow up the sh1P? REALLY? That's WAY too easy. *I* couLDa done that E@RLIER!\n\nNo, no. I think iit's time wE had s@me MORE FUN be*&re you both DIE! YES/NO?!", 0, "FAILS_pissed");
 							levelState = 10;
 							framesElapsed = 0;
 							cg.gameOverAnnouncer = "FAILS";
+							cg.visualEffects.applyBGDistortion(false);
 							
 							// corrupt 3
 							ABST_Console.numCorrupted = 0;
@@ -245,12 +255,13 @@ package vgdev.stroll.support.splevels
 						cg.camera.setShake(5);
 						SoundManager.playSFX("sfx_electricShock", .25);
 						SoundManager.playSFX("sfx_explosionlarge1", .25);
-						if (framesElapsed >= System.SECOND * 11)
-						{
-							var pos:Point = cg.getRandomNearLocation();
-							var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(0.25, 3) } );
-							spawnFX.mc_object.base.setTint(System.COL_RED);
-						}
+					}
+					if (framesElapsed >= System.SECOND * 11 && framesElapsed < System.SECOND * 23 && framesElapsed % (System.SECOND >= 16 ? 10 : 20) == 0)
+					{
+						var pos:Point = cg.getRandomNearLocation();
+						var spawnFX:ABST_Object = cg.addDecor("spawn", { "x":pos.x, "y":pos.y, "scale":System.getRandNum(0.25, 3) } );
+						spawnFX.mc_object.base.setTint(System.COL_RED);
+						cg.addSparks(System.getRandInt(1, 3));
 					}
 				break;
 				case 10:
@@ -896,7 +907,7 @@ package vgdev.stroll.support.splevels
 						EnemyCrystal.dTheta += 0.025;
 				break;
 				case 52:
-					if (framesElapsed == 1)
+					if (framesElapsed == System.SECOND * 5)
 						SoundManager.crossFadeBGM("bgm_1a_here_we_go");
 					if (framesElapsed == System.SECOND * 8)
 					{
@@ -984,7 +995,10 @@ package vgdev.stroll.support.splevels
 				}
 			}
 			
-			cg.bossBar.setPercent(1 - (EnemyCrystal.totalNumCorrupted + 6) / 12);
+			var p:Number = 1 - (EnemyCrystal.totalNumCorrupted + 6) / 12;
+			if (framesElapsed % 12 == 0)
+			p += System.getRandNum(-.07, .07);
+			cg.bossBar.setPercent(System.setWithinLimits(p, 0.01, 1));
 		}
 	}
 }

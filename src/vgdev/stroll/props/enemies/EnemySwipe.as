@@ -96,6 +96,8 @@ package vgdev.stroll.props.enemies
 				case 0:			// reset
 					cdCounts[0] = int(cooldowns[0] * System.getRandNum(1, 1.2));
 					mc_object.visible = false;
+					mc_object.x = 9999;
+					mc_object.y = 9999;
 				break;
 			}
 		}
@@ -113,7 +115,6 @@ package vgdev.stroll.props.enemies
 		}
 		
 		// keep the hand positioned relative to the camera
-		// TODO fix
 		private function updateSwipePosition():void
 		{
 			if (cdCounts[0] > 14) return;

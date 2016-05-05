@@ -61,6 +61,9 @@ package vgdev.stroll.support.splevels
 			
 			var c:ABST_Console;
 			
+			if (levelState >= 10 && levelState < 40 && framesElapsed % (System.SECOND * 4) == 0)
+				cg.gui.tf_distance.text = System.getRandFrom(["HA HA HA", "YOU DIE", "LOSERS", "STUPID", "IDIOTS", "FAILS!", "LOLOLOLO"]);
+			
 			switch (levelState)
 			{
 				case 0:		// pre-FAILS, spawn enemies
@@ -324,6 +327,7 @@ package vgdev.stroll.support.splevels
 					if (framesElapsed == System.SECOND * 6)
 					{
 						cg.tails.show("OOPS. LOOKS LIKE I SCRAMBLED EVERYTHING. MY BAD.", System.TAILS_NORMAL, "FAILS_talk");	
+						SoundManager.playSFX("sfx_electricShock");
 						scrambleConsoles();
 						framesElapsed = 0;
 						levelState++;
@@ -338,7 +342,8 @@ package vgdev.stroll.support.splevels
 					}
 					else if (framesElapsed >= System.SECOND * 14 && framesElapsed % (System.SECOND * 14) == 0)
 					{
-						spawnEnemy("Amoeba", 4, System.SPAWN_AMOEBA, {"am_size": 0} );
+						spawnEnemy("Amoeba", 4, System.SPAWN_AMOEBA, { "am_size": 0 } );
+						spawnEnemy("Eye", 2);
 						cg.tails.show(System.getRandFrom(["I found some amoeba friends. AREN'T THEY CUTE?",
 														  "What ever will our two heroes do? DIE. THAT'S WHAT.",
 														  "Die, die, EVERYBODY DIE!"
@@ -370,19 +375,19 @@ package vgdev.stroll.support.splevels
 				case 30:	// fix 6, adds, taunt
 					switch (framesElapsed)
 					{
-						case System.SECOND * 13:
+						case System.SECOND * 9:
 							messWithConsole();
 							for each (c in cg.consoles)
 								c.setReadyToFormat(true);
 						break;
-						case System.SECOND * 18:
+						case System.SECOND * 16:
 							cg.tails.show("Watch! I'll jump into cloud of TOXIC GAS, next!", System.TAILS_NORMAL, "FAILS_talk");
 						break;
-						case System.SECOND * 24:
+						case System.SECOND * 22:
 							cg.tails.show("Pointy shapes! All the better to KILL YOU WITH!", System.TAILS_NORMAL, "FAILS_talk");
 						break;
 					}
-					if (framesElapsed >= System.SECOND * 36 && framesElapsed % (System.SECOND * 15) == (System.SECOND * 6))
+					if (framesElapsed >= System.SECOND * 22 && framesElapsed % (System.SECOND * 15) == (System.SECOND * 6))
 						cg.tails.show(System.getRandFrom(["Too bad I can't just VENT you into the VOID.",
 															"Keep shooting! They'll just keep COMING!",	
 															"It's an INFINITE field of PURE, GEOMETRIC DEATH."
@@ -439,6 +444,7 @@ package vgdev.stroll.support.splevels
 						if (framesElapsed % (System.SECOND * 16) == 0)
 						{
 							spawnEnemy("Amoeba", 5, System.SPAWN_AMOEBA, {"am_size": 0} );
+							spawnEnemy("Slime", 2);
 							cg.tails.show(System.getRandFrom(["Just STOP already! You're REALLY TICKING ME OFF.",
 															  "GIVE. UP. You're NOT gonna be able to win!",
 															  "QUIT. DOING. THAT. Just shrivel up and DIE ALREADY!"

@@ -290,9 +290,16 @@ package vgdev.stroll
 			return val;
 		}
 		
-		public static function setWithinLimits(newValue:Number, limLow:Number = int.MIN_VALUE, limHigh:Number = int.MAX_VALUE):Number
+		/**
+		 * Returns the value corrected to be within range [limLow, limHigh]
+		 * @param	origValue		The original value	
+		 * @param	limLow			The upper limit
+		 * @param	limHigh			The lower limit
+		 * @return					
+		 */
+		public static function setWithinLimits(origValue:Number, limLow:Number = int.MIN_VALUE, limHigh:Number = int.MAX_VALUE):Number
 		{
-			return Math.max(Math.min(newValue, limHigh), limLow);
+			return Math.max(Math.min(origValue, limHigh), limLow);
 		}
 		
 		/**
@@ -388,6 +395,11 @@ package vgdev.stroll
 			return true;
 		}
 		
+		/**
+		 * Calculate the average (mean) of the given numbers
+		 * @param	values		Array of Numbers and/or ints
+		 * @return				average of the array, 0 if array is empty or null
+		 */
 		public static function calculateAverage(values:Array):Number
 		{
 			if (!values || values.length == 0)

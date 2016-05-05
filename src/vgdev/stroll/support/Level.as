@@ -46,7 +46,9 @@ package vgdev.stroll.support
 		[Embed(source="../../../../json/en_spiders.json", mimeType="application/octet-stream")]
 		private var en_spiders:Class;
 		[Embed(source="../../../../json/en_rainbow.json", mimeType="application/octet-stream")]
-		private var en_rainbow:Class;	
+		private var en_rainbow:Class;
+		[Embed(source="../../../../json/en_boarders.json", mimeType="application/octet-stream")]
+		private var en_boarders:Class;
 		
 		// -- BOSS REGIONS --------------------------------------------------------------------------------------
 		[Embed(source="../../../../json/en_boss_peeps.json", mimeType="application/octet-stream")]
@@ -102,13 +104,14 @@ package vgdev.stroll.support
 												JSON.parse(new en_spiders()),
 												JSON.parse(new en_fire_ice()),
 												JSON.parse(new en_rainbow()),
+												JSON.parse(new en_boarders()),
 												
 												JSON.parse(new en_boss_final())
 											];
 											
 											// DEBUGGING A SINGLE ENCOUNTER ONLY
 											// (you must also CTRL+F and comment out the line containing [COMMENTME] to ignore sector constraints)
-											//rawEncountersJSON = [JSON.parse(new en_boss_final())];
+											//rawEncountersJSON = [JSON.parse(new en_boarders())];
 			
 			// parse all the encounters and save them
 			for each (var rawEncounter:Object in rawEncountersJSON)
@@ -240,6 +243,14 @@ package vgdev.stroll.support
 				break;
 				case "FloaterFire":
 					spawn = new BoarderSuicider(cg, new SWC_Enemy(), cg.shipInsideMask, {});
+					manager = System.M_BOARDER;
+				break;
+				case "FloaterSlime":
+					spawn = new BoarderShooter(cg, new SWC_Enemy(), cg.shipInsideMask, {});
+					manager = System.M_BOARDER;
+				break;
+				case "FloaterDrone":
+					spawn = new BoarderAssassin(cg, new SWC_Enemy(), cg.shipInsideMask, {});
 					manager = System.M_BOARDER;
 				break;
 				case "GeometricAnomalyPlain":

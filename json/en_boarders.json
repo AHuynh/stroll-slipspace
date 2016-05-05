@@ -1,0 +1,109 @@
+{
+  "settings": {
+	"id": "boarders",
+	"background": "default",
+	"difficulty_range": [9, 11],
+    "jamming_min": 2,
+    "slip_range": 66.0,
+	"type": "Enemies",
+	"TAILS": "Alert. Incoming boarders. Prepare PDWs."
+  },
+  "waves": [
+	{
+		"time": 5,
+		"repeat": 3,
+		"spawnables":
+			[
+				{"type": "FloaterFire"}
+			]
+	},
+	{
+		"time": 8,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "FloaterFire"},
+				{"type": "Skull"}
+			]
+	},
+	{
+		"time": 13,
+		"TAILS": "Incoming slimes.",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 4,
+		"repeat": 4,
+		"spawnables":
+			[
+				{"type": "Slime"}
+			]
+	},
+	{
+		"time": 13,
+		"TAILS": "Incoming slime boarders.",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 4,
+		"repeat": 3,
+		"spawnables":
+			[
+				{"type": "FloaterSlime"}
+			]
+	},
+	{
+		"time": 4,
+		"repeat": 3,
+		"spawnables":
+			[
+				{"type": "FloaterSlime"}
+			]
+	},
+	{
+		"time": 15,
+		"TAILS": "Warning. Defense drone malfunction.",
+		"spawnables":
+			[
+			]
+	},
+	{
+		"time": 4,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "FloaterDrone"}
+			]
+	},
+	{
+		"time": 7,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "FloaterDrone"},
+				{"type": "Slime"}
+			]
+	},
+	{
+		"time": 17,
+		"repeat": 2,
+		"spawnables":
+			[
+				{"type": "Spider", "region": "medium_orbit"}
+			]
+	},
+	{
+		"time": 25,
+		"repeat": 3,
+		"recur": 25,
+		"spawnables":
+			[
+				{"type": "Eye", "region": "near_orbit"}
+			]
+	}
+  ]
+}

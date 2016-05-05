@@ -318,6 +318,7 @@ package vgdev.stroll.props.consoles
 			
 			hud_consoles[closestPlayer.playerID].gotoAndStop(label.toLowerCase());
 			cg.hudTitles[closestPlayer.playerID].visible = label != "none";
+			cg.hudBases[closestPlayer.playerID].visible = label != "none";
 			cg.hudTitles[closestPlayer.playerID].text = cName;
 			if (cg.tails.tutorialMode && label != "none" && label != "broken")
 			{

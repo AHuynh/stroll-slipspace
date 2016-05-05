@@ -92,6 +92,7 @@ package vgdev.stroll.support
 			
 			shieldCTF = new ColorTransform();
 			setShieldColor(shieldCol);
+			cg.gui.bar_spReboot.visible = false;
 			
 			hpCTF = new ColorTransform();
 			cg.gui.bar_hp.transform.colorTransform = hpCTF;
@@ -288,15 +289,6 @@ package vgdev.stroll.support
 			// bars
 			cg.gui.bar_hp.width = hpPerc * BAR_BIG_WIDTH;
 			cg.gui.bar_sp.width = spPerc * BAR_BIG_WIDTH;
-			
-			// colors
-			/*if (hpPerc < .3)
-				hpCTF.color = System.COL_RED;
-			else if (hpPerc < .6)
-				hpCTF.color = System.COL_YELLOW;
-			else
-				hpCTF.color = System.COL_GREEN;*/
-			//cg.gui.bar_hp.transform.colorTransform = hpCTF;
 		}
 		
 		/**
@@ -313,6 +305,7 @@ package vgdev.stroll.support
 			mc_shield.transform.colorTransform = shieldCTF;
 			cg.gui.bar_sp.transform.colorTransform = shieldCTF;
 			cg.gui.bar_hp.transform.colorTransform = shieldCTF;
+			cg.gui.bar_spReboot.transform.colorTransform = shieldCTF;
 			
 			if (shield > 0)
 			{
@@ -339,10 +332,6 @@ package vgdev.stroll.support
 			}
 		}
 		
-		/**
-		 * ...
-		 * @param	factor		...
-		 */
 		public function scaleHeading(factor:Number):void
 		{
 			var change:Number = shipHeading * factor - shipHeading;
@@ -374,6 +363,17 @@ package vgdev.stroll.support
 		private function updateShields():void
 		{
 			if (!shieldsEnabled) return;
+			
+			if (shieldReCurr == 0)
+				cg.gui.bar_spReboot.visible = false;
+			else
+			{
+				cg.gui.bar_spReboot.visible = true;
+				if (shieldReCurr > shieldRecharge - 15)
+					cg.gui.bar_spReboot.width = 0;
+				else
+					cg.gui.bar_spReboot.width = ((shieldRecharge - 15) - shieldReCurr) / (shieldRecharge - 15) * BAR_BIG_WIDTH;
+			}
 			
 			for (var c:int = 0; c < 4; c++)
 			{
@@ -445,7 +445,6 @@ package vgdev.stroll.support
 			scaleHeading(HEADING_RUNAWAY);
 			adjustHeading((Math.random() - 0.5) * HEADING_JUMP);
 			slipSpeed = MAX_SLIP_SPEED - ((MAX_SLIP_SPEED - MIN_SLIP_SPEED) * Math.abs(shipHeading));
-			//trace("Current Heading: " + shipHeading + "Current Slip Speed: " + slipSpeed);
 		}
 		
 		/**
@@ -453,6 +452,16 @@ package vgdev.stroll.support
 		 */
 		private function updateSlip():void
 		{
+			if (cg.level.sectorIndex > 0)
+			{
+				if (slipRange > 0)
+					cg.gui.large_indicator.gotoAndStop(1);
+				else if (isJumpReady() == "ready" && !bossOverride)
+					cg.gui.large_indicator.gotoAndStop("green");
+				else
+					cg.gui.large_indicator.gotoAndStop("yellow");
+			}
+			
 			if (bossOverride || hp == 0) return;
 			if (slipRange > 0)
 			{
@@ -461,7 +470,6 @@ package vgdev.stroll.support
 				{
 					SoundManager.playSFX("sfx_readybeep1B", .7);
 					cg.gui.tf_distance.text = "In range";
-					cg.gui.large_indicator.gotoAndStop("green");
 				}
 				else
 					cg.gui.tf_distance.text = Math.ceil(slipRange).toString() + " LY";
@@ -485,7 +493,6 @@ package vgdev.stroll.support
 		 */
 		public function isJumpReady():String
 		{
-			// TODO add other limiting conditions here
 			if (isJumpReadySpecific("repair")) {
 				return "repair";
 			}

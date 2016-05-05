@@ -57,6 +57,7 @@
 		/// UI consoles; an Array of MovieClips
 		public var hudConsoles:Array;
 		public var hudTitles:Array;
+		public var hudBases:Array;
 		public var hudBars:Array;
 		public var painIndicators:Array;
 		
@@ -141,9 +142,12 @@
 			gui.tf_titleL.visible = false;
 			gui.tf_titleR.visible = false;
 			hudTitles = [gui.tf_titleL, gui.tf_titleR];
+			hudBases = [gui.mc_titlebaseL, gui.mc_titlebaseR];
+			hudBases[0].visible = hudBases[1].visible = false;
 			hudBars = [gui.bar_crew1, gui.bar_crew2];
 			painIndicators = [gui.mc_painL, gui.mc_painR];
 			gui.tf_distance.text = "Supr Jmp";
+			gui.large_indicator.gotoAndStop("green");
 
 			game.mc_ship.gotoAndStop(shipName.toLowerCase());
 			
@@ -251,6 +255,14 @@
 			// --- Kingfisher ---------------------------------------------------------------------------------------------------
 			graph.initShip(shipName);
 			game.mc_ship.mc_shipBase.tintShip(engine.shipColor);
+			
+			// debug
+			if (!useLocks)
+			{
+				players[0].pdwEnabled = true;
+				players[1].pdwEnabled = true;
+				upgradeTurrets(2);
+			}
 			
 			// init the managers			
 			managerMap[System.M_EPROJECTILE] = new ManagerProjectile(this);
@@ -436,10 +448,11 @@
 					
 				break;
 				
-				case Keyboard.J:		// TODO remove temporary testing
+				case Keyboard.J:
 					//jump();
 				break;
 				case Keyboard.K:
+					//visualEffects.applyBGDistortion(true, "bg_bars");
 					//players[0].changeHP( -9999);
 					//ship.damage(1000);
 					//killShip();
@@ -465,6 +478,15 @@
 						var bpt:Point = getRandomShipLocation();
 						addToGame(new BoarderShooter(this, new SWC_Enemy(), shipInsideMask, { "x": bpt.x, "y": bpt.y } ), System.M_BOARDER);
 					}*/
+					//gui.large_indicator.gotoAndStop("green");
+				break;
+				case Keyboard.L:
+					//visualEffects.applyBGDistortion(false);
+					//gui.large_indicator.gotoAndStop("yellow");
+				break;
+				case Keyboard.M:
+					//visualEffects.applyBGDistortion(false);
+					//gui.large_indicator.gotoAndStop(1);
 				break;
 			}
 		}
@@ -667,7 +689,7 @@
 			{
 				if (boss)
 					SoundManager.playBGM("bgm_boss", System.VOL_BGM);
-				else if (level.sectorIndex > 4 && level.sectorIndex < 8)
+				else if (level.sectorIndex >= 8)
 					SoundManager.playBGM("bgm_notsocalm", System.VOL_BGM);
 				else
 					SoundManager.playBGM("bgm_calm", System.VOL_BGM);

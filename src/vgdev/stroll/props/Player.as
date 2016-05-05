@@ -63,7 +63,7 @@ package vgdev.stroll.props
 		public var pdwEnabled:Boolean = false;	// if the PDW is unlocked
 		private var countPDW:int = 0;			// current PDW status
 		private var cooldownPDW:int = 5;		// cooldown time in frames between PDW shots
-		private var damagePDW:int = 7;
+		private var damagePDW:int = 11;
 		public var animationPDW:int = 0;		// if non-zero, PDW sprite is visible
 		private const PDW_ANIM:int = 60;
 		

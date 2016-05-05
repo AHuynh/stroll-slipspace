@@ -159,17 +159,17 @@ package vgdev.stroll.props.consoles
 			}
 			
 			if (isActive && missCounter == 0)
-			{
+			{				
 				switch (cg.ship.isJumpReady())
 				{
-					case "repair":	setText("Repair Nav");		break;
-					case "jammed":	setText("Enemy jamming");	break;
-					case "heading":	setText("Center Nav");		break;
-					case "range":	setText("Not in range");	break;
-					case "error":	setText("Malfunction");		break;
-					case "ready":	setText("Ready to spool");	break;
+					case "repair":	setText("Repair Nav");				break;
+					case "jammed":	setText("Enemy jamming");			break;
+					case "heading":	setText("Center Nav");				break;
+					case "range":	setText("Not in range");			break;
+					case "error":	setText("Malfunction");				break;
+					case "ready":	setText("Ready to spool");			break;
 				}
-				
+					
 				if (forceOverride)
 					setText("Malfunction");
 				

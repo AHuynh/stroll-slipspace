@@ -83,7 +83,7 @@ package vgdev.stroll.props
 		private var setup:Boolean = true;
 		
 		private var chooseStateCooldown:int = 0;
-		private const CHOOSE_CD:int = 20;
+		private var CHOOSE_CD:int = 20;
 		
 		private var prevPoint:Point;
 		
@@ -95,11 +95,11 @@ package vgdev.stroll.props
 		private var failsCounter:int = 0;
 		private var repairCounter:int = 0;
 		private var movingPOIcounter:int = 0;			// if 0, update POI location, since object could be moving
-		private const COUNTER_MAX:int = 15;
-		private const TURRET_MAX:int = 75;
-		private const SLIP_MAX:int = System.SECOND * 4;
-		private const FAILS_MAX:int = System.SECOND * 9;
-		private const SHIELD_MAX:int = System.SECOND * 5;
+		private var COUNTER_MAX:int = 15;
+		private var TURRET_MAX:int = 75;
+		private var SLIP_MAX:int = System.SECOND * 4;
+		private var FAILS_MAX:int = System.SECOND * 9;
+		private var SHIELD_MAX:int = System.SECOND * 5;
 		
 		private var turretRandom:Number;
 		
@@ -121,13 +121,23 @@ package vgdev.stroll.props
 			tgtIndicator = _tgtIndicator;
 			tgtIndicator.visible = true;
 			tgtIndicator.gotoAndStop(playerID + 1);
-			trace("[WINGMAN " + playerID + "] Waiting to setup...");
+			//trace("[WINGMAN " + playerID + "] Waiting to setup...");
 		}
 		
 		private function init():void
 		{
 			setup = false;
 			otherPlayer = cg.players[1 - playerID];
+			
+			// slow down the AI a bit if with a human
+			if (!cg.engine.isAllAI())
+			{
+				SLIP_MAX = System.SECOND * 9;
+				FAILS_MAX = System.SECOND * 16;
+				SHIELD_MAX = System.SECOND * 7;
+				COUNTER_MAX = 20;
+				CHOOSE_CD = 25;
+			}
 		
 			// set up consoleMap
 			consoleMap["omnitool"] = [];
@@ -153,7 +163,7 @@ package vgdev.stroll.props
 			prevPoint = new Point(mc_object.x, mc_object.y);
 			updateDisplay();
 			
-			trace("[WINGMAN " + playerID + "] Ready!");
+			//trace("[WINGMAN " + playerID + "] Ready!");
 		}
 		
 		override public function step():Boolean 
@@ -173,7 +183,7 @@ package vgdev.stroll.props
 				{
 					acknowledgeTails = true;
 					cg.onAction(this);
-					trace("[WINGMAN " + playerID + "] I hear you, " + cg.gameOverAnnouncer + "!");
+					//trace("[WINGMAN " + playerID + "] I hear you, " + cg.gameOverAnnouncer + "!");
 				}
 				if (!setup)
 					return completed;
@@ -239,10 +249,10 @@ package vgdev.stroll.props
 					{
 						state = STATE_STUCK;
 						goal = GOAL_IDLE;
-						trace("[WINGMAN " + playerID + "] Stuck! Trying to get unstuck!");
-						trace("\tCurrent node:", (nodeOfInterest ? nodeOfInterest.mc_object.name : null));
-						trace("\tCurrent path:", path);
-						trace("\tCurrent OOI:", objectOfInterest);
+						//trace("[WINGMAN " + playerID + "] Stuck! Trying to get unstuck!");
+						//trace("\tCurrent node:", (nodeOfInterest ? nodeOfInterest.mc_object.name : null));
+						//trace("\tCurrent path:", path);
+						//trace("\tCurrent OOI:", objectOfInterest);
 						releaseAllKeys();
 						chooseState(true);
 					}
@@ -282,7 +292,7 @@ package vgdev.stroll.props
 				{
 					state = STATE_MOVE_FROM_NETWORK;
 					path = [];
-					trace("[WINGMAN " + playerID + "] Making a beeline!");
+					//trace("[WINGMAN " + playerID + "] Making a beeline!");
 				}
 			}
 			
@@ -303,7 +313,7 @@ package vgdev.stroll.props
 					else if (!extendedLOScheck(pointOfInterest))
 					{
 						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-						trace("[WINGMAN " + playerID + "] Trying to heal but lost LOS!");
+						//trace("[WINGMAN " + playerID + "] Trying to heal but lost LOS!");
 					}
 				break;
 				case STATE_BOARDER:
@@ -328,20 +338,20 @@ package vgdev.stroll.props
 					if (objectOfInterest == null || !objectOfInterest.isActive() ||
 						System.getDistance(mc_object.x, mc_object.y, objectOfInterest.mc_object.x, objectOfInterest.mc_object.y) > range)
 					{
-						trace("[WINGMAN " + playerID + "] Fire doused.");
+						//trace("[WINGMAN " + playerID + "] Fire doused.");
 						handleStateDouse();
 					}
 					else if (!extendedLOScheck(pointOfInterest))
 					{
 						setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-						trace("[WINGMAN " + playerID + "] Trying to douse but lost LOS!");
+						//trace("[WINGMAN " + playerID + "] Trying to douse but lost LOS!");
 					}
 				break;
 				case STATE_REPAIR:
 					if (!omnitoolCheck()) break;
 					if (objectOfInterest.getHP() == objectOfInterest.getHPmax())
 					{
-						trace("[WINGMAN " + playerID + "] Console repaired.");
+						//trace("[WINGMAN " + playerID + "] Console repaired.");
 						handleStateRepair();
 					}
 					else if (!extendedLOScheck(pointOfInterest))
@@ -368,7 +378,7 @@ package vgdev.stroll.props
 				case STATE_MOVE_NETWORK:
 					if (nodeOfInterest == null)
 					{
-						trace("[WINGMAN " + playerID + "] Node of interest was null! Cancelling!");
+						//trace("[WINGMAN " + playerID + "] Node of interest was null! Cancelling!");
 						state = STATE_MOVE_FROM_NETWORK;
 						return completed;
 					}
@@ -379,7 +389,7 @@ package vgdev.stroll.props
 						nodeOfInterest = path.shift();
 						if (nodeOfInterest == null)
 						{
-							trace("[WINGMAN " + playerID + "] Leaving path network.");
+							//trace("[WINGMAN " + playerID + "] Leaving path network.");
 							state = STATE_MOVE_FROM_NETWORK;
 							return completed;
 						}
@@ -458,7 +468,7 @@ package vgdev.stroll.props
 			var c:ConsoleShieldRe = objectOfInterest as ConsoleShieldRe;
 			if (c.closestPlayer == null || c.closestPlayer != this)
 			{
-				trace("[WINGMAN " + playerID + "] Couldn't use the reboot module!");
+				//trace("[WINGMAN " + playerID + "] Couldn't use the reboot module!");
 				onCancel();
 				state = STATE_IDLE;
 				goal = GOAL_IDLE;
@@ -474,7 +484,7 @@ package vgdev.stroll.props
 			{
 				mazeSolution = null;
 				pressKey("ACTION");
-				trace("[WINGMAN " + playerID + "] Starting maze.");
+				//trace("[WINGMAN " + playerID + "] Starting maze.");
 				return;
 			}
 			if (!mazeSolution)
@@ -499,7 +509,7 @@ package vgdev.stroll.props
 			}
 			if (mazeIndex == mazeSolution.length)
 			{
-				trace("[WINGMAN " + playerID + "] Finished with maze.");
+				//trace("[WINGMAN " + playerID + "] Finished with maze.");
 				releaseMovementKeys();
 				onCancel();
 				state = STATE_IDLE;
@@ -530,7 +540,7 @@ package vgdev.stroll.props
 					case System.COL_BLUE:	pressKey("DOWN");		return;
 				}
 			}
-			trace("[WINGMAN " + playerID + "] Finished with shield color.");
+			//trace("[WINGMAN " + playerID + "] Finished with shield color.");
 			releaseAllKeys();
 			onCancel();
 			chooseState(true);		
@@ -548,7 +558,7 @@ package vgdev.stroll.props
 			objectOfInterest = near[0];
 			setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 			range = Omnitool.RANGE_EXTINGUISH * .9;
-			trace("[WINGMAN " + playerID + "] Heading to douse fire.");
+			//trace("[WINGMAN " + playerID + "] Heading to douse fire.");
 		}
 				
 		private function handleStateRepair():void
@@ -562,7 +572,7 @@ package vgdev.stroll.props
 			}
 			setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
 			range = Omnitool.RANGE_REPAIR * .9;
-			trace("[WINGMAN " + playerID + "] Heading to repair console.");
+			//trace("[WINGMAN " + playerID + "] Heading to repair console.");
 		}
 		
 		private function handleStateTurret():void
@@ -579,7 +589,7 @@ package vgdev.stroll.props
 				enemyOfInterest = null;
 				releaseAllKeys();
 				onCancel();
-				trace("[WINGMAN " + playerID + "] There's something else more important to do!");
+				//trace("[WINGMAN " + playerID + "] There's something else more important to do!");
 				return;
 			}
 			if (++genericCounter >= TURRET_MAX)
@@ -590,7 +600,7 @@ package vgdev.stroll.props
 				state = STATE_IDLE;
 				goal = GOAL_IDLE;
 				chooseState(true);
-				trace("[WINGMAN " + playerID + "] Enemies out of range!");
+				//trace("[WINGMAN " + playerID + "] Enemies out of range!");
 				return;
 			}
 			if (enemyOfInterest == null || !enemyOfInterest.isActive() ||
@@ -601,7 +611,7 @@ package vgdev.stroll.props
 				(enemyOfInterest is EnemyPeepsEye) && int((enemyOfInterest as EnemyPeepsEye).getEyeNo() / 2) != playerID)
 			{
 				releaseAllKeys();
-				trace("[WINGMAN " + playerID + "] Enemy no longer valid.");
+				//trace("[WINGMAN " + playerID + "] Enemy no longer valid.");
 				enemyOfInterest = getValidEnemy();
 				if (enemyOfInterest == null)
 					chooseState(true);
@@ -700,10 +710,10 @@ package vgdev.stroll.props
 				onCancel();
 				state = STATE_IDLE;
 				goal = GOAL_IDLE;
-				if (cg.ship.isHeadingGood())
-					trace("[WINGMAN " + playerID + "] Navigation fixed!");
-				else
-					trace("[WINGMAN " + playerID + "] There's something else more important to do!");
+				//if (cg.ship.isHeadingGood())
+					//trace("[WINGMAN " + playerID + "] Navigation fixed!");
+				//else
+					//trace("[WINGMAN " + playerID + "] There's something else more important to do!");
 				return;
 			}
 			if (cg.ship.shipHeading < 0)
@@ -733,7 +743,7 @@ package vgdev.stroll.props
 				onCancel();
 				state = STATE_IDLE;
 				goal = GOAL_IDLE;
-				trace("[WINGMAN " + playerID + "] Done with Slipdrive!");
+				//trace("[WINGMAN " + playerID + "] Done with Slipdrive!");
 				return;
 			}
 			var slip:ConsoleSlipdrive = (objectOfInterest as ConsoleSlipdrive);
@@ -821,7 +831,7 @@ package vgdev.stroll.props
 					state = STATE_IDLE;
 					goal = GOAL_IDLE; 
 				}
-				trace("[WINGMAN " + playerID + "] Heading to a valid node.");
+				//trace("[WINGMAN " + playerID + "] Heading to a valid node.");
 			}
 			else if (cg.managerMap[System.M_FIRE].hasObjects() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_DOUSE))
 			{
@@ -834,7 +844,7 @@ package vgdev.stroll.props
 					onCancel();
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-					trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to douse fires.");
+					//trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to douse fires.");
 				}				
 			}
 			else if (otherPlayer.getHP() == 0)
@@ -846,14 +856,14 @@ package vgdev.stroll.props
 					objectOfInterest = otherPlayer;
 					setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
 					range = Omnitool.RANGE_REVIVE * .9;
-					trace("[WINGMAN " + playerID + "] Heading to revive teammate.");
+					//trace("[WINGMAN " + playerID + "] Heading to revive teammate.");
 				}
 				else								// head to closest Omnitool
 				{
 					onCancel();
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-					trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to revive teammate.");
+					//trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to revive teammate.");
 				}
 			}
 			else if (otherPlayer.getHP() / otherPlayer.getHPmax() < HEAL_THRESHOLD)
@@ -865,14 +875,14 @@ package vgdev.stroll.props
 					objectOfInterest = otherPlayer;
 					setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
 					range = Omnitool.RANGE_REVIVE * .9;
-					trace("[WINGMAN " + playerID + "] Heading to heal teammate.");
+					//trace("[WINGMAN " + playerID + "] Heading to heal teammate.");
 				}
 				else								// head to closest Omnitool
 				{
 					onCancel();
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-					trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to heal teammate.");
+					//trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to heal teammate.");
 				}				
 			}
 			else if (failsCounter >= FAILS_MAX && ABST_Console.numCorrupted != 0 && !ABST_Console.beingUsed &&
@@ -885,7 +895,7 @@ package vgdev.stroll.props
 				goal = GOAL_FAILS;
 				onCancel();
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to format system.");
+				//trace("[WINGMAN " + playerID + "] Heading to format system.");
 			}
 			else if (cg.ship.getShieldPercent() < System.getRandNum(SP_THRESHOLD * .9, SP_THRESHOLD * 1.1) && isValidConsole(consoleMap["shieldRe"]) && !consoleMap["shieldRe"].onCooldown() &&
 					!(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_REBOOT))
@@ -895,7 +905,7 @@ package vgdev.stroll.props
 				if (activeConsole != null && !(activeConsole is ConsoleShieldRe)) onCancel();
 				objectOfInterest = consoleMap["shieldRe"];
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to shield reboot module.");
+				//trace("[WINGMAN " + playerID + "] Heading to shield reboot module.");
 			}
 			else if (cg.managerMap[System.M_BOARDER].hasObjects() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_BOARDER))
 			{
@@ -905,7 +915,7 @@ package vgdev.stroll.props
 				goal = GOAL_BOARDER;	
 				onCancel();
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to fight boarder.");
+				//trace("[WINGMAN " + playerID + "] Heading to fight boarder.");
 			}
 			else if (cg.ship.isJumpReady() == "ready" && slipCounter >= SLIP_MAX && !consoleMap["slipdrive"].forceOverride && isValidConsole(consoleMap["slipdrive"])
 					&& !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_SLIP) && !((cg.level.sectorIndex == 0 || cg.level.sectorIndex == 4) && !cg.engine.isAllAI()))
@@ -915,7 +925,7 @@ package vgdev.stroll.props
 				if (activeConsole != null && !(activeConsole is ConsoleSlipdrive)) onCancel();
 				objectOfInterest = consoleMap["slipdrive"];
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to Slipdrive.");
+				//trace("[WINGMAN " + playerID + "] Heading to Slipdrive.");
 			}
 			else if (++shieldCounter >= SHIELD_MAX && isValidConsole(consoleMap["shieldCol"]) && !cg.ship.isShieldOptimal() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_COLOR))
 			{
@@ -925,7 +935,7 @@ package vgdev.stroll.props
 				if (activeConsole != null && !(activeConsole is ConsoleShields)) onCancel();
 				objectOfInterest = consoleMap["shieldCol"];
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to shield color.");
+				//trace("[WINGMAN " + playerID + "] Heading to shield color.");
 			}
 			// chance to fix Nav even if enemies are present
 			else if (!cg.ship.isHeadingGood() && Math.random() > .7 && cg.ship.getShieldPercent() > 0 && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
@@ -935,7 +945,7 @@ package vgdev.stroll.props
 				if (activeConsole != null && !(activeConsole is ConsoleNavigation)) onCancel();
 				objectOfInterest = consoleMap["navigation"];
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to navigation.");
+				//trace("[WINGMAN " + playerID + "] Heading to navigation.");
 			}
 			else if (cg.managerMap[System.M_ENEMY].hasObjects())
 			{
@@ -945,7 +955,7 @@ package vgdev.stroll.props
 				enemyOfInterest = getValidEnemy();
 				if (enemyOfInterest == null)
 				{
-					trace("[WINGMAN " + playerID + "] Enemies detected but no valid one found.");
+					//trace("[WINGMAN " + playerID + "] Enemies detected but no valid one found.");
 					goal = GOAL_IDLE;
 					state = STATE_IDLE;
 					return false;
@@ -953,13 +963,13 @@ package vgdev.stroll.props
 				objectOfInterest = getValidTurret(enemyOfInterest);
 				if (objectOfInterest == null)
 				{
-					trace("[WINGMAN " + playerID + "] Enemies detected but no valid turret found.");
+					//trace("[WINGMAN " + playerID + "] Enemies detected but no valid turret found.");
 					goal = GOAL_IDLE;
 					state = STATE_IDLE;
 					return false;
 				}
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to turret.");
+				//trace("[WINGMAN " + playerID + "] Heading to turret.");
 			}
 			// normal Nav priority
 			else if (!cg.ship.isHeadingGood() && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_NAVIGATION))
@@ -969,7 +979,7 @@ package vgdev.stroll.props
 				if (activeConsole != null && !(activeConsole is ConsoleNavigation)) onCancel();
 				objectOfInterest = consoleMap["navigation"];
 				setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-				trace("[WINGMAN " + playerID + "] Heading to navigation.");
+				//trace("[WINGMAN " + playerID + "] Heading to navigation.");
 			}
 			else if (otherPlayer.getHP() != otherPlayer.getHPmax())		// top off HP
 			{
@@ -980,14 +990,14 @@ package vgdev.stroll.props
 					objectOfInterest = otherPlayer;
 					setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
 					range = Omnitool.RANGE_REVIVE * .9;
-					trace("[WINGMAN " + playerID + "] Heading to heal teammate.");
+					//trace("[WINGMAN " + playerID + "] Heading to heal teammate.");
 				}
 				else								// head to closest Omnitool
 				{
 					onCancel();
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-					trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to heal teammate.");
+					//trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to heal teammate.");
 				}	
 			}
 			else if (toRepair != null && !(otherPlayer is WINGMAN && (otherPlayer as WINGMAN).goal == GOAL_REPAIR))
@@ -999,14 +1009,14 @@ package vgdev.stroll.props
 					objectOfInterest = toRepair;
 					setPOI(new Point(toRepair.mc_object.x, toRepair.mc_object.y));
 					range = Omnitool.RANGE_REPAIR * .9;
-					trace("[WINGMAN " + playerID + "] Heading to repair console.");
+					//trace("[WINGMAN " + playerID + "] Heading to repair console.");
 				}
 				else								// head to closest Omnitool
 				{
 					onCancel();
 					objectOfInterest = getClosestOmnitool();
 					setPOI(new Point(objectOfInterest.mc_object.x, objectOfInterest.mc_object.y));
-					trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to repair console.");
+					//trace("[WINGMAN " + playerID + "] Heading to pick up Omnitool to repair console.");
 				}	
 			}
 			else
@@ -1016,7 +1026,7 @@ package vgdev.stroll.props
 					releaseAllKeys();
 					objectOfInterest = null;
 					pointOfInterest = null;
-					trace("[WINGMAN " + playerID + "] Doing nothing.");
+					//trace("[WINGMAN " + playerID + "] Doing nothing.");
 				}
 				if (activeConsole) onCancel();
 				goal = GOAL_IDLE;
@@ -1038,7 +1048,7 @@ package vgdev.stroll.props
 		 */
 		private function onArrive():void
 		{
-			trace("[WINGMAN " + playerID + "] Arrived at destination.");
+			//trace("[WINGMAN " + playerID + "] Arrived at destination.");
 			switch (goal)
 			{
 				case GOAL_REVIVE:
@@ -1047,14 +1057,14 @@ package vgdev.stroll.props
 						(objectOfInterest as ABST_Console).onAction(this);
 						objectOfInterest = otherPlayer;
 						setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
-						trace("[WINGMAN " + playerID + "] Heading to revive teammate.");
+						//trace("[WINGMAN " + playerID + "] Heading to revive teammate.");
 					}
 					else									// revive the player
 					{
 						state = STATE_REVIVE;
 						releaseMovementKeys();
 						pressKey("ACTION");
-						trace("[WINGMAN " + playerID + "] Reviving teammate.");
+						//trace("[WINGMAN " + playerID + "] Reviving teammate.");
 					}
 				break;
 				case GOAL_HEAL:
@@ -1069,14 +1079,14 @@ package vgdev.stroll.props
 						}
 						objectOfInterest = otherPlayer;
 						setPOI(new Point(otherPlayer.mc_object.x, otherPlayer.mc_object.y));
-						trace("[WINGMAN " + playerID + "] Heading to heal teammate.");
+						//trace("[WINGMAN " + playerID + "] Heading to heal teammate.");
 					}
 					else									// revive the player
 					{
 						state = STATE_HEAL;
 						releaseMovementKeys();
 						pressKey("ACTION");
-						trace("[WINGMAN " + playerID + "] Healing teammate.");
+						//trace("[WINGMAN " + playerID + "] Healing teammate.");
 					}
 				break;
 				case GOAL_DOUSE:
@@ -1096,7 +1106,7 @@ package vgdev.stroll.props
 						state = STATE_DOUSE;
 						releaseMovementKeys();
 						pressKey("ACTION");
-						trace("[WINGMAN " + playerID + "] Dousing fire.");
+						//trace("[WINGMAN " + playerID + "] Dousing fire.");
 					}
 				break;
 				case GOAL_REPAIR:
@@ -1116,7 +1126,7 @@ package vgdev.stroll.props
 						state = STATE_REPAIR;
 						releaseMovementKeys();
 						pressKey("ACTION");
-						trace("[WINGMAN " + playerID + "] Repairing console.");
+						//trace("[WINGMAN " + playerID + "] Repairing console.");
 					}
 				break;
 				case GOAL_TURRET:
@@ -1150,7 +1160,7 @@ package vgdev.stroll.props
 					state = STATE_BOARDER;
 				break;
 				default:
-					trace("[WINGMAN " + playerID + "] Arrived at destination but couldn't figure out what to do.");
+					//trace("[WINGMAN " + playerID + "] Arrived at destination but couldn't figure out what to do.");
 					state = STATE_IDLE;
 					goal = GOAL_IDLE;
 			}
@@ -1160,17 +1170,17 @@ package vgdev.stroll.props
 		{
 			if (c == null)
 			{
-				trace("[WINGMAN " + playerID + "] Couldn't get on a null console!");
+				//trace("[WINGMAN " + playerID + "] Couldn't get on a null console!");
 				return false;
 			}
 			if (c.corrupted && goal != GOAL_FAILS)
 			{
-				trace("[WINGMAN " + playerID + "] Couldn't get on a corrupted console!");
+				//trace("[WINGMAN " + playerID + "] Couldn't get on a corrupted console!");
 				return false;
 			}
 			if (c.inUse && c.closestPlayer != this)
 			{
-				trace("[WINGMAN " + playerID + "] Arrived at", c, "but it's in use!");
+				//trace("[WINGMAN " + playerID + "] Arrived at", c, "but it's in use!");
 				state = STATE_IDLE;
 				goal = GOAL_IDLE;
 				return false;
@@ -1178,7 +1188,7 @@ package vgdev.stroll.props
 			if (activeConsole != null) onCancel();
 			c.closestPlayer = this;
 			c.onAction(this);
-			trace("[WINGMAN " + playerID + "] Getting on console:", c);
+			//trace("[WINGMAN " + playerID + "] Getting on console:", c);
 			return true;
 		}
 		
@@ -1273,15 +1283,8 @@ package vgdev.stroll.props
 				if (rawAngle < 0)
 					tgtAngle += rotOff * 2;
 				
-				//trace("[WINGMAN " + playerID + "] Target", enemy, "is in range", limits[0], tgtAngle, limits[1], "of turret", t.turretID);
-				
 				if (tgtAngle >= limits[0] && tgtAngle <= limits[1])
 					return t;
-				
-				/*var pt:Point = t.getSpawnPoint();
-				var angle:Number = System.getAngle(pt.x, pt.y, enemy.mc_object.x, enemy.mc_object.y);
-				if (angle >= t.gimbalLimits[0] - t.rotOff && angle <= t.gimbalLimits[1] + t.rotOff)
-					return t;*/
 			}
 			return null;
 		}

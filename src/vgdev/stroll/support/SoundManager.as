@@ -337,10 +337,17 @@ package vgdev.stroll.support
 			}
 			else
 			{
-				if (channelCurr)
-					channelCurr = getBGM(nameCurr).play(posCurr, 9999, new SoundTransform(currVolume));
-				if (channelNew)
-					channelNew = getBGM(nameNew).play(posNew, 9999, new SoundTransform(fadeVolume));
+				try {
+					if (channelCurr)
+						channelCurr = getBGM(nameCurr).play(0, 9999, new SoundTransform(currVolume));
+					if (channelNew)
+						channelNew = getBGM(nameNew).play(0, 9999, new SoundTransform(fadeVolume));
+					// should loop from 0, not posCurr - this code will loop from posCurr when repeating
+					/*if (channelCurr)
+						channelCurr = getBGM(nameCurr).play(posCurr, 9999, new SoundTransform(currVolume));
+					if (channelNew)
+						channelNew = getBGM(nameNew).play(posNew, 9999, new SoundTransform(fadeVolume));*/
+				} catch (e:Error) { };
 			}
 		}
 		

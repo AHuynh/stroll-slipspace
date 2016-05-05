@@ -18,7 +18,7 @@ package vgdev.stroll.support
 		private var scale:Number = 1;
 		
 		public var focusTgt:Point;
-		private const DEFAULT_TGT:Point = new Point();
+		private const DEFAULT_TGT:Point = new Point(0, 20);
 		
 		private var aiTgt:Point;
 		private const THRESH_AI:Number = 100;
